@@ -1,5 +1,5 @@
 # Mdown
-Mdown is CLI tool to convert or even batch convert markdown files to HTML. It can also accept a file stream.
+Mdown is CLI tool to convert or even batch convert markdown files to HTML. It can also accept a file stream.  It was inspired by https://github.com/revolunet/sublimetext-markdown-preview.
 
 # Status
 This is in an Alpha state, though it is very useable.  Because of the Alpha state, things are in flux and are subject to change without warning.
@@ -140,7 +140,7 @@ optional arguments:
 # Credits
 - Uses a slightly modified https://pypi.python.org/pypi/Markdown
 - Uses the development branch of Pygments for Python 3 supporthttp://pygments.org/
-- Borrowed and modified default CSS file from https://github.com/revolunet/sublimetext-markdown-preview
+- Borrowed and modified default CSS file from https://github.com/revolunet/sublimetext-markdown-preview.  Also, the original inspiration for this project.
 - Includes Tomorrow Themes for Pygment from https://github.com/MozMorris/tomorrow-pygments
 
 # Build
