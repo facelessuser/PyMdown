@@ -43,7 +43,7 @@ This is in an Alpha state, though it is very useable.  Because of the Alpha stat
 - Binary will be in the `mdown/dist` folder
 
 # TODO
-- Critic markup
+- ~~Critic markup~~
     - ~~Allow for easy optional visual of critic markup in HTML~~
     - ~~When normal parsing of a file with critic markup:~~
         - ~~Remove comments~~
@@ -51,7 +51,13 @@ This is in an Alpha state, though it is very useable.  Because of the Alpha stat
         - ~~don't show removed~~
         - ~~show inserts as normal~~
         - ~~substitute is converted to show just the inserts~~
-    - Front in preprocessor in CLI to dump the markdown without crtic marks if desired
+    - ~~Allow a reject option parse a file with critic markup in the reverse:~~
+        - ~~Remove comments~~
+        - ~~ignore marks~~
+        - ~~don't show added~~
+        - ~~show removed as normal~~
+        - ~~substitute is converted to show just the removed~~
+    - ~~Front in preprocessor in CLI to dump the markdown without crtic marks if desired~~
 - Maybe more extensions
 - Maybe a better batch output file pattern system
 - Maybe inject javascript into current test documents to verify certain expected things are in output HTML
