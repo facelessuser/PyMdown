@@ -25,7 +25,7 @@ import tempfile
 import codecs
 import re
 
-__version_info__ = (0, 2, 0)
+__version_info__ = (0, 2, 1)
 __version__ = '.'.join(map(str, __version_info__))
 
 if sys.platform.startswith('win'):
@@ -335,7 +335,7 @@ def critic_dump(md_file, enc, out, stream, reject):
             with codecs.open(md_file, "r", encoding=enc) as f:
                 text = CriticDump().dump(f.read(), not reject)
         else:
-            text = CriticDump().dump(stream, not reject)
+            text = CriticDump().dump(md_file, not reject)
     except:
         Logger.log(traceback.format_exc())
         status = 1

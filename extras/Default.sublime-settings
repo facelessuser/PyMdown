@@ -1,0 +1,22 @@
+[
+    //////////////////////////////////
+    // Mdown
+    //////////////////////////////////
+    {
+        "caption": "Mdown: Preview Markdown",
+        "command": "mdown_preview"
+    },
+    {
+        "caption": "Mdown: Preview Critic",
+        "command": "mdown_critic_preview"
+    },
+    {
+        "caption": "Mdown: Critic Strip Markdown (accept)",
+        "command": "mdown_critic_strip"
+    },
+    {
+        "caption": "Mdown: Critic Strip Markdown (reject)",
+        "command": "mdown_critic_strip",
+        "args": {"reject": true}
+    }
+]
