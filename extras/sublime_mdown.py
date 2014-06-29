@@ -23,7 +23,7 @@ class MdownPreviewCommand(sublime_plugin.TextCommand):
         binary = sublime.load_settings("mdown.sublime-settings").get("binary", None)
 
         if binary is not None:
-            cmd = [binary, "-t", title, "-s", "-p"]
+            cmd = [binary, "-T", title, "-s", "-p"]
             if basepath is not None:
                 cmd += ["-b", basepath]
 
