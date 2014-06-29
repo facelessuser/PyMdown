@@ -19,7 +19,16 @@ This is in an Alpha state, though it is very useable.  Because of the Alpha stat
     - **insert**: add <ins>test</ins> tags by using ++test++
     - **delete**: add <del>test</del> tags by using ~~test~~
     - **magiclink**: search for and convert http or ftp links to actual HTML links for lazy link creation
-    - **critic**: experimental extension to display a file marked up with critic tags in a more simple way. (must be the last extension added and essentially overrides all others)
+    - **critic**: experimental extension to display a file marked up with critic tags in a more simple way. (this is extension is auto configured internally and is invoked by using -c to view)
+
+        insert, delete, and substitution
+
+        ![Insert, Delete, and Substitution](https://dl.dropboxusercontent.com/u/342698/mdown/insert_delete_sub.png)
+
+        highlight and comments
+
+        ![Highlight and Comments](https://dl.dropboxusercontent.com/u/342698/mdown/highlight_comment.png)
+
     - **mdownx**: currently loads insert, delete, b64, and magiclink
 
 # Credits
