@@ -19,6 +19,12 @@ from markdown import Extension
 from markdown.preprocessors import Preprocessor
 import re
 
+CRITIC_INSERT = '<span class="critic critic_insert">%s</span>'
+CRITIC_DELETE = '<span class="critic critic_delete">%s</span>'
+CRITIC_MARK = '<span class="critic critic_mark">%s</span>'
+CRITIC_COMMENT = '<span class="critic critic_comment">%s</span>'
+CRITIC_SUB = '<span class="critic critic_delete">%s</span><span class="critic critic_insert">%s</span>'
+
 
 class CriticViewPreprocessor(Preprocessor):
     RE_CRITIC = re.compile(
@@ -28,7 +34,7 @@ class CriticViewPreprocessor(Preprocessor):
                     (?P<ins_open>\+{2})(?P<ins_text>.*?)(?P<ins_close>\+{2})
                   | (?P<del_open>\-{2})(?P<del_text>.*?)(?P<del_close>\-{2})
                   | (?P<mark_open>\={2})(?P<mark_text>.*?)(?P<mark_close>\={2})
-                  | (?P<com_open>\>{2})(?P<com_text>.*?)(?P<com_close>\<{2})
+                  | (?P<comment>(?P<com_open>\>{2})(?P<com_text>.*?)(?P<com_close>\<{2}))
                   | (?P<sub_open>\~{2})(?P<sub_del_text>.*?)(?P<sub_mid>\~\>)(?P<sub_ins_text>.*?)(?P<sub_close>\~{2})
                 )
             (?P<close>\})|.)
@@ -38,40 +44,68 @@ class CriticViewPreprocessor(Preprocessor):
     def __init__(self, md):
         super(CriticViewPreprocessor, self).__init__(md)
 
-    def insert(self, m):
-        return self.markdown.htmlStash.store("<ins>%s</ins>" % self._escape(m.group('ins_text')), safe=True)
-
-    def delete(self, m):
-        return self.markdown.htmlStash.store("<del>%s</del>" % self._escape(m.group('del_text')), safe=True)
-
-    def mark(self, m):
-        return self.markdown.htmlStash.store("<mark>%s</mark>" % self._escape(m.group('mark_text')), safe=True)
-
-    def comment(self, m):
-        return self.markdown.htmlStash.store("<span class=\"critic_comment\">%s</span>" % self._escape(m.group("com_text")), safe=True)
-
-    def substitute(self, m):
-        return self.markdown.htmlStash.store("<ins>%s</ins><del>%s</del>" % (self._escape(m.group("sub_del_text")), self._escape(m.group("sub_ins_text"))), safe=True)
-
-    def critic_hit(self, m):
+    def critic_view(self, m):
         if m.group('ins_open'):
-            return self.insert(m)
+            return self.markdown.htmlStash.store(
+                CRITIC_INSERT % self._escape(m.group('ins_text')),
+                safe=True
+            )
         elif m.group('del_open'):
-            return self.delete(m)
+            return self.markdown.htmlStash.store(
+                CRITIC_DELETE % self._escape(m.group('del_text')),
+                safe=True
+            )
         elif m.group('mark_open'):
-            return self.mark(m)
+            return self.markdown.htmlStash.store(
+                CRITIC_MARK % self._escape(m.group('mark_text')),
+                safe=True
+            )
         elif m.group('com_open'):
-            return self.comment(m)
+            return self.markdown.htmlStash.store(
+                CRITIC_COMMENT % self._escape(m.group("comment")),
+                safe=True
+            )
         elif m.group('sub_open'):
-            return self.substitute(m)
+            return self.markdown.htmlStash.store(
+                CRITIC_SUB % (
+                    self._escape(m.group("sub_del_text")),
+                    self._escape(m.group("sub_ins_text"))
+                ),
+                safe=True
+            )
         else:
-            return self.markdown.htmlStash.store(self._escape(m.group(0)), safe=True)
+            return self.markdown.htmlStash.store(
+                self._escape(m.group(0)),
+                safe=True
+            )
+
+    def critic_ignore(self, m):
+        if m.group('ins_open'):
+            return m.group('ins_text')
+        elif m.group('del_open'):
+            return ''
+        elif m.group('mark_open'):
+            return m.group('mark_text')
+        elif m.group('com_open'):
+            return ''
+        elif m.group('sub_open'):
+            return m.group('sub_ins_text')
+        else:
+            return m.group(0)
+
+    def critic_strip(self, m):
+        return m.group(0)
 
     def run(self, lines):
         """ Match and store Fenced Code Blocks in the HtmlStash. """
         text = ''
+        processor = self.critic_ignore
+
+        if self.config['mode'] == "view":
+            processor = self.critic_view
+
         for m in self.RE_CRITIC.finditer('\n'.join(lines)):
-            text += self.critic_hit(m)
+            text += processor(m)
         return text.split('\n')
 
     def _escape(self, txt):
@@ -85,12 +119,21 @@ class CriticViewPreprocessor(Preprocessor):
 
 
 class CriticExtension(Extension):
+    def __init__(self, configs):
+        self.config = {
+            'mode': [None, "Critic mode to run in ('ignore' or 'view') - Default - "]
+        }
+
+        for key, value in configs:
+            if key == "mode":
+                self.setConfig(key, value if value == "view" else "ignore")
 
     def extendMarkdown(self, md, md_globals):
         """ Add FencedBlockPreprocessor to the Markdown instance. """
+        critic = CriticViewPreprocessor(md)
+        critic.config = self.getConfigs()
+        md.preprocessors.add('critic', critic, ">normalize_whitespace")
         md.registerExtension(self)
-
-        md.preprocessors.add('critic', CriticViewPreprocessor(md), ">normalize_whitespace")
 
 
 def makeExtension(configs=None):

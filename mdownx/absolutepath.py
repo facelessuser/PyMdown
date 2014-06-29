@@ -72,7 +72,7 @@ class AbsolutepathTreeprocessor(Treeprocessor):
 class AbsolutepathExtension(Extension):
     def __init__(self, configs):
         self.config = {
-            'base_path': [None, "Base path for absolute path to use to resolve paths Default: None"]
+            'base_path': [None, "Base path for absolute path to use to resolve paths - Default: None"]
         }
 
         for key, value in configs:

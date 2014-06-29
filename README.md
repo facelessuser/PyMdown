@@ -35,15 +35,14 @@ This is in an Alpha state, though it is very useable.  Because of the Alpha stat
 
 # TODO
 - Critic markup
-    - Allow for easy optional visual of critic markup in HTML
-    - When normal parsing of a file with critic markup:
-        - Remove comments
-        - ignore marks
-        - don't show removed
-        - show inserts as normal
-        - substitute is converted to show just the inserts
+    - ~~Allow for easy optional visual of critic markup in HTML~~
+    - ~~When normal parsing of a file with critic markup:~~
+        - ~~Remove comments~~
+        - ~~ignore marks~~
+        - ~~don't show removed~~
+        - ~~show inserts as normal~~
+        - ~~substitute is converted to show just the inserts~~
     - Front in preprocessor in CLI to dump the markdown without crtic marks if desired
-- Allow for accepting or rejecting critic markups and possibly output new markdown file
 - Maybe more extensions
 - Maybe a better batch output file pattern system
 - Maybe inject javascript into current test documents to verify certain expected things are in output HTML
