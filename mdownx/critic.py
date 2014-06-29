@@ -41,6 +41,7 @@ class CriticViewPreprocessor(Preprocessor):
         ''',
         re.MULTILINE | re.DOTALL | re.VERBOSE
     )
+
     def __init__(self, md):
         super(CriticViewPreprocessor, self).__init__(md)
 
@@ -107,9 +108,6 @@ class CriticViewPreprocessor(Preprocessor):
             else:
                 return m.group(0)
 
-    def critic_strip(self, m):
-        return m.group(0)
-
     def run(self, lines):
         """ Match and store Fenced Code Blocks in the HtmlStash. """
         text = ''
@@ -140,9 +138,12 @@ class CriticExtension(Extension):
         }
 
         for key, value in configs:
-            if value == 'True': value = True
-            if value == 'False': value = False
-            if value == 'None': value = None
+            if value == 'True':
+                value = True
+            if value == 'False':
+                value = False
+            if value == 'None':
+                value = None
 
             if key == "mode":
                 self.setConfig(key, value if value == "view" else "ignore")

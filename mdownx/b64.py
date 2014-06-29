@@ -17,7 +17,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 from __future__ import unicode_literals
 from markdown import Extension
 from markdown.treeprocessors import Treeprocessor
-from os.path import abspath, exists, normpath, splitext, join
+from os.path import exists, normpath, splitext, join
 import sys
 import base64
 # import traceback

@@ -23,6 +23,7 @@ import webbrowser
 import traceback
 import tempfile
 import codecs
+import re
 
 __version_info__ = (0, 1, 0)
 __version__ = '.'.join(map(str, __version_info__))
@@ -44,6 +45,7 @@ CRITIC_OPT_MAP = {
     CRITIC_DUMP: "ignore"
 }
 
+
 class Logger(object):
     """ Log messages """
     quiet = False
@@ -54,6 +56,59 @@ class Logger(object):
 
         if not cls.quiet:
             print(msg)
+
+
+class CriticDump(object):
+    RE_CRITIC = re.compile(
+        r'''
+            ((?P<open>\{)
+                (?:
+                    (?P<ins_open>\+{2})(?P<ins_text>.*?)(?P<ins_close>\+{2})
+                  | (?P<del_open>\-{2})(?P<del_text>.*?)(?P<del_close>\-{2})
+                  | (?P<mark_open>\={2})(?P<mark_text>.*?)(?P<mark_close>\={2})
+                  | (?P<comment>(?P<com_open>\>{2})(?P<com_text>.*?)(?P<com_close>\<{2}))
+                  | (?P<sub_open>\~{2})(?P<sub_del_text>.*?)(?P<sub_mid>\~\>)(?P<sub_ins_text>.*?)(?P<sub_close>\~{2})
+                )
+            (?P<close>\})|.)
+        ''',
+        re.MULTILINE | re.DOTALL | re.VERBOSE
+    )
+
+    def process(self, m):
+        if self.accept:
+            if m.group('ins_open'):
+                return m.group('ins_text')
+            elif m.group('del_open'):
+                return ''
+            elif m.group('mark_open'):
+                return m.group('mark_text')
+            elif m.group('com_open'):
+                return ''
+            elif m.group('sub_open'):
+                return m.group('sub_ins_text')
+            else:
+                return m.group(0)
+        else:
+            if m.group('ins_open'):
+                return ''
+            elif m.group('del_open'):
+                return m.group('del_text')
+            elif m.group('mark_open'):
+                return m.group('mark_text')
+            elif m.group('com_open'):
+                return ''
+            elif m.group('sub_open'):
+                return m.group('sub_del_text')
+            else:
+                return m.group(0)
+
+    def dump(self, source, accept):
+        """ Match and store Fenced Code Blocks in the HtmlStash. """
+        text = ''
+        self.accept = accept
+        for m in self.RE_CRITIC.finditer(source):
+            text += self.process(m)
+        return text
 
 
 def get_settings(file_name, preview, critic_mode, reject):
@@ -123,7 +178,7 @@ def get_title(md_file, title_val, is_stream):
     return title
 
 
-def get_output(md_file, index, output_val, terminal, is_stream):
+def get_output(md_file, index, output_val, terminal, is_stream, critic_mode, reject):
     """
     Get the path to output the file.
     If doing multiple files and pointing to a directory,
@@ -160,7 +215,15 @@ def get_output(md_file, index, output_val, terminal, is_stream):
             # Its a directory
             if not is_stream:
                 # Use path and own name
-                output = join(name, "%s.html" % splitext(abspath(md_file))[0])
+                if critic_mode is not CRITIC_DUMP:
+                    output = join(name, "%s.html" % splitext(abspath(md_file))[0])
+                else:
+                    if reject:
+                        label = "(rejected)"
+                    else:
+                        label = "(accepted)"
+                    base, ext = splitext(abspath(md_file))
+                    output = join(name, "%s%s%s" % (base, label, ext))
             else:
                 # Stream: don't know what the file should be called
                 output = None
@@ -168,8 +231,16 @@ def get_output(md_file, index, output_val, terminal, is_stream):
             # Apply mult-pattern to name
             output = name.replace("${count}", index)
     elif not is_stream:
-        # Single or multi file: use own name
-        output = "%s.html" % splitext(abspath(md_file))[0]
+        if critic_mode is not CRITIC_DUMP:
+            # Single or multi file: use own name
+            output = "%s.html" % splitext(abspath(md_file))[0]
+        else:
+            if reject:
+                label = "(rejected)"
+            else:
+                label = "(accepted)"
+            base, ext = splitext(abspath(md_file))
+            output = "%s%s%s" % (base, label, ext)
     else:
         output = None
 
@@ -254,6 +325,68 @@ def auto_open(name):
             pass
 
 
+def critic_dump(md_file, enc, out, stream, reject):
+    """ Process the critic marks and dump the modified file """
+
+    status = 0
+    text = None
+    try:
+        if not stream:
+            with codecs.open(md_file, "r", encoding=enc) as f:
+                text = CriticDump().dump(f.read(), not reject)
+        else:
+            text = CriticDump().dump(stream, not reject)
+    except:
+        Logger.log(traceback.format_exc())
+        status = 1
+    if text is not None:
+        if out is not None:
+            try:
+                if out is not None:
+                    with codecs.open(out, "w", encoding=enc) as f:
+                        f.write(text)
+            except:
+                status = 1
+                print(text.encode(enc))
+        else:
+            print(text.encode(enc))
+    return status
+
+
+def html_dump(md_file, enc, out, stream, html_title, base_path, preview, settings):
+    """ Dump HTML """
+
+    status = 0
+    # Instantiate Mdown class
+    mdown = (Mdowns if stream else Mdown)(
+        md_file, enc,
+        title=html_title, base_path=base_path, settings=settings
+    )
+
+    # If all went well, either preview the file,
+    # or write it to file or terminal
+    if mdown.error is None:
+        if preview:
+            try:
+                with tempfile.NamedTemporaryFile(delete=False, suffix=".html") as f:
+                    f.write(mdown.markdown)
+                auto_open(f.name)
+            except:
+                Logger.log(traceback.format_exc())
+                print(mdown.markdown)
+                status = 1
+        else:
+            mdown.write(out)
+        if status == 0 and mdown.error is not None:
+            print(mdown.markdown)
+            Logger.log(mdown.error)
+            status = 1
+    else:
+        Logger.log(mdown.error)
+        status = 1
+    return status
+
+
 def convert(
     markdown=[], title=None, encoding="utf-8",
     output=None, basepath=None, preview=False,
@@ -285,6 +418,10 @@ def convert(
     if status == 0:
         count = 0
         for md_file in files:
+            # Quit dumping if there was an error
+            if status != 0:
+                break
+
             if stream:
                 Logger.log("Converting buffer...")
             else:
@@ -294,7 +431,7 @@ def convert(
             base_path = get_base_path(md_file, basepath, stream)
 
             # Get output location
-            out = get_output(md_file, count, output, terminal, stream)
+            out = get_output(md_file, count, output, terminal, stream, critic_mode, reject)
 
             # Get the title to be used in the HTML
             html_title = get_title(md_file, title, stream)
@@ -302,34 +439,13 @@ def convert(
             # Get the settings if available
             settings = get_settings(join(script_path, "mdown.json"), preview, critic_mode, reject)
 
-            # Instantiate Mdown class
-            mdown = (Mdowns if stream else Mdown)(
-                md_file, enc,
-                title=html_title, base_path=base_path, settings=settings
-            )
-
-            # If all went well, either preview the file,
-            # or write it to file or terminal
-            if mdown.error is None:
-                if preview:
-                    try:
-                        with tempfile.NamedTemporaryFile(delete=False, suffix=".html") as f:
-                            f.write(mdown.markdown)
-                        auto_open(f.name)
-                    except:
-                        Logger.log(traceback.format_exc())
-                        print(mdown.markdown)
-                        status = 1
-                else:
-                    mdown.write(out)
-                if status == 0 and mdown.error is not None:
-                    print(mdown.markdown)
-                    Logger.log(mdown.error)
-                    status = 1
+            if critic_mode == CRITIC_DUMP:
+                status = critic_dump(md_file, enc, out, stream, reject)
             else:
-                Logger.log(mdown.error)
-                status = 1
-
+                status = html_dump(
+                    md_file, enc, out, stream, html_title,
+                    base_path, preview, settings
+                )
     return status
 
 
@@ -349,7 +465,7 @@ if __name__ == "__main__":
         parser.add_argument('--preview', '-p', action='store_true', default=False, help="Output to preview (temp file). --output will be ignored.")
         me_group = parser.add_mutually_exclusive_group()
         me_group.add_argument('--critic', '-c', action='store_true', default=False, help="Show critic marks in a viewable html output.")
-        me_group.add_argument('--critic-dump', '-C', action='store_true', default=False, help="Process critic marks and dump file.")
+        me_group.add_argument('--critic-dump', '-C', action='store_true', default=False, help="Process critic marks, dumps file(s), and exits.")
         parser.add_argument('--reject', '-r', action='store_true', default=False, help="Reject propossed critic marks when using in normal processing and --critic-dump processing")
         parser.add_argument('--terminal', '-t', action='store_true', default=False, help="Print to terminal (stdout).")
         parser.add_argument('--output', '-o', nargs=1, default=None, help="Output directory can be a directory or file_name.  Use ${count} when exporting multiple files and using a file pattern.")
@@ -364,7 +480,6 @@ if __name__ == "__main__":
         critic_mode = CRITIC_IGNORE
         if args.critic_dump:
             critic_mode = CRITIC_DUMP
-            assert 0, "Not supported yet!"
         elif args.critic:
             critic_mode = CRITIC_VIEW
 
