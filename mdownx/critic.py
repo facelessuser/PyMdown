@@ -80,18 +80,32 @@ class CriticViewPreprocessor(Preprocessor):
             )
 
     def critic_ignore(self, m):
-        if m.group('ins_open'):
-            return m.group('ins_text')
-        elif m.group('del_open'):
-            return ''
-        elif m.group('mark_open'):
-            return m.group('mark_text')
-        elif m.group('com_open'):
-            return ''
-        elif m.group('sub_open'):
-            return m.group('sub_ins_text')
+        if self.config["accept"]:
+            if m.group('ins_open'):
+                return m.group('ins_text')
+            elif m.group('del_open'):
+                return ''
+            elif m.group('mark_open'):
+                return m.group('mark_text')
+            elif m.group('com_open'):
+                return ''
+            elif m.group('sub_open'):
+                return m.group('sub_ins_text')
+            else:
+                return m.group(0)
         else:
-            return m.group(0)
+            if m.group('ins_open'):
+                return ''
+            elif m.group('del_open'):
+                return m.group('del_text')
+            elif m.group('mark_open'):
+                return m.group('mark_text')
+            elif m.group('com_open'):
+                return ''
+            elif m.group('sub_open'):
+                return m.group('sub_del_text')
+            else:
+                return m.group(0)
 
     def critic_strip(self, m):
         return m.group(0)
@@ -121,12 +135,19 @@ class CriticViewPreprocessor(Preprocessor):
 class CriticExtension(Extension):
     def __init__(self, configs):
         self.config = {
-            'mode': [None, "Critic mode to run in ('ignore' or 'view') - Default - "]
+            'mode': ['ignore', "Critic mode to run in ('ignore' or 'view') - Default: ignore "],
+            'accept': [True, "Acceptance or rejection of critic marks - Default: True"]
         }
 
         for key, value in configs:
+            if value == 'True': value = True
+            if value == 'False': value = False
+            if value == 'None': value = None
+
             if key == "mode":
                 self.setConfig(key, value if value == "view" else "ignore")
+            else:
+                self.setConfig(key, value)
 
     def extendMarkdown(self, md, md_globals):
         """ Add FencedBlockPreprocessor to the Markdown instance. """

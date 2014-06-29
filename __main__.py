@@ -56,7 +56,7 @@ class Logger(object):
             print(msg)
 
 
-def get_settings(file_name, preview, critic_mode):
+def get_settings(file_name, preview, critic_mode, reject):
     """
     Get the settings and add absolutepath
     extention if a preview is planned.
@@ -103,7 +103,11 @@ def get_settings(file_name, preview, critic_mode):
 
     # Handle the appropriate critic mode internally
     # Critic must be appended to end of extension list
-    extensions.append("mdownx.critic(mode=%s)" % CRITIC_OPT_MAP[critic_mode])
+    extensions.append(
+        "mdownx.critic(mode=%s,accept=%s)" % (
+            CRITIC_OPT_MAP[critic_mode], not reject
+        )
+    )
 
     return settings
 
@@ -254,7 +258,8 @@ def convert(
     markdown=[], title=None, encoding="utf-8",
     output=None, basepath=None, preview=False,
     stream=False, terminal=False, quiet=False,
-    text_buffer=None, critic_mode=CRITIC_IGNORE
+    text_buffer=None, critic_mode=CRITIC_IGNORE,
+    reject=False
 ):
     """ Convert markdown file(s) to html """
     status = 0
@@ -295,7 +300,7 @@ def convert(
             html_title = get_title(md_file, title, stream)
 
             # Get the settings if available
-            settings = get_settings(join(script_path, "mdown.json"), preview, critic_mode)
+            settings = get_settings(join(script_path, "mdown.json"), preview, critic_mode, reject)
 
             # Instantiate Mdown class
             mdown = (Mdowns if stream else Mdown)(
@@ -344,7 +349,8 @@ if __name__ == "__main__":
         parser.add_argument('--preview', '-p', action='store_true', default=False, help="Output to preview (temp file). --output will be ignored.")
         me_group = parser.add_mutually_exclusive_group()
         me_group.add_argument('--critic', '-c', action='store_true', default=False, help="Show critic marks in a viewable html output.")
-        me_group.add_argument('--critic-dump', '-C', action='store_true', default=False, help="Accept all changes and dump a new modified version.")
+        me_group.add_argument('--critic-dump', '-C', action='store_true', default=False, help="Process critic marks and dump file.")
+        parser.add_argument('--reject', '-r', action='store_true', default=False, help="Reject propossed critic marks when using in normal processing and --critic-dump processing")
         parser.add_argument('--terminal', '-t', action='store_true', default=False, help="Print to terminal (stdout).")
         parser.add_argument('--output', '-o', nargs=1, default=None, help="Output directory can be a directory or file_name.  Use ${count} when exporting multiple files and using a file pattern.")
         parser.add_argument('--stream', '-s', action='store_true', default=False, help="Streaming input.  markdown file inputs will be ignored.")
@@ -358,6 +364,7 @@ if __name__ == "__main__":
         critic_mode = CRITIC_IGNORE
         if args.critic_dump:
             critic_mode = CRITIC_DUMP
+            assert 0, "Not supported yet!"
         elif args.critic:
             critic_mode = CRITIC_VIEW
 
@@ -366,6 +373,7 @@ if __name__ == "__main__":
             basepath=first_or_none(args.basepath),
             terminal=args.terminal,
             critic_mode=critic_mode,
+            reject=args.reject,
             stream=args.stream,
             title=first_or_none(args.title),
             quiet=args.quiet,
