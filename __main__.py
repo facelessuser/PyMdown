@@ -99,7 +99,7 @@ def get_title(md_file, title_val, is_stream):
     return title
 
 
-def get_output(md_file, index, output_val, console, is_stream):
+def get_output(md_file, index, output_val, terminal, is_stream):
     """
     Get the path to output the file.
     If doing multiple files and pointing to a directory,
@@ -117,16 +117,16 @@ def get_output(md_file, index, output_val, console, is_stream):
     use the file path given.
 
     If doing a stream and pointing to a directory, the output will be
-    streamed to the console (stdout).
+    streamed to the terminal (stdout).
 
     If doing a stream and not pointing to a directory, the output will
     be streamed to that file path.
 
     If creating the output fails by mdown or none of these conditions are met,
-    the output will default to the console.
+    the output will default to the terminal.
     """
 
-    if console:
+    if terminal:
         # We want stdout
         output = None
     elif output_val is not None and output_val != "":
@@ -233,7 +233,7 @@ def auto_open(name):
 def convert(
     markdown=[], title=None, encoding="utf-8",
     output=None, basepath=None, preview=False,
-    stream=False, console=False, quiet=False,
+    stream=False, terminal=False, quiet=False,
     text_buffer=None
 ):
     """ Convert markdown file(s) to html """
@@ -269,7 +269,7 @@ def convert(
             base_path = get_base_path(md_file, basepath, stream)
 
             # Get output location
-            out = get_output(md_file, count, output, console, stream)
+            out = get_output(md_file, count, output, terminal, stream)
 
             # Get the title to be used in the HTML
             html_title = get_title(md_file, title, stream)
@@ -284,7 +284,7 @@ def convert(
             )
 
             # If all went well, either preview the file,
-            # or write it to file or console
+            # or write it to file or terminal
             if mdown.error is None:
                 if preview:
                     try:
@@ -322,10 +322,10 @@ if __name__ == "__main__":
         parser.add_argument('--version', action='version', version="%(prog)s " + __version__)
         parser.add_argument('--quiet', '-q', action='store_true', default=False, help="No messages on stdout.")
         parser.add_argument('--preview', '-p', action='store_true', default=False, help="Output to preview (temp file). --output will be ignored.")
-        parser.add_argument('--console', '-c', action='store_true', default=False, help="Print to console (stdout).")
+        parser.add_argument('--terminal', '-t', action='store_true', default=False, help="Print to terminal (stdout).")
         parser.add_argument('--output', '-o', nargs=1, default=None, help="Output directory can be a directory or file_name.  Use ${count} when exporting multiple files and using a file pattern.")
         parser.add_argument('--stream', '-s', action='store_true', default=False, help="Streaming input.  markdown file inputs will be ignored.")
-        parser.add_argument('--title', '-t', nargs=1, default=None, help="Title for HTML.")
+        parser.add_argument('--title', '-T', nargs=1, default=None, help="Title for HTML.")
         parser.add_argument('--encoding', '-e', nargs=1, default=["utf-8"], help="Encoding for input.")
         parser.add_argument('--basepath', '-b', nargs=1, default=None, help="The basepath location mdown should use.")
         parser.add_argument('markdown', nargs='*', default=[], help="Markdown file(s) or file pattern(s).")
@@ -335,7 +335,7 @@ if __name__ == "__main__":
         return convert(
             encoding=args.encoding[0],
             basepath=first_or_none(args.basepath),
-            console=args.console,
+            terminal=args.terminal,
             stream=args.stream,
             title=first_or_none(args.title),
             quiet=args.quiet,

@@ -1,6 +1,9 @@
 # Mdown
 Mdown is CLI tool to convert or even batch convert markdown files to HTML. It can also accept a file stream.
 
+# Status
+This is in an Alpha state, though it is very useable.  Because of the Alpha state, things are in flux and are subject to change without warning.
+
 # Features
 - Python 2 and 3 compatible (but executables built with Python 2 using Pyinstaller)
 - Should run on OSX, Windows, and Linux
@@ -31,7 +34,15 @@ Mdown is CLI tool to convert or even batch convert markdown files to HTML. It ca
 - Binary will be in the `mdown/dist` folder
 
 # TODO
-- Allow for easy visual of critic markup in HTML (maybe dynamically accept reject critic markup and and allow for access or saving of the modified markdown)
+- Critic markup
+    - Allow for easy optional visual of critic markup in HTML
+    - When normal parsing of a file with critic markup:
+        - Remove comments
+        - ignore marks
+        - don't show removed
+        - show inserts as normal
+        - substitute is converted to show just the inserts
+    - Front in preprocessor in CLI to dump the markdown without crtic marks if desired
 - Allow for accepting or rejecting critic markups and possibly output new markdown file
 - Maybe more extensions
 - Maybe a better batch output file pattern system
