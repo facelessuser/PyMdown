@@ -1,0 +1,32 @@
+{
+    // Select your CSS for you output html
+    // or you can have it all contained in your HTML template
+    // Add your highlight.js theme here as well.
+    //
+    // Can be an array of stylesheets or "default"
+    // "default" can also be an entry in the array.
+    // If it points to a physical file, it will be included.
+    "css_style_sheet": ["default"],
+
+    // Load up highlight.js or other js scripts
+    //
+    // Can be an array of scripts.
+    // If it points to a physical file, it will be included.
+    "js_scripts": [],
+
+    // Your HTML template
+    "html_template": "default",
+
+    // Python Markdown extensions
+    "extensions": [
+        "extra",
+        "toc",
+        "codehilite(guess_lang=False,pygments_style=tomorrownighteighties)",
+        "mdownx.delete",
+        "mdownx.insert",
+        "mdownx.absolutepath(base_path=${BASE_PATH})",
+        "mdownx.b64(base_path=${BASE_PATH})",
+        "mdownx.magiclink"
+        //, "mdownx.critic"
+    ]
+}

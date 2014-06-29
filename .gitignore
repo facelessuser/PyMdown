@@ -1,0 +1,8 @@
+*.pyc
+*.pyo
+*.egg
+build/*
+dist/*
+pyinstaller
+mdown.spec
+tests/*.html
