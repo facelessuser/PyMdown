@@ -137,6 +137,47 @@ optional arguments:
                         The basepath location mdown should use.
 ```
 
+# Sublime Plugin
+Generally I recommend https://github.com/revolunet/sublimetext-markdown-preview.  But I wrote this program and this sublime plugin to gain certain control I didn't already have.  If for whatever reason you want to use this plugin, this is how you set it up.
+
+Just drop the extra folder in your Sublime `Packages` folder and name to something sane like `mdown`.  It currently provides only 4 commands that are accessible from the command palette:
+
+```javascript
+    //////////////////////////////////
+    // Mdown
+    //////////////////////////////////
+
+    // Preview the current mardown view in your browser
+    {
+        "caption": "Mdown: Preview Markdown",
+        "command": "mdown_preview"
+    },
+
+    // Preview the current markdown source in a special
+    // mode that highlights critc syntax in a easier to
+    // read way.
+    {
+        "caption": "Mdown: Preview Critic",
+        "command": "mdown_critic_preview"
+    },
+
+    // Strip out critic markup in your current view
+    // favoring the suggested changes
+    {
+        "caption": "Mdown: Critic Strip Markdown (accept)",
+        "command": "mdown_critic_strip"
+    },
+
+    // Strip out the critic markup in your current view
+    // rejecting the suggested changes
+    {
+        "caption": "Mdown: Critic Strip Markdown (reject)",
+        "command": "mdown_critic_strip",
+        "args": {"reject": true}
+    }
+```
+
+
 # Credits
 - Uses a slightly modified https://pypi.python.org/pypi/Markdown
 - Uses the development branch of Pygments for Python 3 supporthttp://pygments.org/
