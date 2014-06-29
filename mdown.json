@@ -21,12 +21,11 @@
     "extensions": [
         "extra",
         "toc",
-        "codehilite(guess_lang=False,pygments_style=tomorrownighteighties)",
+        "codehilite(guess_lang=False,pygments_style=default)",
         "mdownx.delete",
-        "mdownx.insert",
-        "mdownx.absolutepath(base_path=${BASE_PATH})",
-        "mdownx.b64(base_path=${BASE_PATH})",
-        "mdownx.magiclink"
-        //, "mdownx.critic"
+        // "mdownx.insert",
+        "mdownx.magiclink",
+        // "mdownx.absolutepath(base_path=${BASE_PATH})",
+        "mdownx.b64(base_path=${BASE_PATH})"
     ]
 }

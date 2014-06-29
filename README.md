@@ -14,12 +14,12 @@ This is in an Alpha state, though it is very useable.  Because of the Alpha stat
 - Repo includes in `extras` a simple Sublime Text plugin to stream your files to mdown
 - Preview option to open output in a browser intead
 - Optionally all the default Markdown extensions, plus these optional mdownx extensions:
-    - **absolutepath**: convert local file paths from relative to absolute
-    - **b64**: base64 encode local image files
-    - **insert**: add <ins>test</ins> tags by using ++test++
-    - **delete**: add <del>test</del> tags by using ~~test~~
-    - **magiclink**: search for and convert http or ftp links to actual HTML links for lazy link creation
-    - **critic**: experimental extension to display a file marked up with critic tags in a more simple way. (this is extension is auto configured internally and is invoked by using -c to view)
+    - **absolutepath**: Converts local file paths from relative to absolute for things like links, images, etc.  This is automatically done on all previews.  It can be configured to run all the time outside of previews in the settings file, and it can take a hardcoded path `absolutepath(base_path=/my/path)` or a dynamic path `absolutepath(base_path=${BASE_PATH})` that can take the base\_path fed in on the command line or calculated from the source files path.  If you set this in the settings file, keep in mind the settings file overrides preview's settings.
+    - **b64**: Base64 encode local image files. If can be enabled and configured in the settings file and can take a hardcoded path `b64(base_path=/my/path)` or it can take a dynamic base\_path `b64(base_path=${BASE_PATH})` fed in on the command line or calculated from the source files path.
+    - **insert**: Add <ins>test</ins> tags by using ++test++. Can be enabled in the settings file.
+    - **delete**: Add <del>test</del> tags by using ~~test~~. Can be enabled in the settings file.
+    - **magiclink**: Search for and convert http or ftp links to actual HTML links for lazy link creation. Can be enabled in the settings file.
+    - **critic**: Cannot be set in the settings file. It is configured automatically, and can only its behaviour can only be modifid via the command line.  In its current form, it can output in HTML a highlighted critic form to make it more readable using the -c option (maybe in the future it might be able to do more).  The automatic behaviour is to strip out critic marks when outputting HTML.  It either accepts all changes or rejects all changes (by default it accepts, but with the -r option it can reject instead).
 
         insert, delete, and substitution
 
@@ -30,6 +30,112 @@ This is in an Alpha state, though it is very useable.  Because of the Alpha stat
         ![Highlight and Comments](https://dl.dropboxusercontent.com/u/342698/mdown/highlight_comment.png)
 
     - **mdownx**: currently loads insert, delete, b64, and magiclink
+
+# Styles and Configuration
+
+## Syntax Highlighting with Pygments
+Syntax highlighting can be done in fenced blocks when enabling the `codehilite` extension.  Its styles etc. can be configured in the settings file as well. Here is an example:
+
+```javascript
+    "extensions": [
+        "extra",
+        "toc",
+        "codehilite(guess_lang=False,pygments_style=tomorrownighteighties)"
+    ]
+```
+
+Notice the syntax style is set with the `pygments_style` key.
+
+## How To Use highlight.js Syntax Highlighting
+You will have to provide the highlight.js script and preferred CSS theme and add them to the output via these settings:
+
+```javascript
+    // Select your CSS for you output html
+    // or you can have it all contained in your HTML template
+    // Add your highlight.js theme here as well.
+    //
+    // Can be an array of stylesheets or "default"
+    // "default" can also be an entry in the array.
+    // If it points to a physical file, it will be included.
+    "css_style_sheet": ["default"],
+
+    // Load up highlight.js or other js scripts
+    //
+    // Can be an array of scripts.
+    // If it points to a physical file, it will be included.
+    "js_scripts": [],
+```
+
+Then a special parameter was added into the `codehilite` extension to manually enable highlight.js support.
+
+```javascript
+    "codehilite(highlight_js=True)"
+```
+
+# Add More CSS and JS Files
+Add them to the provided settings:
+
+```javascript
+    // Select your CSS for you output html
+    // or you can have it all contained in your HTML template
+    // Add your highlight.js theme here as well.
+    //
+    // Can be an array of stylesheets or "default"
+    // "default" can also be an entry in the array.
+    // If it points to a physical file, it will be included.
+    "css_style_sheet": ["default"],
+
+    // Load up highlight.js or other js scripts
+    //
+    // Can be an array of scripts.
+    // If it points to a physical file, it will be included.
+    "js_scripts": [],
+```
+
+## Change the HTML Template
+This can be done here:
+
+```javascript
+    // Your HTML template
+    "html_template": "default",
+```
+
+# Command Line
+
+```
+usage: mdown [-h] [--version] [--quiet] [--preview] [--critic | --critic-dump]
+             [--reject] [--terminal] [--output OUTPUT] [--stream]
+             [--title TITLE] [--encoding ENCODING] [--basepath BASEPATH]
+             [markdown [markdown ...]]
+
+Markdown generator
+
+positional arguments:
+  markdown              Markdown file(s) or file pattern(s).
+
+optional arguments:
+  -h, --help            show this help message and exit
+  --version             show program's version number and exit
+  --quiet, -q           No messages on stdout.
+  --preview, -p         Output to preview (temp file). --output will be
+                        ignored.
+  --critic, -c          Show critic marks in a viewable html output.
+  --critic-dump, -C     Process critic marks, dumps file(s), and exits.
+  --reject, -r          Reject propossed critic marks when using in normal
+                        processing and --critic-dump processing
+  --terminal, -t        Print to terminal (stdout).
+  --output OUTPUT, -o OUTPUT
+                        Output directory can be a directory or file_name. Use
+                        ${count} when exporting multiple files and using a
+                        file pattern.
+  --stream, -s          Streaming input. markdown file inputs will be ignored.
+  --title TITLE, -T TITLE
+                        Title for HTML.
+  --encoding ENCODING, -e ENCODING
+                        Encoding for input.
+  --basepath BASEPATH, -b BASEPATH
+                        The basepath location mdown should use.
+```
 
 # Credits
 - Uses a slightly modified https://pypi.python.org/pypi/Markdown
@@ -63,7 +169,7 @@ This is in an Alpha state, though it is very useable.  Because of the Alpha stat
 - Maybe inject javascript into current test documents to verify certain expected things are in output HTML
 - ...stuff I havn't yet thought of...
 
-# Licene
+# License
 MIT license.
 
 Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
@@ -74,7 +180,7 @@ The above copyright notice and this permission notice shall be included in all c
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-#3rd Party Licences
+#3rd Party Licenses
 
 ## Markdown
 Copyright 2007, 2008 The Python Markdown Project (v. 1.7 and later)
