@@ -288,3 +288,11 @@ Should convert bg.png to the actual full path below:
 ```
 
 [Absolute path link](bg.png "It works!")
+
+## GithubChecklists
+
+Test List
+
+- Test
+- [ ] whatever
+- [x] yes

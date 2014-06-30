@@ -25,6 +25,7 @@
         "mdownx.delete",
         // "mdownx.insert",
         "mdownx.magiclink",
+        "mdownx.tasklist",
         // "mdownx.absolutepath(base_path=${BASE_PATH})",
         "mdownx.b64(base_path=${BASE_PATH})"
     ]

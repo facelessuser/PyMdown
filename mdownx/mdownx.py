@@ -20,7 +20,8 @@ extensions = [
     'mdownx.delete',
     'mdownx.insert',
     'mdownx.magiclink',
-    'mdownx.b64'
+    'mdownx.b64',
+    'mdownx.tasklist'
 ]
 
 
