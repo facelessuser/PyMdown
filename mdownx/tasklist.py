@@ -29,6 +29,8 @@ class TasklistTreeprocessor(Treeprocessor):
         task_items = []
         lilinks = root.getiterator('li')
         for li in lilinks:
+            if li.text is None:
+                continue
             m = RE_CHECKBOX.match(li.text)
             if m is not None:
                 checkbox = '<input type="checkbox" disabled%s> ' % (' checked' if m.group('state').lower() == 'x' else '')
