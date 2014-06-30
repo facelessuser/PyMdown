@@ -289,10 +289,43 @@ Should convert bg.png to the actual full path below:
 
 [Absolute path link](bg.png "It works!")
 
-## GithubChecklists
+## Tasklists
+Should work on any list item in an ordered list or unordered list
 
-Test List
+```
+First List
 
-- Test
-- [ ] whatever
-- [x] yes
+- Test 1
+- [ ] Test 2
+- [x] Test 3
+    Second line
+- [ ] Test 4
+- Test 5
+
+Another List
+
+1. Test 1
+- [ ] Test 2
+- [x] Test 3
+    Second line
+- [ ] Test 4
+5. Test 5
+
+```
+First Line
+
+- Test 1
+- [ ] Test 2
+- [x] Test 3
+    Second line
+- [ ] Test 4
+- Test 5
+
+Another List
+
+1. Test 1
+- [ ] Test 2
+- [x] Test 3
+    Second line
+- [ ] Test 4
+5. Test 5
