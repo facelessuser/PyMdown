@@ -29,6 +29,6 @@ for directory in to_crawl:
     imports.append(directory.replace('/', '.'))
     for f in os.listdir(directory):
         if f != "__init__.py" and f.endswith('.py'):
-            imports.append(os.path.join(directory, f)[:-3].replace('/', '.'))
+            imports.append('/'.join([directory, f])[:-3].replace('/', '.'))
 
 # print(imports)

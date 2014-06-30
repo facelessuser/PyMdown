@@ -195,25 +195,25 @@ Just drop the extra folder in your Sublime `Packages` folder and name to somethi
 - Binary will be in the `mdown/dist` folder
 
 # TODO
-- ~~Critic markup~~
-    - ~~Allow for easy optional visual of critic markup in HTML~~
-    - ~~When normal parsing of a file with critic markup:~~
-        - ~~Remove comments~~
-        - ~~ignore marks~~
-        - ~~don't show removed~~
-        - ~~show inserts as normal~~
-        - ~~substitute is converted to show just the inserts~~
-    - ~~Allow a reject option parse a file with critic markup in the reverse:~~
-        - ~~Remove comments~~
-        - ~~ignore marks~~
-        - ~~don't show added~~
-        - ~~show removed as normal~~
-        - ~~substitute is converted to show just the removed~~
-    - ~~Front in preprocessor in CLI to dump the markdown without crtic marks if desired~~
-- ~~Tasklist (like github's)~~
-- ~~Github Emoji (just link the images to github's assets)~~
-- Maybe a better batch output file pattern system
-- Maybe inject javascript into current test documents to verify certain expected things are in output HTML
+- [X] Critic markup
+    - [X] Allow for easy optional visual of critic markup in HTML
+    - [X] When normal parsing of a file with critic markup:
+        - [X] Remove comments
+        - [X] ignore marks
+        - [X] don't show removed
+        - [X] show inserts as normal
+        - [X] substitute is converted to show just the inserts
+    - [X] Allow a reject option parse a file with critic markup in the reverse:
+        - [X] Remove comments
+        - [X] ignore marks
+        - [X] don't show added
+        - [X] show removed as normal
+        - [X] substitute is converted to show just the removed
+    - [X] Front in preprocessor in CLI to dump the markdown without crtic marks if desired
+- [X] Tasklist (like github's)
+- [X] Github Emoji (just link the images to github's assets)
+- [ ] Maybe a better batch output file pattern system
+- [ ] Maybe inject javascript into current test documents to verify certain expected things are in output HTML
 - ...stuff I havn't yet thought of...
 
 # License
