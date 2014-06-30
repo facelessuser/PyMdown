@@ -164,6 +164,23 @@ function doIt() {
 }
 ```
 
+## Tables
+
+```
+| Colors        | Fruits        | Vegetable    |
+| ------------- |:-------------:| ------------:|
+| Red           | Apple         | Pepper       |
+| Orange        | Oranges       | Carrot       |
+| Green         | Pears         | Spinach      |
+```
+
+| Colors        | Fruits        | Vegetable    |
+| ------------- |:-------------:| ------------:|
+| Red           | Apple         | Pepper       |
+| Orange        | Oranges       | Carrot       |
+| Green         | Pears         | Spinach      |
+
+
 # Test Extensions
 
 ## Delete
@@ -330,6 +347,9 @@ Another List
 - [ ] Test 4
 5. Test 5
 
-# Github Emoji
+## Github Emoji
+```
+This is a test for emoji :smile:.  The emojis are images linked to github assets :octocat:.
+```
 
 This is a test for emoji :smile:.  The emojis are images linked to github assets :octocat:.
