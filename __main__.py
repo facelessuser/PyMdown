@@ -118,7 +118,11 @@ def get_settings(file_name, preview, critic_mode, reject):
     Unpack the settings file if needed.
     """
 
-    # Unpack settings file if needed
+    # Use default file if one was not provided
+    if file_name is None or not exists(file_name):
+        file_name = join(script_path, "mdown.json")
+
+    # Unpack default settings file if needed
     if not exists(file_name):
         text = load_text_resource("mdown.json")
         try:
@@ -392,7 +396,7 @@ def convert(
     output=None, basepath=None, preview=False,
     stream=False, terminal=False, quiet=False,
     text_buffer=None, critic_mode=CRITIC_IGNORE,
-    reject=False
+    reject=False, settings_path=None
 ):
     """ Convert markdown file(s) to html """
     status = 0
@@ -437,7 +441,7 @@ def convert(
             html_title = get_title(md_file, title, stream)
 
             # Get the settings if available
-            settings = get_settings(join(script_path, "mdown.json"), preview, critic_mode, reject)
+            settings = get_settings(settings_path, preview, critic_mode, reject)
 
             if critic_mode == CRITIC_DUMP:
                 status = critic_dump(md_file, enc, out, stream, reject)
@@ -470,6 +474,7 @@ if __name__ == "__main__":
         parser.add_argument('--terminal', '-t', action='store_true', default=False, help="Print to terminal (stdout).")
         parser.add_argument('--output', '-o', nargs=1, default=None, help="Output directory can be a directory or file_name.  Use ${count} when exporting multiple files and using a file pattern.")
         parser.add_argument('--stream', '-s', action='store_true', default=False, help="Streaming input.  markdown file inputs will be ignored.")
+        parser.add_argument('--settings', '-S', nargs=1, default=None, help="Load the settings file from an alternate location.")
         parser.add_argument('--title', '-T', nargs=1, default=None, help="Title for HTML.")
         parser.add_argument('--encoding', '-e', nargs=1, default=["utf-8"], help="Encoding for input.")
         parser.add_argument('--basepath', '-b', nargs=1, default=None, help="The basepath location mdown should use.")
@@ -494,6 +499,7 @@ if __name__ == "__main__":
             quiet=args.quiet,
             preview=args.preview,
             output=first_or_none(args.output),
+            settings_path=first_or_none(args.settings),
             markdown=args.markdown
         )
 

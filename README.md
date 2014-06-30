@@ -107,7 +107,8 @@ This can be done here:
 ```
 usage: mdown [-h] [--version] [--quiet] [--preview] [--critic | --critic-dump]
              [--reject] [--terminal] [--output OUTPUT] [--stream]
-             [--title TITLE] [--encoding ENCODING] [--basepath BASEPATH]
+             [--settings SETTINGS] [--title TITLE] [--encoding ENCODING]
+             [--basepath BASEPATH]
              [markdown [markdown ...]]
 
 Markdown generator
@@ -131,6 +132,8 @@ optional arguments:
                         ${count} when exporting multiple files and using a
                         file pattern.
   --stream, -s          Streaming input. markdown file inputs will be ignored.
+  --settings SETTINGS, -S SETTINGS
+                        Load the settings file from an alternate location.
   --title TITLE, -T TITLE
                         Title for HTML.
   --encoding ENCODING, -e ENCODING
@@ -207,7 +210,8 @@ Just drop the extra folder in your Sublime `Packages` folder and name to somethi
         - ~~show removed as normal~~
         - ~~substitute is converted to show just the removed~~
     - ~~Front in preprocessor in CLI to dump the markdown without crtic marks if desired~~
-- Maybe more extensions
+- ~~Tasklist (like github's)~~
+- ~~Github Emoji (just link the images to github's assets)~~
 - Maybe a better batch output file pattern system
 - Maybe inject javascript into current test documents to verify certain expected things are in output HTML
 - ...stuff I havn't yet thought of...
