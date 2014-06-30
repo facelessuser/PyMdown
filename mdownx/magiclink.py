@@ -18,7 +18,7 @@ from markdown import Extension
 from markdown.inlinepatterns import LinkPattern
 from markdown import util
 
-RE_LINK = r"((ht|f)tp(s?)://(([a-zA-Z0-9\-._]+(\.[a-zA-Z0-9\-._]+)+)|localhost)(/?)([a-zA-Z0-9\-.?,'/\\+&%$#_]*)?([\d\w./%+-=&?:\\"',|~;]*)[^.,'"\s<])"
+RE_LINK = r'''((ht|f)tp(s?)://(([a-zA-Z0-9\-._]+(\.[a-zA-Z0-9\-._]+)+)|localhost)(/?)([a-zA-Z0-9\-.?,'/+&%$#_]*)([\d\w./%+-=&?:"',|~;]*)[A-Za-z\d\-_~:/?#@!$*+=])'''
 
 
 class MagiclinkPattern(LinkPattern):
