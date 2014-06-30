@@ -19,6 +19,7 @@ from markdown import Extension
 extensions = [
     'mdownx.delete',
     'mdownx.insert',
+    'mdownx.githubemoji',
     'mdownx.magiclink',
     'mdownx.b64',
     'mdownx.tasklist'

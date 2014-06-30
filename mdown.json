@@ -24,6 +24,7 @@
         "codehilite(guess_lang=False,pygments_style=default)",
         "mdownx.delete",
         // "mdownx.insert",
+        "mdownx.githubemoji",
         "mdownx.magiclink",
         "mdownx.tasklist",
         // "mdownx.absolutepath(base_path=${BASE_PATH})",

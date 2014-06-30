@@ -19,6 +19,8 @@ This is in an Alpha state, though it is very useable.  Because of the Alpha stat
     - **insert**: Add <ins>test</ins> tags by using ++test++. Can be enabled in the settings file.
     - **delete**: Add <del>test</del> tags by using ~~test~~. Can be enabled in the settings file.
     - **magiclink**: Search for and convert http or ftp links to actual HTML links for lazy link creation. Can be enabled in the settings file.
+    - **tasklist**: This adds support for github style tasklists.  Can be enabled in the settings.
+    - **githubemoji**: This adds emojis.  Assets link to github's emoji icons.  Can be enabled in the settings.
     - **critic**: Cannot be set in the settings file. It is configured automatically, and can only its behaviour can only be modifid via the command line.  In its current form, it can output in HTML a highlighted critic form to make it more readable using the -c option (maybe in the future it might be able to do more).  The automatic behaviour is to strip out critic marks when outputting HTML.  It either accepts all changes or rejects all changes (by default it accepts, but with the -r option it can reject instead).
 
         insert, delete, and substitution
@@ -29,7 +31,7 @@ This is in an Alpha state, though it is very useable.  Because of the Alpha stat
 
         ![Highlight and Comments](https://dl.dropboxusercontent.com/u/342698/mdown/highlight_comment.png)
 
-    - **mdownx**: currently loads insert, delete, b64, and magiclink
+    - **mdownx**: currently loads insert, delete, b64, tasklist, githubemoji, and magiclink
 
 # Styles and Configuration
 

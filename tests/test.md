@@ -329,3 +329,7 @@ Another List
     Second line
 - [ ] Test 4
 5. Test 5
+
+# Github Emoji
+
+This is a test for emoji :smile:.  The emojis are images linked to github assets :octocat:.
