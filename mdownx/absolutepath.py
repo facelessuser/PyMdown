@@ -42,9 +42,13 @@ def repl(path, base_path):
         absolute = normpath(join(base_path, path))
         if exists(absolute):
             if _PLATFORM == "windows":
-                link = 'file:///%s' % absolute.replace("\\", "/")
+                link = '/%s' % absolute.replace("\\", "/")
             else:
-                link = 'file://%s' % absolute.replace("\\", "/")
+                link = '%s' % absolute.replace("\\", "/")
+    elif path.startswith('file://', 1):
+        link = path.replace('file://', '', 1)
+    if _PLATFORM == "windows" and link.startswith('/'):
+        link = link.replace('/', '', 1)
     return link
 
 

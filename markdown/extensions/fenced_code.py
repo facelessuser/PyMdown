@@ -154,7 +154,6 @@ class FencedBlockPreprocessor(Preprocessor):
                             style=self.codehilite_conf['pygments_style'][0],
                             lang=(m.group('lang') or None),
                             noclasses=self.codehilite_conf['noclasses'][0],
-                            highlight_js=self.codehilite_conf['highlight_js'][0],
                             hl_lines=parse_hl_lines(m.group('hl_lines')))
 
                     code = highliter.hilite()

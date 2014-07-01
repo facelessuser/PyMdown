@@ -11,7 +11,30 @@
 # which ones shouldn't be included.
 #####################################
 import os
-to_crawl = [
+
+data = [
+    ("stylesheets/default.css", "./stylesheets/default.css", "DATA"),
+    ("mdown.json", "./mdown.json", "DATA"),
+    ("highlight.js/highlight.pack.js", "./highlight.js/highlight.pack.js", "DATA"),
+    ("highlight.js/LICENSE", "./highlight.js/LICENSE", "DATA"),
+    ("markdown/LICENSE.md", "./markdown/LICENSE.md", "DATA"),
+    ("pygments/LICENSE", "./pygments/LICENSE", "DATA")
+]
+
+data_to_crawl = [
+    "highlight.js/styles"
+]
+
+for directory in data_to_crawl:
+    for f in os.listdir(directory):
+        if f.endswith(".css"):
+            name = '/'.join([directory, f])
+            data.append((name, "./%s" % name, "DATA"))
+
+
+imports = []
+
+imports_to_crawl = [
     "markdown/extensions",
     "pygments/styles",
     "pygments/lexers",
@@ -19,16 +42,11 @@ to_crawl = [
     "mdownx"
 ]
 
-data = [
-    ("stylesheets/default.css", "./stylesheets/default.css", "DATA"),
-    ("mdown.json", "./mdown.json", "DATA")
-]
-
-imports = []
-for directory in to_crawl:
+for directory in imports_to_crawl:
     imports.append(directory.replace('/', '.'))
     for f in os.listdir(directory):
         if f != "__init__.py" and f.endswith('.py'):
             imports.append('/'.join([directory, f])[:-3].replace('/', '.'))
 
+# print(data)
 # print(imports)

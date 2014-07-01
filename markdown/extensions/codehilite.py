@@ -78,9 +78,7 @@ class CodeHilite(object):
 
     def __init__(self, src=None, linenums=None, guess_lang=True,
                 css_class="codehilite", lang=None, style='default',
-                noclasses=False, highlight_js=False, tab_length=4,
-                hl_lines=None):
-
+                noclasses=False, tab_length=4, hl_lines=None):
         self.src = src
         self.lang = lang
         self.linenums = linenums
@@ -90,7 +88,6 @@ class CodeHilite(object):
         self.noclasses = noclasses
         self.tab_length = tab_length
         self.hl_lines = hl_lines or []
-        self.highlight_js = highlight_js
 
     def hilite(self):
         """
@@ -108,7 +105,7 @@ class CodeHilite(object):
         if self.lang is None:
             self._parseHeader()
 
-        if pygments and not self.highlight_js:
+        if pygments:
             try:
                 lexer = get_lexer_by_name(self.lang)
             except ValueError:
@@ -215,7 +212,6 @@ class HiliteTreeprocessor(Treeprocessor):
                             css_class=self.config['css_class'],
                             style=self.config['pygments_style'],
                             noclasses=self.config['noclasses'],
-                            highlight_js=self.config['highlight_js'],
                             tab_length=self.markdown.tab_length)
                 placeholder = self.markdown.htmlStash.store(code.hilite(),
                                                             safe=True)
@@ -239,8 +235,8 @@ class CodeHiliteExtension(Extension):
             'css_class' : ["codehilite",
                            "Set class name for wrapper <div> - Default: codehilite"],
             'pygments_style' : ['default', 'Pygments HTML Formatter Style (Colorscheme) - Default: default'],
-            'noclasses': [False, 'Use inline styles instead of CSS classes - Default false'],
-            'highlight_js': [False, 'Use highlight.js as the preferred highlighter - Default false']}
+            'noclasses': [False, 'Use inline styles instead of CSS classes - Default false']
+            }
 
         # Override defaults with user settings
         for key, value in configs:

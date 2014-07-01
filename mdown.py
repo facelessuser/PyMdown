@@ -46,8 +46,6 @@ DEFAULT_CSS = None
 
 RE_PYGMENT_STYLE = r"pygments_style\s*=\s*([a-zA-Z][a-zA-Z_\d]*)"
 RE_URL_START = r"https?://"
-RE_HIGHLIGHT_JS = r"highlight_js"
-RE_FILE_REF = r'''(?P<tag><(?P<name>img|script|a)[^>]+(?P<type>src|href)=(?P<quote>["'])(?P<src>.+?)?(?P=quote)[^>]*>)'''
 LOAD_HIGHLIGHT_JS = '<script type="text/javascript">hljs.initHighlightingOnLoad();</script>\n'
 
 
@@ -89,6 +87,17 @@ def get_js(js, link=False):
         return '<script type="text/javascript">\n%s\n</script>\n' % js
 
 
+def get_highlight_js_code():
+    scripts = []
+    try:
+        scripts.append(get_js(load_text_resource("highlight.js", "highlight.pack.js")))
+        scripts.append(LOAD_HIGHLIGHT_JS)
+        # scripts.append(get_js(load_text_resource("highlight.js", "higlight.dynamic.js")))
+    except:
+        pass
+    return scripts
+
+
 def get_style(style, link=False):
     if link:
         return '<link href="%s" rel="stylesheet" type="text/css">\n' % style
@@ -97,7 +106,19 @@ def get_style(style, link=False):
 
 
 def get_pygment_style(style):
-    return '<style>\n%s\n</style>\n' % HtmlFormatter(style=style).get_style_defs('.codehilite pre')
+    try:
+        text = HtmlFormatter(style=style).get_style_defs('.codehilite pre')
+    except:
+        text = HtmlFormatter(style="default").get_style_defs('.codehilite pre')
+    return '<style>\n%s\n</style>\n' % text
+
+
+def get_highlight_js_style(style):
+    try:
+        text = load_text_resource("highlight.js", "styles", "%s.css" % style)
+    except:
+        text = load_text_resource("highlight.js", "styles", "%s.css" % style)
+    return '<style>\n%s\n</style>\n' % text
 
 
 class Mdown(object):
@@ -126,30 +147,37 @@ class Mdown(object):
 
     def load_highlight(self):
         style = None
-        self.highlight_js = False
-        for e in self.extensions:
-            if e.startswith("codehilite"):
-                self.highlight_js = re.search(RE_HIGHLIGHT_JS, e) is not None
-
-                if self.highlight_js:
+        self.highlight_js = self.settings.get("highlight_js", False)
+        print(self.highlight_js)
+        print(self.settings)
+        from markdown.extensions import codehilite
+        if not self.highlight_js:
+            # Ensure pygments is enabled in the highlighter
+            codehilite.pygments = True
+            for e in self.extensions:
+                if e.startswith("codehilite"):
+                    pygment_style = re.search(RE_PYGMENT_STYLE, e)
+                    try:
+                        style = get_pygment_style("default" if pygment_style is None else pygment_style.group(1))
+                    except:
+                        self.error = str(traceback.format_exc())
                     break
-
-                pygment_style = re.search(RE_PYGMENT_STYLE, e)
-                if pygment_style is None:
-                    style = "default"
-                else:
-                    style = pygment_style.group(1)
-                break
+        else:
+            # Disable pygments in the highlighter
+            print("disabled")
+            codehilite.pygments = False
+            for e in self.extensions:
+                if e.startswith("codehilite"):
+                    try:
+                        style = get_highlight_js_style(self.settings.get("highlight_js_theme", "default"))
+                    except:
+                        self.error = str(traceback.format_exc())
+                    break
 
         css = []
         if style is not None:
-            try:
-                css = [get_pygment_style(style)]
-            except:
-                try:
-                    css = [get_pygment_style("default")]
-                except:
-                    self.error = str(traceback.format_exc())
+            css.append(style)
+
         return css
 
     def load_css(self):
@@ -191,7 +219,7 @@ class Mdown(object):
                 else:
                     scripts.append(get_js(js, link=True))
         if self.highlight_js:
-            scripts.append(LOAD_HIGHLIGHT_JS)
+            scripts += get_highlight_js_code()
         return ''.join(scripts)
 
     def load_header(self):
