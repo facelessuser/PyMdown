@@ -91,8 +91,7 @@ def get_highlight_js_code():
     scripts = []
     try:
         scripts.append(get_js(load_text_resource("highlight.js", "highlight.pack.js")))
-        scripts.append(LOAD_HIGHLIGHT_JS)
-        # scripts.append(get_js(load_text_resource("highlight.js", "higlight.dynamic.js")))
+        scripts.append(get_js(load_text_resource("highlight.js", "highlight.noguess.js")))
     except:
         pass
     return scripts

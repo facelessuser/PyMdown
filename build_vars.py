@@ -16,6 +16,7 @@ data = [
     ("stylesheets/default.css", "./stylesheets/default.css", "DATA"),
     ("mdown.json", "./mdown.json", "DATA"),
     ("highlight.js/highlight.pack.js", "./highlight.js/highlight.pack.js", "DATA"),
+    ("highlight.js/highlight.noguess.js", "./highlight.js/highlight.noguess.js", "DATA"),
     ("highlight.js/LICENSE", "./highlight.js/LICENSE", "DATA"),
     ("markdown/LICENSE.md", "./markdown/LICENSE.md", "DATA"),
     ("pygments/LICENSE", "./pygments/LICENSE", "DATA")
