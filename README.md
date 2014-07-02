@@ -49,29 +49,19 @@ Syntax highlighting can be done in fenced blocks when enabling the `codehilite` 
 Notice the syntax style is set with the `pygments_style` key.
 
 ## How To Use highlight.js Syntax Highlighting
-You will have to provide the highlight.js script and preferred CSS theme and add them to the output via these settings:
+Highlight.js is built in. Use the following settings to enable and control it.
 
 ```javascript
-    // Select your CSS for you output html
-    // or you can have it all contained in your HTML template
-    // Add your highlight.js theme here as well.
-    //
-    // Can be an array of stylesheets or "default"
-    // "default" can also be an entry in the array.
-    // If it points to a physical file, it will be included.
-    "css_style_sheet": ["default"],
+    // Use highlight.js instead of pygments
+    "highlight_js": false,
 
-    // Load up highlight.js or other js scripts
-    //
-    // Can be an array of scripts.
-    // If it points to a physical file, it will be included.
-    "js_scripts": [],
-```
+    // Select highlight js theme
+    "highlight_js_theme": "default",
 
-Then a special parameter was added into the `codehilite` extension to manually enable highlight.js support.
-
-```javascript
-    "codehilite(highlight_js=True)"
+    // Do not try and guess the language.
+    // Only look for fenced blocks where the language
+    // is expressly defined
+    "highlight_js_noguess": true
 ```
 
 # Add More CSS and JS Files
@@ -80,14 +70,13 @@ Add them to the provided settings:
 ```javascript
     // Select your CSS for you output html
     // or you can have it all contained in your HTML template
-    // Add your highlight.js theme here as well.
     //
     // Can be an array of stylesheets or "default"
     // "default" can also be an entry in the array.
     // If it points to a physical file, it will be included.
-    "css_style_sheet": ["default"],
+    "css_style_sheets": ["default"],
 
-    // Load up highlight.js or other js scripts
+    // Load up js scripts
     //
     // Can be an array of scripts.
     // If it points to a physical file, it will be included.
@@ -212,6 +201,8 @@ Just drop the extra folder in your Sublime `Packages` folder and name to somethi
     - [X] Front in preprocessor in CLI to dump the markdown without crtic marks if desired
 - [X] Tasklist (like github's)
 - [X] Github Emoji (just link the images to github's assets)
+- [X] Better highlight.js support
+- [ ] Option in binary to show licenses
 - [ ] Maybe a better batch output file pattern system
 - [ ] Maybe inject javascript into current test documents to verify certain expected things are in output HTML
 - ...stuff I havn't yet thought of...
