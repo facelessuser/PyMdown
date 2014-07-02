@@ -20,6 +20,7 @@ from markdown.treeprocessors import Treeprocessor
 from os.path import exists, normpath, splitext, join
 import sys
 import base64
+import re
 # import traceback
 
 if sys.platform.startswith('win'):
@@ -47,12 +48,15 @@ def repl(path, base_path):
 
     link = path
     absolute = False
+    re_win_drive = re.compile(r"(^[A-Za-z]{1}:(?:\\|/))")
 
     # Format the link
     if path.startswith('file://'):
         path = path.replace('file://', '', 1)
-        if _PLATFORM == "windows":
+        if _PLATFORM == "windows" and not path.startswith('//'):
             path = path.lstrip("/")
+        absolute = True
+    elif _PLATFORM == "windows" and re_win_drive.match(path) is not None:
         absolute = True
 
     if not path.startswith(exclusion_list):
@@ -60,6 +64,7 @@ def repl(path, base_path):
             file_name = normpath(path)
         else:
             file_name = normpath(join(base_path, path))
+
         if exists(file_name):
             ext = splitext(file_name)[1].lower()
             if ext in file_types:
@@ -67,7 +72,6 @@ def repl(path, base_path):
                     with open(file_name, "rb") as f:
                         link = "data:%s;base64,%s" % (file_types[ext], base64.b64encode(f.read()).decode('ascii'))
                 except:
-                    # print(traceback.format_exc())
                     pass
     return link
 

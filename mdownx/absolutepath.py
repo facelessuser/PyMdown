@@ -18,6 +18,7 @@ from __future__ import unicode_literals
 from markdown import Extension
 from markdown.treeprocessors import Treeprocessor
 from os.path import exists, normpath, join
+import re
 import sys
 
 if sys.platform.startswith('win'):
@@ -27,9 +28,11 @@ elif sys.platform == "darwin":
 else:
     _PLATFORM = "linux"
 
-exclusion_list = (
-    'file://', 'https://', 'http://', '/', '#'
-    "data:image/jpeg;base64,", "data:image/png;base64,", "data:image/gif;base64,"
+exclusion_list = tuple(
+    [
+        'file://', 'https://', 'http://', '/', '#',
+        "data:image/jpeg;base64,", "data:image/png;base64,", "data:image/gif;base64,"
+    ] + ['\\'] if _PLATFORM == "windows" else []
 )
 
 
@@ -37,18 +40,15 @@ def repl(path, base_path):
     """ Replace path with absolute path """
 
     link = path
+    re_win_drive = re.compile(r"(^[A-Za-z]{1}:(?:\\|/))")
 
-    if not path.startswith(exclusion_list):
+    if (
+        not path.startswith(exclusion_list) and
+        not (_PLATFORM == "windows" and re_win_drive.match(path) is not None)
+    ):
         absolute = normpath(join(base_path, path))
         if exists(absolute):
-            if _PLATFORM == "windows":
-                link = '/%s' % absolute.replace("\\", "/")
-            else:
-                link = '%s' % absolute.replace("\\", "/")
-    elif path.startswith('file://', 1):
-        link = path.replace('file://', '', 1)
-    if _PLATFORM == "windows" and link.startswith('/'):
-        link = link.replace('/', '', 1)
+            link = absolute.replace("\\", "/")
     return link
 
 
