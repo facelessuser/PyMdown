@@ -8,6 +8,11 @@ function hljs_initNoGuessHighlighting() {
         elength = elements.length,
         clenght, i, j, classes, m, language, obj, code, index;
 
+    if (hljs_initNoGuessHighlighting.called) {
+        return;
+    }
+    hljs_initNoGuessHighlighting.called = true;
+
     for (i = 0; i < elength; i++) {
         code = elements[i]
         classes = code.className.split(' ');

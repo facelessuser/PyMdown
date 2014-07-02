@@ -8,6 +8,11 @@ function hljs_initGuessHighlighting() {
         elength = elements.length,
         clenght, i, j, classes, m, language, obj, code, index;
 
+    if (hljs_initGuessHighlighting.called) {
+        return;
+    }
+    hljs_initGuessHighlighting.called = true;
+
     for (i = 0; i < elength; i++) {
         code = elements[i]
         classes = code.className.split(' ');
