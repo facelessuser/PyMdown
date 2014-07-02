@@ -87,11 +87,14 @@ def get_js(js, link=False):
         return '<script type="text/javascript">\n%s\n</script>\n' % js
 
 
-def get_highlight_js_code():
+def get_highlight_js_code(no_guess):
     scripts = []
     try:
         scripts.append(get_js(load_text_resource("highlight.js", "highlight.pack.js")))
-        scripts.append(get_js(load_text_resource("highlight.js", "highlight.noguess.js")))
+        if no_guess:
+            scripts.append(get_js(load_text_resource("highlight.js", "highlight.noguess.js")))
+        else:
+            scripts.append(get_js(load_text_resource("highlight.js", "highlight.guess.js")))
     except:
         pass
     return scripts
@@ -147,8 +150,6 @@ class Mdown(object):
     def load_highlight(self):
         style = None
         self.highlight_js = self.settings.get("highlight_js", False)
-        print(self.highlight_js)
-        print(self.settings)
         from markdown.extensions import codehilite
         if not self.highlight_js:
             # Ensure pygments is enabled in the highlighter
@@ -180,7 +181,7 @@ class Mdown(object):
         return css
 
     def load_css(self):
-        user_css = self.settings.get("css_style_sheet", "default")
+        user_css = self.settings.get("css_style_sheets", "default")
         if user_css == "default" or not isinstance(user_css, list):
             css = [get_style(get_default_css())]
         else:
@@ -218,7 +219,7 @@ class Mdown(object):
                 else:
                     scripts.append(get_js(js, link=True))
         if self.highlight_js:
-            scripts += get_highlight_js_code()
+            scripts += get_highlight_js_code(self.settings.get("highlight_js_noguess", True))
         return ''.join(scripts)
 
     def load_header(self):

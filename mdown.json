@@ -1,14 +1,13 @@
 {
     // Select your CSS for you output html
     // or you can have it all contained in your HTML template
-    // Add your highlight.js theme here as well.
     //
     // Can be an array of stylesheets or "default"
     // "default" can also be an entry in the array.
     // If it points to a physical file, it will be included.
-    "css_style_sheet": ["default"],
+    "css_style_sheets": ["default"],
 
-    // Load up highlight.js or other js scripts
+    // Load up js scripts
     //
     // Can be an array of scripts.
     // If it points to a physical file, it will be included.
@@ -29,5 +28,16 @@
         "mdownx.tasklist",
         // "mdownx.absolutepath(base_path=${BASE_PATH})",
         "mdownx.b64(base_path=${BASE_PATH})"
-    ]
+    ],
+
+    // Use highlight.js instead of pygments
+    "highlight_js": false,
+
+    // Select highlight js theme
+    "highlight_js_theme": "default",
+
+    // Do not try and guess the language.
+    // Only look for fenced blocks where the language
+    // is expressly defined
+    "highlight_js_noguess": true
 }

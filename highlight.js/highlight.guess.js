@@ -1,9 +1,9 @@
-function hljs_initNoGuessOnLoad() {
-    addEventListener('DOMContentLoaded', hljs_initNoGuessHighlighting, false);
-    addEventListener('load', hljs_initNoGuessHighlighting, false);
+function hljs_initGuessOnLoad() {
+    addEventListener('DOMContentLoaded', hljs_initGuessHighlighting, false);
+    addEventListener('load', hljs_initGuessHighlighting, false);
 }
 
-function hljs_initNoGuessHighlighting() {
+function hljs_initGuessHighlighting() {
     var elements = document.querySelectorAll('pre code'),
         elength = elements.length,
         clenght, i, j, classes, m, language, obj, code, index;
@@ -22,17 +22,16 @@ function hljs_initNoGuessHighlighting() {
                 break;
             }
         }
+        obj = hljs.highlightAuto(code.textContent)
+        code.innerHTML = obj.value;
         if (language) {
-            obj = hljs.highlight(language, code.textContent, true)
-            code.innerHTML = obj.value;
             classes[index] = "hljs " + obj.language;
-            code.className = classes.join(" ");
-            code.parentNode.className += " hljs";
         } else {
-            code.className += " hljs";
-            code.parentNode.className += " hljs";
+            classes.push("hljs " + obj.language)
         }
+        code.className = classes.join(" ");
+        code.parentNode.className += " hljs";
     }
 }
 
-hljs_initNoGuessOnLoad();
+hljs_initGuessOnLoad();
