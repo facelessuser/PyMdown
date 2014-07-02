@@ -202,7 +202,7 @@ Just drop the extra folder in your Sublime `Packages` folder and name to somethi
 - [X] Tasklist (like github's)
 - [X] Github Emoji (just link the images to github's assets)
 - [X] Better highlight.js support
-- [ ] Option in binary to show licenses
+- [X] Option in binary to show licenses
 - [ ] Maybe a better batch output file pattern system
 - [ ] Maybe inject javascript into current test documents to verify certain expected things are in output HTML
 - ...stuff I havn't yet thought of...

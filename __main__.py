@@ -391,6 +391,42 @@ def html_dump(md_file, enc, out, stream, html_title, base_path, preview, setting
     return status
 
 
+def display_licenses():
+    status = 0
+    text = load_text_resource("LICENSE")
+    if text is not None:
+        print(text)
+    else:
+        status = 1
+    print("")
+    print("Idea based off of the Markdown Preview plugin:")
+    print("https://github.com/revolunet/sublimetext-markdown-preview")
+    print("http://revolunet.mit-license.org/")
+    print("")
+    print("\n===== 3rd Party Licenses =====")
+    print("Markdown - https://pythonhosted.org/Markdown/")
+    text = load_text_resource("markdown", "LICENSE.md")
+    if text is not None:
+        print(text)
+    else:
+        status = 1
+    print("")
+    print("Pygments - http://pygments.org/")
+    text = load_text_resource("pygments", "LICENSE")
+    if text is not None:
+        print(text)
+    else:
+        status = 1
+    print("")
+    print("highlight.js - http://highlightjs.org/")
+    text = load_text_resource("highlight.js", "LICENSE")
+    if text is not None:
+        print(text)
+    else:
+        status = 1
+    return status
+
+
 def convert(
     markdown=[], title=None, encoding="utf-8",
     output=None, basepath=None, preview=False,
@@ -465,6 +501,7 @@ if __name__ == "__main__":
         parser = argparse.ArgumentParser(prog='mdown', description='Markdown generator')
         # Flag arguments
         parser.add_argument('--version', action='version', version="%(prog)s " + __version__)
+        parser.add_argument('--licenses', action='store_true', default=False, help="Display licenses.")
         parser.add_argument('--quiet', '-q', action='store_true', default=False, help="No messages on stdout.")
         parser.add_argument('--preview', '-p', action='store_true', default=False, help="Output to preview (temp file). --output will be ignored.")
         me_group = parser.add_mutually_exclusive_group()
@@ -481,6 +518,9 @@ if __name__ == "__main__":
         parser.add_argument('markdown', nargs='*', default=[], help="Markdown file(s) or file pattern(s).")
 
         args = parser.parse_args()
+
+        if args.licenses:
+            return display_licenses()
 
         critic_mode = CRITIC_IGNORE
         if args.critic_dump:
