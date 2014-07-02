@@ -10,7 +10,7 @@ This is in an Alpha state, though it is very useable.  Because of the Alpha stat
 - Receive multiple files or file patterns to process
 - Receive input file stream for conversion
 - Configurable options file to tweak Python's Markdown package behavior
-- Uses Pygments for syntax highighlighting or optionally highlight.js (you must provide highlight.js and highlight.js theme)
+- Uses Pygments for syntax highighlighting or optionally highlight.js
 - Repo includes in `extras` a simple Sublime Text plugin to stream your files to mdown
 - Preview option to open output in a browser intead
 - Optionally all the default Markdown extensions, plus these optional mdownx extensions:
