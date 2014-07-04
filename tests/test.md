@@ -1,22 +1,23 @@
 # Cheat Sheet and Test
+[TOC]
 
 ## Headers
 
 ```
 # H1
 ## H2
-## H3
-### H4
-#### H5
-##### H6
+### H3
+#### H4
+##### H5
+###### H6
 ```
 
 # H1
 ## H2
-## H3
-### H4
-#### H5
-##### H6
+### H3
+#### H4
+##### H5
+###### H6
 
 ## Paragraphs
 ```
@@ -316,8 +317,8 @@ First List
 - [ ] Test 2
 - [x] Test 3
     Second line
-- [ ] Test 4
-- Test 5
+    - [ ] Test 4
+        - Test 5
 
 Another List
 
@@ -334,9 +335,8 @@ First Line
 - Test 1
 - [ ] Test 2
 - [x] Test 3
-    Second line
-- [ ] Test 4
-- Test 5
+    - [ ] Test 4
+        - Test 5
 
 Another List
 

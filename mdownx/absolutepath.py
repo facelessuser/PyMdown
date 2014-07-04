@@ -59,17 +59,14 @@ class AbsolutepathTreeprocessor(Treeprocessor):
         if self.config['base_path'] is None:
             return root
 
-        ilinks = root.getiterator('img')
-        slinks = root.getiterator('scripts')
-        alinks = root.getiterator('a')
-        for links in (alinks, ilinks, slinks):
-            for link in links:
-                src = link.attrib.get("src")
-                href = link.attrib.get("href")
+        for tag in root.getiterator():
+            if tag.tag in ("img", "scripts", "a"):
+                src = tag.attrib.get("src")
+                href = tag.attrib.get("href")
                 if src is not None:
-                    link.attrib["src"] = repl(src, self.config['base_path'])
+                    tag.attrib["src"] = repl(src, self.config['base_path'])
                 if href is not None:
-                    link.attrib["href"] = repl(href, self.config['base_path'])
+                    tag.attrib["href"] = repl(href, self.config['base_path'])
         return root
 
 
