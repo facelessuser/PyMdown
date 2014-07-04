@@ -15,7 +15,7 @@ Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
 from __future__ import unicode_literals
 from __future__ import absolute_import
 from __future__ import print_function
-from markdown import markdown
+from markdown import Markdown
 from pygments.formatters import HtmlFormatter
 import codecs
 import sys
@@ -121,6 +121,40 @@ def get_highlight_js_style(style):
     except:
         text = load_text_resource("highlight.js", "styles", "%s.css" % style)
     return '<style>\n%s\n</style>\n' % text
+
+
+class MdWrapper(Markdown):
+    def __init__(self, *args, **kwargs):
+        super(MdWrapper, self).__init__(*args, **kwargs)
+
+    def registerExtensions(self, extensions, configs):
+        """
+        Register extensions with this instance of Markdown.
+
+        Keyword arguments:
+
+        * extensions: A list of extensions, which can either
+           be strings or objects.  See the docstring on Markdown.
+        * configs: A dictionary mapping module names to config options.
+
+        """
+        from markdown import util
+        from markdown.extensions import Extension
+
+        for ext in extensions:
+            try:
+                if isinstance(ext, util.string_type):
+                    ext = self.build_extension(ext, configs.get(ext, []))
+                if isinstance(ext, Extension):
+                    ext.extendMarkdown(self, globals())
+                elif ext is not None:
+                    raise TypeError(
+                        'Extension "%s.%s" must be of type: "markdown.Extension"'
+                        % (ext.__class__.__module__, ext.__class__.__name__))
+            except:
+                # print(str(traceback.format_exc()))
+                continue
+        return self
 
 
 class Mdown(object):
@@ -232,7 +266,7 @@ class Mdown(object):
         self.body = ""
         try:
             with codecs.open(self.file_name, "r", encoding=self.encoding) as f:
-                self.body = markdown(f.read(), extensions=self.extensions)
+                self.body = MdWrapper(extensions=self.extensions).convert(f.read())
         except:
             self.error = str(traceback.format_exc())
 
@@ -287,6 +321,6 @@ class Mdowns(Mdown):
     def load_body(self):
         self.body = ""
         try:
-            self.body = markdown(self.string, extensions=self.extensions)
+            self.body = MdWrapper(extensions=self.extensions).convert(self.string)
         except:
             self.error = str(traceback.format_exc())
