@@ -1,7 +1,7 @@
 """
 mdownx.headeranchor
 An extension for Python Markdown.
-Github style tasklists
+Github header anchors
 
 MIT license.
 
@@ -31,7 +31,7 @@ class HeaderAnchorTreeprocessor(Treeprocessor):
                     id = tag.get('id')
                 else:
                     id = stashedHTML2text(''.join(itertext(tag)), self.md)
-                    id = slugify(id, '-')
+                    id = slugify(id, self.config.get('sep'))
                     tag.set('id', id)
                 tag.text = self.markdown.htmlStash.store(
                     LINK % {"id": id},
@@ -41,11 +41,19 @@ class HeaderAnchorTreeprocessor(Treeprocessor):
 
 
 class HeaderAnchorExtension(Extension):
+    def __init__(self, configs):
+        self.config = {
+            'sep': ['-', "Separator to use when creating header ids - Default: '-'"]
+        }
+
+        for key, value in configs:
+            self.setConfig(key, value)
 
     def extendMarkdown(self, md, md_globals):
         """Add HeaderAnchorTreeprocessor to Markdown instance"""
 
         self.processor = HeaderAnchorTreeprocessor(md)
+        self.processor.config = self.getConfigs()
         self.processor.md = md
         if 'toc' in md.treeprocessors.keys():
             insertion = ">toc"
