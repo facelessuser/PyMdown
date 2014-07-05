@@ -104,4 +104,5 @@ class Comments(object):
 Comments.add_style("c", _cpp)
 Comments.add_style("json", _cpp)
 Comments.add_style("cpp", _cpp)
+Comments.add_style("css", _cpp)
 Comments.add_style("python", _python)
