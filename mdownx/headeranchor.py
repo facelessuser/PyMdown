@@ -64,7 +64,7 @@ class HeaderAnchorExtension(Extension):
         if 'toc' in md.treeprocessors.keys():
             insertion = ">toc"
         else:
-            insertion = ">_end"
+            insertion = "_end"
         md.treeprocessors.add("headeranchor", self.processor, insertion)
         md.registerExtension(self)
 
