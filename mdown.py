@@ -46,7 +46,6 @@ DEFAULT_CSS = None
 
 RE_PYGMENT_STYLE = r"pygments_style\s*=\s*([a-zA-Z][a-zA-Z_\d]*)"
 RE_URL_START = r"https?://"
-LOAD_HIGHLIGHT_JS = '<script type="text/javascript">hljs.initHighlightingOnLoad();</script>\n'
 
 
 def load_text_resource(*args):
@@ -84,7 +83,7 @@ def get_js(js, link=False):
     if link:
         return '<script type="text/javascript" charset="utf-8" src="%s"></script>\n' % js
     else:
-        return '<script type="text/javascript">\n%s\n</script>\n' % js
+        return '<script type="text/javascript">\n%s\n</script>\n' % js if js is not None else ""
 
 
 def get_highlight_js_code(no_guess):
@@ -104,23 +103,26 @@ def get_style(style, link=False):
     if link:
         return '<link href="%s" rel="stylesheet" type="text/css">\n' % style
     else:
-        return '<style>\n%s\n</style>\n' % style
+        return '<style>\n%s\n</style>\n' % style if style is not None else ""
 
 
 def get_pygment_style(style):
     try:
+        # Try and request pygments to generate it
         text = HtmlFormatter(style=style).get_style_defs('.codehilite pre')
     except:
+        # Try and request pygments to generate default
         text = HtmlFormatter(style="default").get_style_defs('.codehilite pre')
-    return '<style>\n%s\n</style>\n' % text
+    return '<style>\n%s\n</style>\n' % text if text is not None else ""
 
 
 def get_highlight_js_style(style):
-    try:
-        text = load_text_resource("highlight.js", "styles", "%s.css" % style)
-    except:
-        text = load_text_resource("highlight.js", "styles", "%s.css" % style)
-    return '<style>\n%s\n</style>\n' % text
+    # Try and get specified CSS
+    text = load_text_resource("highlight.js", "styles", "%s.css" % style)
+    if text is None:
+        # Resort to default CSS
+        text = load_text_resource("highlight.js", "styles", "default.css")
+    return '<style>\n%s\n</style>\n' % text if text is not None else ""
 
 
 class MdWrapper(Markdown):
