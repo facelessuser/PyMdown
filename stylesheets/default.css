@@ -24,8 +24,7 @@ body{
 }
 
 /* Links */
-a{ color: #06d; text-decoration:none;}
-a:visited{ color: #0b0080; }
+a{ color: #06d; text-decoration:none; }
 a:hover{ color: #06e; text-decoration: underline; }
 a:active{ color:#faa700; }
 a:focus{ outline: thin dotted; }
@@ -87,7 +86,7 @@ img {
 h1,h2,h3,h4,h5,h6 {
   font-weight:normal;
   color:#111;
-  line-height:1em;
+  line-height: 1.7;
   position: relative;
 }
 h4,h5,h6{ font-weight: bold; }
@@ -169,7 +168,6 @@ table { border-collapse: collapse; border: 1px solid #ddd; }
 table tr:nth-child(2n) { background-color: #f8f8f8; }
 td, th { border: 1px solid #ddd; padding: 6px 13px; }
 
-
 /* Codehilite Tables */
 table.codehilitetable { border: 0; border-spacing: 0; width: 100%; }
 td.linenos, td.code { border: 0; padding: 0; }
@@ -218,8 +216,9 @@ table.codehilitetable td.code div pre {
 
 @media print {
   * { background: transparent !important; color: black !important; filter:none !important; -ms-filter: none !important; }
-  body{ font-size:12pt; max-width:100%; outline:none; }
+  body{ font-size:12pt; max-width:100%; outline:none; border: 0;}
   a, a:visited { text-decoration: underline; }
+  a.headeranchor-link { display: none; }
   hr { height: 1px; border:0; border-bottom:1px solid black; }
   a[href]:after { content: " (" attr(href) ")"; }
   abbr[title]:after { content: " (" attr(title) ")"; }
@@ -227,8 +226,8 @@ table.codehilitetable td.code div pre {
   pre, blockquote { border: 1px solid #999; padding-right: 1em; page-break-inside: avoid; }
   tr, img { page-break-inside: avoid; }
   img { max-width: 100% !important; }
-  @page :left { margin: 15mm 20mm 15mm 10mm; }
-  @page :right { margin: 15mm 10mm 15mm 20mm; }
+  /*@page :left { margin: 15mm 20mm 15mm 10mm; }
+  @page :right { margin: 15mm 10mm 15mm 20mm; }*/
   p, h2, h3 { orphans: 3; widows: 3; }
   h2, h3 { page-break-after: avoid; }
 }

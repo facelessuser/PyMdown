@@ -86,11 +86,11 @@ def get_js(js, link=False):
         return '<script type="text/javascript">\n%s\n</script>\n' % js if js is not None else ""
 
 
-def get_highlight_js_code(no_guess):
+def get_highlight_js_code(guess):
     scripts = []
     try:
         scripts.append(get_js(load_text_resource("highlight.js", "highlight.pack.js")))
-        if no_guess:
+        if not guess:
             scripts.append(get_js(load_text_resource("highlight.js", "highlight.noguess.js")))
         else:
             scripts.append(get_js(load_text_resource("highlight.js", "highlight.guess.js")))
@@ -255,7 +255,7 @@ class Mdown(object):
                 else:
                     scripts.append(get_js(js, link=True))
         if self.highlight_js:
-            scripts += get_highlight_js_code(self.settings.get("highlight_js_noguess", True))
+            scripts += get_highlight_js_code(self.settings.get("highlight_js_guess", False))
         return ''.join(scripts)
 
     def load_header(self):

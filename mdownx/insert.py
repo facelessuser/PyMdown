@@ -1,7 +1,7 @@
 """
 mdownx.delete
 Really simple plugin to add support for
-<ins>test</ins> tags as ++test++
+<ins>test</ins> tags as ^^test^^
 
 MIT license.
 
@@ -17,14 +17,14 @@ from __future__ import unicode_literals
 from markdown import Extension
 from markdown.inlinepatterns import SimpleTagPattern
 
-RE_INS = r"(\+{2})(.+?)\2"
+RE_INS = r"(\^{2})(.+?)\2"
 
 
 class InsertExtension(Extension):
     """Adds insert extension to Markdown class."""
 
     def extendMarkdown(self, md, md_globals):
-        """Add support for <ins>test</ins> tags as ++test++"""
+        """Add support for <ins>test</ins> tags as ^^test^^"""
 
         md.inlinePatterns.add("ins", SimpleTagPattern(RE_INS, "ins"), "<not_strong")
 

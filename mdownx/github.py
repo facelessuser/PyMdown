@@ -2,7 +2,6 @@ from __future__ import unicode_literals
 from markdown import Extension
 
 extensions = [
-    'extra',
     'mdownx.delete',
     'mdownx.githubemoji',
     'mdownx.magiclink',

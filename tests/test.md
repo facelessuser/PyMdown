@@ -143,11 +143,21 @@ Dictionary
     This is more of a block
 
 
+## Block Quotes
+```
+> This is a block quote
+>> How does it look?
+```
+
+> This is a block quote
+>> How does it look?
+
 ## Fenced Block
+Assuming guessing languages is enabled.
 ```
 // Fenced **without** highlighting
 function doIt() {
-    for (var i = 1; i <= slen ; i++) {
+    for (var i = 1; i <= slen ; i^^) {
         setTimeout("document.z.textdisplay.value = newMake()", i*300);
         setTimeout("window.status = newMake()", i*300);
     }
@@ -158,7 +168,7 @@ function doIt() {
 ```javascript
 // Fenced **with** highlighting
 function doIt() {
-    for (var i = 1; i <= slen ; i++) {
+    for (var i = 1; i <= slen ; i^^) {
         setTimeout("document.z.textdisplay.value = newMake()", i*300);
         setTimeout("window.status = newMake()", i*300);
     }
@@ -233,50 +243,50 @@ __~~*strike italic bold*~~__  *~~__strike italic bold 2__~~*
 
 ## Insert
 ```
-++insert++
+^^insert^^
 
-++*insert italic*++  *++insert italic 2++*
+^^*insert italic*^^  *^^insert italic 2^^*
 
-++_insert italic_++  _++insert italic 2++_
+^^_insert italic_^^  _^^insert italic 2^^_
 
-++**insert bold**++  **++insert bold 2++**
+^^**insert bold**^^  **^^insert bold 2^^**
 
-++__insert bold__++  __++insert bold 2++__
+^^__insert bold__^^  __^^insert bold 2^^__
 
-++***insert italic bold***++  ***++insert italic bold 2++***
+^^***insert italic bold***^^  ***^^insert italic bold 2^^***
 
-++___insert italic bold___++  ___++insert italic bold 2++___
+^^___insert italic bold___^^  ___^^insert italic bold 2^^___
 
-**++*insert italic bold*++**  *++**insert italic bold 2**++*
+**^^*insert italic bold*^^**  *^^**insert italic bold 2**^^*
 
-__++_insert italic bold_++__  _++__insert italic bold 2__++_
+__^^_insert italic bold_^^__  _^^__insert italic bold 2__^^_
 
-**++_insert italic bold_++**  _++**insert italic bold 2**++_
+**^^_insert italic bold_^^**  _^^**insert italic bold 2**^^_
 
-__++*insert italic bold*++__  *++__insert italic bold 2__++*
+__^^*insert italic bold*^^__  *^^__insert italic bold 2__^^*
 ```
 
-++insert++
+^^insert^^
 
-++*insert italic*++  *++insert italic 2++*
+^^*insert italic*^^  *^^insert italic 2^^*
 
-++_insert italic_++  _++insert italic 2++_
+^^_insert italic_^^  _^^insert italic 2^^_
 
-++**insert bold**++  **++insert bold 2++**
+^^**insert bold**^^  **^^insert bold 2^^**
 
-++__insert bold__++  __++insert bold 2++__
+^^__insert bold__^^  __^^insert bold 2^^__
 
-++***insert italic bold***++  ***++insert italic bold 2++***
+^^***insert italic bold***^^  ***^^insert italic bold 2^^***
 
-++___insert italic bold___++  ___++insert italic bold 2++___
+^^___insert italic bold___^^  ___^^insert italic bold 2^^___
 
-**++*insert italic bold*++**  *++**insert italic bold 2**++*
+**^^*insert italic bold*^^**  *^^**insert italic bold 2**^^*
 
-__++_insert italic bold_++__  _++__insert italic bold 2__++_
+__^^_insert italic bold_^^__  _^^__insert italic bold 2__^^_
 
-**++_insert italic bold_++**  _++**insert italic bold 2**++_
+**^^_insert italic bold_^^**  _^^**insert italic bold 2**^^_
 
-__++*insert italic bold*++__  *++__insert italic bold 2__++*
+__^^*insert italic bold*^^__  *^^__insert italic bold 2__^^*
 
 
 ## Magiclinks
@@ -330,6 +340,7 @@ Another List
 5. Test 5
 
 ```
+
 First Line
 
 - Test 1
