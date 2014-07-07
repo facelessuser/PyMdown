@@ -170,9 +170,10 @@ td, th { border: 1px solid #ddd; padding: 6px 13px; }
 
 /* Codehilite Tables */
 table.codehilitetable { border: 0; border-spacing: 0; width: 100%; }
-td.linenos, td.code { border: 0; padding: 0; }
+td.linenos, td.code, table.codehilitetable td { border: 0; padding: 0; }
+table.codehilitetable td:not(.linenos) div.linenodiv { padding: 0 !important; }
 td.code { width: 100%; }
-table.codehilitetable td.linenos div pre {
+table.codehilitetable td.linenos div pre, td div.linenodiv pre {
   border: 0;
   border-top: 1px solid #CCC;
   border-left: 1px solid #CCC;
@@ -226,8 +227,6 @@ table.codehilitetable td.code div pre {
   pre, blockquote { border: 1px solid #999; padding-right: 1em; page-break-inside: avoid; }
   tr, img { page-break-inside: avoid; }
   img { max-width: 100% !important; }
-  /*@page :left { margin: 15mm 20mm 15mm 10mm; }
-  @page :right { margin: 15mm 10mm 15mm 20mm; }*/
   p, h2, h3 { orphans: 3; widows: 3; }
   h2, h3 { page-break-after: avoid; }
 }

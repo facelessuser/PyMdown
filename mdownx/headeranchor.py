@@ -42,7 +42,7 @@ class HeaderAnchorTreeprocessor(Treeprocessor):
                 tag.text = self.markdown.htmlStash.store(
                     LINK % {"id": id},
                     safe=True
-                ) + tag.text
+                ) + tag.text if tag.text is not None else ''
         return root
 
 
