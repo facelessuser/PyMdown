@@ -21,10 +21,16 @@
         "extra",
         "mdownx.github",
         "toc",
-        "codehilite(guess_lang=False,pygments_style=default)",
-        // "mdownx.insert",
+        "codehilite(guess_lang=False,pygments_style=github)",
+        "mdownx.insert",
         // "mdownx.absolutepath(base_path=${BASE_PATH})",
-        "mdownx.b64(base_path=${BASE_PATH})"
+        "mdownx.b64(base_path=${BASE_PATH})",
+        "headerid",
+        "footnotes",
+        "meta",
+        "smarty",
+        "wikilinks",
+        "admonition"
     ],
 
     // Use highlight.js instead of pygments

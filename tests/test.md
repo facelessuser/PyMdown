@@ -1,3 +1,27 @@
+!!! hint "Recommended Extentions for Testing"
+    This is mainly used to test the Python Markdown parser
+
+    - extra
+    - mdownx.github
+    - mdownx.insert
+    - toc
+    - headerid
+    - meta
+    - smarty
+    - footnotes
+    - wikilinks
+    - admonition
+    - codehilite(guess_lang=False,pygments_style=github)
+    - mdownx.b64(base_path=${BASE_PATH})
+    - mdownx.absolutepath(base_path=${BASE_PATH})
+
+    !!! Caution "Testing Note"
+        - `sane_lists` will alter the results of the second test in [Mixed Lists](#mixed-lists). When turned off, this test will have all list items mixed and aligned proper.  With `sane_lists` on, some will not be recognized, and some items may be aligned in different lists.
+        - having `guess_lang=False` allows the testing of the selective highlighting.  When omitted or set `true`, it can be expected that all of the blocks will be highlighted to some extent.
+        - Most tests are spot checked at this point or a link can be clicked to verify it is working.
+        - mdown.b64 check requires looking at the source of one of the images to see if conversion occured.
+
+
 # Cheat Sheet and Test
 [TOC]
 
@@ -10,6 +34,8 @@
 #### H4
 ##### H5
 ###### H6
+### Duplicate Header
+### Duplicate Header
 ```
 
 # H1
@@ -18,6 +44,8 @@
 #### H4
 ##### H5
 ###### H6
+### Duplicate Header
+### Duplicate Header
 
 ## Paragraphs
 ```
@@ -35,89 +63,288 @@ New paragraph.
 ## Inline
 
 ```
-**bold** and __bold 2__
+`inline block`
 
-*italic*  and _italic 2_
+**bold 1** and __bold 2__
 
-***bold and italic*** ___bold and italic 2__  __*bold and italic 3*__ **_bold and italic 4_**
+*italic 1*  and _italic 2_
+
+~~strike~~
+
+
+***bold 1 and italic 1***
+
+___bold 2 and italic 2___
+
+__*bold 2 and italic 1*__
+
+**_bold 1 and italic 2_**
+
+
+~~*strike italic 1*~~ and *~~strike italic 2~~*
+
+~~_strike italic 2_~~ and  _~~strike italic 2~~_
+
+
+~~**strike bold 1**~~ and **~~strike bold 1~~**
+
+~~__strike bold 2__~~ and __~~strike bold 2~~__
+
+
+~~***strike italic 1 bold 1***~~ and ***~~strike italic 1 bold 1~~***
+
+~~___strike italic 2 bold 2___~~ and ___~~strike italic 2 bold 2~~___
+
+**~~*strike italic 1 bold 1*~~** and *~~**strike italic 1 bold 1**~~*
+
+__~~_strike italic 2 bold 2_~~__ and _~~__strike italic 2 bold 2__~~_
+
+**~~_strike italic 2 bold 1_~~** and _~~**strike italic 2 bold 1**~~_
+
+__~~*strike italic 1 bold 2*~~__ and *~~__strike italic 1 bold 2__~~*
+
 ```
 
-**bold** and __bold 2__
+`inline block`
 
-*italic*  and _italic 2_
+**bold 1** and __bold 2__
 
-***bold and italic*** ___bold and italic 2___  __*bold and italic 3*__ **_bold and italic 4_**
+*italic 1*  and _italic 2_
+
+~~strike~~
+
+
+***bold 1 and italic 1***
+
+___bold 2 and italic 2___
+
+__*bold 2 and italic 1*__
+
+**_bold 1 and italic 2_**
+
+
+~~*strike italic 1*~~ and *~~strike italic 2~~*
+
+~~_strike italic 2_~~ and  _~~strike italic 2~~_
+
+
+~~**strike bold 1**~~ and **~~strike bold 1~~**
+
+~~__strike bold 2__~~ and __~~strike bold 2~~__
+
+
+~~***strike italic 1 bold 1***~~ and ***~~strike italic 1 bold 1~~***
+
+~~___strike italic 2 bold 2___~~ and ___~~strike italic 2 bold 2~~___
+
+**~~*strike italic 1 bold 1*~~** and *~~**strike italic 1 bold 1**~~*
+
+__~~_strike italic 2 bold 2_~~__ and _~~__strike italic 2 bold 2__~~_
+
+**~~_strike italic 2 bold 1_~~** and _~~**strike italic 2 bold 1**~~_
+
+__~~*strike italic 1 bold 2*~~__ and *~~__strike italic 1 bold 2__~~*
+
 
 ## Links
+Footnote and reference sources are at the bottom of the page.
 ```
-![Some Picture](bj.png "Some Picture")
+[Reference Link][1]
 
-[Link](bg.png "Link")
+Footnotes[^1] have a label[^label] and a definition[^!DEF]
+
+![A Picture](bg.png "A Picture")
+
+[Link to Picture](bg.png "Link")
+
+https://github.com/facelessuser/mdown
+
+This is a link https://github.com/facelessuser/mdown.
+
+This is a link "https://github.com/facelessuser/mdown".
+
+With this link (https://github.com/facelessuser/mdown), it still works.
+
+    [1]: https://github.com/facelessuser/mdown
+    [^1]: This is a footnote
+    [^label]: A footnote on "label"
+    [^!DEF]: The footnote for definition
 ```
 
-![Base 64 encoded image](bg.png "Some Picture")
+[Reference Link][1]
 
-[Link](bg.png "Link")
+Footnotes[^1] have a label[^label] and a definition[^!DEF]
 
-## Lists
+![A Picture](bg.png "A Picture")
+
+[Link to Picture](bg.png "Link")
+
+https://github.com/facelessuser/mdown
+
+This is a link https://github.com/facelessuser/mdown.
+
+This is a link "https://github.com/facelessuser/mdown".
+
+With this link (https://github.com/facelessuser/mdown), it still works.
+
+## Unordered List
 
 ```
-List
+Unordered List
 
 - item 1
+    * item A
+    * item B
+        more text
+        + item a
+        + item b
+        + item c
+    * item C
+- item 2
+- item 3
+```
+
+Unordered List
+
+- item 1
+    * item A
+    * item B
+        more text
+        + item a
+        + item b
+        + item c
+    * item C
 - item 2
 - item 3
 
-List 2
 
-* item 1
-* item 2
-* item 3
-
-List 3
-
-+ item 1
-+ item 2
-+ item 3
-
-Ordered List
-
-1. item 1
-2. item 2
-3. item3
-
-
-Dictionary
-: item 1
-
-  item 2
-
-  item 3
+## Ordered List
 ```
-
-List
-
-- item 1
-- item 2
-- item 3
-
-List 2
-
-* item 1
-* item 2
-* item 3
-
-List 3
-
-+ item 1
-+ item 2
-+ item 3
-
 Ordered List
 
 1. item 1
+    1. item A
+    2. item B
+        more text
+        1. item a
+        2. item b
+        3. item c
+    3. item C
 2. item 2
 3. item 3
+```
+
+Ordered List
+
+1. item 1
+    1. item A
+    2. item B
+        more text
+        1. item a
+        2. item b
+        3. item c
+    3. item C
+2. item 2
+3. item 3
+
+## Task List
+```
+Task List
+
+- [X] item 1
+    * [X] item A
+    * [ ] item B
+        more text
+        + [x] item a
+        + [ ] item b
+        + [x] item c
+    * [X] item C
+- [ ] item 2
+- [ ] item 3
+```
+
+Task List
+
+- [X] item 1
+    * [X] item A
+    * [ ] item B
+        more text
+        + [x] item a
+        + [ ] item b
+        + [x] item c
+    * [X] item C
+- [ ] item 2
+- [ ] item 3
+
+## Mixed Lists
+`Really Mixed Lists` should break with `sane_lists` on.
+
+```
+Mixed Lists
+
+- item 1
+    * [X] item A
+    * [ ] item B
+        more text
+        1. item a
+        2. itemb
+        3. item c
+    * [X] item C
+- item 2
+- item 3
+
+
+Really Mixed Lists
+
+- item 1
+    * [X] item A
+    - item B
+        more text
+        1. item a
+        + itemb
+        + [ ] item c
+    3. item C
+2. item 2
+- [X] item 3
+```
+
+Mixed Lists
+
+- item 1
+    * [X] item A
+    * [ ] item B
+        more text
+        1. item a
+        2. itemb
+        3. item c
+    * [X] item C
+- item 2
+- item 3
+
+
+Really Mixed Lists
+
+- item 1
+    * [X] item A
+    - item B
+        more text
+        1. item a
+        + itemb
+        + [ ] item c
+    3. item C
+2. item 2
+- [X] item 3
+
+
+## Dictionary
+```
+Dictionary
+:   item 1
+
+    item 2
+
+    item 3
+```
 
 Dictionary
 :   item 1
@@ -128,19 +355,15 @@ Dictionary
 
 ## Blocks
 ```
-`inline block`
-
-    This is a block
+    This is a block.
     
-    This is more of a block
+    This is more of a block.
 
 ```
 
-`inline block`
-
-    This is a block
+    This is a block.
     
-    This is more of a block
+    This is more of a block.
 
 
 ## Block Quotes
@@ -149,11 +372,14 @@ Dictionary
 >> How does it look?
 ```
 
-> This is a block quote
+> This is a block quote.
 >> How does it look?
+> I think it looks good.
 
 ## Fenced Block
-Assuming guessing languages is enabled.
+Assuming guessing is not enabled.
+
+`````
 ```
 // Fenced **without** highlighting
 function doIt() {
@@ -164,6 +390,26 @@ function doIt() {
 }
 ```
 
+```javascript
+// Fenced **with** highlighting
+function doIt() {
+    for (var i = 1; i <= slen ; i^^) {
+        setTimeout("document.z.textdisplay.value = newMake()", i*300);
+        setTimeout("window.status = newMake()", i*300);
+    }
+}
+```
+`````
+
+```
+// Fenced **without** highlighting
+function doIt() {
+    for (var i = 1; i <= slen ; i^^) {
+        setTimeout("document.z.textdisplay.value = newMake()", i*300);
+        setTimeout("window.status = newMake()", i*300);
+    }
+}
+```
 
 ```javascript
 // Fenced **with** highlighting
@@ -178,68 +424,116 @@ function doIt() {
 ## Tables
 
 ```
-| Colors        | Fruits        | Vegetable    |
-| ------------- |:-------------:| ------------:|
-| Red           | Apple         | Pepper       |
-| Orange        | Oranges       | Carrot       |
-| Green         | Pears         | Spinach      |
+| _Colors_      | Fruits          | Vegetable         |
+| ------------- |:---------------:| -----------------:|
+| Red           | *Apple*         | [Pepper](#Tables) |
+| ~~Orange~~    | Oranges         | **Carrot**        |
+| Green         | ~~***Pears***~~ | Spinach           |
 ```
 
-| Colors        | Fruits        | Vegetable    |
-| ------------- |:-------------:| ------------:|
-| Red           | Apple         | Pepper       |
-| Orange        | Oranges       | Carrot       |
-| Green         | Pears         | Spinach      |
+| _Colors_      | Fruits          | Vegetable    |
+| ------------- |:---------------:| ------------:|
+| Red           | *Apple*         | Pepper       |
+| ~~Orange~~    | Oranges         | **Carrot**   |
+| Green         | ~~***Pears***~~ | Spinach      |
 
-
-# Test Extensions
-
-## Delete
+## Smart Strong
 ```
-~~strike~~
+Text with double__underscore__words.
 
-~~*strike italic*~~  *~~strike italic 2~~*
+__Strong__ still works.
 
-~~_strike italic_~~  _~~strike italic 2~~_
-
-~~**strike bold**~~  **~~strike bold 2~~**
-
-~~__strike bold__~~  __~~strike bold 2~~__
-
-~~***strike italic bold***~~  ***~~strike italic bold 2~~***
-
-~~___strike italic bold___~~  ___~~strike italic bold 2~~___
-
-**~~*strike italic bold*~~**  *~~**strike italic bold 2**~~*
-
-__~~_strike italic bold_~~__  _~~__strike italic bold 2__~~_
-
-**~~_strike italic bold_~~**  _~~**strike italic bold 2**~~_
-
-__~~*strike italic bold*~~__  *~~__strike italic bold 2__~~*
+__this__works__too__
 ```
 
-~~strike~~
+Text with double__underscore__words.
 
-~~*strike italic*~~  *~~strike italic 2~~*
+__Strong__ still works.
 
-~~_strike italic_~~  _~~strike italic 2~~_
+__this__works__too__
 
-~~**strike bold**~~  **~~strike bold 2~~**
+## Smarty
+```
+"double quotes"
 
-~~__strike bold__~~  __~~strike bold 2~~__
+'single quotes'
 
-~~***strike italic bold***~~  ***~~strike italic bold 2~~***
+da--sh
 
-~~___strike italic bold___~~  ___~~strike italic bold 2~~___
+elipsis...
+```
 
-**~~*strike italic bold*~~**  *~~**strike italic bold 2**~~*
+"double quotes"
 
-__~~_strike italic bold_~~__  _~~__strike italic bold 2__~~_
+'single quotes'
 
-**~~_strike italic bold_~~**  _~~**strike italic bold 2**~~_
+da--sh
 
-__~~*strike italic bold*~~__  *~~__strike italic bold 2__~~*
+elipsis...
+
+## Admonition
+```
+!!! Attention "Success!"
+    You can use inline ~~stuff~~ markup too!
+
+!!! Hint "Info!"
+    - Here is some info.
+    - And some more
+
+!!! Caution "Warning!"
+    - [X] Make sure you turn off the stove
+    - [X] Don't run with scissors
+
+!!! Danger "Alert!"
+    You really need to read [this](#admonition)!
+
+!!! Note ""
+    This one has no `title`.
+
+    > Not all markup can be placed in these boxes, but you can fit all sorts of things in them. But you will notice that the styles don't always play nice with each other.  Additional CSS could fix this though.
+
+    Stuff like _this_ works too.
+
+    | _Colors_      | Fruits          | Vegetable    |
+    | ------------- |:---------------:| ------------:|
+    | Red           | *Apple*         | Pepper       |
+    | ~~Orange~~    | Oranges         | **Carrot**   |
+    | Green         | ~~***Pears***~~ | Spinach      |
+```
+
+!!! Attention "Success!"
+    You can use inline ~~stuff~~ markup too!
+
+!!! Hint "Info!"
+    - Here is some info.
+    - And some more
+
+!!! Caution "Warning!"
+    - [X] Make sure you turn off the stove
+    - [X] Don't run with scissors
+
+!!! Danger "Alert!"
+    You really need to read [this](#admonition)!
+
+!!! Note ""
+    This one has no `title` :smile:.
+
+    > Not all markup can be placed in these boxes, but you can fit all sorts of things in them. But you will notice that the styles don't always play nice with each other.  Additional CSS could fix this though.
+
+    Stuff like _this_ works too.
+
+    | _Colors_      | Fruits          | Vegetable    |
+    | ------------- |:---------------:| ------------:|
+    | Red           | *Apple*         | Pepper       |
+    | ~~Orange~~    | Oranges         | **Carrot**   |
+    | Green         | ~~***Pears***~~ | Spinach      |
+
+## Github Emoji
+```
+This is a test for emoji :smile:.  The emojis are images linked to github assets :octocat:.
+```
+
+This is a test for emoji :smile:.  The emojis are images linked to github assets :octocat:.
 
 ## Insert
 ```
@@ -288,79 +582,7 @@ __^^_insert italic bold_^^__  _^^__insert italic bold 2__^^_
 
 __^^*insert italic bold*^^__  *^^__insert italic bold 2__^^*
 
-
-## Magiclinks
-
-https://github.com/facelessuser/BracketHighlighter/tree/ST3
-
-This is a link https://github.com/facelessuser/BracketHighlighter/tree/ST3.
-
-This is a link "https://github.com/facelessuser/BracketHighlighter/tree/ST3".
-
-With this link (https://github.com/facelessuser/BracketHighlighter/tree/ST3), it still works.
-
-
-## Base64
-Image should be embedded in base 64 below:
-```
-![Some Picture](bj.png "Some Picture")
-```
-
-![Base 64 encoded image](bg.png "It works!")
-
-
-## Absolutepath
-Should convert bg.png to the actual full path below:
-```
-[Absolute path link](bg.png "It works!")
-```
-
-[Absolute path link](bg.png "It works!")
-
-## Tasklists
-Should work on any list item in an ordered list or unordered list
-
-```
-First List
-
-- Test 1
-- [ ] Test 2
-- [x] Test 3
-    Second line
-    - [ ] Test 4
-        - Test 5
-
-Another List
-
-1. Test 1
-- [ ] Test 2
-- [x] Test 3
-    Second line
-- [ ] Test 4
-5. Test 5
-
-```
-
-First Line
-
-- Test 1
-- [ ] Test 2
-- [x] Test 3
-    - [ ] Test 4
-        - Test 5
-
-Another List
-
-1. Test 1
-- [ ] Test 2
-- [x] Test 3
-    Second line
-- [ ] Test 4
-5. Test 5
-
-## Github Emoji
-```
-This is a test for emoji :smile:.  The emojis are images linked to github assets :octocat:.
-```
-
-This is a test for emoji :smile:.  The emojis are images linked to github assets :octocat:.
+[1]: https://github.com/facelessuser/mdown
+[^1]: This is a footnote
+[^label]: A footnote on "label"
+[^!DEF]: The footnote for definition
