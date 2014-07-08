@@ -19,7 +19,7 @@
     // Python Markdown extensions
     "extensions": [
         "extra",
-        "mdownx.github"
+        "mdownx.github",
         "toc",
         "codehilite(guess_lang=False,pygments_style=default)",
         // "mdownx.insert",

@@ -160,11 +160,15 @@ class MdWrapper(Markdown):
 
 
 class Mdown(object):
-    def __init__(self, file_name, encoding, title="Untitled", base_path=None, settings=None):
+    def __init__(
+        self, file_name, encoding, title="Untitled", base_path=None,
+        plain=False, settings=None
+    ):
         self.error = None
         self.settings = settings
         self.file_name = abspath(file_name)
         self.title = title
+        self.plain = plain
         self.base_path = base_path if base_path is not None else ''
         self.encoding = encoding
         self.read_extensions()
@@ -200,7 +204,6 @@ class Mdown(object):
                     break
         else:
             # Disable pygments in the highlighter
-            print("disabled")
             codehilite.pygments = False
             for e in self.extensions:
                 if e.startswith("codehilite"):
@@ -251,7 +254,7 @@ class Mdown(object):
                             )
                     except:
                         self.error = str(traceback.format_exc())
-                        print(traceback.format_exc())
+                        # print(traceback.format_exc())
                 else:
                     scripts.append(get_js(js, link=True))
         if self.highlight_js:
@@ -275,33 +278,37 @@ class Mdown(object):
     @property
     def markdown(self):
         self.html_file = None
-        html = self.settings.get("html_template", "default")
-        if html == "default" or not exists(html):
-            html = get_default_template()
-
-        return html.replace(
-            "{{ HEAD }}", self.head, 1
-        ).replace(
-            "{{ BODY }}", self.body, 1
-        ).encode("utf-8", errors="xmlcharrefreplace")
+        if self.plain:
+            html = self.body
+        else:
+            html = self.settings.get("html_template", "default")
+            if html == "default" or not exists(html):
+                html = get_default_template()
+            html = html.replace(
+                "{{ HEAD }}", self.head, 1
+            ).replace(
+                "{{ BODY }}", self.body, 1
+            )
+        return html.encode("utf-8", errors="xmlcharrefreplace")
 
     def write(self, output):
-        html = self.settings.get("html_template", "default")
-        if html == "default" or not exists(html):
-            html = get_default_template()
-
         if output is None:
             self.html_file = None
             return
         try:
             with codecs.open(output, "w", encoding="utf-8", errors="xmlcharrefreplace") as f:
-                f.write(
-                    html.replace(
+                if self.plain:
+                    html = self.body
+                else:
+                    html = self.settings.get("html_template", "default")
+                    if html == "default" or not exists(html):
+                        html = get_default_template()
+                    html = html.replace(
                         "{{ HEAD }}", self.head, 1
                     ).replace(
                         "{{ BODY }}", self.body, 1
                     )
-                )
+                f.write(html)
             self.html_file = output
         except:
             self.error = str(traceback.format_exc())
@@ -309,11 +316,15 @@ class Mdown(object):
 
 
 class Mdowns(Mdown):
-    def __init__(self, string, encoding, title="Untitled", base_path=None, settings=None):
+    def __init__(
+        self, string, encoding, title="Untitled",
+        base_path=None, plain=False, settings=None
+    ):
         self.error = None
         self.string = string
         self.encoding = encoding
         self.title = title
+        self.plain = plain
         self.base_path = base_path if base_path is not None else ''
         self.settings = settings
         self.read_extensions()

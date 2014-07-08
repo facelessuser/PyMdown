@@ -111,13 +111,14 @@ class CriticDump(object):
         return text
 
 
-def get_settings(file_name, preview, critic_mode, reject):
+def get_settings(file_name, preview, critic_mode, reject, plain):
     """
     Get the settings and add absolutepath
     extention if a preview is planned.
     Unpack the settings file if needed.
     """
 
+    status = 0
     # Use default file if one was not provided
     if file_name is None or not exists(file_name):
         file_name = join(script_path, "mdown.json")
@@ -129,8 +130,7 @@ def get_settings(file_name, preview, critic_mode, reject):
             with codecs.open(file_name, "w", encoding="utf-8") as f:
                 f.write(text)
         except:
-            print(traceback.format_exc())
-            pass
+            Logger.log(traceback.format_exc())
 
     # Try and read settings file
     settings = {}
@@ -138,11 +138,12 @@ def get_settings(file_name, preview, critic_mode, reject):
         with open(file_name, "r") as f:
             settings = json.loads(sanitize_json(f.read()))
     except:
-        # print(traceback.format_exc())
-        pass
+        Logger.log(traceback.format_exc())
+        status = 1
 
     absolute = False
     critic_found = []
+    plain_html = []
     extensions = settings.get("extensions", [])
     for i in range(0, len(extensions)):
         name = extensions[i]
@@ -150,15 +151,19 @@ def get_settings(file_name, preview, critic_mode, reject):
             absolute = True
         if name.startswith("critic"):
             critic_found.append(i)
+        if name.startswith("mdownx.plainhtml"):
+            plain_html.append(i)
 
     # Ensure the user can never set critic mode
     for index in reversed(critic_found):
         del extensions[index]
 
+    for index in reversed(plain_html):
+        del extensions[index]
+
     # Ensure previews are using absolute paths
     if preview and not absolute:
         extensions.append("mdownx.absolutepath(base_path=${BASE_PATH})")
-        settings["extensions"] = extensions
 
     # Handle the appropriate critic mode internally
     # Critic must be appended to end of extension list
@@ -168,7 +173,13 @@ def get_settings(file_name, preview, critic_mode, reject):
         )
     )
 
-    return settings
+    #  Add plainhtml
+    if plain:
+        extensions.append("mdownx.plainhtml")
+
+    settings["extensions"] = extensions
+
+    return status, settings
 
 
 def get_title(md_file, title_val, is_stream):
@@ -357,14 +368,15 @@ def critic_dump(md_file, enc, out, stream, reject):
     return status
 
 
-def html_dump(md_file, enc, out, stream, html_title, base_path, preview, settings):
+def html_dump(md_file, enc, out, stream, html_title, base_path, preview, plain, settings):
     """ Dump HTML """
 
     status = 0
     # Instantiate Mdown class
     mdown = (Mdowns if stream else Mdown)(
         md_file, enc,
-        title=html_title, base_path=base_path, settings=settings
+        title=html_title, base_path=base_path, plain=plain,
+        settings=settings
     )
 
     # If all went well, either preview the file,
@@ -432,7 +444,7 @@ def convert(
     output=None, basepath=None, preview=False,
     stream=False, terminal=False, quiet=False,
     text_buffer=None, critic_mode=CRITIC_IGNORE,
-    reject=False, settings_path=None
+    reject=False, settings_path=None, plain=False
 ):
     """ Convert markdown file(s) to html """
     status = 0
@@ -471,21 +483,26 @@ def convert(
             base_path = get_base_path(md_file, basepath, stream)
 
             # Get output location
-            out = get_output(md_file, count, output, terminal, stream, critic_mode, reject)
+            out = get_output(
+                md_file, count, output, terminal, stream, critic_mode, reject
+            )
 
             # Get the title to be used in the HTML
             html_title = get_title(md_file, title, stream)
 
             # Get the settings if available
-            settings = get_settings(settings_path, preview, critic_mode, reject)
+            status, settings = get_settings(
+                settings_path, preview, critic_mode, reject, plain
+            )
 
-            if critic_mode == CRITIC_DUMP:
-                status = critic_dump(md_file, enc, out, stream, reject)
-            else:
-                status = html_dump(
-                    md_file, enc, out, stream, html_title,
-                    base_path, preview, settings
-                )
+            if status == 0:
+                if critic_mode == CRITIC_DUMP:
+                    status = critic_dump(md_file, enc, out, stream, reject)
+                else:
+                    status = html_dump(
+                        md_file, enc, out, stream, html_title,
+                        base_path, preview, plain, settings
+                    )
     return status
 
 
@@ -504,6 +521,7 @@ if __name__ == "__main__":
         parser.add_argument('--licenses', action='store_true', default=False, help="Display licenses.")
         parser.add_argument('--quiet', '-q', action='store_true', default=False, help="No messages on stdout.")
         parser.add_argument('--preview', '-p', action='store_true', default=False, help="Output to preview (temp file). --output will be ignored.")
+        parser.add_argument('--plain-html', '-P', action='store_true', default=False, help="Strip out CSS, style, ids, etc.  Just show tags.")
         me_group = parser.add_mutually_exclusive_group()
         me_group.add_argument('--critic', '-c', action='store_true', default=False, help="Show critic marks in a viewable html output.")
         me_group.add_argument('--critic-dump', '-C', action='store_true', default=False, help="Process critic marks, dumps file(s), and exits.")
@@ -540,7 +558,8 @@ if __name__ == "__main__":
             preview=args.preview,
             output=first_or_none(args.output),
             settings_path=first_or_none(args.settings),
-            markdown=args.markdown
+            markdown=args.markdown,
+            plain=args.plain_html
         )
 
     script_path = dirname(abspath(sys.argv[0]))
