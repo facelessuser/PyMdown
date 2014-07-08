@@ -36,14 +36,11 @@ else:
     _PLATFORM = "linux"
 
 CRITIC_IGNORE = 0
-CRITIC_VIEW = 1
-CRITIC_DUMP = 2
-
-CRITIC_OPT_MAP = {
-    CRITIC_IGNORE: "ignore",
-    CRITIC_VIEW: "view",
-    CRITIC_DUMP: "ignore"
-}
+CRITIC_ACCEPT = 1
+CRITIC_REJECT = 2
+CRITIC_VIEW = 4
+CRITIC_DUMP = 8
+CRITIC_OFF = 16
 
 
 class Logger(object):
@@ -111,7 +108,7 @@ class CriticDump(object):
         return text
 
 
-def get_settings(file_name, preview, critic_mode, reject, plain):
+def get_settings(file_name, preview, critic_mode, plain):
     """
     Get the settings and add absolutepath
     extention if a preview is planned.
@@ -158,6 +155,7 @@ def get_settings(file_name, preview, critic_mode, reject, plain):
     for index in reversed(critic_found):
         del extensions[index]
 
+    # Ensure the user can never set plainhtml mode
     for index in reversed(plain_html):
         del extensions[index]
 
@@ -167,13 +165,15 @@ def get_settings(file_name, preview, critic_mode, reject, plain):
 
     # Handle the appropriate critic mode internally
     # Critic must be appended to end of extension list
-    extensions.append(
-        "mdownx.critic(mode=%s,accept=%s)" % (
-            CRITIC_OPT_MAP[critic_mode], not reject
-        )
-    )
+    if critic_mode != CRITIC_OFF:
+        mode = "ignore"
+        if critic_mode & CRITIC_ACCEPT:
+            mode = "accept"
+        elif critic_mode & CRITIC_REJECT:
+            mode = "reject"
+        extensions.append("mdownx.critic(mode=%s)" % mode)
 
-    #  Add plainhtml
+    # Handle plainhtml internally.  Must be appended to the end. Okay to come after critic.
     if plain:
         extensions.append("mdownx.plainhtml")
 
@@ -193,7 +193,7 @@ def get_title(md_file, title_val, is_stream):
     return title
 
 
-def get_output(md_file, index, output_val, terminal, is_stream, critic_mode, reject):
+def get_output(md_file, index, output_val, terminal, is_stream, critic_mode):
     """
     Get the path to output the file.
     If doing multiple files and pointing to a directory,
@@ -220,6 +220,7 @@ def get_output(md_file, index, output_val, terminal, is_stream, critic_mode, rej
     the output will default to the terminal.
     """
 
+    critic_enabled = critic_mode & CRITIC_ACCEPT or critic_mode & CRITIC_REJECT
     if terminal:
         # We want stdout
         output = None
@@ -230,15 +231,15 @@ def get_output(md_file, index, output_val, terminal, is_stream, critic_mode, rej
             # Its a directory
             if not is_stream:
                 # Use path and own name
-                if critic_mode is not CRITIC_DUMP:
-                    output = join(name, "%s.html" % splitext(abspath(md_file))[0])
-                else:
-                    if reject:
+                if critic_mode & CRITIC_DUMP and critic_enabled:
+                    if critic_mode & CRITIC_REJECT:
                         label = "(rejected)"
                     else:
                         label = "(accepted)"
                     base, ext = splitext(abspath(md_file))
                     output = join(name, "%s%s%s" % (base, label, ext))
+                else:
+                    output = join(name, "%s.html" % splitext(abspath(md_file))[0])
             else:
                 # Stream: don't know what the file should be called
                 output = None
@@ -246,16 +247,16 @@ def get_output(md_file, index, output_val, terminal, is_stream, critic_mode, rej
             # Apply mult-pattern to name
             output = name.replace("${count}", index)
     elif not is_stream:
-        if critic_mode is not CRITIC_DUMP:
-            # Single or multi file: use own name
-            output = "%s.html" % splitext(abspath(md_file))[0]
-        else:
-            if reject:
+        if critic_mode & CRITIC_DUMP and critic_enabled:
+            if critic_mode & CRITIC_REJECT:
                 label = "(rejected)"
             else:
                 label = "(accepted)"
             base, ext = splitext(abspath(md_file))
             output = "%s%s%s" % (base, label, ext)
+        else:
+            # Single or multi file: use own name
+            output = "%s.html" % splitext(abspath(md_file))[0]
     else:
         output = None
 
@@ -444,7 +445,7 @@ def convert(
     output=None, basepath=None, preview=False,
     stream=False, terminal=False, quiet=False,
     text_buffer=None, critic_mode=CRITIC_IGNORE,
-    reject=False, settings_path=None, plain=False
+    settings_path=None, plain=False
 ):
     """ Convert markdown file(s) to html """
     status = 0
@@ -484,7 +485,7 @@ def convert(
 
             # Get output location
             out = get_output(
-                md_file, count, output, terminal, stream, critic_mode, reject
+                md_file, count, output, terminal, stream, critic_mode
             )
 
             # Get the title to be used in the HTML
@@ -492,12 +493,16 @@ def convert(
 
             # Get the settings if available
             status, settings = get_settings(
-                settings_path, preview, critic_mode, reject, plain
+                settings_path, preview, critic_mode, plain
             )
 
             if status == 0:
-                if critic_mode == CRITIC_DUMP:
-                    status = critic_dump(md_file, enc, out, stream, reject)
+                if critic_mode & CRITIC_DUMP:
+                    if not (critic_mode & CRITIC_REJECT or critic_mode & CRITIC_ACCEPT):
+                        Logger.log("Acceptance or rejection was not specified for critic dump!")
+                        status = 1
+                    else:
+                        status = critic_dump(md_file, enc, out, stream, critic_mode & CRITIC_REJECT)
                 else:
                     status = html_dump(
                         md_file, enc, out, stream, html_title,
@@ -520,17 +525,22 @@ if __name__ == "__main__":
         parser.add_argument('--version', action='version', version="%(prog)s " + __version__)
         parser.add_argument('--licenses', action='store_true', default=False, help="Display licenses.")
         parser.add_argument('--quiet', '-q', action='store_true', default=False, help="No messages on stdout.")
+        # Format and Viewing
         parser.add_argument('--preview', '-p', action='store_true', default=False, help="Output to preview (temp file). --output will be ignored.")
         parser.add_argument('--plain-html', '-P', action='store_true', default=False, help="Strip out CSS, style, ids, etc.  Just show tags.")
+        parser.add_argument('--title', '-T', nargs=1, default=None, help="Title for HTML.")
+        # Critic features
         me_group = parser.add_mutually_exclusive_group()
-        me_group.add_argument('--critic', '-c', action='store_true', default=False, help="Show critic marks in a viewable html output.")
-        me_group.add_argument('--critic-dump', '-C', action='store_true', default=False, help="Process critic marks, dumps file(s), and exits.")
-        parser.add_argument('--reject', '-r', action='store_true', default=False, help="Reject propossed critic marks when using in normal processing and --critic-dump processing")
+        me_group.add_argument('--accept', '-a', action='store_true', default=False, help="Accept propossed critic marks when using in normal processing and --critic-dump processing")
+        me_group.add_argument('--reject', '-r', action='store_true', default=False, help="Reject propossed critic marks when using in normal processing and --critic-dump processing")
+        parser.add_argument('--critic-dump', action='store_true', default=False, help="Process critic marks, dumps file(s), and exits.")
+        parser.add_argument('--no-critic', action='store_true', default=False, help="Turn off critic feature completely")
+        # Output
         parser.add_argument('--terminal', '-t', action='store_true', default=False, help="Print to terminal (stdout).")
         parser.add_argument('--output', '-o', nargs=1, default=None, help="Output directory can be a directory or file_name.  Use ${count} when exporting multiple files and using a file pattern.")
-        parser.add_argument('--stream', '-s', action='store_true', default=False, help="Streaming input.  markdown file inputs will be ignored.")
+        # Input configuration
         parser.add_argument('--settings', '-S', nargs=1, default=None, help="Load the settings file from an alternate location.")
-        parser.add_argument('--title', '-T', nargs=1, default=None, help="Title for HTML.")
+        parser.add_argument('--stream', '-s', action='store_true', default=False, help="Streaming input.  markdown file inputs will be ignored.")
         parser.add_argument('--encoding', '-e', nargs=1, default=["utf-8"], help="Encoding for input.")
         parser.add_argument('--basepath', '-b', nargs=1, default=None, help="The basepath location mdown should use.")
         parser.add_argument('markdown', nargs='*', default=[], help="Markdown file(s) or file pattern(s).")
@@ -541,17 +551,21 @@ if __name__ == "__main__":
             return display_licenses()
 
         critic_mode = CRITIC_IGNORE
-        if args.critic_dump:
-            critic_mode = CRITIC_DUMP
-        elif args.critic:
-            critic_mode = CRITIC_VIEW
+
+        if args.no_critic:
+            if args.accept or args.reject:
+                critic_mode |= CRITIC_ACCEPT if args.accept else CRITIC_REJECT
+
+            if args.critic_dump:
+                critic_mode |= CRITIC_DUMP
+        else:
+            critic_mode |= CRITIC_OFF
 
         return convert(
             encoding=args.encoding[0],
             basepath=first_or_none(args.basepath),
             terminal=args.terminal,
             critic_mode=critic_mode,
-            reject=args.reject,
             stream=args.stream,
             title=first_or_none(args.title),
             quiet=args.quiet,

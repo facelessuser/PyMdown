@@ -23,7 +23,7 @@ CRITIC_INSERT = '<span class="critic critic_insert">%s</span>'
 CRITIC_DELETE = '<span class="critic critic_delete">%s</span>'
 CRITIC_MARK = '<span class="critic critic_mark">%s</span>'
 CRITIC_COMMENT = '<span class="critic critic_comment">%s</span>'
-CRITIC_SUB = '<span class="critic critic_delete">%s</span><span class="critic critic_insert">%s</span>'
+CRITIC_SUB = '<span class="critic critic_delete">{~~%s~</span><span class="critic critic_insert">>%s~~}</span>'
 
 
 class CriticViewPreprocessor(Preprocessor):
@@ -44,29 +44,35 @@ class CriticViewPreprocessor(Preprocessor):
 
     def __init__(self, md):
         super(CriticViewPreprocessor, self).__init__(md)
+        self.is_critic = False
 
     def critic_view(self, m):
         if m.group('ins_open'):
+            self.is_critic = True
             return self.markdown.htmlStash.store(
-                CRITIC_INSERT % self._escape(m.group('ins_text')),
+                CRITIC_INSERT % self._escape(m.group(0)),
                 safe=True
             )
         elif m.group('del_open'):
+            self.is_critic = True
             return self.markdown.htmlStash.store(
-                CRITIC_DELETE % self._escape(m.group('del_text')),
+                CRITIC_DELETE % self._escape(m.group(0)),
                 safe=True
             )
         elif m.group('mark_open'):
+            self.is_critic = True
             return self.markdown.htmlStash.store(
-                CRITIC_MARK % self._escape(m.group('mark_text')),
+                CRITIC_MARK % self._escape(m.group(0)),
                 safe=True
             )
         elif m.group('com_open'):
+            self.is_critic = True
             return self.markdown.htmlStash.store(
-                CRITIC_COMMENT % self._escape(m.group("comment")),
+                CRITIC_COMMENT % self._escape(m.group(0)),
                 safe=True
             )
         elif m.group('sub_open'):
+            self.is_critic = True
             return self.markdown.htmlStash.store(
                 CRITIC_SUB % (
                     self._escape(m.group("sub_del_text")),
@@ -81,7 +87,7 @@ class CriticViewPreprocessor(Preprocessor):
             )
 
     def critic_ignore(self, m):
-        if self.config["accept"]:
+        if self.config["mode"] == 'accept':
             if m.group('ins_open'):
                 return m.group('ins_text')
             elif m.group('del_open'):
@@ -113,12 +119,12 @@ class CriticViewPreprocessor(Preprocessor):
         text = ''
         processor = self.critic_ignore
 
-        if self.config['mode'] == "view":
+        if self.config['mode'] == "ignore":
             processor = self.critic_view
 
         for m in self.RE_CRITIC.finditer('\n'.join(lines)):
             text += processor(m)
-        return text.split('\n')
+        return text.split('\n') if self.is_critic else lines
 
     def _escape(self, txt):
         """ basic html escaping """
@@ -133,21 +139,11 @@ class CriticViewPreprocessor(Preprocessor):
 class CriticExtension(Extension):
     def __init__(self, configs):
         self.config = {
-            'mode': ['ignore', "Critic mode to run in ('ignore' or 'view') - Default: ignore "],
-            'accept': [True, "Acceptance or rejection of critic marks - Default: True"]
+            'mode': ['ignore', "Critic mode to run in ('ignore', 'accept', or 'reject') - Default: ignore "]
         }
 
         for key, value in configs:
-            if value == 'True':
-                value = True
-            if value == 'False':
-                value = False
-            if value == 'None':
-                value = None
-
-            if key == "mode":
-                self.setConfig(key, value if value == "view" else "ignore")
-            else:
+            if key == "mode" and value in ('ignore', 'accept', 'reject'):
                 self.setConfig(key, value)
 
     def extendMarkdown(self, md, md_globals):
