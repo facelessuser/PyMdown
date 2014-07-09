@@ -233,9 +233,9 @@ def get_output(md_file, index, output_val, terminal, is_stream, critic_mode):
                 # Use path and own name
                 if critic_mode & CRITIC_DUMP and critic_enabled:
                     if critic_mode & CRITIC_REJECT:
-                        label = "(rejected)"
+                        label = ".rejected"
                     else:
-                        label = "(accepted)"
+                        label = ".accepted"
                     base, ext = splitext(abspath(md_file))
                     output = join(name, "%s%s%s" % (base, label, ext))
                 else:
@@ -249,9 +249,9 @@ def get_output(md_file, index, output_val, terminal, is_stream, critic_mode):
     elif not is_stream:
         if critic_mode & CRITIC_DUMP and critic_enabled:
             if critic_mode & CRITIC_REJECT:
-                label = "(rejected)"
+                label = ".rejected"
             else:
-                label = "(accepted)"
+                label = ".accepted"
             base, ext = splitext(abspath(md_file))
             output = "%s%s%s" % (base, label, ext)
         else:
@@ -289,6 +289,7 @@ def get_files(file_patterns):
     import glob
     files = []
     all_files = []
+    assert len(file_patterns), "No file patterns"
     if len(file_patterns):
         for pattern in file_patterns:
             files += glob.glob(pattern)
@@ -443,7 +444,7 @@ def display_licenses():
 def convert(
     markdown=[], title=None, encoding="utf-8",
     output=None, basepath=None, preview=False,
-    stream=False, terminal=False, quiet=False,
+    terminal=False, quiet=False,
     text_buffer=None, critic_mode=CRITIC_IGNORE,
     settings_path=None, plain=False
 ):
@@ -452,20 +453,22 @@ def convert(
     Logger.quiet = quiet
 
     # Get file(s) or stream
-    enc = encoding
     files = None
+    stream = False
 
-    if stream:
-        files = [get_file_stream(enc)]
     if text_buffer is not None:
         stream = True
         files = [text_buffer]
-    if files is None:
-        files = get_files(markdown)
+    else:
+        try:
+            files = get_files(markdown)
+        except:
+            files = [get_file_stream(encoding)]
+            stream = True
 
     # Make sure we have something we can process
-    if files is None or len(files) == 0 or files[0] is None:
-        Logger.log("No file to parse!")
+    if files is None or len(files) == 0 or files[0] in ('', None):
+        Logger.log("Nothing to parse!")
         status = 1
 
     if status == 0:
@@ -502,10 +505,10 @@ def convert(
                         Logger.log("Acceptance or rejection was not specified for critic dump!")
                         status = 1
                     else:
-                        status = critic_dump(md_file, enc, out, stream, critic_mode & CRITIC_REJECT)
+                        status = critic_dump(md_file, encoding, out, stream, critic_mode & CRITIC_REJECT)
                 else:
                     status = html_dump(
-                        md_file, enc, out, stream, html_title,
+                        md_file, encoding, out, stream, html_title,
                         base_path, preview, plain, settings
                     )
     return status
@@ -528,21 +531,21 @@ if __name__ == "__main__":
         # Format and Viewing
         parser.add_argument('--preview', '-p', action='store_true', default=False, help="Output to preview (temp file). --output will be ignored.")
         parser.add_argument('--plain-html', '-P', action='store_true', default=False, help="Strip out CSS, style, ids, etc.  Just show tags.")
-        parser.add_argument('--title', '-T', nargs=1, default=None, help="Title for HTML.")
+        parser.add_argument('--title', nargs=1, default=None, help="Title for HTML.")
         # Critic features
-        me_group = parser.add_mutually_exclusive_group()
-        me_group.add_argument('--accept', '-a', action='store_true', default=False, help="Accept propossed critic marks when using in normal processing and --critic-dump processing")
-        me_group.add_argument('--reject', '-r', action='store_true', default=False, help="Reject propossed critic marks when using in normal processing and --critic-dump processing")
+        critic_group = parser.add_mutually_exclusive_group()
+        critic_group.add_argument('--accept', '-a', action='store_true', default=False, help="Accept propossed critic marks when using in normal processing and --critic-dump processing")
+        critic_group.add_argument('--reject', '-r', action='store_true', default=False, help="Reject propossed critic marks when using in normal processing and --critic-dump processing")
         parser.add_argument('--critic-dump', action='store_true', default=False, help="Process critic marks, dumps file(s), and exits.")
         parser.add_argument('--no-critic', action='store_true', default=False, help="Turn off critic feature completely")
         # Output
         parser.add_argument('--terminal', '-t', action='store_true', default=False, help="Print to terminal (stdout).")
         parser.add_argument('--output', '-o', nargs=1, default=None, help="Output directory can be a directory or file_name.  Use ${count} when exporting multiple files and using a file pattern.")
+        parser.add_argument('--batch', '-b', action='store_true', default=False, help="Batch mode output.")
         # Input configuration
-        parser.add_argument('--settings', '-S', nargs=1, default=None, help="Load the settings file from an alternate location.")
-        parser.add_argument('--stream', '-s', action='store_true', default=False, help="Streaming input.  markdown file inputs will be ignored.")
+        parser.add_argument('--settings', '-s', nargs=1, default=None, help="Load the settings file from an alternate location.")
         parser.add_argument('--encoding', '-e', nargs=1, default=["utf-8"], help="Encoding for input.")
-        parser.add_argument('--basepath', '-b', nargs=1, default=None, help="The basepath location mdown should use.")
+        parser.add_argument('--basepath', nargs=1, default=None, help="The basepath location mdown should use.")
         parser.add_argument('markdown', nargs='*', default=[], help="Markdown file(s) or file pattern(s).")
 
         args = parser.parse_args()
@@ -566,7 +569,6 @@ if __name__ == "__main__":
             basepath=first_or_none(args.basepath),
             terminal=args.terminal,
             critic_mode=critic_mode,
-            stream=args.stream,
             title=first_or_none(args.title),
             quiet=args.quiet,
             preview=args.preview,
@@ -577,6 +579,9 @@ if __name__ == "__main__":
         )
 
     script_path = dirname(abspath(sys.argv[0]))
-    sys.exit(main())
+    try:
+        sys.exit(main())
+    except (KeyboardInterrupt, SystemExit):
+        sys.exit(1)
 else:
     script_path = dirname(abspath(__file__))

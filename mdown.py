@@ -161,13 +161,13 @@ class MdWrapper(Markdown):
 
 class Mdown(object):
     def __init__(
-        self, file_name, encoding, title="Untitled", base_path=None,
+        self, file_name, encoding, title=None, base_path=None,
         plain=False, settings=None
     ):
         self.error = None
         self.settings = settings
         self.file_name = abspath(file_name)
-        self.title = title
+        self.title = title if title is not None else "Untitled"
         self.plain = plain
         self.base_path = base_path if base_path is not None else ''
         self.encoding = encoding

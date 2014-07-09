@@ -30,11 +30,11 @@ class MdownCommand(sublime_plugin.TextCommand):
         self.binary = sublime.load_settings("mdown.sublime-settings").get("binary", {}).get(_PLATFORM, "")
         self.reject = sublime.load_settings("mdown.sublime-settings").get("critic_reject", False)
         self.settings = alternate_settings
-        self.cmd = [self.binary, "-T", self.title, "-s"]
+        self.cmd = [self.binary, "--title=%s" % self.title]
         if self.basepath is not None:
-            self.cmd += ["-b", self.basepath]
+            self.cmd += ["--basepath=%s" % self.basepath]
         if self.settings is not None and exists(self.settings):
-            self.cmd += ["-S", self.settings]
+            self.cmd += ["-s", self.settings]
         if self.binary:
             self.convert(edit)
 
@@ -98,11 +98,11 @@ class MdownCriticStripCommand(MdownCommand):
         self.binary = sublime.load_settings("mdown.sublime-settings").get("binary", None)
         self.reject = reject
         self.settings = alternate_settings
-        self.cmd = [self.binary, "-T", self.title, "-s"]
+        self.cmd = [self.binary, "--title=%s" % self.title]
         if self.basepath is not None:
-            self.cmd += ["-b", self.basepath]
+            self.cmd += ["--basepath=%s" % self.basepath]
         if self.settings is not None and exists(self.settings):
-            self.cmd += ["-S", self.settings]
+            self.cmd += ["-s", self.settings]
         if self.binary:
             self.convert(edit)
 
