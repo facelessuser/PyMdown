@@ -187,6 +187,19 @@ This is a link "https://github.com/facelessuser/mdown".
 
 With this link (https://github.com/facelessuser/mdown), it still works.
 
+## Abbreviation
+Abreviations source are found at the bottom of the page
+```
+The HTML specification 
+is maintained by the W3C.
+
+*[HTML]: Hyper Text Markup Language
+*[W3C]:  World Wide Web Consortium
+```
+
+The HTML specification 
+is maintained by the W3C.
+
 ## Unordered List
 
 ```
@@ -582,7 +595,11 @@ __^^_insert italic bold_^^__  _^^__insert italic bold 2__^^_
 
 __^^*insert italic bold*^^__  *^^__insert italic bold 2__^^*
 
+*[HTML]: Hyper Text Markup Language
+*[W3C]:  World Wide Web Consortium
+
 [1]: https://github.com/facelessuser/mdown
+
 [^1]: This is a footnote
 [^label]: A footnote on "label"
 [^!DEF]: The footnote for definition

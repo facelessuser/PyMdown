@@ -26,7 +26,6 @@
         // "mdownx.absolutepath(base_path=${BASE_PATH})",
         "mdownx.b64(base_path=${BASE_PATH})",
         "headerid",
-        "footnotes",
         "meta",
         "smarty",
         "wikilinks",
