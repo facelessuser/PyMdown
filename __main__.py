@@ -15,11 +15,13 @@ from __future__ import print_function
 from lib.resources import load_text_resource
 from lib.mdown import Mdown, Mdowns
 from lib import formatter
+from lib.frontmatter import get_frontmatter, get_frontmatter_string
 from os.path import dirname, abspath, normpath, exists
 from os.path import isfile, isdir, splitext, join, basename
 import sys
 from lib.file_strip.json import sanitize_json
 from lib.logger import Logger
+from lib.critic_dump import CriticDump
 import json
 import subprocess
 import webbrowser
@@ -48,64 +50,8 @@ PASS = 0
 FAIL = 1
 
 
-class CriticDump(object):
-    error = None
-
-    RE_CRITIC = re.compile(
-        r'''
-            ((?P<open>\{)
-                (?:
-                    (?P<ins_open>\+{2})(?P<ins_text>.*?)(?P<ins_close>\+{2})
-                  | (?P<del_open>\-{2})(?P<del_text>.*?)(?P<del_close>\-{2})
-                  | (?P<mark_open>\={2})(?P<mark_text>.*?)(?P<mark_close>\={2})
-                  | (?P<comment>(?P<com_open>\>{2})(?P<com_text>.*?)(?P<com_close>\<{2}))
-                  | (?P<sub_open>\~{2})(?P<sub_del_text>.*?)(?P<sub_mid>\~\>)(?P<sub_ins_text>.*?)(?P<sub_close>\~{2})
-                )
-            (?P<close>\})|.)
-        ''',
-        re.MULTILINE | re.DOTALL | re.VERBOSE
-    )
-
-    def process(self, m):
-        if self.accept:
-            if m.group('ins_open'):
-                return m.group('ins_text')
-            elif m.group('del_open'):
-                return ''
-            elif m.group('mark_open'):
-                return m.group('mark_text')
-            elif m.group('com_open'):
-                return ''
-            elif m.group('sub_open'):
-                return m.group('sub_ins_text')
-            else:
-                return m.group(0)
-        else:
-            if m.group('ins_open'):
-                return ''
-            elif m.group('del_open'):
-                return m.group('del_text')
-            elif m.group('mark_open'):
-                return m.group('mark_text')
-            elif m.group('com_open'):
-                return ''
-            elif m.group('sub_open'):
-                return m.group('sub_del_text')
-            else:
-                return m.group(0)
-
-    def dump(self, source, encoding, accept):
-        """ Match and store Fenced Code Blocks in the HtmlStash. """
-        text = ''
-        try:
-            with codecs.open(source, "r", encoding=encoding) as f:
-                self.accept = accept
-                for m in self.RE_CRITIC.finditer(f.read()):
-                    text += self.process(m)
-        except:
-            self.error = str(traceback.format_exc())
-            text = None
-        return text
+class MdownSettingsException(Exception):
+    pass
 
 
 def get_settings(file_name, preview, critic_mode, plain):
@@ -115,7 +61,6 @@ def get_settings(file_name, preview, critic_mode, plain):
     Unpack the settings file if needed.
     """
 
-    status = PASS
     # Use default file if one was not provided
     if file_name is None or not exists(file_name):
         file_name = join(script_path, "mdown.json")
@@ -136,7 +81,7 @@ def get_settings(file_name, preview, critic_mode, plain):
             settings = json.loads(sanitize_json(f.read()))
     except:
         Logger.log(traceback.format_exc())
-        status = FAIL
+        raise MdownSettingsException("Could not parse settings file!")
 
     absolute = False
     critic_found = []
@@ -191,7 +136,7 @@ def get_settings(file_name, preview, critic_mode, plain):
                 style = "default" if pygment_style is None else pygment_style.group(1)
     settings["style"] = style
 
-    return status, settings
+    return settings
 
 
 def get_title(md_file, title_val, is_stream):
@@ -394,21 +339,30 @@ def convert(
             else:
                 Logger.log("Converting %s..." % md_file)
 
-            # Get base path to use when resolving basepath paths
-            base_path = get_base_path(md_file, basepath, stream)
+            if not stream:
+                fm, text = get_frontmatter(md_file, encoding)
+            else:
+                fm, text = get_frontmatter_string(md_file)
 
-            # Get output location
-            out = get_output(
-                md_file, count, output, batch, critic_mode
-            )
+            print(fm)
+            try:
+                # Get base path to use when resolving basepath paths
+                base_path = get_base_path(md_file, basepath, stream)
 
-            # Get the title to be used in the HTML
-            html_title = get_title(md_file, title, stream)
+                # Get output location
+                out = get_output(
+                    md_file, count, output, batch, critic_mode
+                )
 
-            # Get the settings if available
-            status, settings = get_settings(
-                settings_path, preview, critic_mode, plain
-            )
+                # Get the title to be used in the HTML
+                html_title = get_title(md_file, title, stream)
+
+                # Get the settings if available
+                settings = get_settings(
+                    settings_path, preview, critic_mode, plain
+                )
+            except:
+                status = FAIL
 
             if status == PASS:
                 if critic_mode & CRITIC_DUMP:
@@ -417,14 +371,15 @@ def convert(
                         status = FAIL
                     else:
                         if batch or (count == 0 and not batch):
-                            output_stream = formatter.Text(output, encoding)
-                            if output_stream.error is not None:
-                                Logger.log(output_stream.error)
+                            try:
+                                output_stream = formatter.Text(output, encoding)
+                            except:
                                 status = FAIL
                                 break
-                        text = CriticDump().dump(md_file, critic_mode & CRITIC_ACCEPT)
-                        if text.error is not None:
-                            Logger.log(text.error)
+
+                        try:
+                            text = CriticDump().dump(md_file, critic_mode & CRITIC_ACCEPT)
+                        except:
                             status = FAIL
                             break
 
@@ -435,26 +390,25 @@ def convert(
                             output_stream = None
                 else:
                     if batch or (count == 0 and not batch):
-                        output_stream = formatter.Html(
-                            out, preview=preview, title=html_title, plain=plain,
-                            encoding=encoding, settings=settings
-                        )
-                        if output_stream.error is not None:
-                            Logger.log(output_stream.error)
-                            output_stream.error = None
+                        try:
+                            output_stream = formatter.Html(
+                                out, preview=preview, title=html_title, plain=plain,
+                                encoding=encoding, settings=settings
+                            )
+                        except:
+                            status = FAIL
                             break
 
-                    mdown = (Mdowns if stream else Mdown)(
-                        md_file, encoding,
-                        base_path=base_path,
-                        extensions=settings.get("extensions", "default")
-                    )
-
-                    if mdown.error is not None:
-                        Logger.log(mdown.error)
-                        status = FAIL
+                    try:
+                        mdown = Mdowns(
+                            text,
+                            base_path=base_path,
+                            extensions=settings.get("extensions", "default")
+                        )
+                    except:
+                        Logger.log(str(traceback.format_exc()))
                         output_stream.close()
-                        output_stream = None
+                        status = FAIL
                         break
 
                     output_stream.write(mdown.markdown)
@@ -463,7 +417,6 @@ def convert(
                         output_stream.close()
                         if output_stream.file.name is not None:
                             auto_open(output_stream.file.name)
-                        output_stream = None
             count += 1
 
     return status

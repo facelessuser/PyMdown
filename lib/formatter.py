@@ -23,6 +23,10 @@ DEFAULT_CSS = None
 RE_URL_START = r"https?://"
 
 
+class MdownFormatterException(Exception):
+    pass
+
+
 def get_default_template():
     return DEFAULT_TEMPLATE
 
@@ -92,20 +96,19 @@ class Terminal(object):
 
 class Html(object):
     def __init__(self, output, preview=False, title=None, plain=False, encoding="utf-8", settings={}):
-        self.error = None
         self.settings = settings
         self.encoding = encoding
         self.encode_file = True
         self.highlight_js = self.settings.get("highlight_js", False)
         self.body_end = None
         self.template = ''
-        if self.set_output(output, preview) == 0:
-            self.load_header(
-                self.settings.get("style", None),
-                title if title is not None else "Untitled"
-            )
-            if not plain:
-                self.write_html_start()
+        self.set_output(output, preview)
+        self.load_header(
+            self.settings.get("style", None),
+            title if title is not None else "Untitled"
+        )
+        if not plain:
+            self.write_html_start()
 
     def write_html_start(self):
         template = self.settings.get("html_template", "default")
@@ -120,7 +123,6 @@ class Html(object):
                 self.body_end = m.end(0)
 
     def set_output(self, output, preview):
-        status = 0
         if output is None:
             self.file = Terminal()
         try:
@@ -130,9 +132,8 @@ class Html(object):
             else:
                 self.file = tempfile.NamedTemporaryFile(delete=False, suffix=".html")
         except:
-            status = 1
-            self.error = str(traceback.format_exc())
-        return status
+            Logger.Log(str(traceback.format_exc()))
+            raise MdownFormatterException("Could not open output file!")
 
     def close(self):
         if self.body_end is not None:
@@ -223,7 +224,8 @@ class Text(object):
                 self.file = codecs.open(output, "w", encoding=encoding)
                 self.encode_file = False
             except:
-                self.error = str(traceback.format_exc())
+                Logger.Log(str(traceback.format_exc()))
+                raise MdownFormatterException("Could not open output file!")
 
     def write(self, text):
         self.file.write(

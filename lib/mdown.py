@@ -29,6 +29,10 @@ else:
     string_type = basestring  # flake8: noqa
 
 
+class MdownException(Exception):
+    pass
+
+
 class MdWrapper(Markdown):
     def __init__(self, *args, **kwargs):
         super(MdWrapper, self).__init__(*args, **kwargs)
@@ -67,7 +71,6 @@ class Mdown(object):
     def __init__(
         self, file_name, encoding, base_path=None, extensions=[]
     ):
-        self.error = None
         self.file_name = abspath(file_name)
         self.base_path = base_path if base_path is not None else ''
         self.encoding = encoding
@@ -91,18 +94,16 @@ class Mdown(object):
             with codecs.open(self.file_name, "r", encoding=self.encoding) as f:
                 self.markdown = MdWrapper(extensions=self.extensions).convert(f.read())
         except:
-            self.error = str(traceback.format_exc())
+            raise MdownException(str(traceback.format_exc()))
 
 
 class Mdowns(Mdown):
     def __init__(
-        self, string, encoding,
+        self, string,
         base_path=None, extensions=[]
     ):
-        self.error = None
         self.string = string
         self.base_path = base_path if base_path is not None else ''
-        self.encoding = encoding
         self.read_extensions(extensions)
         self.convert()
 
@@ -111,4 +112,4 @@ class Mdowns(Mdown):
         try:
             self.markdown = MdWrapper(extensions=self.extensions).convert(self.string)
         except:
-            self.error = str(traceback.format_exc())
+            raise MdownException(str(traceback.format_exc()))
