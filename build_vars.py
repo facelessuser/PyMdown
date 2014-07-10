@@ -16,17 +16,11 @@ data = [
     ("stylesheets/default.css", "./stylesheets/default.css", "DATA"),
     ("LICENSE", "./LICENSE", "DATA"),
     ("mdown.json", "./mdown.json", "DATA"),
-    ("highlight.js/highlight.pack.js", "./highlight.js/highlight.pack.js", "DATA"),
-    ("highlight.js/highlight.noguess.js", "./highlight.js/highlight.noguess.js", "DATA"),
-    ("highlight.js/highlight.guess.js", "./highlight.js/highlight.guess.js", "DATA"),
-    ("highlight.js/LICENSE", "./highlight.js/LICENSE", "DATA"),
     ("markdown/LICENSE.md", "./markdown/LICENSE.md", "DATA"),
     ("pygments/LICENSE", "./pygments/LICENSE", "DATA")
 ]
 
-data_to_crawl = [
-    "highlight.js/styles"
-]
+data_to_crawl = []
 
 for directory in data_to_crawl:
     for f in os.listdir(directory):

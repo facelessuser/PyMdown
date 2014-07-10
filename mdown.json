@@ -30,17 +30,5 @@
         "smarty",
         "wikilinks",
         "admonition"
-    ],
-
-    // Use highlight.js instead of pygments
-    "highlight_js": false,
-
-    // Select highlight js theme
-    "highlight_js_theme": "default",
-
-    // Do not try and guess the language.
-    // Only look for fenced blocks where the language
-    // is expressly defined.  Set to true to enable
-    // guessing.
-    "highlight_js_guess": false
+    ]
 }

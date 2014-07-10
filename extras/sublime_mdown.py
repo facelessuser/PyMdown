@@ -72,6 +72,8 @@ class MdownPreviewCommand(MdownCommand):
         self.cmd.append("-p")
         if self.reject:
             self.cmd.append("-r")
+        else:
+            self.cmd.append('-a')
 
         print(self.call())
         if self.returncode:
@@ -107,9 +109,11 @@ class MdownCriticStripCommand(MdownCommand):
             self.convert(edit)
 
     def convert(self, edit):
-        self.cmd += ["-C", "-p", "-q"]
+        self.cmd += ["--critic-dump", "-p", "-q"]
         if self.reject:
             self.cmd.append("-r")
+        else:
+            self.cmd.append("-a")
 
         text = self.call()
         if self.returncode:

@@ -1,7 +1,11 @@
 import re
-import codecs
-from .logger import Logger
-import traceback
+
+CRITIC_IGNORE = 0
+CRITIC_ACCEPT = 1
+CRITIC_REJECT = 2
+CRITIC_VIEW = 4
+CRITIC_DUMP = 8
+CRITIC_OFF = 16
 
 RE_CRITIC = re.compile(
     r'''
@@ -53,16 +57,11 @@ class CriticDump(object):
             else:
                 return m.group(0)
 
-    def dump(self, source, encoding, accept):
+    def dump(self, source, accept):
         """ Match and store Fenced Code Blocks in the HtmlStash. """
         text = ''
-        try:
-            with codecs.open(source, "r", encoding=encoding) as f:
-                self.accept = accept
-                for m in RE_CRITIC.finditer(f.read()):
-                    text += self.process(m)
-        except:
-            Logger.log(str(traceback.format_exc()))
-            raise MdownCriticDumpException("Critic parsing failed!")
+        self.accept = accept
+        for m in RE_CRITIC.finditer(source):
+            text += self.process(m)
 
         return text

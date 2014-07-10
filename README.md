@@ -10,7 +10,7 @@ This is in an Alpha state, though it is very useable.  Because of the Alpha stat
 - Receive multiple files or file patterns to process
 - Receive input file stream for conversion
 - Configurable options file to tweak Python's Markdown package behavior
-- Uses Pygments for syntax highighlighting or optionally highlight.js
+- Uses Pygments for syntax highighlighting
 - Repo includes in `extras` a simple Sublime Text plugin to stream your files to mdown
 - Preview option to open output in a browser intead
 - Optionally all the default Markdown extensions, plus these optional mdownx extensions:
@@ -47,22 +47,6 @@ Syntax highlighting can be done in fenced blocks when enabling the `codehilite` 
 ```
 
 Notice the syntax style is set with the `pygments_style` key.
-
-## How To Use highlight.js Syntax Highlighting
-Highlight.js is built in. Use the following settings to enable and control it.
-
-```javascript
-    // Use highlight.js instead of pygments
-    "highlight_js": false,
-
-    // Select highlight js theme
-    "highlight_js_theme": "default",
-
-    // Do not try and guess the language.
-    // Only look for fenced blocks where the language
-    // is expressly defined
-    "highlight_js_noguess": true
-```
 
 # Add More CSS and JS Files
 Add them to the provided settings:
@@ -201,8 +185,8 @@ Just drop the extra folder in your Sublime `Packages` folder and name to somethi
     - [X] Front in preprocessor in CLI to dump the markdown without crtic marks if desired
 - [X] Tasklist (like github's)
 - [X] Github Emoji (just link the images to github's assets)
-- [X] Better highlight.js support
 - [X] Option in binary to show licenses
+- [ ] Yaml and json frontmatter handling
 - [ ] Maybe a better batch output file pattern system
 - [ ] Maybe inject javascript into current test documents to verify certain expected things are in output HTML
 - ...stuff I havn't yet thought of...

@@ -1,13 +1,29 @@
+---
+    settings:
+        extensions:
+        - extra
+        - mdownx.github
+        - mdownx.insert
+        - toc
+        - headerid
+        - smarty
+        - meta
+        - wikilinks
+        - admonition
+        - codehilite(guess_lang=False,pygments_style=zenburn)
+        - mdownx.b64(base_path=${BASE_PATH})
+        - mdownx.absolutepath(base_path=${BASE_PATH})
+---
 !!! hint "Recommended Extentions for Testing"
-    This is mainly used to test the Python Markdown parser
+    This is mainly used to test the Python Markdown parser.
 
     - extra
     - mdownx.github
     - mdownx.insert
     - toc
     - headerid
-    - meta
     - smarty
+    - meta
     - footnotes
     - wikilinks
     - admonition

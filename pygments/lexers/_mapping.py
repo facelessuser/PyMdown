@@ -333,6 +333,7 @@ LEXERS = {
     'TextLexer': ('pygments.lexers.special', 'Text only', ('text',), ('*.txt',), ('text/plain',)),
     'TodotxtLexer': ('pygments.lexers.text', 'Todotxt', ('todotxt',), ('todo.txt', '*.todotxt'), ('text/x-todo',)),
     'TreetopLexer': ('pygments.lexers.parsers', 'Treetop', ('treetop',), ('*.treetop', '*.tt'), ()),
+    'TrexLexer': ('pygments.lexers.trex', "Trex", ('trex',), ('*.trex', '*.trx', '*.def'), ('text/trex')),
     'TypeScriptLexer': ('pygments.lexers.web', 'TypeScript', ('ts',), ('*.ts',), ('text/x-typescript',)),
     'UrbiscriptLexer': ('pygments.lexers.other', 'UrbiScript', ('urbiscript',), ('*.u',), ('application/x-urbiscript',)),
     'VCTreeStatusLexer': ('pygments.lexers.other', 'VCTreeStatus', ('vctreestatus',), (), ()),

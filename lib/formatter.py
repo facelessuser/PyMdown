@@ -45,19 +45,6 @@ def get_js(js, link=False):
         return '<script type="text/javascript">\n%s\n</script>\n' % js if js is not None else ""
 
 
-def get_highlight_js_code(guess):
-    scripts = []
-    try:
-        scripts.append(get_js(load_text_resource("highlight.js", "highlight.pack.js")))
-        if not guess:
-            scripts.append(get_js(load_text_resource("highlight.js", "highlight.noguess.js")))
-        else:
-            scripts.append(get_js(load_text_resource("highlight.js", "highlight.guess.js")))
-    except:
-        pass
-    return scripts
-
-
 def get_style(style, link=False):
     if link:
         return '<link href="%s" rel="stylesheet" type="text/css">\n' % style
@@ -75,15 +62,6 @@ def get_pygment_style(style):
     return '<style>\n%s\n</style>\n' % text if text is not None else ""
 
 
-def get_highlight_js_style(style):
-    # Try and get specified CSS
-    text = load_text_resource("highlight.js", "styles", "%s.css" % style)
-    if text is None:
-        # Resort to default CSS
-        text = load_text_resource("highlight.js", "styles", "default.css")
-    return '<style>\n%s\n</style>\n' % text if text is not None else ""
-
-
 class Terminal(object):
     name = None
 
@@ -95,11 +73,9 @@ class Terminal(object):
 
 
 class Html(object):
-    def __init__(self, output, preview=False, title=None, plain=False, encoding="utf-8", settings={}):
+    def __init__(self, output, preview=False, title=None, plain=False, settings={}):
         self.settings = settings
-        self.encoding = encoding
         self.encode_file = True
-        self.highlight_js = self.settings.get("highlight_js", False)
         self.body_end = None
         self.template = ''
         self.set_output(output, preview)
@@ -123,16 +99,17 @@ class Html(object):
                 self.body_end = m.end(0)
 
     def set_output(self, output, preview):
+        print(output)
         if output is None:
             self.file = Terminal()
         try:
-            if not preview:
+            if not preview and output is not None:
                 self.file = codecs.open(output, "w", encoding="utf-8", errors="xmlcharrefreplace")
                 self.encode_file = False
-            else:
+            elif preview:
                 self.file = tempfile.NamedTemporaryFile(delete=False, suffix=".html")
         except:
-            Logger.Log(str(traceback.format_exc()))
+            Logger.log(str(traceback.format_exc()))
             raise MdownFormatterException("Could not open output file!")
 
     def close(self):
@@ -148,17 +125,10 @@ class Html(object):
     def load_highlight(self, highlight_style):
         style = None
         self.highlight_enabled = False
-        from markdown.extensions import codehilite
         if highlight_style is not None:
             self.highlight_enabled = True
-            if not self.highlight_js:
-                # Ensure pygments is enabled in the highlighter
-                codehilite.pygments = True
-                style = get_pygment_style(highlight_style)
-            else:
-                # Disable pygments in the highlighter
-                codehilite.pygments = False
-                style = get_highlight_js_style(highlight_style)
+            # Ensure pygments is enabled in the highlighter
+            style = get_pygment_style(highlight_style)
 
         css = []
         if style is not None:
@@ -203,8 +173,6 @@ class Html(object):
                         Logger.log(str(traceback.format_exc()))
                 else:
                     scripts.append(get_js(js, link=True))
-        if self.highlight_enabled and self.highlight_js:
-            scripts += get_highlight_js_code(self.settings.get("highlight_js_guess", False))
         return ''.join(scripts)
 
     def load_header(self, style, title):
