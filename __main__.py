@@ -12,16 +12,18 @@ Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
 from __future__ import unicode_literals
 from __future__ import absolute_import
 from __future__ import print_function
-from mdown import Mdown, Mdowns, load_text_resource
+from lib.resources import load_text_resource
+from lib.mdown import Mdown, Mdowns
+from lib import formatter
 from os.path import dirname, abspath, normpath, exists
 from os.path import isfile, isdir, splitext, join, basename
 import sys
-from file_strip.json import sanitize_json
+from lib.file_strip.json import sanitize_json
+from lib.logger import Logger
 import json
 import subprocess
 import webbrowser
 import traceback
-import tempfile
 import codecs
 import re
 
@@ -42,20 +44,13 @@ CRITIC_VIEW = 4
 CRITIC_DUMP = 8
 CRITIC_OFF = 16
 
-
-class Logger(object):
-    """ Log messages """
-    quiet = False
-
-    @classmethod
-    def log(cls, msg):
-        """ Log if not quiet """
-
-        if not cls.quiet:
-            print(msg)
+PASS = 0
+FAIL = 1
 
 
 class CriticDump(object):
+    error = None
+
     RE_CRITIC = re.compile(
         r'''
             ((?P<open>\{)
@@ -99,12 +94,17 @@ class CriticDump(object):
             else:
                 return m.group(0)
 
-    def dump(self, source, accept):
+    def dump(self, source, encoding, accept):
         """ Match and store Fenced Code Blocks in the HtmlStash. """
         text = ''
-        self.accept = accept
-        for m in self.RE_CRITIC.finditer(source):
-            text += self.process(m)
+        try:
+            with codecs.open(source, "r", encoding=encoding) as f:
+                self.accept = accept
+                for m in self.RE_CRITIC.finditer(f.read()):
+                    text += self.process(m)
+        except:
+            self.error = str(traceback.format_exc())
+            text = None
         return text
 
 
@@ -115,7 +115,7 @@ def get_settings(file_name, preview, critic_mode, plain):
     Unpack the settings file if needed.
     """
 
-    status = 0
+    status = PASS
     # Use default file if one was not provided
     if file_name is None or not exists(file_name):
         file_name = join(script_path, "mdown.json")
@@ -136,7 +136,7 @@ def get_settings(file_name, preview, critic_mode, plain):
             settings = json.loads(sanitize_json(f.read()))
     except:
         Logger.log(traceback.format_exc())
-        status = 1
+        status = FAIL
 
     absolute = False
     critic_found = []
@@ -179,6 +179,18 @@ def get_settings(file_name, preview, critic_mode, plain):
 
     settings["extensions"] = extensions
 
+    # Find the style
+    style = None
+    re_pygment = r"pygments_style\s*=\s*([a-zA-Z][a-zA-Z_\d]*)"
+    for e in extensions:
+        if e.startswith("codehilite"):
+            if settings.get("highlight_js", False):
+                style = settings.get("highlight_js_theme", "default")
+            else:
+                pygment_style = re.search(re_pygment, e)
+                style = "default" if pygment_style is None else pygment_style.group(1)
+    settings["style"] = style
+
     return status, settings
 
 
@@ -193,75 +205,33 @@ def get_title(md_file, title_val, is_stream):
     return title
 
 
-def get_output(md_file, index, output_val, terminal, is_stream, critic_mode):
+def get_output(md_file, index, out_name, batch, critic_mode):
     """
     Get the path to output the file.
-    If doing multiple files and pointing to a directory,
-    it will convert the current file name to a HTML filename
-    in that directory.
-
-    If doing multiple files and not pointing to a directory,
-    it will use ${count} to have different file names.  If you
-    forget this, it will rewrite the same file over and over.
-
-    If doing a single file, and pointing to a directory, it will
-    convert the current file name to a HTML filename in that directory.
-
-    If doing a single file and not pointing to a directory, it will
-    use the file path given.
-
-    If doing a stream and pointing to a directory, the output will be
-    streamed to the terminal (stdout).
-
-    If doing a stream and not pointing to a directory, the output will
-    be streamed to that file path.
-
-    If creating the output fails by mdown or none of these conditions are met,
-    the output will default to the terminal.
     """
 
     critic_enabled = critic_mode & CRITIC_ACCEPT or critic_mode & CRITIC_REJECT
-    if terminal:
-        # We want stdout
-        output = None
-    elif output_val is not None and output_val != "":
-        # Output is specified
-        name = abspath(output_val)
-        if exists(name) and isdir(name):
-            # Its a directory
-            if not is_stream:
-                # Use path and own name
-                if critic_mode & CRITIC_DUMP and critic_enabled:
-                    if critic_mode & CRITIC_REJECT:
-                        label = ".rejected"
-                    else:
-                        label = ".accepted"
-                    base, ext = splitext(abspath(md_file))
-                    output = join(name, "%s%s%s" % (base, label, ext))
-                else:
-                    output = join(name, "%s.html" % splitext(abspath(md_file))[0])
+    output = None
+
+    if not batch:
+        if out_name is not None:
+            if isdir(out_name):
+                Logger.log("%s is a directory!" % out_name)
             else:
-                # Stream: don't know what the file should be called
-                output = None
-        else:
-            # Apply mult-pattern to name
-            output = name.replace("${count}", index)
-    elif not is_stream:
+                # Format the output file for critic dump
+                output = abspath(out_name)
+    else:
+        name = abspath(md_file)
         if critic_mode & CRITIC_DUMP and critic_enabled:
             if critic_mode & CRITIC_REJECT:
                 label = ".rejected"
             else:
                 label = ".accepted"
             base, ext = splitext(abspath(md_file))
-            output = "%s%s%s" % (base, label, ext)
+            output = join(name, "%s%s%s" % (base, label, ext))
         else:
-            # Single or multi file: use own name
-            output = "%s.html" % splitext(abspath(md_file))[0]
-    else:
-        output = None
+            output = join(name, "%s.html" % splitext(abspath(md_file))[0])
 
-    if not is_stream and output == md_file:
-        output = None
     return output
 
 
@@ -342,76 +312,13 @@ def auto_open(name):
             pass
 
 
-def critic_dump(md_file, enc, out, stream, reject):
-    """ Process the critic marks and dump the modified file """
-
-    status = 0
-    text = None
-    try:
-        if not stream:
-            with codecs.open(md_file, "r", encoding=enc) as f:
-                text = CriticDump().dump(f.read(), not reject)
-        else:
-            text = CriticDump().dump(md_file, not reject)
-    except:
-        Logger.log(traceback.format_exc())
-        status = 1
-    if text is not None:
-        if out is not None:
-            try:
-                if out is not None:
-                    with codecs.open(out, "w", encoding=enc) as f:
-                        f.write(text)
-            except:
-                status = 1
-                print(text.encode(enc))
-        else:
-            print(text.encode(enc))
-    return status
-
-
-def html_dump(md_file, enc, out, stream, html_title, base_path, preview, plain, settings):
-    """ Dump HTML """
-
-    status = 0
-    # Instantiate Mdown class
-    mdown = (Mdowns if stream else Mdown)(
-        md_file, enc,
-        title=html_title, base_path=base_path, plain=plain,
-        settings=settings
-    )
-
-    # If all went well, either preview the file,
-    # or write it to file or terminal
-    if mdown.error is None:
-        if preview:
-            try:
-                with tempfile.NamedTemporaryFile(delete=False, suffix=".html") as f:
-                    f.write(mdown.markdown)
-                auto_open(f.name)
-            except:
-                Logger.log(traceback.format_exc())
-                print(mdown.markdown)
-                status = 1
-        else:
-            mdown.write(out)
-        if status == 0 and mdown.error is not None:
-            print(mdown.markdown)
-            Logger.log(mdown.error)
-            status = 1
-    else:
-        Logger.log(mdown.error)
-        status = 1
-    return status
-
-
 def display_licenses():
-    status = 0
+    status = PASS
     text = load_text_resource("LICENSE")
     if text is not None:
         print(text)
     else:
-        status = 1
+        status = FAIL
     print("")
     print("Idea based off of the Markdown Preview plugin:")
     print("https://github.com/revolunet/sublimetext-markdown-preview")
@@ -423,33 +330,33 @@ def display_licenses():
     if text is not None:
         print(text)
     else:
-        status = 1
+        status = FAIL
     print("")
     print("Pygments - http://pygments.org/")
     text = load_text_resource("pygments", "LICENSE")
     if text is not None:
         print(text)
     else:
-        status = 1
+        status = FAIL
     print("")
     print("highlight.js - http://highlightjs.org/")
     text = load_text_resource("highlight.js", "LICENSE")
     if text is not None:
         print(text)
     else:
-        status = 1
+        status = FAIL
     return status
 
 
 def convert(
     markdown=[], title=None, encoding="utf-8",
     output=None, basepath=None, preview=False,
-    terminal=False, quiet=False,
+    batch=False, quiet=False,
     text_buffer=None, critic_mode=CRITIC_IGNORE,
     settings_path=None, plain=False
 ):
     """ Convert markdown file(s) to html """
-    status = 0
+    status = PASS
     Logger.quiet = quiet
 
     # Get file(s) or stream
@@ -459,23 +366,27 @@ def convert(
     if text_buffer is not None:
         stream = True
         files = [text_buffer]
+        batch = False
     else:
         try:
             files = get_files(markdown)
         except:
             files = [get_file_stream(encoding)]
             stream = True
+            batch = False
 
     # Make sure we have something we can process
     if files is None or len(files) == 0 or files[0] in ('', None):
         Logger.log("Nothing to parse!")
-        status = 1
+        status = FAIL
 
-    if status == 0:
+    output_stream = None
+
+    if status == PASS:
         count = 0
         for md_file in files:
             # Quit dumping if there was an error
-            if status != 0:
+            if status != PASS:
                 break
 
             if stream:
@@ -488,7 +399,7 @@ def convert(
 
             # Get output location
             out = get_output(
-                md_file, count, output, terminal, stream, critic_mode
+                md_file, count, output, batch, critic_mode
             )
 
             # Get the title to be used in the HTML
@@ -499,18 +410,62 @@ def convert(
                 settings_path, preview, critic_mode, plain
             )
 
-            if status == 0:
+            if status == PASS:
                 if critic_mode & CRITIC_DUMP:
                     if not (critic_mode & CRITIC_REJECT or critic_mode & CRITIC_ACCEPT):
                         Logger.log("Acceptance or rejection was not specified for critic dump!")
-                        status = 1
+                        status = FAIL
                     else:
-                        status = critic_dump(md_file, encoding, out, stream, critic_mode & CRITIC_REJECT)
+                        if batch or (count == 0 and not batch):
+                            output_stream = formatter.Text(output, encoding)
+                            if output_stream.error is not None:
+                                Logger.log(output_stream.error)
+                                status = FAIL
+                                break
+                        text = CriticDump().dump(md_file, critic_mode & CRITIC_ACCEPT)
+                        if text.error is not None:
+                            Logger.log(text.error)
+                            status = FAIL
+                            break
+
+                        output_stream.write(text)
+
+                        if (count + 1 == len(files) and not batch) or batch:
+                            output_stream.close()
+                            output_stream = None
                 else:
-                    status = html_dump(
-                        md_file, encoding, out, stream, html_title,
-                        base_path, preview, plain, settings
+                    if batch or (count == 0 and not batch):
+                        output_stream = formatter.Html(
+                            out, preview=preview, title=html_title, plain=plain,
+                            encoding=encoding, settings=settings
+                        )
+                        if output_stream.error is not None:
+                            Logger.log(output_stream.error)
+                            output_stream.error = None
+                            break
+
+                    mdown = (Mdowns if stream else Mdown)(
+                        md_file, encoding,
+                        base_path=base_path,
+                        extensions=settings.get("extensions", "default")
                     )
+
+                    if mdown.error is not None:
+                        Logger.log(mdown.error)
+                        status = FAIL
+                        output_stream.close()
+                        output_stream = None
+                        break
+
+                    output_stream.write(mdown.markdown)
+
+                    if (count + 1 == len(files) and not batch) or batch:
+                        output_stream.close()
+                        if output_stream.file.name is not None:
+                            auto_open(output_stream.file.name)
+                        output_stream = None
+            count += 1
+
     return status
 
 
@@ -539,8 +494,7 @@ if __name__ == "__main__":
         parser.add_argument('--critic-dump', action='store_true', default=False, help="Process critic marks, dumps file(s), and exits.")
         parser.add_argument('--no-critic', action='store_true', default=False, help="Turn off critic feature completely")
         # Output
-        parser.add_argument('--terminal', '-t', action='store_true', default=False, help="Print to terminal (stdout).")
-        parser.add_argument('--output', '-o', nargs=1, default=None, help="Output directory can be a directory or file_name.  Use ${count} when exporting multiple files and using a file pattern.")
+        parser.add_argument('--output', '-o', nargs=1, default=None, help="Output file. Ignored in batch mode.")
         parser.add_argument('--batch', '-b', action='store_true', default=False, help="Batch mode output.")
         # Input configuration
         parser.add_argument('--settings', '-s', nargs=1, default=None, help="Load the settings file from an alternate location.")
@@ -555,7 +509,7 @@ if __name__ == "__main__":
 
         critic_mode = CRITIC_IGNORE
 
-        if args.no_critic:
+        if not args.no_critic:
             if args.accept or args.reject:
                 critic_mode |= CRITIC_ACCEPT if args.accept else CRITIC_REJECT
 
@@ -567,9 +521,9 @@ if __name__ == "__main__":
         return convert(
             encoding=args.encoding[0],
             basepath=first_or_none(args.basepath),
-            terminal=args.terminal,
             critic_mode=critic_mode,
             title=first_or_none(args.title),
+            batch=args.batch,
             quiet=args.quiet,
             preview=args.preview,
             output=first_or_none(args.output),
