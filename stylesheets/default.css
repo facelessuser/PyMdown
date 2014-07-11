@@ -10,10 +10,9 @@
 html { font-size: 100%; overflow-y: scroll; -webkit-text-size-adjust: 100%; -ms-text-size-adjust: 100%; }
 
 body{
-  color:#4d4d4c;
-  font-family:Georgia, Palatino, 'Palatino Linotype', Times, 'Times New Roman',
-              "Hiragino Sans GB", "STXihei", "微软雅黑", serif;
-  font-size:12px;
+  color:#333;
+  font-family: Helvetica, arial, freesans, clean, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
+  font-size:13px;
   line-height:1.5em;
   background:#fefefe;
   width: 80%;
@@ -38,7 +37,7 @@ a::selection { background:rgba(255,255,0,0.3); color:#0645ad }
 
 /* Header Anchor Links*/
 a.headeranchor-link {
-  color:#111;
+  color:#333;
   border: 0;
   margin-left: -20px;
   padding-right: 6px;
@@ -61,8 +60,8 @@ span.headeranchor {
 }
 
 a.headeranchor-link:hover { text-decoration: none;}
-a.headeranchor-link:visited { color:#4d4d4c; }
-a.headeranchor-link:active { color:#4d4d4c; }
+a.headeranchor-link:visited { color:#333; }
+a.headeranchor-link:active { color:#333; }
 a.headeranchor-link:hover span.headeranchor:before { content: '\f05c'; }
 h1:hover a span.headeranchor:before { content: '\f05c'; }
 h2:hover a span.headeranchor:before { content: '\f05c'; }
@@ -86,18 +85,17 @@ img {
 
 /* Headers */
 h1,h2,h3,h4,h5,h6 {
-  font-weight:normal;
-  color:#111;
+  font-weight:bold;
+  color:#333;
   line-height: 1.7;
   position: relative;
 }
-h4,h5,h6{ font-weight: bold; }
 h1 { font-size:2.5em; border-bottom: 1px solid #ddd;}
 h2 { font-size:2em; border-bottom:1px solid #eee; padding-bottom: 5px; }
 h3 { font-size:1.5em; }
 h4 { font-size:1.2em; }
 h5 { font-size:1em; }
-h6 { font-size:0.9em; }
+h6 { font-size:1em; color: #777;}
 
 /* Block Quotes */
 blockquote {
@@ -117,7 +115,7 @@ span.backtick {
 }
 
 pre, code, kbd, samp {
-  color: #000;
+  color: #333;
   font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
