@@ -234,7 +234,7 @@ def convert(
                         try:
                             output_stream = formatter.Html(
                                 settings["builtin"]["destination"], preview=config.preview, title=settings["builtin"]["title"],
-                                plain=config.plain, settings=settings["settings"]
+                                plain=config.plain, settings=settings["settings"], noclasses=config.pygments_noclasses
                             )
                         except:
                             Logger.log(traceback.format_exc())

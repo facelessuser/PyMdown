@@ -39,6 +39,7 @@ class Settings(object):
         self.encoding = encoding
         self.preview = preview
         self.is_stream = stream
+        self.pygments_noclasses = False
         self.settings = {
             "builtin": {
                 "title": None,
@@ -218,8 +219,28 @@ class Settings(object):
         # Find the style
         style = None
         re_pygment = r"pygments_style\s*=\s*([a-zA-Z][a-zA-Z_\d]*)"
+        re_insert_pygment = re.compile(r"(?P<bracket_start>codehilite\([^)]+?)(?P<bracket_end>\s*\)$)|(?P<start>codehilite)")
+        re_no_classes = re.compile(r"noclasses\s*=\s*(True|False)")
+        self.pygments_noclasses = False
+        count = 0
         for e in extensions:
             if e.startswith("codehilite"):
-                pygment_style = re.search(re_pygment, e)
-                style = "default" if pygment_style is None else pygment_style.group(1)
+                pygments_style = re.search(re_pygment, e)
+                if pygments_style is None:
+                    style = "github"
+                    m = re_insert_pygment.match(e)
+                    if m is not None:
+                        if m.group('bracket_start'):
+                            start = m.group('bracket_start') + ',pygments_style='
+                            end = ")"
+                        else:
+                            start = m.group('start') + "(pygments_style="
+                            end = ')'
+                        extensions[count] = start + style + end
+                else:
+                    style = "github" if pygments_style is None else pygments_style.group(1)
+                noclasses = re_no_classes.search(e)
+                if noclasses is not None and noclasses.group(1) == "True":
+                    self.pygments_noclasses = True
+            count += 1
         settings["settings"]["style"] = style

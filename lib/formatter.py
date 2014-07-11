@@ -68,7 +68,7 @@ def get_pygment_style(style):
         text = HtmlFormatter(style=style).get_style_defs('.codehilite pre')
     except:
         # Try and request pygments to generate default
-        text = HtmlFormatter(style="default").get_style_defs('.codehilite pre')
+        text = HtmlFormatter(style="github").get_style_defs('.codehilite pre')
     return '<style>\n%s\n</style>\n' % text if text is not None else ""
 
 
@@ -83,11 +83,15 @@ class Terminal(object):
 
 
 class Html(object):
-    def __init__(self, output, preview=False, title=None, plain=False, settings={}):
+    def __init__(
+        self, output, preview=False, title=None,
+        plain=False, noclasses=False, settings={}
+    ):
         self.settings = settings
         self.encode_file = True
         self.body_end = None
         self.template = ''
+        self.noclasses = noclasses
         self.set_output(output, preview)
         self.load_header(
             self.settings.get("style", None),
@@ -133,9 +137,7 @@ class Html(object):
 
     def load_highlight(self, highlight_style):
         style = None
-        self.highlight_enabled = False
-        if highlight_style is not None:
-            self.highlight_enabled = True
+        if highlight_style is not None and not self.noclasses:
             # Ensure pygments is enabled in the highlighter
             style = get_pygment_style(highlight_style)
 
@@ -163,6 +165,7 @@ class Html(object):
                             css.append(get_style(f.read()))
                     except:
                         Logger.log(str(traceback.format_exc()))
+
 
         css += self.load_highlight(style)
         return ''.join(css)
