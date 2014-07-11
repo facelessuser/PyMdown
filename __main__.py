@@ -12,19 +12,19 @@ Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
 from __future__ import unicode_literals
 from __future__ import absolute_import
 from __future__ import print_function
-from lib.resources import load_text_resource
-from lib.mdown import Mdowns
-from lib import formatter
-from lib.frontmatter import get_frontmatter
 import codecs
-from os.path import dirname, abspath, normpath, exists
 import sys
-from lib.logger import Logger
-from lib import critic_dump as cd
-from lib.settings import Settings
 import subprocess
 import webbrowser
 import traceback
+from os.path import dirname, abspath, normpath, exists
+from lib.logger import Logger
+from lib import critic_dump as cd
+from lib.settings import Settings
+from lib.resources import load_text_resource
+from lib.mdown import Mdowns
+from lib import formatter
+from lib.frontmatter import get_frontmatter_string, get_frontmatter
 
 __version_info__ = (0, 3, 1)
 __version__ = '.'.join(map(str, __version_info__))
@@ -130,7 +130,7 @@ def get_sources(args):
     try:
         files = get_files(args.markdown)
     except:
-        files = [get_file_stream(args.encoding)]
+        files = [get_file_stream(args.encoding[0])]
         stream = True
     return files, stream
 
@@ -196,7 +196,10 @@ def convert(
             try:
                 # Extract settings from file frontmatter and config file
                 # Fronmatter options will overwrite config file options.
-                frontmatter, text = get_frontmatter(md_file, config.encoding)
+                if not config.is_stream:
+                    frontmatter, text = get_frontmatter(md_file, config.encoding)
+                else:
+                    frontmatter, text = get_frontmatter_string(md_file)
                 settings = config.get(
                     md_file, basepath=basepath, title=title, output=output, frontmatter=frontmatter
                 )

@@ -13,7 +13,7 @@ else:
 
 
 def parse_file_name(file_name):
-    if file_name is None:
+    if file_name is None or not exists(file_name):
         title = "Untitled"
         basepath = None
     else:

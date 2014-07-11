@@ -1,3 +1,27 @@
+#!/usr/bin/env python
+"""
+Frontmatter
+
+Strips out yaml or json frontmatter from a file and
+and returns a dictionary and the stripped text.
+
+Blocks are at the very beginning of a file.
+
+---
+yaml code goes here
+---
+
+or
+
+---
+{
+    json code goes here
+}
+---
+
+Licensed under MIT
+Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
+"""
 import json
 import re
 import codecs

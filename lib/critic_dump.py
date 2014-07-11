@@ -1,3 +1,12 @@
+#!/usr/bin/env python
+"""
+Mdown  critic_dump
+
+Strips and returns the the markdown with critic marks removed
+
+Licensed under MIT
+Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
+"""
 import re
 
 CRITIC_IGNORE = 0

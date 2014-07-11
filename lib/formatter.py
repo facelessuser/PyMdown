@@ -1,14 +1,24 @@
+#!/usr/bin/env python
+"""
+Formatter
+
+Places markdown in HTML with the specified CSS and JS etc.
+
+Licensed under MIT
+Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
+"""
 from __future__ import unicode_literals
 from __future__ import print_function
 from __future__ import absolute_import
 import codecs
 import traceback
 import re
-from .resources import load_text_resource
-from .logger import Logger
+import tempfile
 from pygments.formatters import HtmlFormatter
 from os.path import exists, isfile
-import tempfile
+from .resources import load_text_resource
+from .logger import Logger
+
 
 DEFAULT_TEMPLATE = '''<!DOCTYPE html>
 <html>
@@ -99,7 +109,6 @@ class Html(object):
                 self.body_end = m.end(0)
 
     def set_output(self, output, preview):
-        print(output)
         if output is None:
             self.file = Terminal()
         try:

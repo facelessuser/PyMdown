@@ -1,3 +1,12 @@
+#!/usr/bin/env python
+"""
+Mdown logger
+
+Simple class for controlling when to log to stdout
+
+Licensed under MIT
+Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
+"""
 from __future__ import print_function
 
 

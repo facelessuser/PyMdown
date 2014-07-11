@@ -1,3 +1,13 @@
+#!/usr/bin/env python
+"""
+resources
+
+Load resources from project normally or when it
+is packaged via Pyinstaller
+
+Licensed under MIT
+Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
+"""
 from __future__ import unicode_literals
 from __future__ import print_function
 import sys

@@ -1,14 +1,24 @@
-from . import critic_dump as cd
-from os.path import dirname, abspath, exists
-import codecs
-from os.path import isfile, isdir, splitext, join, basename
-from . import resources as res
-import traceback
-from .logger import Logger
+#!/usr/bin/env python
+"""
+Mdown logger
+
+Simple class for controlling when to log to stdout
+
+Licensed under MIT
+Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
+"""
 import json
 import re
-from .file_strip.json import sanitize_json
+import codecs
+import traceback
 from copy import deepcopy
+from os.path import dirname, abspath, exists
+from os.path import isfile, isdir, splitext, join, basename
+from . import critic_dump as cd
+from . import resources as res
+from .logger import Logger
+from .file_strip.json import sanitize_json
+
 
 BUILTIN_KEYS = ('title', 'destination', 'basepath', 'references')
 
