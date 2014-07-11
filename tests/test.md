@@ -10,7 +10,7 @@
         - meta
         - wikilinks
         - admonition
-        - codehilite(guess_lang=False,pygments_style=zenburn)
+        - codehilite(guess_lang=False,pygments_style=github)
         - mdownx.b64(base_path=${BASE_PATH})
         - mdownx.absolutepath(base_path=${BASE_PATH})
 ---
@@ -194,6 +194,10 @@ Footnotes[^1] have a label[^label] and a definition[^!DEF]
 ![A Picture](bg.png "A Picture")
 
 [Link to Picture](bg.png "Link")
+
+www.google.com
+
+isaacmuse@gmail.com
 
 https://github.com/facelessuser/mdown
 
