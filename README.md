@@ -21,16 +21,7 @@ This is in an Alpha state, though it is very useable.  Because of the Alpha stat
     - **magiclink**: Search for and convert http or ftp links to actual HTML links for lazy link creation. Can be enabled in the settings file.
     - **tasklist**: This adds support for github style tasklists.  Can be enabled in the settings.
     - **githubemoji**: This adds emojis.  Assets link to github's emoji icons.  Can be enabled in the settings.
-    - **critic**: Cannot be set in the settings file. It is configured automatically, and can only its behaviour can only be modifid via the command line.  In its current form, it can output in HTML a highlighted critic form to make it more readable using the -c option (maybe in the future it might be able to do more).  The automatic behaviour is to strip out critic marks when outputting HTML.  It either accepts all changes or rejects all changes (by default it accepts, but with the -r option it can reject instead).
-
-        insert, delete, and substitution
-
-        ![Insert, Delete, and Substitution](https://dl.dropboxusercontent.com/u/342698/mdown/insert_delete_sub.png)
-
-        highlight and comments
-
-        ![Highlight and Comments](https://dl.dropboxusercontent.com/u/342698/mdown/highlight_comment.png)
-
+    - **critic**: Cannot be set in the settings file. It is configured automatically, and its behaviour can only be modifid via the command line.  In its current form, it can output in HTML a highlighted critic form to make it more readable.  If you select `--accept` or `--reject`, it will strip out the critic marks by accepting the changes or discarding them.
     - **mdownx**: currently loads insert, delete, b64, tasklist, githubemoji, and magiclink
 
 # Styles and Configuration
@@ -78,10 +69,10 @@ This can be done here:
 # Command Line
 
 ```
-usage: mdown [-h] [--version] [--quiet] [--preview] [--critic | --critic-dump]
-             [--reject] [--terminal] [--output OUTPUT] [--stream]
-             [--settings SETTINGS] [--title TITLE] [--encoding ENCODING]
-             [--basepath BASEPATH]
+usage: mdown [-h] [--version] [--licenses] [--quiet] [--preview]
+             [--plain-html] [--title TITLE] [--accept | --reject]
+             [--critic-dump] [--no-critic] [--output OUTPUT] [--batch]
+             [--settings SETTINGS] [--encoding ENCODING] [--basepath BASEPATH]
              [markdown [markdown ...]]
 
 Markdown generator
@@ -92,27 +83,26 @@ positional arguments:
 optional arguments:
   -h, --help            show this help message and exit
   --version             show program's version number and exit
+  --licenses            Display licenses.
   --quiet, -q           No messages on stdout.
   --preview, -p         Output to preview (temp file). --output will be
                         ignored.
-  --critic, -c          Show critic marks in a viewable html output.
-  --critic-dump, -C     Process critic marks, dumps file(s), and exits.
+  --plain-html, -P      Strip out CSS, style, ids, etc. Just show tags.
+  --title TITLE         Title for HTML.
+  --accept, -a          Accept propossed critic marks when using in normal
+                        processing and --critic-dump processing
   --reject, -r          Reject propossed critic marks when using in normal
                         processing and --critic-dump processing
-  --terminal, -t        Print to terminal (stdout).
+  --critic-dump         Process critic marks, dumps file(s), and exits.
+  --no-critic           Turn off critic feature completely
   --output OUTPUT, -o OUTPUT
-                        Output directory can be a directory or file_name. Use
-                        ${count} when exporting multiple files and using a
-                        file pattern.
-  --stream, -s          Streaming input. markdown file inputs will be ignored.
-  --settings SETTINGS, -S SETTINGS
+                        Output file. Ignored in batch mode.
+  --batch, -b           Batch mode output.
+  --settings SETTINGS, -s SETTINGS
                         Load the settings file from an alternate location.
-  --title TITLE, -T TITLE
-                        Title for HTML.
   --encoding ENCODING, -e ENCODING
                         Encoding for input.
-  --basepath BASEPATH, -b BASEPATH
-                        The basepath location mdown should use.
+  --basepath BASEPATH   The basepath location mdown should use.
 ```
 
 # Sublime Plugin
@@ -186,8 +176,8 @@ Just drop the extra folder in your Sublime `Packages` folder and name to somethi
 - [X] Tasklist (like github's)
 - [X] Github Emoji (just link the images to github's assets)
 - [X] Option in binary to show licenses
-- [ ] Yaml and json frontmatter handling
-- [ ] Maybe a better batch output file pattern system
+- [X] Yaml and json frontmatter handling
+- [X] Maybe a better batch output file pattern system
 - [ ] Maybe inject javascript into current test documents to verify certain expected things are in output HTML
 - ...stuff I havn't yet thought of...
 
