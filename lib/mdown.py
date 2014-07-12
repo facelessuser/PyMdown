@@ -34,6 +34,8 @@ class MdownException(Exception):
 
 
 class MdWrapper(Markdown):
+    Meta = {}
+
     def __init__(self, *args, **kwargs):
         super(MdWrapper, self).__init__(*args, **kwargs)
 
@@ -71,13 +73,16 @@ class Mdown(object):
     def __init__(
         self, file_name, encoding, base_path=None, extensions=[]
     ):
+        """ Initialize """
+        self.meta = {}
         self.file_name = abspath(file_name)
         self.base_path = base_path if base_path is not None else ''
         self.encoding = encoding
-        self.read_extensions(extensions)
+        self.check_extensions(extensions)
         self.convert()
 
-    def read_extensions(self, extensions):
+    def check_extensions(self, extensions):
+        """ Check the extensions and see if anything needs to be modified """
         if isinstance(extensions, string_type) and extensions == "default":
             extensions = [
                 "extra",
@@ -89,10 +94,16 @@ class Mdown(object):
             self.extensions.append(e.replace("${BASE_PATH}", self.base_path))
 
     def convert(self):
+        """ Convert the file to HTML """
         self.markdown = ""
         try:
             with codecs.open(self.file_name, "r", encoding=self.encoding) as f:
-                self.markdown = MdWrapper(extensions=self.extensions).convert(f.read())
+                md = MdWrapper(extensions=self.extensions)
+                self.markdown = md.convert(f.read())
+                try:
+                    self.meta = md.Meta
+                except:
+                    pass
         except:
             raise MdownException(str(traceback.format_exc()))
 
@@ -102,14 +113,22 @@ class Mdowns(Mdown):
         self, string,
         base_path=None, extensions=[]
     ):
+        """ Initialize """
+        self.meta = {}
         self.string = string
         self.base_path = base_path if base_path is not None else ''
-        self.read_extensions(extensions)
+        self.check_extensions(extensions)
         self.convert()
 
     def convert(self):
+        """ Convert the given string to HTML """
         self.markdown = ""
         try:
-            self.markdown = MdWrapper(extensions=self.extensions).convert(self.string)
+            md = MdWrapper(extensions=self.extensions)
+            self.markdown = md.convert(self.string)
+            try:
+                self.meta = md.Meta
+            except:
+                pass
         except:
             raise MdownException(str(traceback.format_exc()))

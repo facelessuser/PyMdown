@@ -17,14 +17,14 @@ import sys
 import subprocess
 import webbrowser
 import traceback
-from os.path import dirname, abspath, normpath, exists
+from os.path import dirname, abspath, normpath, exists, basename, join
 from lib.logger import Logger
 from lib import critic_dump as cd
 from lib.settings import Settings
 from lib.resources import load_text_resource
 from lib.mdown import Mdowns
 from lib import formatter
-from lib.frontmatter import get_frontmatter_string, get_frontmatter
+from lib.frontmatter import get_frontmatter_string
 
 __version_info__ = (0, 3, 1)
 __version__ = '.'.join(map(str, __version_info__))
@@ -100,6 +100,7 @@ def auto_open(name):
 
 
 def get_critic_mode(args):
+    """ Setp the critic mode """
     critic_mode = cd.CRITIC_IGNORE
     if not args.no_critic:
         if args.accept or args.reject:
@@ -111,19 +112,25 @@ def get_critic_mode(args):
     return critic_mode
 
 
-def get_references(file_name, encoding):
+def get_references(file_name, basepath, encoding):
+    """ Get footnote and general references from outside source """
     text = ''
-    if file_name is not None and exists(file_name):
-        try:
-            with codecs.open(file_name, "r", encoding=encoding) as f:
-                text = f.read()
-        except:
-            Logger.log(traceback.format_exc())
+    if file_name is not None:
+        if not exists(file_name):
+            file_name = normpath(join(basepath, file_name))
+        if exists(file_name):
+            try:
+                with codecs.open(file_name, "r", encoding=encoding) as f:
+                    text = f.read()
+            except:
+                Logger.log(traceback.format_exc())
+        else:
+            Logger.log("Could not find reference file %s!", file_name)
     return text
 
 
 def get_sources(args):
-    # Get file(s) or stream
+    """ Get file(s) or stream """
     files = None
     stream = False
 
@@ -135,7 +142,28 @@ def get_sources(args):
     return files, stream
 
 
+def get_title(file_name, title_val):
+    """ Get title for HTML """
+    if title_val is not None:
+        title = str(title_val)
+    elif file_name is not None:
+        title = basename(abspath(file_name))
+    else:
+        title = None
+    return title
+
+
+def merge_meta(meta1, meta2, title=None):
+    """ Merge meta1 and meta2.  Add title to meta data if needed. """
+    meta = dict(meta1.items() + meta2.items())
+    if "title" not in meta and title is not None:
+        if title is not None:
+            meta["title"] = title
+    return meta
+
+
 def display_licenses():
+    """ Display licenses """
     status = PASS
     text = load_text_resource("LICENSE")
     if text is not None:
@@ -164,102 +192,178 @@ def display_licenses():
     return status
 
 
-def convert(
-    files, config, encoding="utf-8",
-    output=None, basepath=None,
-    title=None, settings_path=None
-):
-    """ Convert markdown file(s) to html """
-    status = PASS
+class Convert(object):
+    def __init__(
+        self, config,
+        output=None, basepath=None,
+        title=None, settings_path=None
+    ):
+        self.config = config
+        self.output = output
+        self.basepath = basepath
+        self.title = title
+        self.settings_path = settings_path
 
-    # Make sure we have something we can process
-    if files is None or len(files) == 0 or files[0] in ('', None):
-        Logger.log("Nothing to parse!")
-        status = FAIL
+    def strip_frontmatter(self, text):
+        """
+        Extract settings from file frontmatter and config file
+        Fronmatter options will overwrite config file options.
+        """
 
-    output_stream = None
+        frontmatter, text = get_frontmatter_string(text)
+        return frontmatter, text
 
-    if status == PASS:
-        total_files = len(files)
-        for count in range(0, total_files):
-            md_file = files[count]
+    def get_file_settings(self, file_name, frontmatter={}):
+        """
+        Using the filename and/or frontmatter, this retrieves
+        the full set of settings for this specific file.
+        """
 
-            # Quit dumping if there was an error
-            if status != PASS:
-                break
+        status = PASS
+        try:
+            self.settings = self.config.get(
+                file_name, basepath=self.basepath, output=self.output, frontmatter=frontmatter
+            )
+        except:
+            Logger.log(traceback.format_exc())
+            status = FAIL
+        return status
 
-            if config.is_stream:
-                Logger.log("Converting buffer...")
+    def read_file(self, file_name):
+        """ Read the source file """
+        try:
+            with codecs.open(file_name, "r", encoding=self.config.encoding) as f:
+                text = f.read()
+        except:
+            Logger.log("Failed to open %s!" % file_name)
+            text = None
+        return text
+
+    def critic_dump(self, file_name, text):
+        """ Dump the markdown back out after stripping critic marks """
+        status = PASS
+
+        status = self.get_file_settings(file_name)
+
+        if status == PASS and file_name is not None:
+            text = self.read_file(file_name)
+            if text is None:
+                status = FAIL
+
+        if status == PASS:
+            if not (self.config.critic & (cd.CRITIC_REJECT | cd.CRITIC_ACCEPT)):
+                Logger.log("Acceptance or rejection was not specified for critic dump!")
+                status = FAIL
             else:
-                Logger.log("Converting %s..." % md_file)
+                # Create text object
+                try:
+                    txt = formatter.Text(self.settings["builtin"]["destination"], self.config.encoding)
+                except:
+                    Logger.log("Failed to create text file!")
+                    status = FAIL
 
+        if status == PASS:
+            text = cd.CriticDump().dump(text, self.config.critic & cd.CRITIC_ACCEPT)
+            txt.write(text)
+            txt.close()
+
+        return status
+
+    def html_dump(self, file_name, text):
+        """ Convet markdown to HTML """
+        status = PASS
+
+        html_title = get_title(file_name, self.title)
+
+        if status == PASS and file_name is not None:
+            text = self.read_file(file_name)
+            if text is None:
+                status = FAIL
+
+        if status == PASS:
+            frontmatter, text = self.strip_frontmatter(text)
+            status = self.get_file_settings(file_name, frontmatter=frontmatter)
+
+        if status == PASS:
+            print(self.settings)
+            text += get_references(
+                self.settings["builtin"].get("references", None),
+                self.settings["builtin"]["basepath"],
+                self.config.encoding
+            )
+
+            # Create html object
             try:
-                # Extract settings from file frontmatter and config file
-                # Fronmatter options will overwrite config file options.
-                if not config.is_stream:
-                    frontmatter, text = get_frontmatter(md_file, config.encoding)
-                else:
-                    frontmatter, text = get_frontmatter_string(md_file)
-                settings = config.get(
-                    md_file, basepath=basepath, title=title, output=output, frontmatter=frontmatter
+                html = formatter.Html(
+                    self.settings["builtin"]["destination"], preview=self.config.preview,
+                    plain=self.config.plain, settings=self.settings["settings"],
+                    noclasses=self.config.pygments_noclasses
                 )
             except:
                 Logger.log(traceback.format_exc())
                 status = FAIL
 
-            if status == PASS:
-                if config.critic & cd.CRITIC_DUMP:
-                    if not (config.critic & cd.CRITIC_REJECT or config.critic & cd.CRITIC_ACCEPT):
-                        Logger.log("Acceptance or rejection was not specified for critic dump!")
-                        status = FAIL
-                    else:
-                        if config.batch or (count == 0 and not config.batch):
-                            try:
-                                output_stream = formatter.Text(output, encoding)
-                            except:
-                                status = FAIL
-                                break
+        if status == PASS:
+            # Convert markdown to HTML
+            try:
+                mdown = Mdowns(
+                    text,
+                    base_path=self.settings["builtin"]["basepath"],
+                    extensions=self.settings["extensions"]
+                )
+            except:
+                Logger.log(str(traceback.format_exc()))
+                html.close()
+                status = FAIL
 
-                        text = cd.CriticDump().dump(text, config.critic & cd.CRITIC_ACCEPT)
-                        output_stream.write(text)
+        if status == PASS:
+            # Retrieve meta data if available and merge with frontmatter
+            # meta data.
+            #     1. Frontmatter will override normal meta data.
+            #     2. Meta data overrides --title option on command line.
+            html.set_meta(
+                merge_meta(mdown.meta, self.settings["meta"], title=html_title)
+            )
 
-                        if (count + 1 == total_files and not config.batch) or config.batch:
-                            output_stream.close()
-                            output_stream = None
+            # Write the markdown
+            html.write(mdown.markdown)
+
+            html.close()
+            if html.file.name is not None and self.config.preview and status == PASS:
+                auto_open(html.file.name)
+        return status
+
+    def convert(self, files):
+        """ Convert markdown file(s) """
+        status = PASS
+
+        # Make sure we have something we can process
+        if files is None or len(files) == 0 or files[0] in ('', None):
+            Logger.log("Nothing to parse!")
+            status = FAIL
+
+        self.output_stream = None
+
+        if status == PASS:
+            for md_file in files:
+                # Quit dumping if there was an error
+                if status != PASS:
+                    break
+
+                if self.config.is_stream:
+                    Logger.log("Converting buffer...")
                 else:
-                    text += get_references(settings["builtin"].get("references"), config.encoding)
+                    Logger.log("Converting %s..." % md_file)
 
-                    # Get reference file if specified
-                    if config.batch or (count == 0 and not config.batch):
-                        try:
-                            output_stream = formatter.Html(
-                                settings["builtin"]["destination"], preview=config.preview, title=settings["builtin"]["title"],
-                                plain=config.plain, settings=settings["settings"], noclasses=config.pygments_noclasses
-                            )
-                        except:
-                            Logger.log(traceback.format_exc())
-                            status = FAIL
-                            break
-
-                    try:
-                        mdown = Mdowns(
-                            text,
-                            base_path=settings["builtin"]["basepath"],
-                            extensions=settings["extensions"]
-                        )
-                    except:
-                        Logger.log(str(traceback.format_exc()))
-                        output_stream.close()
-                        status = FAIL
-                        break
-
-                    output_stream.write(mdown.markdown)
-
-                    if (count + 1 == total_files and not config.batch) or config.batch:
-                        output_stream.close()
-                        if output_stream.file.name is not None and config.preview and status == PASS:
-                            auto_open(output_stream.file.name)
-    return status
+                if status == PASS:
+                    file_name = md_file if not self.config.is_stream else None
+                    text = None if not self.config.is_stream else md_file
+                    md_file = None
+                    if self.config.critic & cd.CRITIC_DUMP:
+                        status = self.critic_dump(file_name, text)
+                    else:
+                        status = self.html_dump(file_name, text)
+        return status
 
 
 if __name__ == "__main__":
@@ -308,6 +412,10 @@ if __name__ == "__main__":
         else:
             batch = args.batch
 
+        if not batch and len(files) > 1:
+            Logger.log("Please use batch mode to process multiple files!")
+            return FAIL
+
         config = Settings(
             encoding=args.encoding[0],
             critic=get_critic_mode(args),
@@ -318,13 +426,12 @@ if __name__ == "__main__":
             plain=args.plain_html
         )
 
-        return convert(
-            files=files,
+        return Convert(
             basepath=first_or_none(args.basepath),
             title=first_or_none(args.title),
             output=first_or_none(args.output),
             config=config
-        )
+        ).convert(files)
 
     script_path = dirname(abspath(sys.argv[0]))
     try:

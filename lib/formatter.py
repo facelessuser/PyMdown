@@ -18,6 +18,7 @@ from pygments.formatters import HtmlFormatter
 from os.path import exists, isfile
 from .resources import load_text_resource
 from .logger import Logger
+import cgi
 
 
 DEFAULT_TEMPLATE = '''<!DOCTYPE html>
@@ -38,10 +39,12 @@ class MdownFormatterException(Exception):
 
 
 def get_default_template():
+    """ Return the default template """
     return DEFAULT_TEMPLATE
 
 
 def get_default_css():
+    """ Get the default CSS style """
     global DEFAULT_CSS
     if DEFAULT_CSS is None:
         DEFAULT_CSS = load_text_resource("stylesheets", "default.css")
@@ -49,6 +52,7 @@ def get_default_css():
 
 
 def get_js(js, link=False):
+    """ Get the specified JS code """
     if link:
         return '<script type="text/javascript" charset="utf-8" src="%s"></script>\n' % js
     else:
@@ -56,6 +60,7 @@ def get_js(js, link=False):
 
 
 def get_style(style, link=False):
+    """ Get the specified CSS code """
     if link:
         return '<link href="%s" rel="stylesheet" type="text/css">\n' % style
     else:
@@ -63,6 +68,7 @@ def get_style(style, link=False):
 
 
 def get_pygment_style(style):
+    """ Get the specified pygments sytle CSS """
     try:
         # Try and request pygments to generate it
         text = HtmlFormatter(style=style).get_style_defs('.codehilite pre')
@@ -73,12 +79,15 @@ def get_pygment_style(style):
 
 
 class Terminal(object):
+    """ Have console output mimic the file output calls """
     name = None
 
     def write(self, text):
+        """ Dump texst to screen """
         print(text)
 
     def close(self):
+        """ There is nothing to close """
         pass
 
 
@@ -90,17 +99,35 @@ class Html(object):
         self.settings = settings
         self.encode_file = True
         self.body_end = None
+        self.plain = plain
         self.template = ''
         self.noclasses = noclasses
+        self.title = "Untitled"
         self.set_output(output, preview)
         self.load_header(
-            self.settings.get("style", None),
-            title if title is not None else "Untitled"
+            self.settings.get("style", None)
         )
-        if not plain:
-            self.write_html_start()
+        self.started = False
+
+    def set_meta(self, meta):
+        """ Create meta data tags """
+        if "title" in meta:
+            value = meta["title"]
+            if isinstance(value, list):
+                value = ','.join(value)
+            self.title = value
+            del meta["title"]
+
+        for k, v in meta.items():
+            if isinstance(v, list):
+                v = ','.join(v)
+            if v is not None:
+                self.meta.append(
+                    '<meta name="%s" content="%s">' % (cgi.escape(k, True), cgi.escape(v, True))
+                )
 
     def write_html_start(self):
+        """ Output the HTML head and body up to the {{ BODY }} specifier """
         template = self.settings.get("html_template", "default")
         if template == "default" or not exists(template):
             template = get_default_template()
@@ -109,10 +136,17 @@ class Html(object):
         if self.template != "":
             m = re.search(r"\{\{ BODY \}\}", template)
             if m:
-                self.write(template[0:m.start(0)].replace("{{ HEAD }}", self.head, 1))
+                meta = '\n'.join(self.meta) + '\n'
+                title = '<title>%s</title>\n' % cgi.escape(self.title)
+                self.write(
+                    template[0:m.start(0)].replace(
+                        "{{ HEAD }}", meta + self.head + title, 1
+                    )
+                )
                 self.body_end = m.end(0)
 
     def set_output(self, output, preview):
+        """ Set and create the output target and target related flags """
         if output is None:
             self.file = Terminal()
         try:
@@ -126,16 +160,23 @@ class Html(object):
             raise MdownFormatterException("Could not open output file!")
 
     def close(self):
+        """ Close the output file """
         if self.body_end is not None:
             self.write(self.template[self.body_end:])
         self.file.close()
 
     def write(self, text):
+        """ Write the given text to the output file """
+        if not self.plain and not self.started:
+            # If we haven't already, print the file head
+            self.started = True
+            self.write_html_start()
         self.file.write(
             text.encode("utf-8", errors="xmlcharrefreplace") if self.encode_file else text
         )
 
     def load_highlight(self, highlight_style):
+        """ Load Syntax highlighter CSS """
         style = None
         if highlight_style is not None and not self.noclasses:
             # Ensure pygments is enabled in the highlighter
@@ -148,6 +189,7 @@ class Html(object):
         return css
 
     def load_css(self, style):
+        """ Load specified CSS sources """
         user_css = self.settings.get("css_style_sheets", "default")
         if user_css == "default" or not isinstance(user_css, list):
             css = [get_style(get_default_css())]
@@ -166,11 +208,11 @@ class Html(object):
                     except:
                         Logger.log(str(traceback.format_exc()))
 
-
         css += self.load_highlight(style)
         return ''.join(css)
 
     def load_js(self):
+        """ Load specified JS sources """
         user_js = self.settings.get("js_scripts", [])
         scripts = []
         if isinstance(user_js, list) and len(user_js):
@@ -187,16 +229,19 @@ class Html(object):
                     scripts.append(get_js(js, link=True))
         return ''.join(scripts)
 
-    def load_header(self, style, title):
-        self.head = '<meta charset="utf-8">\n'
-        self.head += self.load_css(style)
+    def load_header(self, style):
+        """ Load up header related info """
+        self.meta = ['<meta charset="utf-8">']
+        self.head = self.load_css(style)
         self.head += self.load_js()
-        self.head += '<title>%s</title>\n' % title
 
 
 class Text(object):
     def __init__(self, output, encoding):
+        """ Initialize Text object """
         self.encode_file = True
+
+        # Set the correct output target and create the file if necessary
         if output is None:
             self.file = Terminal()
         else:
@@ -208,9 +253,11 @@ class Text(object):
                 raise MdownFormatterException("Could not open output file!")
 
     def write(self, text):
+        """ Write the content """
         self.file.write(
             text.encode("utf-8", errors="xmlcharrefreplace") if self.encode_file else text
         )
 
     def close(self):
+        """ Close the file """
         self.file.close()
