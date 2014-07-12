@@ -76,7 +76,7 @@ class Terminal(object):
     name = None
 
     def write(self, text):
-        print(text.encode("utf-8", errors="xmlcharrefreplace"))
+        print(text)
 
     def close(self):
         pass
