@@ -1,4 +1,6 @@
 ---
+    title: Test Page
+    references: references.md
     settings:
         extensions:
         - extra
@@ -614,12 +616,3 @@ __^^_insert italic bold_^^__  _^^__insert italic bold 2__^^_
 **^^_insert italic bold_^^**  _^^**insert italic bold 2**^^_
 
 __^^*insert italic bold*^^__  *^^__insert italic bold 2__^^*
-
-*[HTML]: Hyper Text Markup Language
-*[W3C]:  World Wide Web Consortium
-
-[1]: https://github.com/facelessuser/mdown
-
-[^1]: This is a footnote
-[^label]: A footnote on "label"
-[^!DEF]: The footnote for definition
