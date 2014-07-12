@@ -132,9 +132,18 @@ pre {
   padding: 10px;
 }
 
-pre code { border: 0 }
+pre code { border: 0 !important; }
 
-code { padding: 0 3px 0 3px; }
+code:before,
+code:after {
+  content: "\00a0";
+  letter-spacing: -0.2em;
+}
+
+pre code:before,
+pre code:after {
+  content: none;
+}
 
 /* Admonition */
 div.admonition {
