@@ -4,7 +4,23 @@
     //////////////////////////////////
     {
         "caption": "Mdown: Preview Markdown",
-        "command": "mdown_preview"
+        "command": "mdown_preview",
+        "args": {"target": "browser"}
+    },
+    {
+        "caption": "Mdown: Save to Disk",
+        "command": "mdown_preview",
+        "args": {"target": "save"}
+    },
+    {
+        "caption": "Mdown: To Clipboard",
+        "command": "mdown_preview",
+        "args": {"target": "clipboard", "plain": true}
+    },
+    {
+        "caption": "Mdown: Export to Sublime",
+        "command": "mdown_preview",
+        "args": {"target": "sublime", "plain": true}
     },
     {
         "caption": "Mdown: Preview Critic",
