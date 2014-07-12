@@ -31,12 +31,14 @@ import traceback
 
 
 def get_frontmatter(source, encoding):
+    """ Get frontmatter from file """
     with codecs.open(source, "r", encoding=encoding) as f:
         return get_frontmatter_string(f.read())
     return None, None
 
 
 def get_frontmatter_string(string):
+    """ Get frontmatter from string """
     frontmatter = {}
 
     if string.startswith("---"):

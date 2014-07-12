@@ -18,6 +18,7 @@ RESOURCE_PATH = abspath(join(dirname(__file__), ".."))
 
 
 def load_text_resource(*args):
+    """ Load text resource from either the package source location """ 
     base = None
     try:
         base = sys._MEIPASS
