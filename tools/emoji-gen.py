@@ -19,8 +19,8 @@ with open("emoji-test.md", "w") as f:
         f.write("\n\n")
 
 with open("emoji-regex.txt", "w") as f:
-    emoji_all = []
     for emoji_type in emoji:
-        emoji_all += emoji_type[1]
-    emoji_all.sort()
-    f.write(":(%s):" % '|'.join(emoji_all).replace("+", "\\+"))
+        # emoji_type[1].sort()
+        f.write("%s\n" % emoji_type[0].replace("_", " "))
+        f.write(":(%s):" % '|'.join(emoji_type[1]).replace("+", "\\+"))
+        f.write("\n\n")
