@@ -17,7 +17,7 @@ import sys
 import subprocess
 import webbrowser
 import traceback
-from os.path import dirname, abspath, normpath, exists, basename, join
+from os.path import dirname, abspath, normpath, exists, basename
 from lib.logger import Logger
 from lib import critic_dump as cd
 from lib.settings import Settings
@@ -112,12 +112,10 @@ def get_critic_mode(args):
     return critic_mode
 
 
-def get_references(file_name, basepath, encoding):
+def get_references(file_name, encoding):
     """ Get footnote and general references from outside source """
     text = ''
     if file_name is not None:
-        if not exists(file_name):
-            file_name = normpath(join(basepath, file_name))
         if exists(file_name):
             try:
                 with codecs.open(file_name, "r", encoding=encoding) as f:
@@ -285,10 +283,8 @@ class Convert(object):
             status = self.get_file_settings(file_name, frontmatter=frontmatter)
 
         if status == PASS:
-            print(self.settings)
             text += get_references(
                 self.settings["builtin"].get("references", None),
-                self.settings["builtin"]["basepath"],
                 self.config.encoding
             )
 
@@ -341,8 +337,6 @@ class Convert(object):
         if files is None or len(files) == 0 or files[0] in ('', None):
             Logger.log("Nothing to parse!")
             status = FAIL
-
-        self.output_stream = None
 
         if status == PASS:
             for md_file in files:

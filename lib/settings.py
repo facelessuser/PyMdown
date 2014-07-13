@@ -11,9 +11,10 @@ import json
 import re
 import codecs
 import traceback
+import sys
 from copy import deepcopy
-from os.path import dirname, abspath, exists
-from os.path import isfile, isdir, splitext, join
+from os.path import dirname, abspath, exists, normpath, expanduser
+from os.path import isfile, isdir, splitext, join, basename
 from . import critic_dump as cd
 from . import resources as res
 from .logger import Logger
@@ -25,6 +26,18 @@ BUILTIN_KEYS = ('destination', 'basepath', 'references')
 
 class MdownSettingsException(Exception):
     pass
+
+
+def is_abs(pth):
+    absolute = False
+    if pth is not None:
+        if sys.platform.startswith('win'):
+            re_win_drive = re.compile(r"(^[A-Za-z]{1}:(?:\\|/))")
+            if re_win_drive.match(pth) is not None or pth.startswith("//"):
+                absolute = True
+        elif pth.startswith('/'):
+            absolute = True
+    return absolute
 
 
 class Settings(object):
@@ -96,18 +109,61 @@ class Settings(object):
         self.post_process_settings(settings)
         return settings
 
+    def resolve_meta_path(self, target, basepath):
+        """
+        Resolve the path returned in the meta data.
+        1. See if path is defined as absolute and if so see
+           if it exists
+        2. If relative, use the file's current directory
+           (if available) as the base and see if the file
+           can be found
+        3. If relative, and the file's current directory
+           as the base proved fruitless, use the defined
+           basepath (if available)
+        """
+        current_dir = None if self.file_name is None else dirname(self.file_name)
+        if target is not None:
+            target = expanduser(target)
+            if not is_abs(target):
+                for base in (current_dir, basepath):
+                    if base is not None:
+                        temp = join(base, target)
+                        if exists(temp):
+                            target = temp
+                            break
+            elif not exists(target):
+                target = None
+        return target
+
     def apply_frontmatter(self, frontmatter, settings):
         """ Apply front matter to settings object etc. """
+
+        # Handle basepath first
+        if "basepath" in frontmatter:
+            value = frontmatter["basepath"]
+            settings["builtin"]["basepath"] = self.get_base_path(value)
+            del frontmatter["basepath"]
+
         for key, value in frontmatter.items():
             if key == "settings" and isinstance(value, dict):
                 for subkey, subvalue in value.items():
                     settings[key][subkey] = subvalue
             elif key in BUILTIN_KEYS:
-                if key == "basepath" and not self.batch:
-                    settings["builtin"][key] = self.get_base_path(value)
-                elif key == "destination":
-                    settings["builtin"][key] = self.get_output(value)
+                if key == "destination":
+                    file_name = self.resolve_meta_path(dirname(value), settings["builtin"]["basepath"])
+                    if file_name is not None and isdir(file_name):
+                        value = normpath(join(file_name, basename(value)))
+                        if exists(value) and isdir(value):
+                            value = None
+                    else:
+                        value = None
+                    settings["builtin"][key] = value
                 elif key == "references":
+                    file_name = self.resolve_meta_path(value, settings["builtin"]["basepath"])
+                    if file_name is not None and not isdir(file_name):
+                        value = normpath(file_name)
+                    else:
+                        value = None
                     settings["builtin"][key] = value
             else:
                 if isinstance(value, list):
@@ -121,6 +177,8 @@ class Settings(object):
 
         critic_enabled = self.critic & cd.CRITIC_ACCEPT or self.critic & cd.CRITIC_REJECT
         output = None
+        if out_name is not None:
+            out_name = expanduser(out_name)
         if not self.batch:
             if out_name is not None:
                 name = abspath(out_name)
@@ -146,7 +204,8 @@ class Settings(object):
 
     def get_base_path(self, basepath):
         """ Get the base path to use when resolving basepath paths if possible """
-
+        if basepath is not None:
+            basepath = expanduser(basepath)
         if basepath is not None and exists(basepath):
             # A valid path was fed in
             path = basepath
@@ -162,6 +221,46 @@ class Settings(object):
 
         return basepath
 
+    def set_style(self, extensions):
+        """
+        Search the extensions for the style to be used and return it.
+        If it is not explicitly set, go ahead and insert the default
+        style (github).
+        """
+        style = None
+        re_pygment = r"pygments_style\s*=\s*([a-zA-Z][a-zA-Z_\d]*)"
+        re_insert_pygment = re.compile(r"(?P<bracket_start>codehilite\([^)]+?)(?P<bracket_end>\s*\)$)|(?P<start>codehilite)")
+        re_no_classes = re.compile(r"noclasses\s*=\s*(True|False)")
+        self.pygments_noclasses = False
+        count = 0
+        for e in extensions:
+            # Search for codhilite to see what style is being set.
+            if e.startswith("codehilite"):
+                pygments_style = re.search(re_pygment, e)
+                if pygments_style is None:
+                    # Explicitly define a pygment style and store the name
+                    # This is to ensure the "noclasses" option always works
+                    style = "github"
+                    m = re_insert_pygment.match(e)
+                    if m is not None:
+                        if m.group('bracket_start'):
+                            start = m.group('bracket_start') + ',pygments_style='
+                            end = ")"
+                        else:
+                            start = m.group('start') + "(pygments_style="
+                            end = ')'
+                        extensions[count] = start + style + end
+                else:
+                    # Store pygment style name
+                    style = "github" if pygments_style is None else pygments_style.group(1)
+
+                # Track if the "noclasses" settings option is enabled
+                noclasses = re_no_classes.search(e)
+                if noclasses is not None and noclasses.group(1) == "True":
+                    self.pygments_noclasses = True
+            count += 1
+        return style
+
     def post_process_settings(self, settings):
         """ Process the settings files making needed adjustements """
 
@@ -169,7 +268,7 @@ class Settings(object):
         critic_found = []
         plain_html = []
 
-        # Move extensions to its own key
+        # Copy extensions; we will move it to its own key later
         if "extensions" in settings["settings"]:
             extensions = deepcopy(settings["settings"].get("extensions", []))
             del settings["settings"]["extensions"]
@@ -177,7 +276,7 @@ class Settings(object):
         # Log whether:
         #    - absolute paths is enabled,
         #    - Where the critic extension is enabled
-        #    - Where the plainhteml plugin is enabled
+        #    - Where the plainhtml plugin is enabled
         for i in range(0, len(extensions)):
             name = extensions[i]
             if name.startswith("mdownx.absolutepath"):
@@ -187,7 +286,7 @@ class Settings(object):
             if name.startswith("mdownx.plainhtml"):
                 plain_html.append(i)
 
-        # Ensure the user can never set critic mode
+        # Ensure the user can never set critic mode directly
         for index in reversed(critic_found):
             del extensions[index]
 
@@ -214,40 +313,8 @@ class Settings(object):
         if self.plain:
             extensions.append("mdownx.plainhtml")
 
+        # Set extensions to its own key
         settings["extensions"] = extensions
 
-        # Find the style
-        style = None
-        re_pygment = r"pygments_style\s*=\s*([a-zA-Z][a-zA-Z_\d]*)"
-        re_insert_pygment = re.compile(r"(?P<bracket_start>codehilite\([^)]+?)(?P<bracket_end>\s*\)$)|(?P<start>codehilite)")
-        re_no_classes = re.compile(r"noclasses\s*=\s*(True|False)")
-        self.pygments_noclasses = False
-        count = 0
-        for e in extensions:
-            if e.startswith("codehilite"):
-                pygments_style = re.search(re_pygment, e)
-                if pygments_style is None:
-                    # Explicitly define a pygment style and store the name
-                    # This is to ensure the "noclasses" option always works
-                    style = "github"
-                    m = re_insert_pygment.match(e)
-                    if m is not None:
-                        if m.group('bracket_start'):
-                            start = m.group('bracket_start') + ',pygments_style='
-                            end = ")"
-                        else:
-                            start = m.group('start') + "(pygments_style="
-                            end = ')'
-                        extensions[count] = start + style + end
-                else:
-                    # Store pygment style name
-                    style = "github" if pygments_style is None else pygments_style.group(1)
-
-                # Track if the "noclasses" settings option is enabled
-                noclasses = re_no_classes.search(e)
-                if noclasses is not None and noclasses.group(1) == "True":
-                    self.pygments_noclasses = True
-            count += 1
-
         # Set style
-        settings["settings"]["style"] = style
+        settings["settings"]["style"] = self.set_style(extensions)

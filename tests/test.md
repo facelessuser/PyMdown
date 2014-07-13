@@ -1,6 +1,13 @@
 ---
-    title: Test Page
+    # Builtin values
     references: references.md
+    destination: here.html
+
+    # Meta Data
+    title: Test Page
+    author: Isaac Muse
+
+    # Settings overrides
     settings:
         extensions:
         - extra
