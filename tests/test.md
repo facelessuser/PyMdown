@@ -1,13 +1,16 @@
 ---
     # Builtin values
-    references: references.md
-    destination: here.html
+    references:
+        - references.md
+        - abbreviations.md
+        - footnotes.md
+    destination: Test Page.html
 
     # Meta Data
     title: Test Page
     author:
-        - Isaac Muse
-        - Some Dude
+        - John Doe
+        - Jane Doe
 
     # Settings overrides
     settings:

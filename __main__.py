@@ -283,10 +283,8 @@ class Convert(object):
             status = self.get_file_settings(file_name, frontmatter=frontmatter)
 
         if status == PASS:
-            text += get_references(
-                self.settings["builtin"].get("references", None),
-                self.config.encoding
-            )
+            for ref in self.settings["builtin"].get("references", []):
+                text += get_references(ref, self.config.encoding)
 
             # Create html object
             try:

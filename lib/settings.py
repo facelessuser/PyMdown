@@ -58,7 +58,7 @@ class Settings(object):
             "builtin": {
                 "destination": None,
                 "basepath": None,
-                "references": None
+                "references": []
             },
             "settings": {},
             "meta": {}
@@ -159,12 +159,14 @@ class Settings(object):
                         value = None
                     settings["builtin"][key] = value
                 elif key == "references":
-                    file_name = self.resolve_meta_path(value, settings["builtin"]["basepath"])
-                    if file_name is not None and not isdir(file_name):
-                        value = normpath(file_name)
-                    else:
-                        value = None
-                    settings["builtin"][key] = value
+                    if not isinstance(value, list):
+                        value = [value]
+                    refs = []
+                    for v in value:
+                        file_name = self.resolve_meta_path(v, settings["builtin"]["basepath"])
+                        if file_name is not None and not isdir(file_name):
+                            refs.append(normpath(file_name))
+                    settings["builtin"][key] = refs
             else:
                 if isinstance(value, list):
                     value = [str(v) for v in value]
