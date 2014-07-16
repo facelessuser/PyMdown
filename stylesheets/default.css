@@ -126,10 +126,11 @@ pre, code, kbd, samp {
 }
 
 pre {
-  white-space: pre;
+  /*white-space: pre;
   white-space: pre-wrap;
-  word-wrap: break-word;
+  word-wrap: break-word;*/
   padding: 10px;
+  overflow-x: auto;
 }
 
 pre code { border: 0 !important; }
@@ -192,6 +193,92 @@ div.admonition.note {
   color: #888888;
   background-color: #F8F8F8;
   border: 1px solid #888888;
+}
+
+/* progress bar*/
+.progress {
+    width: 500px;
+    height: 30px;
+    /*padding: 3px;*/
+    border: 1px solid #ccc;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    background-color: #ddd;
+    position: relative;
+}
+
+.progress-label {
+    position: absolute;
+    text-align: center;
+    font-weight: bold;
+    width: 100%; margin: 0;
+    line-height: 30px;
+    color: #fefefe;
+    text-shadow: 1px 1px 1px #000;
+    text-overflow: elipsis;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.progress-bar {
+    height: 28px;
+    border-top: 1px solid #fefefe;
+    border-right: 1px solid #DFF2BF;
+    border-left: 1px solid #fefefe;
+    border-bottom: 1px solid #DFF2BF;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+    background-size: 30px 30px;
+    background-color: #DFF2BF;
+    /*box-shadow: 1px 1px 0.5px #444;*/
+    background-image: -webkit-linear-gradient(
+      135deg, rgba(255, 255, 255, .15) 25%,
+      transparent 25%,
+      transparent 50%, rgba(255, 255, 255, .15) 50%,
+      rgba(255, 255, 255, .15) 75%,
+      transparent 75%, transparent
+    );
+    background-image: -moz-linear-gradient(
+      135deg, rgba(255, 255, 255, .15) 25%,
+      transparent 25%,
+      transparent 50%, rgba(255, 255, 255, .15) 50%,
+      rgba(255, 255, 255, .15) 75%,
+      transparent 75%, transparent
+    );
+    background-image: -ms-linear-gradient(
+      135deg, rgba(255, 255, 255, .15) 25%,
+      transparent 25%,
+      transparent 50%, rgba(255, 255, 255, .15) 50%,
+      rgba(255, 255, 255, .15) 75%,
+      transparent 75%, transparent
+    );
+    background-image: -o-linear-gradient(
+      135deg, rgba(255, 255, 255, .15) 25%,
+      transparent 25%,
+      transparent 50%, rgba(255, 255, 255, .15) 50%,
+      rgba(255, 255, 255, .15) 75%,
+      transparent 75%, transparent
+    );
+    background-image: linear-gradient(
+      135deg, rgba(255, 255, 255, .15) 25%,
+      transparent 25%,
+      transparent 50%, rgba(255, 255, 255, .15) 50%,
+      rgba(255, 255, 255, .15) 75%,
+      transparent 75%, transparent
+    );
+
+    -webkit-animation: animate-stripes 3s linear infinite;
+    -moz-animation: animate-stripes 3s linear infinite;
+}
+
+@-webkit-keyframes animate-stripes {
+    0% {background-position: 0 0;} 100% {background-position: 60px 0;}
+}
+
+@-moz-keyframes animate-stripes {
+      0% {background-position: 0 0;} 100% {background-position: 60px 0;}
 }
 
 /* Multimarkdown Critic Blocks */

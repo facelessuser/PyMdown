@@ -18,6 +18,7 @@
         - extra
         - mdownx.github
         - mdownx.insert
+        - mdownx.progressbar
         - toc
         - headerid
         - smarty
@@ -648,3 +649,18 @@ __^^_insert italic bold_^^__  _^^__insert italic bold 2__^^_
 **^^_insert italic bold_^^**  _^^**insert italic bold 2**^^_
 
 __^^*insert italic bold*^^__  *^^__insert italic bold 2__^^*
+
+# Progress
+```
+There should always be an empty line before the progress bar.
+
+[==55%][55% Testing percentages]
+
+[==212.2/537][212.2/537 Testing division]
+```
+
+There should always be an empty line before the progress bar.
+
+[==55%][55% Testing percentages]
+
+[==212.2/537][212.2/537 Testing division]
