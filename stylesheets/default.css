@@ -222,6 +222,7 @@ div.admonition.note {
 
 .progress-bar {
     height: 29px;
+    float: left;
     border-top: 1px solid #fefefe;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
@@ -265,17 +266,17 @@ div.admonition.note {
       transparent 75%, transparent
     );
 
-    -webkit-animation: animate-stripes 3s linear infinite;
-    -moz-animation: animate-stripes 3s linear infinite;
+    /*-webkit-animation: animate-stripes 3s linear infinite;
+    -moz-animation: animate-stripes 3s linear infinite;*/
 }
 
-@-webkit-keyframes animate-stripes {
+/*@-webkit-keyframes animate-stripes {
     0% {background-position: 0 0;} 100% {background-position: 60px 0;}
 }
 
 @-moz-keyframes animate-stripes {
       0% {background-position: 0 0;} 100% {background-position: 60px 0;}
-}
+}*/
 
 /* Multimarkdown Critic Blocks */
 span.critic_mark { background: #ff0; }
