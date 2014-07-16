@@ -197,14 +197,14 @@ div.admonition.note {
 
 /* progress bar*/
 .progress {
-    width: 500px;
+    width: 300px;
+    margin: 10px 0;
     height: 30px;
-    /*padding: 3px;*/
     border: 1px solid #ccc;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
-    background-color: #ddd;
+    background-color: #F8F8F8;
     position: relative;
 }
 
@@ -216,22 +216,18 @@ div.admonition.note {
     line-height: 30px;
     color: #fefefe;
     text-shadow: 1px 1px 1px #000;
-    text-overflow: elipsis;
     white-space: nowrap;
-    overflow: hidden;
+    overflow-x: auto;
 }
 
 .progress-bar {
-    height: 28px;
+    height: 29px;
     border-top: 1px solid #fefefe;
-    border-right: 1px solid #DFF2BF;
-    border-left: 1px solid #fefefe;
-    border-bottom: 1px solid #DFF2BF;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
     background-size: 30px 30px;
-    background-color: #DFF2BF;
+    background-color: #BDE5F8;
     /*box-shadow: 1px 1px 0.5px #444;*/
     background-image: -webkit-linear-gradient(
       135deg, rgba(255, 255, 255, .15) 25%,

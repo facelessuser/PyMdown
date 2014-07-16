@@ -3,9 +3,9 @@ mdownx.progressbar
 Really simple plugin to add support for
 progress bars
 
-[==30%][MyLabel]
+[==30%  MyLabel]
 
-[==50/200][MyLabel]
+[==50/200 MyLabel]
 
 New line is required before the progress bar.  Can take percentages and divisions.
 Floats are okay.  Numbers must be positive.  This is an experimental extension.
@@ -24,10 +24,10 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 """
 from __future__ import unicode_literals
 from markdown import Extension
-from markdown.inlinepatterns import Pattern
+from markdown.inlinepatterns import Pattern, dequote
 
-RE_PROGRESS = r'^\s*\[==(?:(100(?:.0+)?|[1-9]?[0-9](?:.\d+)?)%|(?:(\d+(?:.\d+)?)/(\d+(?:.\d+)?)))\]\[((?:[^\]\\]|\\.)*)\]'
-PROGRESS_BAR = '<p><div class="progress"><div class="progress-bar" style="width:%s%%"><p class="progress-label">%s</p></div></div></p>'
+RE_PROGRESS = r'\[==\s*(?:(100(?:.0+)?|[1-9]?[0-9](?:.\d+)?)%|(?:(\d+(?:.\d+)?)\s*/\s*(\d+(?:.\d+)?)))(\s+(?:[^\]\\]|\\.)*)?\s*\]'
+PROGRESS_BAR = '<div class="progress"><div class="progress-bar" style="width:%s%%"><p class="progress-label">%s</p></div></div>'
 
 
 class ProgressBarPattern(Pattern):
@@ -37,10 +37,10 @@ class ProgressBarPattern(Pattern):
     def handleMatch(self, m):
         label = ""
         if m.group(5):
-            label = m.group(5)
+            label = m.group(5).strip()
         if m.group(2):
             placeholder = self.markdown.htmlStash.store(
-                PROGRESS_BAR % (m.group(2), self.unescape(label)),
+                PROGRESS_BAR % (m.group(2), dequote(self.unescape(label))),
                 safe=True
             )
         else:
@@ -63,7 +63,7 @@ class ProgressBarPattern(Pattern):
                 value = 0.0
 
             placeholder = self.markdown.htmlStash.store(
-                PROGRESS_BAR % ('%.2f' % value, self.unescape(label)),
+                PROGRESS_BAR % ('%.2f' % value, dequote(self.unescape(label))),
                 safe=True
             )
         return placeholder
@@ -76,7 +76,7 @@ class ProgressBarExtension(Extension):
         """Add for progress bar"""
         progress = ProgressBarPattern(RE_PROGRESS)
         progress.markdown = md
-        md.inlinePatterns.add("progressbar", progress, "<not_strong")
+        md.inlinePatterns.add("progressbar", progress, "<reference")
 
 
 def makeExtension(configs={}):

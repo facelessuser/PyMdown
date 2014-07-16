@@ -206,7 +206,7 @@ With this link (https://github.com/facelessuser/mdown), it still works.
 
 Footnotes[^1] have a label[^label] and a definition[^!DEF]
 
-![A Picture](bg.png "A Picture")
+![A Picture](bg.png "A "Picture")
 
 [Link to Picture](bg.png "Link")
 
@@ -652,15 +652,30 @@ __^^*insert italic bold*^^__  *^^__insert italic bold 2__^^*
 
 # Progress
 ```
-There should always be an empty line before the progress bar.
+It will work without, but it is recommended to use a new line before and after where possible.
 
-[==55%][55% Testing percentages]
+[== 55% "55% Testing percentages with really long text that goes off the bar"]
 
-[==212.2/537][212.2/537 Testing division]
+No label.
+
+[== 75%]
+
+| Test1 | Test 2                                      |
+|-------|---------------------------------------------|
+|first  |[== 212.2 / 537 "212.2/537 Testing division"]|
+|second |[== 100% "All Done"]                         |
 ```
 
-There should always be an empty line before the progress bar.
+It will work without, but it is recommended to use a new line before and after where possible.
 
-[==55%][55% Testing percentages]
+[== 55% "55% Testing percentages with really long text that goes off the bar"]
 
-[==212.2/537][212.2/537 Testing division]
+No label.
+
+[== 75%]
+
+
+| Test1 | Test 2                                      |
+|-------|---------------------------------------------|
+|first  |[== 212.2 / 537 "212.2/537 Testing division"]|
+|second |[== 100% "All Done"]                         |
