@@ -17,7 +17,7 @@ import sys
 import subprocess
 import webbrowser
 import traceback
-from os.path import dirname, abspath, normpath, exists, basename
+from os.path import dirname, abspath, normpath, exists, basename, join
 from lib.logger import Logger
 from lib import critic_dump as cd
 from lib.settings import Settings
@@ -386,7 +386,7 @@ if __name__ == "__main__":
         parser.add_argument('--output', '-o', nargs=1, default=None, help="Output file. Ignored in batch mode.")
         parser.add_argument('--batch', '-b', action='store_true', default=False, help="Batch mode output.")
         # Input configuration
-        parser.add_argument('--settings', '-s', nargs=1, default=None, help="Load the settings file from an alternate location.")
+        parser.add_argument('--settings', '-s', nargs=1, default=[join(script_path, "mdown.json")], help="Load the settings file from an alternate location.")
         parser.add_argument('--encoding', '-e', nargs=1, default=["utf-8"], help="Encoding for input.")
         parser.add_argument('--basepath', nargs=1, default=None, help="The basepath location mdown should use.")
         parser.add_argument('markdown', nargs='*', default=[], help="Markdown file(s) or file pattern(s).")
