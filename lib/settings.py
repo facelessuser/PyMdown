@@ -288,12 +288,10 @@ class Settings(object):
             if name.startswith("mdownx.plainhtml"):
                 plain_html.append(i)
 
-        # Ensure the user can never set critic mode directly
-        for index in reversed(critic_found):
-            del extensions[index]
-
-        # Ensure the user can never set plainhtml mode directly
-        for index in reversed(plain_html):
+        indexes = list(set(critic_found + plain_html))
+        indexes.sort()
+        # Ensure the user can never set critic and plain text mode directly
+        for index in reversed(indexes):
             del extensions[index]
 
         # Ensure previews are using absolute paths if not already
