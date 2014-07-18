@@ -133,6 +133,48 @@ pre {
   overflow-x: auto;
 }
 
+hr {
+    background-size: 6px 6px;
+    background-color: #ddd;
+    height: 4px;
+    border: 0;
+    background-image: -webkit-linear-gradient(
+      135deg, rgba(255, 255, 255, 1) 27%,
+      transparent 27%,
+      transparent 53%, rgba(255, 255, 255, 1) 53%,
+      rgba(255, 255, 255, 1) 77%,
+      transparent 77%, transparent
+    );
+    background-image: -moz-linear-gradient(
+      135deg, rgba(255, 255, 255, 1) 27%,
+      transparent 27%,
+      transparent 53%, rgba(255, 255, 255, 1) 53%,
+      rgba(255, 255, 255, 1) 77%,
+      transparent 77%, transparent
+    );
+    background-image: -ms-linear-gradient(
+      135deg, rgba(255, 255, 255, 1) 27%,
+      transparent 27%,
+      transparent 53%, rgba(255, 255, 255, 1) 53%,
+      rgba(255, 255, 255, 1) 77%,
+      transparent 77%, transparent
+    );
+    background-image: -o-linear-gradient(
+      135deg, rgba(255, 255, 255, 1) 27%,
+      transparent 27%,
+      transparent 53%, rgba(255, 255, 255, 1) 53%,
+      rgba(255, 255, 255, 1) 77%,
+      transparent 77%, transparent
+    );
+    background-image: linear-gradient(
+      135deg, rgba(255, 255, 255, 1) 27%,
+      transparent 27%,
+      transparent 53%, rgba(255, 255, 255, 1) 53%,
+      rgba(255, 255, 255, 1) 77%,
+      transparent 77%, transparent
+    );
+}
+
 pre code { border: 0 !important; }
 
 code:before,
@@ -224,7 +266,7 @@ div.admonition.note {
 .progress-bar {
     height: 30px;
     float: left;
-    border-right: 1px inset #ccc;
+    border-right: 1px solid #ccc;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
