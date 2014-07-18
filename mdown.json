@@ -20,6 +20,7 @@
     "extensions": [
         "extra",
         "mdownx.github",
+        "mdownx.progressbar",
         "toc",
         "codehilite(guess_lang=False,pygments_style=github)",
         "mdownx.insert",

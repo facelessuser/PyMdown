@@ -78,6 +78,17 @@
 ### Duplicate Header
 ### Duplicate Header
 
+## Horizontal Rules
+```
+---
+
+***
+```
+
+---
+
+***
+
 ## Paragraphs
 ```
 This is a paragraph.

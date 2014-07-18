@@ -205,6 +205,7 @@ div.admonition.note {
     -moz-border-radius: 3px;
     border-radius: 3px;
     background-color: #F8F8F8;
+    box-shadow: inset -1px 8px 16px rgba(0, 0, 0, .05);
     position: relative;
 }
 
@@ -217,66 +218,66 @@ div.admonition.note {
     color: #fefefe;
     text-shadow: 1px 1px 1px #000;
     white-space: nowrap;
-    overflow-x: auto;
+    overflow: hidden;
 }
 
 .progress-bar {
-    height: 29px;
+    height: 30px;
     float: left;
-    border-top: 1px solid #fefefe;
+    border-right: 1px inset #ccc;
     -webkit-border-radius: 3px;
     -moz-border-radius: 3px;
     border-radius: 3px;
-    background-size: 30px 30px;
     background-color: #BDE5F8;
-    /*box-shadow: 1px 1px 0.5px #444;*/
+    background-size: 30px 30px;
+    box-shadow: inset -1px 8px 16px rgba(255, 255, 255, .5), 2px 2px 2px rgba(0, 0, 0, .1);
     background-image: -webkit-linear-gradient(
-      135deg, rgba(255, 255, 255, .15) 25%,
+      135deg, rgba(255, 255, 255, .25) 25%,
       transparent 25%,
-      transparent 50%, rgba(255, 255, 255, .15) 50%,
-      rgba(255, 255, 255, .15) 75%,
+      transparent 50%, rgba(255, 255, 255, .25) 50%,
+      rgba(255, 255, 255, .25) 75%,
       transparent 75%, transparent
     );
     background-image: -moz-linear-gradient(
-      135deg, rgba(255, 255, 255, .15) 25%,
+      135deg, rgba(255, 255, 255, .25) 25%,
       transparent 25%,
-      transparent 50%, rgba(255, 255, 255, .15) 50%,
-      rgba(255, 255, 255, .15) 75%,
+      transparent 50%, rgba(255, 255, 255, .25) 50%,
+      rgba(255, 255, 255, .25) 75%,
       transparent 75%, transparent
     );
     background-image: -ms-linear-gradient(
-      135deg, rgba(255, 255, 255, .15) 25%,
+      135deg, rgba(255, 255, 255, .25) 25%,
       transparent 25%,
-      transparent 50%, rgba(255, 255, 255, .15) 50%,
-      rgba(255, 255, 255, .15) 75%,
+      transparent 50%, rgba(255, 255, 255, .25) 50%,
+      rgba(255, 255, 255, .25) 75%,
       transparent 75%, transparent
     );
     background-image: -o-linear-gradient(
-      135deg, rgba(255, 255, 255, .15) 25%,
+      135deg, rgba(255, 255, 255, .25) 25%,
       transparent 25%,
-      transparent 50%, rgba(255, 255, 255, .15) 50%,
-      rgba(255, 255, 255, .15) 75%,
+      transparent 50%, rgba(255, 255, 255, .25) 50%,
+      rgba(255, 255, 255, .25) 75%,
       transparent 75%, transparent
     );
     background-image: linear-gradient(
-      135deg, rgba(255, 255, 255, .15) 25%,
+      135deg, rgba(255, 255, 255, .25) 25%,
       transparent 25%,
-      transparent 50%, rgba(255, 255, 255, .15) 50%,
-      rgba(255, 255, 255, .15) 75%,
+      transparent 50%, rgba(255, 255, 255, .25) 50%,
+      rgba(255, 255, 255, .25) 75%,
       transparent 75%, transparent
     );
 
-    /*-webkit-animation: animate-stripes 3s linear infinite;
-    -moz-animation: animate-stripes 3s linear infinite;*/
+    -webkit-animation: animate-stripes 3s linear infinite;
+    -moz-animation: animate-stripes 3s linear infinite;
 }
 
-/*@-webkit-keyframes animate-stripes {
+@-webkit-keyframes animate-stripes {
     0% {background-position: 0 0;} 100% {background-position: 60px 0;}
 }
 
 @-moz-keyframes animate-stripes {
       0% {background-position: 0 0;} 100% {background-position: 60px 0;}
-}*/
+}
 
 /* Multimarkdown Critic Blocks */
 span.critic_mark { background: #ff0; }
