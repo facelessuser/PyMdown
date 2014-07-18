@@ -546,6 +546,9 @@ elipsis...
 !!! Danger "Alert!"
     You really need to read [this](#admonition)!
 
+!!! Question "Question?"
+    Are you serious?
+
 !!! Note "Note"
     :smile:
 
@@ -573,6 +576,9 @@ elipsis...
 
 !!! Danger "Alert!"
     You really need to read [this](#admonition)!
+
+!!! Question "Question?"
+    Are you serious?
 
 !!! Note "Note"
     :smile:
@@ -663,13 +669,22 @@ __^^*insert italic bold*^^__  *^^__insert italic bold 2__^^*
 
 # Progress
 ```
-It will work without, but it is recommended to use a new line before and after where possible.
+It will work without, put a new line before and after.
 
-[== 55% "55% Testing percentages"]
+[== 0% "0% Test"]
 
-No label.
+[== 5% "5% Test"]
 
-[== 75%]
+[== 25% "25% Test :smile:"]
+
+[== 45% "45% Test"]
+
+[== 65% "65% Test"]
+
+[== 85% "85% Test"]
+
+[== 100% "100% Test"]
+
 
 | Test1 | Test 2                                      |
 |-------|---------------------------------------------|
@@ -677,13 +692,21 @@ No label.
 |second |[== 100% "All Done"]                         |
 ```
 
-It will work without, but it is recommended to use a new line before and after where possible.
+It will work without, put a new line before and after.
 
-[== 55% "55% Testing percentages"]
+[== 0% "0% Test"]
 
-No label.
+[== 5% "5% Test"]
 
-[== 75%]
+[== 25% "25% Test"]
+
+[== 45% "45% Test"]
+
+[== 65% "65% Test"]
+
+[== 85% "85% Test"]
+
+[== 100% "100% Test"]
 
 
 | Test1 | Test 2                                      |

@@ -25,24 +25,39 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 from __future__ import unicode_literals
 from markdown import Extension
 from markdown.inlinepatterns import Pattern, dequote
+from markdown import util
 
 RE_PROGRESS = r'\[==\s*(?:(100(?:.0+)?|[1-9]?[0-9](?:.\d+)?)%|(?:(\d+(?:.\d+)?)\s*/\s*(\d+(?:.\d+)?)))(\s+(?:[^\]\\]|\\.)*)?\s*\]'
-PROGRESS_BAR = '<div class="progress"><div class="progress-bar" style="width:%s%%"><p class="progress-label">%s</p></div></div>'
+# PROGRESS_BAR = '<div class="progress"><div class="progress-bar %s" style="width:%s%%"><p class="progress-label">%s</p></div></div>'
 
+CLASS_100PLUS = "progress-100plus"
+CLASS_80PLUS = "progress-80plus"
+CLASS_60PLUS = "progress-60plus"
+CLASS_40PLUS = "progress-40plus"
+CLASS_20PLUS = "progress-20plus"
+CLASS_0PLUS = "progress-0plus"
 
 class ProgressBarPattern(Pattern):
     def __init__(self, pattern):
         Pattern.__init__(self, pattern)
 
+    def create_tag(self, progress_class, width, label):
+        el = util.etree.Element("div")
+        el.set('class', 'progress')
+        bar = util.etree.SubElement(el, 'div')
+        bar.set('class', 'progress-bar %s' % progress_class)
+        bar.set('style', 'width:%s%%' % width)
+        p = util.etree.SubElement(bar, 'p')
+        p.set('class', 'progress-label')
+        p.text = label
+        return el
+
     def handleMatch(self, m):
         label = ""
         if m.group(5):
-            label = m.group(5).strip()
+            label = dequote(m.group(5).strip())
         if m.group(2):
-            placeholder = self.markdown.htmlStash.store(
-                PROGRESS_BAR % (m.group(2), dequote(self.unescape(label))),
-                safe=True
-            )
+            value = float(m.group(2))
         else:
             try:
                 num = float(m.group(3))
@@ -62,11 +77,26 @@ class ProgressBarPattern(Pattern):
             elif value < 0.0:
                 value = 0.0
 
-            placeholder = self.markdown.htmlStash.store(
-                PROGRESS_BAR % ('%.2f' % value, dequote(self.unescape(label))),
-                safe=True
-            )
-        return placeholder
+        if value >= 100.0:
+            c = CLASS_100PLUS
+        elif value >= 80.0:
+            c = CLASS_80PLUS
+        elif value >= 60.0:
+            c = CLASS_60PLUS
+        elif value >= 40.0:
+            c = CLASS_40PLUS
+        elif value >= 20.0:
+            c = CLASS_20PLUS
+        else:
+            c = CLASS_0PLUS
+
+        return self.create_tag(c, '%.2f' % value, label)
+
+        # placeholder = self.markdown.htmlStash.store(
+        #     PROGRESS_BAR % (c, '%.2f' % value, label),
+        #     safe=True
+        # )
+        # return placeholder
 
 
 class ProgressBarExtension(Extension):
