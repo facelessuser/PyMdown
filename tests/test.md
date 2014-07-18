@@ -546,8 +546,8 @@ elipsis...
 !!! Danger "Alert!"
     You really need to read [this](#admonition)!
 
-!!! Note ""
-    This one has no `title`.
+!!! Note "Note"
+    :smile:
 
     > Not all markup can be placed in these boxes, but you can fit all sorts of things in them. But you will notice that the styles don't always play nice with each other.  Additional CSS could fix this though.
 
@@ -574,8 +574,8 @@ elipsis...
 !!! Danger "Alert!"
     You really need to read [this](#admonition)!
 
-!!! Note ""
-    This one has no `title` :smile:.
+!!! Note "Note"
+    :smile:
 
     > Not all markup can be placed in these boxes, but you can fit all sorts of things in them. But you will notice that the styles don't always play nice with each other.  Additional CSS could fix this though.
 

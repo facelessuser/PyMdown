@@ -36,7 +36,7 @@ a::-moz-selection { background:rgba(255,255,0,0.3); color:#0645ad }
 a::selection { background:rgba(255,255,0,0.3); color:#0645ad }
 
 /* Header Anchor Links*/
-a.headeranchor-link {
+.headeranchor-link {
   color:#333;
   border: 0;
   margin-left: -20px;
@@ -49,7 +49,7 @@ a.headeranchor-link {
   bottom: 0;
 }
 
-span.headeranchor {
+.headeranchor {
   font: normal normal 16px octicons-anchor;
   line-height: 1;
   -moz-osx-font-smoothing: grayscale;
@@ -59,16 +59,18 @@ span.headeranchor {
   user-select: none;
 }
 
-a.headeranchor-link:hover { text-decoration: none;}
-a.headeranchor-link:visited { color:#333; }
-a.headeranchor-link:active { color:#333; }
-a.headeranchor-link:hover span.headeranchor:before { content: '\f05c'; }
-h1:hover a span.headeranchor:before { content: '\f05c'; }
-h2:hover a span.headeranchor:before { content: '\f05c'; }
-h3:hover a span.headeranchor:before { content: '\f05c'; }
-h4:hover a span.headeranchor:before { content: '\f05c'; }
-h5:hover a span.headeranchor:before { content: '\f05c'; }
-h6:hover a span.headeranchor:before { content: '\f05c'; }
+.headeranchor-link:hover,
+.headeranchor-link:visited,
+.headeranchor-link:active
+{ text-decoration: none; color:#333; }
+.headeranchor-link:hover .headeranchor:before,
+h1:hover .headeranchor:before,
+h2:hover .headeranchor:before,
+h3:hover .headeranchor:before,
+h4:hover .headeranchor:before,
+h5:hover .headeranchor:before,
+h6:hover .headeranchor:before
+{ content: '\f05c'; }
 
 abbr { cursor: pointer; }
 
@@ -175,7 +177,7 @@ pre {
   white-space: pre-wrap;
   word-wrap: break-word;*/
   padding: 10px;
-  overflow-x: auto;
+  overflow: auto;
 }
 
 pre code { border: 0 !important; }
@@ -192,7 +194,7 @@ pre code:after {
 }
 
 /* Admonition */
-div.admonition {
+.admonition {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
@@ -201,40 +203,60 @@ div.admonition {
   margin: 10px auto;
 }
 
-div.admonition p {
+.admonition p {
   padding: 0;
   margin: 0.5em 0 0.5em 0;
 }
 
-p.admonition-title {
+.admonition-title {
   font-weight: bold;
 }
 
-div.admonition.attention {
+.attention > .admonition-title:before {
+  content: "\2714\00a0";
+}
+
+.admonition.attention {
   color: #4F8A10;
   background-color: #DFF2BF;
   border: 1px solid #4F8A10;
 }
 
-div.admonition.caution {
+.caution > .admonition-title:before {
+  content: "\26A0\00a0";
+}
+
+.admonition.caution {
   color: #9F6000;
   background-color: #FEEFB3;
   border: 1px solid #9F6000;
 }
 
-div.admonition.hint {
+.hint > .admonition-title:before {
+  content: "\2605\00a0";
+}
+
+.admonition.hint {
   color: #00529B;
   background-color: #BDE5F8;
   border: 1px solid #00529B;
 }
 
-div.admonition.danger {
+.danger > .admonition-title:before {
+  content: "\2718\00a0";
+}
+
+.admonition.danger {
   color: #D8000C;
   background-color: #FFBABA;
   border: 1px solid #D8000C;
 }
 
-div.admonition.note {
+.note > .admonition-title:before {
+  content: "\270E\00a0";
+}
+
+.admonition.note {
   color: #888888;
   background-color: #F8F8F8;
   border: 1px solid #888888;
@@ -325,10 +347,10 @@ div.admonition.note {
 }
 
 /* Multimarkdown Critic Blocks */
-span.critic_mark { background: #ff0; }
-span.critic_delete { color: #c82829; text-decoration: line-through; }
-span.critic_insert { color: #718c00 ; text-decoration: underline; }
-span.critic_comment { color: #8e908c; font-style: italic; }
+.critic_mark { background: #ff0; }
+.critic_delete { color: #c82829; text-decoration: line-through; }
+.critic_insert { color: #718c00 ; text-decoration: underline; }
+.critic_comment { color: #8e908c; font-style: italic; }
 
 /* Inlines */
 b, strong { font-weight: bold; }
@@ -346,23 +368,23 @@ dfn { font-style: italic; }
 /* Lists */
 ul, ol { padding-left: 30px; }
 li p:last-child { margin:0 }
-li.task-list-item { list-style-type: none; }
-li.task-list-item input { float:left; margin-left: -20px; margin-top: 6px; }
+.task-list-item { list-style-type: none; }
+.task-list-item input { float:left; margin-left: -20px; margin-top: 6px; }
 dt { font-weight: bold; font-style: italic;}
 dd { margin: 0 0 0 2em; }
 
 /* Tables */
-table { width: 100%; border-collapse: collapse; overflow: auto; display: block;}
+table { width: 100%; border-collapse: collapse; overflow-x: auto; overflow-y: hidden; display: block;}
 table tr { background-color: #fefefe; }
 table tr:nth-child(2n) { background-color: #f8f8f8; }
 td, th { border: 1px solid #ddd; padding: 6px 13px; }
 
 /* Codehilite Tables */
-table.codehilitetable { border: 0; border-spacing: 0; width: 100%; }
-td.linenos, td.code, table.codehilitetable td { border: 0; padding: 0; }
-table.codehilitetable td:not(.linenos) div.linenodiv { padding: 0 !important; }
-td.code { width: 100%; }
-table.codehilitetable td.linenos div pre, td div.linenodiv pre {
+.codehilitetable { border: 0; border-spacing: 0; }
+.linenos, .code, .codehilitetable td { border: 0; padding: 0; }
+td:not(.linenos) .linenodiv { padding: 0 !important; }
+.code { width: 100%; }
+.linenos div pre, .linenodiv pre {
   border: 0;
   border-top: 1px solid #CCC;
   border-left: 1px solid #CCC;
@@ -379,7 +401,7 @@ table.codehilitetable td.linenos div pre, td div.linenodiv pre {
   border-bottom-left-radius: 3px;
 }
 
-table.codehilitetable td.code div pre {
+.code div pre {
   border: 0;
   border-top: 1px solid #CCC;
   border-right: 1px solid #CCC;
@@ -408,7 +430,7 @@ table.codehilitetable td.code div pre {
   * { background: transparent !important; color: black !important; filter:none !important; -ms-filter: none !important; }
   body{ font-size:12pt; max-width:100%; outline:none; border: 0;}
   a, a:visited { text-decoration: underline; }
-  a.headeranchor-link { display: none; }
+  .headeranchor-link { display: none; }
   hr { height: 1px; border:0; border-bottom:1px solid black; }
   a[href]:after { content: " (" attr(href) ")"; }
   abbr[title]:after { content: " (" attr(title) ")"; }
