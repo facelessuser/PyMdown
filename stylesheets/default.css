@@ -307,7 +307,8 @@ dt { font-weight: bold; font-style: italic;}
 dd { margin: 0 0 0 2em; }
 
 /* Tables */
-table { width: 100%; border-collapse: collapse; background-color: #fefefe; overflow: auto; display: block;}
+table { width: 100%; border-collapse: collapse; overflow: auto; display: block;}
+table tr { background-color: #fefefe; }
 table tr:nth-child(2n) { background-color: #f8f8f8; }
 td, th { border: 1px solid #ddd; padding: 6px 13px; }
 
