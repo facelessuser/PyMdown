@@ -104,36 +104,12 @@ blockquote {
   padding-left: 3em;
   border-left: 0.5em #EEE solid;
 }
-hr { display: block; height: 2px; border: 0; border-top: 1px solid #aaa;border-bottom: 1px solid #eee; margin: 1em 0; padding: 0; }
 
-/* Raw Blocks */
-span.backtick {
-  border:1px solid #EAEAEA;
-  border-radius:3px;
-  background:#F8F8F8;
-  padding:0 3px 0 3px;
-}
-
-pre, code, kbd, samp {
-  color: #333;
-  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  font-size: 0.88em;
-  background-color: #F8F8F8;
-  border: 1px solid #CCC;
-}
-
-pre {
-  /*white-space: pre;
-  white-space: pre-wrap;
-  word-wrap: break-word;*/
-  padding: 10px;
-  overflow-x: auto;
-}
-
+/* Horizontal Rule */
 hr {
+    display: block;
+    margin: 1em 0;
+    padding: 0;
     background-size: 6px 6px;
     background-color: #ddd;
     height: 4px;
@@ -173,6 +149,33 @@ hr {
       rgba(255, 255, 255, 1) 77%,
       transparent 77%, transparent
     );
+}
+
+/* Raw Blocks */
+span.backtick {
+  border:1px solid #EAEAEA;
+  border-radius:3px;
+  background:#F8F8F8;
+  padding:0 3px 0 3px;
+}
+
+pre, code, kbd, samp {
+  color: #333;
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  font-size: 0.88em;
+  background-color: #F8F8F8;
+  border: 1px solid #CCC;
+}
+
+pre {
+  /*white-space: pre;
+  white-space: pre-wrap;
+  word-wrap: break-word;*/
+  padding: 10px;
+  overflow-x: auto;
 }
 
 pre code { border: 0 !important; }
