@@ -665,7 +665,7 @@ __^^*insert italic bold*^^__  *^^__insert italic bold 2__^^*
 ```
 It will work without, but it is recommended to use a new line before and after where possible.
 
-[== 55% "55% Testing percentages with really long text that goes off the bar"]
+[== 55% "55% Testing percentages"]
 
 No label.
 
@@ -679,7 +679,7 @@ No label.
 
 It will work without, but it is recommended to use a new line before and after where possible.
 
-[== 55% "55% Testing percentages with really long text that goes off the bar"]
+[== 55% "55% Testing percentages"]
 
 No label.
 
