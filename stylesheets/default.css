@@ -1,5 +1,3 @@
-/* CSS borrowed from https://github.com/revolunet/sublimetext-markdown-preview and modified */
-
 /* Fonts */
 @font-face{
   font-family: octicons-anchor;
@@ -54,8 +52,8 @@ a::selection { background:rgba(255,255,0,0.3); color:#0645ad }
   bottom: 0;
 }
 
-.headeranchor, .admonition-icon {
-  font: normal normal 16px fontawesome-mini;
+.headeranchor {
+  font: normal normal 16px octicons-anchor;
   line-height: 1;
   -moz-osx-font-smoothing: grayscale;
   -webkit-user-select: none;
@@ -75,7 +73,7 @@ h3:hover .headeranchor:before,
 h4:hover .headeranchor:before,
 h5:hover .headeranchor:before,
 h6:hover .headeranchor:before
-{ content: '\f0c1'; }
+{ content: '\f05c'; }
 
 abbr { cursor: pointer; }
 
@@ -122,39 +120,39 @@ hr {
     height: 4px;
     border: 0;
     background-image: -webkit-linear-gradient(
-      135deg, rgba(255, 255, 255, 1) 27%,
-      transparent 27%,
+      135deg,
+      rgba(255, 255, 255, 1) 27%, transparent 27%,
       transparent 53%, rgba(255, 255, 255, 1) 53%,
-      rgba(255, 255, 255, 1) 77%,
-      transparent 77%, transparent
+      rgba(255, 255, 255, 1) 77%, transparent 77%,
+      transparent
     );
     background-image: -moz-linear-gradient(
-      135deg, rgba(255, 255, 255, 1) 27%,
-      transparent 27%,
+      135deg,
+      rgba(255, 255, 255, 1) 27%, transparent 27%,
       transparent 53%, rgba(255, 255, 255, 1) 53%,
-      rgba(255, 255, 255, 1) 77%,
-      transparent 77%, transparent
+      rgba(255, 255, 255, 1) 77%, transparent 77%,
+      transparent
     );
     background-image: -ms-linear-gradient(
-      135deg, rgba(255, 255, 255, 1) 27%,
-      transparent 27%,
+      135deg,
+      rgba(255, 255, 255, 1) 27%, transparent 27%,
       transparent 53%, rgba(255, 255, 255, 1) 53%,
-      rgba(255, 255, 255, 1) 77%,
-      transparent 77%, transparent
+      rgba(255, 255, 255, 1) 77%, transparent 77%,
+      transparent
     );
     background-image: -o-linear-gradient(
-      135deg, rgba(255, 255, 255, 1) 27%,
-      transparent 27%,
+      135deg,
+      rgba(255, 255, 255, 1) 27%, transparent 27%,
       transparent 53%, rgba(255, 255, 255, 1) 53%,
-      rgba(255, 255, 255, 1) 77%,
-      transparent 77%, transparent
+      rgba(255, 255, 255, 1) 77%, transparent 77%,
+      transparent
     );
     background-image: linear-gradient(
-      135deg, rgba(255, 255, 255, 1) 27%,
-      transparent 27%,
+      135deg,
+      rgba(255, 255, 255, 1) 27%, transparent 27%,
       transparent 53%, rgba(255, 255, 255, 1) 53%,
-      rgba(255, 255, 255, 1) 77%,
-      transparent 77%, transparent
+      rgba(255, 255, 255, 1) 77%, transparent 77%,
+      transparent
     );
 }
 
@@ -178,9 +176,6 @@ pre, code, kbd, samp {
 }
 
 pre {
-  /*white-space: pre;
-  white-space: pre-wrap;
-  word-wrap: break-word;*/
   padding: 10px;
   overflow: auto;
 }
@@ -199,6 +194,16 @@ pre code:after {
 }
 
 /* Admonition */
+.admonition-icon {
+  font: normal normal 16px fontawesome-mini;
+  line-height: 1.5;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
+
 .admonition {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
@@ -208,39 +213,39 @@ pre code:after {
   margin: 10px auto;
   background-size: 6px 6px;
   background-image: -webkit-linear-gradient(
-    135deg, rgba(255, 255, 255, .2) 27%,
-    transparent 27%,
+    135deg,
+    rgba(255, 255, 255, .2) 27%, transparent 27%,
     transparent 53%, rgba(255, 255, 255, .2) 53%,
-    rgba(255, 255, 255, .2) 77%,
-    transparent 77%, transparent
+    rgba(255, 255, 255, .2) 77%, transparent 77%,
+    transparent
   );
   background-image: -moz-linear-gradient(
-    135deg, rgba(255, 255, 255, .2) 27%,
-    transparent 27%,
+    135deg,
+    rgba(255, 255, 255, .2) 27%, transparent 27%,
     transparent 53%, rgba(255, 255, 255, .2) 53%,
-    rgba(255, 255, 255, .2) 77%,
-    transparent 77%, transparent
+    rgba(255, 255, 255, .2) 77%, transparent 77%,
+    transparent
   );
-  background-image: -ms-linear-gradient(
-    135deg, rgba(255, 255, 255, .2) 27%,
-    transparent 27%,
+  background-image:-ms-linear-gradient(
+    135deg,
+    rgba(255, 255, 255, .2) 27%, transparent 27%,
     transparent 53%, rgba(255, 255, 255, .2) 53%,
-    rgba(255, 255, 255, .2) 77%,
-    transparent 77%, transparent
+    rgba(255, 255, 255, .2) 77%, transparent 77%,
+    transparent
   );
   background-image: -o-linear-gradient(
-    135deg, rgba(255, 255, 255, .2) 27%,
-    transparent 27%,
+    135deg,
+    rgba(255, 255, 255, .2) 27%, transparent 27%,
     transparent 53%, rgba(255, 255, 255, .2) 53%,
-    rgba(255, 255, 255, .2) 77%,
-    transparent 77%, transparent
+    rgba(255, 255, 255, .2) 77%, transparent 77%,
+    transparent
   );
   background-image: linear-gradient(
-    135deg, rgba(255, 255, 255, .2) 27%,
-    transparent 27%,
+    135deg,
+    rgba(255, 255, 255, .2) 27%, transparent 27%,
     transparent 53%, rgba(255, 255, 255, .2) 53%,
-    rgba(255, 255, 255, .2) 77%,
-    transparent 77%, transparent
+    rgba(255, 255, 255, .2) 77%, transparent 77%,
+    transparent
   );
 }
 
@@ -341,15 +346,16 @@ pre code:after {
   width: 100%; margin: 0;
   line-height: 30px;
   color: #333;
-  text-shadow: 1px 1px 0px #fefefe,
-               -1px -1px 0px #fefefe,
-               -1px 1px 0px #fefefe,
-               1px -1px 0px #fefefe,
-               0px 1px 0px #fefefe,
-               0px -1px 0px #fefefe,
-               1px 0px 0px #fefefe,
-               -1px 0px 0px #fefefe,
-               1px 1px 2px #000;
+  text-shadow:
+    1px 1px 0px #fefefe,
+    -1px -1px 0px #fefefe,
+    -1px 1px 0px #fefefe,
+    1px -1px 0px #fefefe,
+    0px 1px 0px #fefefe,
+    0px -1px 0px #fefefe,
+    1px 0px 0px #fefefe,
+    -1px 0px 0px #fefefe,
+    1px 1px 2px #000;
   -webkit-font-smoothing: antialiased !important;
   white-space: nowrap;
   overflow: hidden;
@@ -364,49 +370,65 @@ pre code:after {
   border-radius: 3px;
   background-color: #34c2e3;
   background-size: 30px 30px;
-  box-shadow: inset -1px 1px 0px rgba(255, 255, 255, .5),
-              inset 0 -4px 16px rgba(255, 255, 255, .7),
-              inset 0 4px 16px rgba(255, 255, 255, .7),
-              inset 0 -16px 0px rgba(0, 0, 0, .025),
-              inset 1px -1px 0px rgba(255, 255, 255, .2);
+  box-shadow:
+    inset -1px 1px 0px rgba(255, 255, 255, .5),
+    inset 0 -4px 16px rgba(255, 255, 255, .7),
+    inset 0 4px 16px rgba(255, 255, 255, .7),
+    inset 0 -16px 0px rgba(0, 0, 0, .025),
+    inset 1px -1px 0px rgba(255, 255, 255, .2);
   background-image: -webkit-linear-gradient(
     135deg, rgba(255, 255, 255, .4) 27%,
-    transparent 25%,
-    transparent 50%, rgba(255, 255, 255, .4) 52%,
+    transparent 27%,
+    transparent 53%, rgba(255, 255, 255, .4) 53%,
     rgba(255, 255, 255, .4) 77%,
-    transparent 75%, transparent
+    transparent 77%, transparent
   );
   background-image: -moz-linear-gradient(
-    135deg, rgba(255, 255, 255, .4) 27%,
-    transparent 25%,
-    transparent 50%, rgba(255, 255, 255, .4) 52%,
-    rgba(255, 255, 255, .4) 77%,
-    transparent 75%, transparent
+    135deg,
+    rgba(255, 255, 255, .4) 27%, transparent 27%,
+    transparent 53%, rgba(255, 255, 255, .4) 53%,
+    rgba(255, 255, 255, .4) 77%, transparent 77%,
+    transparent
   );
   background-image: -ms-linear-gradient(
-    135deg, rgba(255, 255, 255, .4) 27%,
-    transparent 25%,
-    transparent 50%, rgba(255, 255, 255, .4) 52%,
-    rgba(255, 255, 255, .4) 77%,
-    transparent 75%, transparent
+    135deg,
+    rgba(255, 255, 255, .4) 27%, transparent 27%,
+    transparent 53%, rgba(255, 255, 255, .4) 53%,
+    rgba(255, 255, 255, .4) 77%, transparent 77%,
+    transparent
   );
   background-image: -o-linear-gradient(
-    135deg, rgba(255, 255, 255, .4) 27%,
-    transparent 25%,
-    transparent 50%, rgba(255, 255, 255, .4) 52%,
-    rgba(255, 255, 255, .4) 77%,
-    transparent 75%, transparent
+    135deg,
+    rgba(255, 255, 255, .4) 27%, transparent 27%,
+    transparent 53%, rgba(255, 255, 255, .4) 53%,
+    rgba(255, 255, 255, .4) 77%, transparent 77%,
+    transparent
   );
   background-image: linear-gradient(
-    135deg, rgba(255, 255, 255, .4) 27%,
-    transparent 25%,
-    transparent 50%, rgba(255, 255, 255, .4) 52%,
-    rgba(255, 255, 255, .4) 77%,
-    transparent 75%, transparent
+    135deg,
+    rgba(255, 255, 255, .4) 27%, transparent 27%,
+    transparent 53%, rgba(255, 255, 255, .4) 53%,
+    rgba(255, 255, 255, .4) 77%, transparent 77%,
+    transparent
   );
   -webkit-animation: animate-stripes 3s linear infinite;
   -moz-animation: animate-stripes 3s linear infinite;
   animation: animate-stripes 3s linear infinite;
+}
+
+@-webkit-keyframes animate-stripes {
+  0% { background-position: 0 0; }
+  100% { background-position: 60px 0; }
+}
+
+@-moz-keyframes animate-stripes {
+  0% { background-position: 0 0; }
+  100% { background-position: 60px 0; }
+}
+
+@keyframes animate-stripes {
+  0% { background-position: 0 0; }
+  100% { background-position: 60px 0; }
 }
 
 .progress-bar[class*="progress-100plus"] {
@@ -432,19 +454,6 @@ pre code:after {
 
 .progress-bar[class*="progress-0plus"] {
   background-color: #f63a0f;
-}
-
-
-@-webkit-keyframes animate-stripes {
-  0% { background-position: 0 0; } 100% { background-position: 60px 0; }
-}
-
-@-moz-keyframes animate-stripes {
-  0% { background-position: 0 0; } 100% { background-position: 60px 0; }
-}
-
-@keyframes animate-stripes {
-  0% { background-position: 0 0; } 100% { background-position: 60px 0; }
 }
 
 /* Multimarkdown Critic Blocks */
