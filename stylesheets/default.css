@@ -340,18 +340,17 @@ pre code:after {
   font-weight: bold;
   width: 100%; margin: 0;
   line-height: 30px;
-  color: #fefefe;
-  text-shadow: 1px 1px 0px #666,
-               -1px -1px 0px #666,
-               -1px 1px 0px #666,
-               1px -1px 0px #666,
-               0px 1px 0px #666,
-               0px -1px 0px #666,
-               1px 0px 0px #666,
-               -1px 0px 0px #666,
+  color: #333;
+  text-shadow: 1px 1px 0px #fefefe,
+               -1px -1px 0px #fefefe,
+               -1px 1px 0px #fefefe,
+               1px -1px 0px #fefefe,
+               0px 1px 0px #fefefe,
+               0px -1px 0px #fefefe,
+               1px 0px 0px #fefefe,
+               -1px 0px 0px #fefefe,
                1px 1px 2px #000;
   -webkit-font-smoothing: antialiased !important;
-  /*text-shadow: 1px 1px 1px #000;*/
   white-space: nowrap;
   overflow: hidden;
 }
@@ -367,6 +366,7 @@ pre code:after {
   background-size: 30px 30px;
   box-shadow: inset -1px 1px 0px rgba(255, 255, 255, .5),
               inset 0 -4px 16px rgba(255, 255, 255, .7),
+              inset 0 4px 16px rgba(255, 255, 255, .7),
               inset 0 -16px 0px rgba(0, 0, 0, .025),
               inset 1px -1px 0px rgba(255, 255, 255, .2);
   background-image: -webkit-linear-gradient(
@@ -406,6 +406,7 @@ pre code:after {
   );
   -webkit-animation: animate-stripes 3s linear infinite;
   -moz-animation: animate-stripes 3s linear infinite;
+  animation: animate-stripes 3s linear infinite;
 }
 
 .progress-bar[class*="progress-100plus"] {
@@ -439,6 +440,10 @@ pre code:after {
 }
 
 @-moz-keyframes animate-stripes {
+  0% { background-position: 0 0; } 100% { background-position: 60px 0; }
+}
+
+@keyframes animate-stripes {
   0% { background-position: 0 0; } 100% { background-position: 60px 0; }
 }
 
@@ -531,7 +536,9 @@ td:not(.linenos) .linenodiv { padding: 0 !important; }
   a[href]:after { content: " (" attr(href) ")"; }
   abbr[title]:after { content: " (" attr(title) ")"; }
   .ir a:after, a[href^="javascript:"]:after, a[href^="#"]:after { content: ""; }
+  pre { white-space: pre; white-space: pre-wrap; word-wrap: break-word; }
   pre, blockquote { border: 1px solid #999; padding-right: 1em; page-break-inside: avoid; }
+  .progress, .progress-bar { box-shadow: none; }
   tr, img { page-break-inside: avoid; }
   img { max-width: 100% !important; }
   p, h2, h3 { orphans: 3; widows: 3; }

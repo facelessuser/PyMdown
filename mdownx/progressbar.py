@@ -28,7 +28,6 @@ from markdown.inlinepatterns import Pattern, dequote
 from markdown import util
 
 RE_PROGRESS = r'\[==\s*(?:(100(?:.0+)?|[1-9]?[0-9](?:.\d+)?)%|(?:(\d+(?:.\d+)?)\s*/\s*(\d+(?:.\d+)?)))(\s+(?:[^\]\\]|\\.)*)?\s*\]'
-# PROGRESS_BAR = '<div class="progress"><div class="progress-bar %s" style="width:%s%%"><p class="progress-label">%s</p></div></div>'
 
 CLASS_100PLUS = "progress-100plus"
 CLASS_80PLUS = "progress-80plus"
@@ -36,6 +35,7 @@ CLASS_60PLUS = "progress-60plus"
 CLASS_40PLUS = "progress-40plus"
 CLASS_20PLUS = "progress-20plus"
 CLASS_0PLUS = "progress-0plus"
+
 
 class ProgressBarPattern(Pattern):
     def __init__(self, pattern):
@@ -49,7 +49,7 @@ class ProgressBarPattern(Pattern):
         bar.set('style', 'width:%s%%' % width)
         p = util.etree.SubElement(bar, 'p')
         p.set('class', 'progress-label')
-        p.text = label
+        p.text = self.markdown.htmlStash.store(label, safe=True)
         return el
 
     def handleMatch(self, m):
@@ -91,12 +91,6 @@ class ProgressBarPattern(Pattern):
             c = CLASS_0PLUS
 
         return self.create_tag(c, '%.2f' % value, label)
-
-        # placeholder = self.markdown.htmlStash.store(
-        #     PROGRESS_BAR % (c, '%.2f' % value, label),
-        #     safe=True
-        # )
-        # return placeholder
 
 
 class ProgressBarExtension(Extension):

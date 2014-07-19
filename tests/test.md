@@ -692,21 +692,21 @@ It will work without, put a new line before and after.
 |second |[== 100% "All Done"]                         |
 ```
 
-It will work without, put a new line before and after.
+It is recommened to put a new line before and after.
 
-[== 0% "0% Test"]
+[== 0% "0%"]
 
-[== 5% "5% Test"]
+[== 5% "5%"]
 
-[== 25% "25% Test"]
+[== 25% "25%"]
 
-[== 45% "45% Test"]
+[== 45% "45%"]
 
-[== 65% "65% Test"]
+[== 65% "65%"]
 
-[== 85% "85% Test"]
+[== 85% "85%"]
 
-[== 100% "100% Test"]
+[== 100% "100%"]
 
 
 | Test1 | Test 2                                      |
