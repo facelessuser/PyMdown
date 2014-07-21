@@ -236,14 +236,14 @@ With this link (https://github.com/facelessuser/mdown), it still works.
 ## Abbreviation
 Abreviations source are found at the bottom of the page
 ```
-The HTML specification 
+The HTML specification
 is maintained by the W3C.
 
 *[HTML]: Hyper Text Markup Language
 *[W3C]:  World Wide Web Consortium
 ```
 
-The HTML specification 
+The HTML specification
 is maintained by the W3C.
 
 ## Unordered List
@@ -530,6 +530,19 @@ da--sh
 
 elipsis...
 
+## Attribute List
+```
+Normal Text
+
+Modified Text
+{: style="font-weight:bold;" }
+```
+
+Normal Text
+
+Modified Text
+{: style="font-weight:bold;" }
+
 ## Admonition
 ```
 !!! Attention "Success!"
@@ -668,48 +681,37 @@ __^^_insert italic bold_^^__  _^^__insert italic bold 2__^^_
 __^^*insert italic bold*^^__  *^^__insert italic bold 2__^^*
 
 # Progress
+Progress bars are block elements and it is recommened to put a newline before and after.  But they will be recognized inline like in a table, but they will be on their own line.
+
+Normally you would just globally set your additional classes: `progressbar(add_classes=candystripe-animate)`, but here we want to test the inline class adding.
+
+To turn off color level classes you could just use `progressbar(level_class=False)`
 ```
-It will work without, put a new line before and after.
-
-[== 0% "0% Test"]
-
-[== 5% "5% Test"]
-
-[== 25% "25% Test :smile:"]
-
-[== 45% "45% Test"]
-
-[== 65% "65% Test"]
-
-[== 85% "85% Test"]
-
-[== 100% "100% Test"]
-
-
-| Test1 | Test 2                                      |
-|-------|---------------------------------------------|
-|first  |[== 212.2 / 537 "212.2/537 Testing division"]|
-|second |[== 100% "All Done"]                         |
+| Test                               | Result                                          |
+|------------------------------------|------------------------------------------------ |
+|Animated Candystripes (flat): 0%    |[==0% "0%" class="candystripe-animate"]          |
+|Animated Candystripes (flat): 5%    |[==5% "5%" class="candystripe-animate"]          |
+|Animated Candystripes (flat): 25%   |[==25% "25%" class="candystripe-animate"]        |
+|Animated Candystripes (shaded): 45% |[==45% "45%" class="candystripe-animate shaded"] |
+|Animated Candystripes (shaded): 65% |[==65% "65%" class="candystripe-animate shaded"] |
+|Animated Candystripes (gloss): 85%  |[==85% "85%" class="candystripe-animate gloss"]  |
+|Animated Candystripes (gloss): 100% |[==100% "100%" class="candystripe-animate gloss"]|
+|Division: Plain                     |[== 212.2/537 "212.2/537 Testing division"]      |
+|No Title: Plain                     |[== 50%]                                         |
+|No Title: Candystripe               |[== 50% "" class="candystripe"]                  |
+|Inline: Plain                       |Before[== 50% I'm a block!]After                 |
 ```
 
-It is recommened to put a new line before and after.
-
-[== 0% "0%"]
-
-[== 5% "5%"]
-
-[== 25% "25%"]
-
-[== 45% "45%"]
-
-[== 65% "65%"]
-
-[== 85% "85%"]
-
-[== 100% "100%"]
-
-
-| Test1 | Test 2                                      |
-|-------|---------------------------------------------|
-|first  |[== 212.2 / 537 "212.2/537 Testing division"]|
-|second |[== 100% "All Done"]                         |
+| Test                               | Result                                          |
+|------------------------------------|------------------------------------------------ |
+|Animated Candystripes (flat): 0%    |[==0% "0%" class="candystripe-animate"]          |
+|Animated Candystripes (flat): 5%    |[==5% "5%" class="candystripe-animate"]          |
+|Animated Candystripes (flat): 25%   |[==25% "25%" class="candystripe-animate"]        |
+|Animated Candystripes (shaded): 45% |[==45% "45%" class="candystripe-animate shaded"] |
+|Animated Candystripes (shaded): 65% |[==65% "65%" class="candystripe-animate shaded"] |
+|Animated Candystripes (gloss): 85%  |[==85% "85%" class="candystripe-animate gloss"]  |
+|Animated Candystripes (gloss): 100% |[==100% "100%" class="candystripe-animate gloss"]|
+|Division: Plain                     |[== 212.2/537 "212.2/537 Testing division"]      |
+|No Title: Plain                     |[== 50%]                                         |
+|No Title: Candystripe               |[== 50% "" class="candystripe"]                  |
+|Inline: Plain                       |Before[== 50% I'm a block!]After                 |

@@ -32,11 +32,11 @@ a:active{ color:#faa700; }
 a:focus{ outline: thin dotted; }
 a:hover, a:active{ outline: 0; }
 
-::-moz-selection { background:rgba(255,255,0,0.3); color:#000 }
-::selection { background:rgba(255,255,0,0.3); color:#000 }
+::-moz-selection { background:#a8d1ff; color:#000 }
+::selection { background:#a8d1ff; color:#000 }
 
-a::-moz-selection { background:rgba(255,255,0,0.3); color:#0645ad }
-a::selection { background:rgba(255,255,0,0.3); color:#0645ad }
+a::-moz-selection { background:#a8d1ff; color:#0645ad }
+a::selection { background:#a8d1ff; color:#0645ad }
 
 /* Header Anchor Links*/
 .headeranchor-link {
@@ -157,12 +157,6 @@ hr {
 }
 
 /* Raw Blocks */
-span.backtick {
-  border:1px solid #EAEAEA;
-  border-radius:3px;
-  background:#F8F8F8;
-  padding:0 3px 0 3px;
-}
 
 pre, code, kbd, samp {
   color: #333;
@@ -211,42 +205,6 @@ pre code:after {
   font-size: 0.88em;
   padding: 0.5em 1em 0.5em 1em;
   margin: 10px auto;
-  background-size: 6px 6px;
-  background-image: -webkit-linear-gradient(
-    135deg,
-    rgba(255, 255, 255, .2) 27%, transparent 27%,
-    transparent 53%, rgba(255, 255, 255, .2) 53%,
-    rgba(255, 255, 255, .2) 77%, transparent 77%,
-    transparent
-  );
-  background-image: -moz-linear-gradient(
-    135deg,
-    rgba(255, 255, 255, .2) 27%, transparent 27%,
-    transparent 53%, rgba(255, 255, 255, .2) 53%,
-    rgba(255, 255, 255, .2) 77%, transparent 77%,
-    transparent
-  );
-  background-image:-ms-linear-gradient(
-    135deg,
-    rgba(255, 255, 255, .2) 27%, transparent 27%,
-    transparent 53%, rgba(255, 255, 255, .2) 53%,
-    rgba(255, 255, 255, .2) 77%, transparent 77%,
-    transparent
-  );
-  background-image: -o-linear-gradient(
-    135deg,
-    rgba(255, 255, 255, .2) 27%, transparent 27%,
-    transparent 53%, rgba(255, 255, 255, .2) 53%,
-    rgba(255, 255, 255, .2) 77%, transparent 77%,
-    transparent
-  );
-  background-image: linear-gradient(
-    135deg,
-    rgba(255, 255, 255, .2) 27%, transparent 27%,
-    transparent 53%, rgba(255, 255, 255, .2) 53%,
-    rgba(255, 255, 255, .2) 77%, transparent 77%,
-    transparent
-  );
 }
 
 .admonition p {
@@ -335,7 +293,6 @@ pre code:after {
   -moz-border-radius: 3px;
   border-radius: 3px;
   background-color: #F8F8F8;
-  box-shadow: inset -1px 8px 16px rgba(0, 0, 0, .05);
   position: relative;
 }
 
@@ -369,13 +326,27 @@ pre code:after {
   -moz-border-radius: 3px;
   border-radius: 3px;
   background-color: #34c2e3;
-  background-size: 30px 30px;
+  box-shadow: inset 0 1px 0px rgba(255, 255, 255, .7);
+}
+
+.gloss .progress-bar {
   box-shadow:
     inset -1px 1px 0px rgba(255, 255, 255, .5),
     inset 0 -4px 16px rgba(255, 255, 255, .7),
     inset 0 4px 16px rgba(255, 255, 255, .7),
     inset 0 -16px 0px rgba(0, 0, 0, .025),
     inset 1px -1px 0px rgba(255, 255, 255, .2);
+}
+
+.shaded .progress-bar {
+  box-shadow:
+    inset 0 -4px 16px rgba(0, 0, 0, .2),
+    inset 0 4px 16px rgba(255, 255, 255, .7);
+}
+
+.candystripe .progress-bar,
+.candystripe-animate .progress-bar {
+  background-size: 30px 30px;
   background-image: -webkit-linear-gradient(
     135deg, rgba(255, 255, 255, .4) 27%,
     transparent 27%,
@@ -411,6 +382,9 @@ pre code:after {
     rgba(255, 255, 255, .4) 77%, transparent 77%,
     transparent
   );
+}
+
+.candystripe-animate .progress-bar{
   -webkit-animation: animate-stripes 3s linear infinite;
   -moz-animation: animate-stripes 3s linear infinite;
   animation: animate-stripes 3s linear infinite;
@@ -431,28 +405,24 @@ pre code:after {
   100% { background-position: 60px 0; }
 }
 
-.progress-bar[class*="progress-100plus"] {
-  background-color: #86e01e;
-  background-image: none;
-}
-
-.progress-bar[class*="progress-80plus"] {
+.progress-80plus .progress-bar,
+.progress-100plus .progress-bar {
   background-color: #86e01e;
 }
 
-.progress-bar[class*="progress-60plus"] {
+.progress-60plus .progress-bar {
   background-color: #f2d31b;
 }
 
-.progress-bar[class*="progress-40plus"] {
+.progress-40plus .progress-bar {
   background-color: #f2b01e;
 }
 
-.progress-bar[class*="progress-20plus"] {
+.progress-20plus .progress-bar {
   background-color: #f27011;
 }
 
-.progress-bar[class*="progress-0plus"] {
+.progress-0plus .progress-bar {
   background-color: #f63a0f;
 }
 
