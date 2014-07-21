@@ -55,7 +55,11 @@ Minimum Recommended Styling
 If using progress levels, you can add these
 (you could even do something special at 100%):
 
-.progress-80plus, .progress-100plus {
+.progress-100plus .progress-bar {
+  background-color: #1ee038;
+}
+
+.progress-80plus .progress-bar {
   background-color: #86e01e;
 }
 

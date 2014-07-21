@@ -405,8 +405,11 @@ pre code:after {
   100% { background-position: 60px 0; }
 }
 
-.progress-80plus .progress-bar,
 .progress-100plus .progress-bar {
+  background-color: #1ee038;
+}
+
+.progress-80plus .progress-bar {
   background-color: #86e01e;
 }
 
