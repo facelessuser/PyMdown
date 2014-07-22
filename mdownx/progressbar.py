@@ -125,7 +125,7 @@ class ProgressBarPattern(Pattern):
         bar.set('style', 'width:%s%%' % width)
         p = util.etree.SubElement(bar, 'p')
         p.set('class', 'progress-label')
-        p.text = self.markdown.htmlStash.store(label, safe=True)
+        p.text = label
         return el
 
     def handleMatch(self, m):
@@ -200,7 +200,7 @@ class ProgressBarExtension(Extension):
         progress = ProgressBarPattern(RE_PROGRESS)
         progress.config = self.getConfigs()
         progress.markdown = md
-        md.inlinePatterns.add("progressbar", progress, "<reference")
+        md.inlinePatterns.add("progressbar", progress, "<backtick")
 
 
 def makeExtension(configs={}):
