@@ -200,7 +200,7 @@ class ProgressBarExtension(Extension):
         progress = ProgressBarPattern(RE_PROGRESS)
         progress.config = self.getConfigs()
         progress.markdown = md
-        md.inlinePatterns.add("progressbar", progress, "<backtick")
+        md.inlinePatterns.add("progressbar", progress, ">escape")
 
 
 def makeExtension(configs={}):
