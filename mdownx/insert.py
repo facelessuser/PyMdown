@@ -25,7 +25,7 @@ class InsertExtension(Extension):
 
     def extendMarkdown(self, md, md_globals):
         """Add support for <ins>test</ins> tags as ^^test^^"""
-
+        md.ESCAPED_CHARS.append('^')
         md.inlinePatterns.add("ins", SimpleTagPattern(RE_INS, "ins"), "<not_strong")
 
 
