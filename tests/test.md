@@ -683,35 +683,37 @@ __^^*insert italic bold*^^__  *^^__insert italic bold 2__^^*
 # Progress
 Progress bars are block elements and it is recommened to put a newline before and after.  But they will be recognized inline like in a table, but they will be on their own line.
 
-Normally you would just globally set your additional classes: `progressbar(add_classes=candystripe-animate)`, but here we want to test the inline class adding.
+Normally you would just globally set your additional classes: `progressbar(add_classes=candystripe-animate)`, but here we want to test the inline class adding and inline control of level classes.
 
-To turn off color level classes you could just use `progressbar(level_class=False)`
+To turn off level classes used to decide special colors for certain percentages you could just use `progressbar(level_class=False)`
 ```
-| Test                               | Result                                          |
-|------------------------------------|------------------------------------------------ |
-|Animated Candystripes (flat): 0%    |[==0% "0%" class="candystripe-animate"]          |
-|Animated Candystripes (flat): 5%    |[==5% "5%" class="candystripe-animate"]          |
-|Animated Candystripes (flat): 25%   |[==25% "25%" class="candystripe-animate"]        |
-|Animated Candystripes (shaded): 45% |[==45% "45%" class="candystripe-animate shaded"] |
-|Animated Candystripes (shaded): 65% |[==65% "65%" class="candystripe-animate shaded"] |
-|Animated Candystripes (gloss): 85%  |[==85% "85%" class="candystripe-animate gloss"]  |
-|Animated Candystripes (gloss): 100% |[==100% "100%" class="candystripe-animate gloss"]|
-|Division: Plain                     |[== 212.2/537 "212.2/537 Testing division"]      |
-|No Title: Plain                     |[== 50%]                                         |
-|No Title: Candystripe               |[== 50% "" class="candystripe"]                  |
-|Inline: Plain                       |Before[== 50% I'm a block!]After                 |
+| Test                               | Result                                                 |
+|------------------------------------|--------------------------------------------------------|
+|Animated Candystripes (flat): 0%    |[==0% "0%"]{add_classes="candystripe-animate"}          |
+|Animated Candystripes (flat): 5%    |[==5% "5%"]{add_classes="candystripe-animate"}          |
+|Animated Candystripes (flat): 25%   |[==25% "25%"]{add_classes="candystripe-animate"}        |
+|Animated Candystripes (shaded): 45% |[==45% "45%"]{add_classes="candystripe-animate"}        |
+|Animated Candystripes (shaded): 65% |[==65% "65%"]{add_classes="candystripe-animate"}        |
+|Animated Candystripes (gloss): 85%  |[==85% "85%"]{add_classes="candystripe-animate"}        |
+|Animated Candystripes (gloss): 100% |[==100% "100%"]{add_classes="candystripe-animate gloss"}|
+|Division: Plain                     |[== 212.2/537 "212.2/537 Testing division"]             |
+|No Title: Plain                     |[== 50%]                                                |
+|No Title: Candystripe               |[== 50% ""]{add_classes="candystripe"}                  |
+|Inline: Plain                       |Before[== 50% I'm a block!]After                        |
+|Turn Off Level Classes              |[== 50% No Level Class]{level_class="false" add_classes="candystripe-animate gloss"}            |
 ```
 
-| Test                               | Result                                          |
-|------------------------------------|------------------------------------------------ |
-|Animated Candystripes (flat): 0%    |[==0% "0%" class="candystripe-animate"]          |
-|Animated Candystripes (flat): 5%    |[==5% "5%" class="candystripe-animate"]          |
-|Animated Candystripes (flat): 25%   |[==25% "25%" class="candystripe-animate"]        |
-|Animated Candystripes (shaded): 45% |[==45% "45%" class="candystripe-animate shaded"] |
-|Animated Candystripes (shaded): 65% |[==65% "65%" class="candystripe-animate shaded"] |
-|Animated Candystripes (gloss): 85%  |[==85% "85%" class="candystripe-animate gloss"]  |
-|Animated Candystripes (gloss): 100% |[==100% "100%" class="candystripe-animate gloss"]|
-|Division: Plain                     |[== 212.2/537 "212.2/537 Testing division"]      |
-|No Title: Plain                     |[== 50%]                                         |
-|No Title: Candystripe               |[== 50% "" class="candystripe"]                  |
-|Inline: Plain                       |Before[== 50% I'm a block!]After                 |
+| Test                               | Result                                                 |
+|------------------------------------|--------------------------------------------------------|
+|Animated Candystripes (flat): 0%    |[==0% "0%"]{add_classes="candystripe-animate"}          |
+|Animated Candystripes (flat): 5%    |[==5% "5%"]{add_classes="candystripe-animate"}          |
+|Animated Candystripes (flat): 25%   |[==25% "25%"]{add_classes="candystripe-animate"}        |
+|Animated Candystripes (shaded): 45% |[==45% "45%"]{add_classes="candystripe-animate"}        |
+|Animated Candystripes (shaded): 65% |[==65% "65%"]{add_classes="candystripe-animate"}        |
+|Animated Candystripes (gloss): 85%  |[==85% "85%"]{add_classes="candystripe-animate"}        |
+|Animated Candystripes (gloss): 100% |[==100% "100%"]{add_classes="candystripe-animate gloss"}|
+|Division: Plain                     |[== 212.2/537 "212.2/537 Testing division"]             |
+|No Title: Plain                     |[== 50%]                                                |
+|No Title: Candystripe               |[== 50% ""]{add_classes="candystripe"}                  |
+|Inline: Plain                       |Before[== 50% I'm a block!]After                        |
+|Turn Off Level Classes              |[== 50% No Level Class]{level_class="false" add_classes="candystripe-animate gloss"}            |

@@ -3,11 +3,17 @@ mdownx.progressbar
 Really simple plugin to add support for
 progress bars
 
-[==30%  MyLabel class="additional classes"]
+/* No label */
+[==30%]
 
-[==50/200  MyLabel class="additional classes"]
+/* Label */
+[==30%  MyLabel]
 
-[==50%  MyLabel  class="additional classes"]
+/* Inline adding of classes to html object */
+[==50/200  MyLabel]{add_classes="additional classes"}
+
+/* Inline turning off/on level_class */
+[==50%  MyLabel]{add_class="additional classes" level_class="false"}
 
 New line is required before the progress bar.  Can take percentages and divisions.
 Floats are okay.  Numbers must be positive.  This is an experimental extension.
@@ -94,8 +100,9 @@ from __future__ import unicode_literals
 from markdown import Extension
 from markdown.inlinepatterns import Pattern, dequote
 from markdown import util
+import re
 
-RE_PROGRESS = r'\[==\s*(?:(100(?:.0+)?|[1-9]?[0-9](?:.\d+)?)%|(?:(\d+(?:.\d+)?)\s*/\s*(\d+(?:.\d+)?)))(\s+(?:[^\]\\]|\\.)*?)?(?:\s+class="([^"]*)")?\s*\]'
+RE_PROGRESS = r'\[==\s*(?:(100(?:.0+)?|[1-9]?[0-9](?:.\d+)?)%|(?:(\d+(?:.\d+)?)\s*/\s*(\d+(?:.\d+)?)))(\s+(?:[^\]\\]|\\.)*?)?\s*\](?:\{\s*((?:(?<=[\s\{])(?:add_classes|level_class)="[^"{}]*"\s*)*)\})?'
 
 CLASS_100PLUS = "progress-100plus"
 CLASS_80PLUS = "progress-80plus"
@@ -103,6 +110,8 @@ CLASS_60PLUS = "progress-60plus"
 CLASS_40PLUS = "progress-40plus"
 CLASS_20PLUS = "progress-20plus"
 CLASS_0PLUS = "progress-0plus"
+
+ATTR = r'\s*(add_classes|level_class)="([^"{}]+)"\s*'
 
 
 class ProgressBarPattern(Pattern):
@@ -128,12 +137,32 @@ class ProgressBarPattern(Pattern):
         p.text = label
         return el
 
+    def get_attr(self, string):
+        """ Get add_classes (c) or level_class (l) attributes """
+        attr = re.compile(ATTR)
+        c = []
+        l = None
+        for m in attr.finditer(string):
+            if m.group(1) == "add_classes":
+                c += m.group(2).strip().split()
+            elif m.group(1) == "level_class":
+                if m.group(2).lower() == "true":
+                    l = True
+                elif m.group(2).lower() == "false":
+                    l = False
+                else:
+                    l = None
+        return c, l
+
     def handleMatch(self, m):
         label = ""
+        level_class = self.config.get('level_class', False)
         if m.group(5):
             label = dequote(m.group(5).strip())
         if m.group(6):
-            add_classes = m.group(6).strip().split()
+            add_classes, lvl_class = self.get_attr(m.group(6))
+            if lvl_class is not None:
+                level_class = lvl_class
         else:
             add_classes = []
         if m.group(2):
@@ -157,7 +186,7 @@ class ProgressBarPattern(Pattern):
             elif value < 0.0:
                 value = 0.0
 
-        if self.config.get('level_class', False):
+        if level_class:
             if value >= 100.0:
                 add_classes.append(CLASS_100PLUS)
             elif value >= 80.0:
