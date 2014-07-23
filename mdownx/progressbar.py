@@ -134,7 +134,7 @@ class ProgressBarPattern(Pattern):
         bar.set('style', 'width:%s%%' % width)
         p = util.etree.SubElement(bar, 'p')
         p.set('class', 'progress-label')
-        p.text = label
+        p.text = self.markdown.htmlStash.store(label, safe=True)
         return el
 
     def get_attr(self, string):
@@ -158,7 +158,7 @@ class ProgressBarPattern(Pattern):
         label = ""
         level_class = self.config.get('level_class', False)
         if m.group(5):
-            label = dequote(m.group(5).strip())
+            label = dequote(self.unescape(m.group(5).strip()))
         if m.group(6):
             add_classes, lvl_class = self.get_attr(m.group(6))
             if lvl_class is not None:
@@ -229,7 +229,7 @@ class ProgressBarExtension(Extension):
         progress = ProgressBarPattern(RE_PROGRESS)
         progress.config = self.getConfigs()
         progress.markdown = md
-        md.inlinePatterns.add("progressbar", progress, ">escape")
+        md.inlinePatterns.add("progressbar", progress, "<not_strong")
 
 
 def makeExtension(configs={}):
