@@ -1,7 +1,6 @@
 """
 mdownx.progressbar
-Really simple plugin to add support for
-progress bars
+Simple plugin to add support for progress bars
 
 /* No label */
 [==30%]
@@ -10,10 +9,10 @@ progress bars
 [==30%  MyLabel]
 
 /* Inline adding of classes to html object */
-[==50/200  MyLabel]{add_classes="additional classes"}
+[==50/200  MyLabel]{addclasses="additional classes"}
 
 /* Inline turning off/on level_class */
-[==50%  MyLabel]{add_class="additional classes" level_class="false"}
+[==50%  MyLabel]{addclasses="additional classes" levelclass="false"}
 
 New line is required before the progress bar.  Can take percentages and divisions.
 Floats are okay.  Numbers must be positive.  This is an experimental extension.
@@ -26,13 +25,14 @@ Minimum Recommended Styling
   display: block;
   width: 300px;
   margin: 10px 0;
-  height: 30px;
+  height: 24px;
   border: 1px solid #ccc;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
   background-color: #F8F8F8;
   position: relative;
+  box-shadow: inset -1px 1px 3px rgba(0, 0, 0, .1);
 }
 
 .progress-label {
@@ -40,26 +40,25 @@ Minimum Recommended Styling
   text-align: center;
   font-weight: bold;
   width: 100%; margin: 0;
-  line-height: 30px;
-  color: #000;
+  line-height: 24px;
+  color: #333;
   -webkit-font-smoothing: antialiased !important;
   white-space: nowrap;
   overflow: hidden;
 }
 
 .progress-bar {
-  height: 30px;
+  height: 24px;
   float: left;
   border-right: 1px solid #ccc;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
   background-color: #34c2e3;
-  box-shadow: inset 0 1px 0px rgba(255, 255, 255, .7);
+  box-shadow: inset 0 1px 0px rgba(255, 255, 255, .5);
 }
 
-If using progress levels, you can add these
-(you could even do something special at 100%):
+For Level Colors
 
 .progress-100plus .progress-bar {
   background-color: #1ee038;
@@ -69,19 +68,19 @@ If using progress levels, you can add these
   background-color: #86e01e;
 }
 
-.progress-60plus {
+.progress-60plus .progress-bar {
   background-color: #f2d31b;
 }
 
-.progress-40plus {
+.progress-40plus .progress-bar {
   background-color: #f2b01e;
 }
 
-.progress-20plus {
+.progress-20plus .progress-bar {
   background-color: #f27011;
 }
 
-.progress-0plus {
+.progress-0plus .progress-bar {
   background-color: #f63a0f;
 }
 
@@ -102,7 +101,7 @@ from markdown.inlinepatterns import Pattern, dequote
 from markdown import util
 import re
 
-RE_PROGRESS = r'\[==\s*(?:(100(?:.0+)?|[1-9]?[0-9](?:.\d+)?)%|(?:(\d+(?:.\d+)?)\s*/\s*(\d+(?:.\d+)?)))(\s+(?:[^\]\\]|\\.)*?)?\s*\](?:\{\s*((?:(?<=[\s\{])(?:add_classes|level_class)="[^"{}]*"\s*)*)\})?'
+RE_PROGRESS = r'\[==\s*(?:(100(?:.0+)?|[1-9]?[0-9](?:.\d+)?)%|(?:(\d+(?:.\d+)?)\s*/\s*(\d+(?:.\d+)?)))(\s+(?:[^\]\\]|\\.)*?)?\s*\](?:\{\s*((?:(?<=[\s\{])(?:addclasses|levelclass)="[^"{}]*"\s*)*)\})?'
 
 CLASS_100PLUS = "progress-100plus"
 CLASS_80PLUS = "progress-80plus"
@@ -111,7 +110,7 @@ CLASS_40PLUS = "progress-40plus"
 CLASS_20PLUS = "progress-20plus"
 CLASS_0PLUS = "progress-0plus"
 
-ATTR = r'\s*(add_classes|level_class)="([^"{}]+)"\s*'
+ATTR = r'\s*(addclasses|levelclass)="([^"{}]+)"\s*'
 
 
 class ProgressBarPattern(Pattern):
@@ -143,9 +142,9 @@ class ProgressBarPattern(Pattern):
         c = []
         l = None
         for m in attr.finditer(string):
-            if m.group(1) == "add_classes":
+            if m.group(1) == "addclasses":
                 c += m.group(2).strip().split()
-            elif m.group(1) == "level_class":
+            elif m.group(1) == "levelclass":
                 if m.group(2).lower() == "true":
                     l = True
                 elif m.group(2).lower() == "false":
@@ -156,7 +155,7 @@ class ProgressBarPattern(Pattern):
 
     def handleMatch(self, m):
         label = ""
-        level_class = self.config.get('level_class', False)
+        level_class = self.config.get('levelclass', False)
         if m.group(5):
             label = dequote(self.unescape(m.group(5).strip()))
         if m.group(6):
@@ -207,8 +206,8 @@ class ProgressBarExtension(Extension):
     """Adds progressbar extension to Markdown class."""
     def __init__(self, configs):
         self.config = {
-            'level_class': [True, "Include class that defines progress level in increments of 20 - Default: True"],
-            'add_classes': ['', "Add additional classes to the progress tag for styling.  Classes are separated by spaces. - Default: None"]
+            'levelclass': [True, "Include class that defines progress level in increments of 20 - Default: True"],
+            'addclasses': ['', "Add additional classes to the progress tag for styling.  Classes are separated by spaces. - Default: None"]
         }
 
         for key, value in configs.items():
@@ -219,7 +218,7 @@ class ProgressBarExtension(Extension):
             if value == 'None':
                 value = None
 
-            if key == 'add_classes':
+            if key == 'addclasses':
                 value = str(value)
 
             self.setConfig(key, value)
