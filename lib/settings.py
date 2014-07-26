@@ -1,12 +1,13 @@
 #!/usr/bin/env python
 """
-Mdown logger
+Mdown Settings
 
-Simple class for controlling when to log to stdout
+Manage Settings
 
 Licensed under MIT
 Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
 """
+from __future__ import unicode_literals
 import json
 import re
 import codecs
@@ -19,6 +20,13 @@ from . import critic_dump as cd
 from . import resources as res
 from .logger import Logger
 from .file_strip.json import sanitize_json
+
+PY3 = sys.version_info >= (3, 0)
+
+if PY3:
+    unicode_string = str
+else:
+    unicode_string = unicode  # flake8: noqa
 
 
 BUILTIN_KEYS = ('destination', 'basepath', 'references')
@@ -169,10 +177,10 @@ class Settings(object):
                     settings["builtin"][key] = refs
             else:
                 if isinstance(value, list):
-                    value = [str(v) for v in value]
+                    value = [unicode_string(v) for v in value]
                 else:
-                    value = str(value)
-                settings["meta"][str(key)] = value
+                    value = unicode_string(value)
+                settings["meta"][unicode_string(key)] = value
 
     def get_output(self, out_name):
         """ Get the path to output the file. """
