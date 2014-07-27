@@ -19,6 +19,14 @@ from os.path import exists, isfile
 from .resources import load_text_resource
 from .logger import Logger
 import cgi
+import sys
+
+PY3 = sys.version_info >= (3, 0)
+
+if PY3:
+    unicode_string = str
+else:
+    unicode_string = unicode  # flake8: noqa
 
 
 DEFAULT_TEMPLATE = '''<!DOCTYPE html>
@@ -114,8 +122,11 @@ class Html(object):
         if "title" in meta:
             value = meta["title"]
             if isinstance(value, list):
-                value = ','.join(value)
-            self.title = value
+                if len(value) == 0:
+                    value = ""
+                else:
+                    value = value[0]
+            self.title = unicode_string(value)
             del meta["title"]
 
         for k, v in meta.items():
@@ -123,7 +134,10 @@ class Html(object):
                 v = ','.join(v)
             if v is not None:
                 self.meta.append(
-                    '<meta name="%s" content="%s">' % (cgi.escape(k, True), cgi.escape(v, True))
+                    '<meta name="%s" content="%s">' % (
+                        cgi.escape(unicode_string(k), True),
+                        cgi.escape(unicode_string(v), True)
+                    )
                 )
 
     def write_html_start(self):
