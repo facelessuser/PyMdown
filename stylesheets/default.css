@@ -256,6 +256,12 @@ pre code:after {
   content: "\f056\00a0";
 }
 
+.admonition {
+  color: #888888;
+  background-color: #F8F8F8;
+  border: 1px solid #888888;
+}
+
 .admonition.danger {
   color: #D8000C;
   background-color: #FFBABA;
