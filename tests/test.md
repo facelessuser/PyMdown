@@ -25,6 +25,7 @@
         - meta
         - wikilinks
         - admonition
+        - mdownx.admonitionicon
         - codehilite(guess_lang=False,pygments_style=github,noclasses=True)
         - mdownx.b64(base_path=${BASE_PATH})
         - mdownx.absolutepath(base_path=${BASE_PATH})
@@ -577,6 +578,9 @@ Modified Text
     | Red           | *Apple*         | Pepper       |
     | ~~Orange~~    | Oranges         | **Carrot**   |
     | Green         | ~~***Pears***~~ | Spinach      |
+
+!!! Unknown "Title"
+    Default class style
 ```
 
 !!! Attention "Success!"
@@ -610,7 +614,7 @@ Modified Text
     | Green         | ~~***Pears***~~ | Spinach      |
 
 !!! Unknown "Title"
-    Test
+    Default class style
 
 ## Github Emoji
 ```

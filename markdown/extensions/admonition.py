@@ -64,7 +64,6 @@ class AdmonitionProcessor(BlockProcessor):
 
     CLASSNAME = 'admonition'
     CLASSNAME_TITLE = 'admonition-title'
-    CLASSNAME_ICON = 'admonition-icon'
     RE = re.compile(r'(?:^|\n)!!!\ ?([\w\-]+)(?:\ "(.*?)")?')
 
     def test(self, parent, block):
@@ -87,8 +86,6 @@ class AdmonitionProcessor(BlockProcessor):
             klass, title = self.get_class_and_title(m)
             div = etree.SubElement(parent, 'div')
             div.set('class', '%s %s' % (self.CLASSNAME, klass))
-            span = etree.SubElement(div, 'span')
-            span.set('class', self.CLASSNAME_ICON)
             if title:
                 p = etree.SubElement(div, 'p')
                 p.text = title

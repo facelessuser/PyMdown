@@ -188,6 +188,21 @@ pre code:after {
 }
 
 /* Admonition */
+.admonition {
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
+  font-size: 0.88em;
+  padding: 0.5em 1em 0.5em 1em;
+  margin: 10px auto;
+  color: #888888;
+  background-color: #F8F8F8;
+  border: 1px solid #888888;
+}
+
+.admonition p { padding: 0; margin: 0; }
+.admonition-title { font-weight: bold; margin: 0; }
+
 .admonition-icon {
   font: normal normal 16px fontawesome-mini;
   line-height: 1.5;
@@ -196,97 +211,22 @@ pre code:after {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
-}
-
-.admonition {
-  -webkit-border-radius: 3px;
-  -moz-border-radius: 3px;
-  border-radius: 3px;
-  font-size: 0.88em;
-  padding: 0.5em 1em 0.5em 1em;
-  margin: 10px auto;
-}
-
-.admonition p {
-  padding: 0;
-  margin: 0;
-}
-
-.admonition-title {
-  font-weight: bold;
-  margin: 0;
-}
-
-.attention > .admonition-icon:before {
-  content: "\f058\00a0";
-}
-
-.admonition-icon {
-  line-height: 1.5;
   float: left;
 }
 
-.admonition.attention {
-  color: #4F8A10;
-  background-color: #DFF2BF;
-  border: 1px solid #4F8A10;
-}
+.admonition.attention { color: #4F8A10; background-color: #DFF2BF; border: 1px solid #4F8A10; }
+.admonition.caution { color: #D63301; background-color: #FFCCBA; border: 1px solid #D63301; }
+.admonition.hint { color: #00529B; background-color: #BDE5F8; border: 1px solid #00529B; }
+.admonition.danger { color: #D8000C; background-color: #FFBABA; border: 1px solid #D8000C; }
+.admonition.question { color: #00049b; background-color: #BDC8F8; border: 1px solid #00049b; }
+.admonition.note { color: #9F6000; background-color: #FEEFB3; border: 1px solid #9F6000; }
 
-.caution > .admonition-icon:before {
-  content: "\f06a\00a0";
-}
-
-.admonition.caution {
-  color: #D63301;
-  background-color: #FFCCBA;
-  border: 1px solid #D63301;
-}
-
-.hint > .admonition-icon:before {
-  content: "\f05a\00a0";
-}
-
-.admonition.hint {
-  color: #00529B;
-  background-color: #BDE5F8;
-  border: 1px solid #00529B;
-}
-
-.danger > .admonition-icon:before {
-  content: "\f056\00a0";
-}
-
-.admonition {
-  color: #888888;
-  background-color: #F8F8F8;
-  border: 1px solid #888888;
-}
-
-.admonition.danger {
-  color: #D8000C;
-  background-color: #FFBABA;
-  border: 1px solid #D8000C;
-}
-
-.admonition.question {
-  color: #00049b;
-  background-color: #BDC8F8;
-  border: 1px solid #00049b;
-}
-
-.question > .admonition-icon:before {
-  content: "\f059\00a0";
-}
-
-.note > .admonition-icon:before {
-  content: "\f040\00a0";
-}
-
-.admonition.note {
-  color: #9F6000;
-  background-color: #FEEFB3;
-  border: 1px solid #9F6000;
-}
+.attention > .admonition-icon:before { content: "\f058\00a0"; }
+.caution > .admonition-icon:before { content: "\f06a\00a0"; }
+.hint > .admonition-icon:before { content: "\f05a\00a0"; }
+.danger > .admonition-icon:before { content: "\f056\00a0"; }
+.question > .admonition-icon:before { content: "\f059\00a0"; }
+.note > .admonition-icon:before { content: "\f040\00a0"; }
 
 /* progress bar*/
 .progress {
@@ -372,6 +312,13 @@ pre code:after {
   );
 }
 
+.progress-100plus .progress-bar { background-color: #1ee038; }
+.progress-80plus .progress-bar { background-color: #86e01e; }
+.progress-60plus .progress-bar { background-color: #f2d31b; }
+.progress-40plus .progress-bar { background-color: #f2b01e; }
+.progress-20plus .progress-bar { background-color: #f27011; }
+.progress-0plus .progress-bar { background-color: #f63a0f; }
+
 .gloss .progress-bar {
   box-shadow:
     inset -1px 1px 0px rgba(255, 255, 255, .5),
@@ -387,44 +334,9 @@ pre code:after {
   animation: animate-stripes 3s linear infinite;
 }
 
-@-webkit-keyframes animate-stripes {
-  0% { background-position: 0 0; }
-  100% { background-position: 60px 0; }
-}
-
-@-moz-keyframes animate-stripes {
-  0% { background-position: 0 0; }
-  100% { background-position: 60px 0; }
-}
-
-@keyframes animate-stripes {
-  0% { background-position: 0 0; }
-  100% { background-position: 60px 0; }
-}
-
-.progress-100plus .progress-bar {
-  background-color: #1ee038;
-}
-
-.progress-80plus .progress-bar {
-  background-color: #86e01e;
-}
-
-.progress-60plus .progress-bar {
-  background-color: #f2d31b;
-}
-
-.progress-40plus .progress-bar {
-  background-color: #f2b01e;
-}
-
-.progress-20plus .progress-bar {
-  background-color: #f27011;
-}
-
-.progress-0plus .progress-bar {
-  background-color: #f63a0f;
-}
+@-webkit-keyframes animate-stripes { 0% { background-position: 0 0; } 100% { background-position: 60px 0; } }
+@-moz-keyframes animate-stripes { 0% { background-position: 0 0; } 100% { background-position: 60px 0; } }
+@keyframes animate-stripes { 0% { background-position: 0 0; } 100% { background-position: 60px 0; } }
 
 /* Multimarkdown Critic Blocks */
 .critic_mark { background: #ff0; }
