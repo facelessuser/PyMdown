@@ -166,7 +166,8 @@ pre, code, kbd, samp {
   border-radius: 3px;
   font-size: 0.88em;
   background-color: #F8F8F8;
-  border: 1px solid #CCC;
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
 }
 
 pre {
@@ -174,7 +175,7 @@ pre {
   overflow: auto;
 }
 
-pre code { border: 0 !important; }
+pre code { border: 0 !important; padding: 0;}
 
 code:before,
 code:after {
