@@ -400,7 +400,9 @@ td:not(.linenos) .linenodiv { padding: 0 !important; }
   border-bottom-right-radius: 3px;
 }
 
-.linenos div, .code div, .linenodiv { background-color: transparent !important;}
+/* Codehilite fix when using noclasses option*/
+div.codehilite {background: none !important; }
+.linenos div, .code div, .linenodiv { background: none !important; }
 
 /* Media */
 @media only screen and (min-width: 480px) {
