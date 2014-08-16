@@ -350,7 +350,7 @@ Mixed Lists
     * [ ] item B
         more text
         1. item a
-        2. itemb
+        2. item b
         3. item c
     * [X] item C
 - item 2
@@ -364,7 +364,7 @@ Really Mixed Lists
     - item B
         more text
         1. item a
-        + itemb
+        + item b
         + [ ] item c
     3. item C
 2. item 2
@@ -378,7 +378,7 @@ Mixed Lists
     * [ ] item B
         more text
         1. item a
-        2. itemb
+        2. item b
         3. item c
     * [X] item C
 - item 2
@@ -392,7 +392,7 @@ Really Mixed Lists
     - item B
         more text
         1. item a
-        + itemb
+        + item b
         + [ ] item c
     3. item C
 2. item 2
@@ -580,7 +580,7 @@ Modified Text
     | Green         | ~~***Pears***~~ | Spinach      |
 
 !!! Unknown "Title"
-    Default class style
+    `Default` class style
 ```
 
 !!! Attention "Success!"
@@ -614,7 +614,7 @@ Modified Text
     | Green         | ~~***Pears***~~ | Spinach      |
 
 !!! Unknown "Title"
-    Default class style
+    `Default` class style
 
 ## Github Emoji
 ```
