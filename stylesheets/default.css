@@ -116,44 +116,9 @@ hr {
     margin: 1em 0;
     padding: 0;
     background-size: 6px 6px;
-    background-color: #ddd;
+    background-color: #e7e7e7;
     height: 4px;
     border: 0;
-    background-image: -webkit-linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 1) 27%, transparent 27%,
-      transparent 53%, rgba(255, 255, 255, 1) 53%,
-      rgba(255, 255, 255, 1) 77%, transparent 77%,
-      transparent
-    );
-    background-image: -moz-linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 1) 27%, transparent 27%,
-      transparent 53%, rgba(255, 255, 255, 1) 53%,
-      rgba(255, 255, 255, 1) 77%, transparent 77%,
-      transparent
-    );
-    background-image: -ms-linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 1) 27%, transparent 27%,
-      transparent 53%, rgba(255, 255, 255, 1) 53%,
-      rgba(255, 255, 255, 1) 77%, transparent 77%,
-      transparent
-    );
-    background-image: -o-linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 1) 27%, transparent 27%,
-      transparent 53%, rgba(255, 255, 255, 1) 53%,
-      rgba(255, 255, 255, 1) 77%, transparent 77%,
-      transparent
-    );
-    background-image: linear-gradient(
-      135deg,
-      rgba(255, 255, 255, 1) 27%, transparent 27%,
-      transparent 53%, rgba(255, 255, 255, 1) 53%,
-      rgba(255, 255, 255, 1) 77%, transparent 77%,
-      transparent
-    );
 }
 
 /* Raw Blocks */
@@ -187,6 +152,66 @@ pre code:before,
 pre code:after {
   content: none;
 }
+
+/* Inlines */
+b, strong { font-weight: bold; }
+
+mark { background: #ff0; color: #000; font-style: italic; font-weight: bold; }
+
+sub, sup { font-size: 75%; line-height: 0; position: relative; vertical-align: baseline; }
+sup { top: -0.5em; }
+sub { bottom: -0.25em; }
+
+dfn { font-style: italic; }
+
+/* Lists */
+ul, ol { padding-left: 30px; }
+.task-list-item { list-style-type: none; }
+.task-list-item input { float:left; margin-left: -20px; margin-top: 6px; }
+dt { font-weight: bold; font-style: italic;}
+dd { margin: 0 0 0 2em; }
+
+/* Tables */
+table { width: 100%; border-collapse: collapse; overflow-x: auto; overflow-y: hidden; display: block; color: #333;}
+table tr { background-color: #fefefe; }
+table tr:nth-child(2n) { background-color: #f8f8f8; }
+td, th { border: 1px solid #ddd; padding: 6px 13px; }
+
+/* Codehilite Tables */
+.codehilitetable { border: 0; border-spacing: 0; }
+.linenos, .code, .codehilitetable td { border: 0; padding: 0; }
+td:not(.linenos) .linenodiv { padding: 0 !important; }
+.code { width: 100%; }
+
+.linenos div pre, .linenodiv pre {
+  border: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-border-top-left-radius: 3px;
+  -webkit-border-bottom-left-radius: 3px;
+  -moz-border-radius-topleft: 3px;
+  -moz-border-radius-bottomleft: 3px;
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+}
+
+.code div pre {
+  border: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-border-top-right-radius: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+  -moz-border-radius-topright: 3px;
+  -moz-border-radius-bottomright: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
+}
+
+/* Codehilite fix when using noclasses option*/
+div.codehilite {background: none !important; }
+.linenos div, .code div, .linenodiv { background: none !important; }
 
 /* Admonition */
 .admonition {
@@ -343,66 +368,6 @@ pre code:after {
 .critic_delete { color: #c82829; text-decoration: line-through; }
 .critic_insert { color: #718c00 ; text-decoration: underline; }
 .critic_comment { color: #8e908c; font-style: italic; }
-
-/* Inlines */
-b, strong { font-weight: bold; }
-
-mark { background: #ff0; color: #000; font-style: italic; font-weight: bold; }
-
-sub, sup { font-size: 75%; line-height: 0; position: relative; vertical-align: baseline; }
-sup { top: -0.5em; }
-sub { bottom: -0.25em; }
-
-dfn { font-style: italic; }
-
-/* Lists */
-ul, ol { padding-left: 30px; }
-.task-list-item { list-style-type: none; }
-.task-list-item input { float:left; margin-left: -20px; margin-top: 6px; }
-dt { font-weight: bold; font-style: italic;}
-dd { margin: 0 0 0 2em; }
-
-/* Tables */
-table { width: 100%; border-collapse: collapse; overflow-x: auto; overflow-y: hidden; display: block; color: #333;}
-table tr { background-color: #fefefe; }
-table tr:nth-child(2n) { background-color: #f8f8f8; }
-td, th { border: 1px solid #ddd; padding: 6px 13px; }
-
-/* Codehilite Tables */
-.codehilitetable { border: 0; border-spacing: 0; }
-.linenos, .code, .codehilitetable td { border: 0; padding: 0; }
-td:not(.linenos) .linenodiv { padding: 0 !important; }
-.code { width: 100%; }
-
-.linenos div pre, .linenodiv pre {
-  border: 0;
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  border-radius: 0;
-  -webkit-border-top-left-radius: 3px;
-  -webkit-border-bottom-left-radius: 3px;
-  -moz-border-radius-topleft: 3px;
-  -moz-border-radius-bottomleft: 3px;
-  border-top-left-radius: 3px;
-  border-bottom-left-radius: 3px;
-}
-
-.code div pre {
-  border: 0;
-  -webkit-border-radius: 0;
-  -moz-border-radius: 0;
-  border-radius: 0;
-  -webkit-border-top-right-radius: 3px;
-  -webkit-border-bottom-right-radius: 3px;
-  -moz-border-radius-topright: 3px;
-  -moz-border-radius-bottomright: 3px;
-  border-top-right-radius: 3px;
-  border-bottom-right-radius: 3px;
-}
-
-/* Codehilite fix when using noclasses option*/
-div.codehilite {background: none !important; }
-.linenos div, .code div, .linenodiv { background: none !important; }
 
 /* Media */
 @media only screen and (min-width: 480px) {
