@@ -26,7 +26,7 @@
         - wikilinks
         - admonition
         - mdownx.admonitionicon
-        - codehilite(guess_lang=False,pygments_style=github,noclasses=True)
+        - codehilite(guess_lang=False,pygments_style=github, noclasses=False, linenums=False)
         - mdownx.b64(base_path=${BASE_PATH})
         - mdownx.absolutepath(base_path=${BASE_PATH})
 ---

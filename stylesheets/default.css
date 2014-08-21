@@ -106,8 +106,8 @@ h6 { font-size:1em; color: #777;}
 blockquote {
   color:#777;
   margin:0;
-  padding-left: 3em;
-  border-left: 0.5em #ddd solid;
+  padding: 0 15px;
+  border-left: 4px #ddd solid;
 }
 
 /* Horizontal Rule */
@@ -126,6 +126,7 @@ hr {
 pre, code, kbd, samp {
   color: #333;
   font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  border: 0;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
@@ -141,7 +142,7 @@ pre {
   background-color: #F7F7F7;
 }
 
-pre code { border: 0 !important; padding: 0;}
+pre code { padding: 0; }
 
 code:before,
 code:after {
@@ -173,18 +174,26 @@ dt { font-weight: bold; font-style: italic;}
 dd { margin: 0 0 0 2em; }
 
 /* Tables */
-table { width: 100%; border-collapse: collapse; overflow-x: auto; overflow-y: hidden; display: block; color: #333;}
+table { width: 100%; border-collapse: collapse; overflow-x: auto; overflow-y: hidden; display: block; color: #333; margin: 20px 0; }
 table tr { background-color: #fefefe; }
 table tr:nth-child(2n) { background-color: #f8f8f8; }
 td, th { border: 1px solid #ddd; padding: 6px 13px; }
 
+/* Codehilite fix when using noclasses option*/
+div.codehilite[style*=background\:] pre { background: inherit !important; }
+div.codehilite { -webkit-border-radius: 3px; -moz-border-radius: 3px; border-radius: 3px; }
+/* noclasses needs the foreground font defined
+div.codehilite pre { color: <your default foreground font color here>; }
+*/
+
 /* Codehilite Tables */
-.codehilitetable { border: 0; border-spacing: 0; }
+.codehilitetable { border: 0; border-spacing: 0; margin: 20px 0;}
+.codehilitetable pre { margin: 0; }
 .linenos, .code, .codehilitetable td { border: 0; padding: 0; }
 td:not(.linenos) .linenodiv { padding: 0 !important; }
 .code { width: 100%; }
 
-.linenos div pre, .linenodiv pre {
+.linenos div pre, .linenodiv pre, .linenodiv {
   border: 0;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
@@ -197,7 +206,7 @@ td:not(.linenos) .linenodiv { padding: 0 !important; }
   border-bottom-left-radius: 3px;
 }
 
-.code div pre {
+.code div pre, .code div {
   border: 0;
   -webkit-border-radius: 0;
   -moz-border-radius: 0;
@@ -209,10 +218,6 @@ td:not(.linenos) .linenodiv { padding: 0 !important; }
   border-top-right-radius: 3px;
   border-bottom-right-radius: 3px;
 }
-
-/* Codehilite fix when using noclasses option*/
-div.codehilite {background: none !important; }
-.linenos div, .code div, .linenodiv { background: none !important; }
 
 /* Admonition */
 .admonition {
