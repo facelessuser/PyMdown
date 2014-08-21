@@ -92,22 +92,22 @@ img {
 h1,h2,h3,h4,h5,h6 {
   font-weight:bold;
   color:#333;
-  line-height: 1.7;
+  line-height: 1.4;
   position: relative;
 }
-h1 { font-size:2.5em; border-bottom: 1px solid #ddd;}
-h2 { font-size:2em; border-bottom:1px solid #eee; padding-bottom: 5px; }
-h3 { font-size:1.5em; }
-h4 { font-size:1.2em; }
+h1 { font-size:2.25em; border-bottom: 1px solid #eee; padding-bottom: 0.3em; line-height: 1.2; }
+h2 { font-size:1.75em; border-bottom:1px solid #eee; padding-bottom: 0.3em; line-height: 1.225; }
+h3 { font-size:1.5em; line-height: 1.43; }
+h4 { font-size:1.25em; }
 h5 { font-size:1em; }
 h6 { font-size:1em; color: #777;}
 
 /* Block Quotes */
 blockquote {
-  color:#666666;
+  color:#777;
   margin:0;
   padding-left: 3em;
-  border-left: 0.5em #EEE solid;
+  border-left: 0.5em #ddd solid;
 }
 
 /* Horizontal Rule */
@@ -138,6 +138,7 @@ pre, code, kbd, samp {
 pre {
   padding: 10px;
   overflow: auto;
+  background-color: #F7F7F7;
 }
 
 pre code { border: 0 !important; padding: 0;}

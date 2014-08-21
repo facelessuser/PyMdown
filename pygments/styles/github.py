@@ -7,7 +7,7 @@ from pygments.token import Keyword, Name, Comment, String, Error, Text, \
 
 
 class GithubStyle(Style):
-    background_color = "#f8f8f8"  # Background
+    background_color = "#f7f7f7"  # Background
     highlight_color = "#ffffcc"   # <-- Not defined; defaulted
 
     styles = {
