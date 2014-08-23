@@ -13,7 +13,8 @@
 import os
 
 data = [
-    ("stylesheets/default.css", "./stylesheets/default.css", "DATA"),
+    ("stylesheets/default-html.css", "./stylesheets/default-html.css", "DATA"),
+    ("stylesheets/default-markdown.css", "./stylesheets/default-markdown.css", "DATA"),
     ("LICENSE", "./LICENSE", "DATA"),
     ("mdown.json", "./mdown.json", "DATA"),
     ("markdown/LICENSE.md", "./markdown/LICENSE.md", "DATA"),

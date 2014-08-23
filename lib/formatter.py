@@ -34,11 +34,14 @@ DEFAULT_TEMPLATE = '''<!DOCTYPE html>
 <head>
 {{ HEAD }}
 </head>
-<body>{{ BODY }}</body>
+<body>
+<article class="markdown-body">
+{{ BODY }}
+</article>
+</body>
 </html>
 '''
 
-DEFAULT_CSS = None
 RE_URL_START = r"https?://"
 
 
@@ -53,10 +56,10 @@ def get_default_template():
 
 def get_default_css():
     """ Get the default CSS style """
-    global DEFAULT_CSS
-    if DEFAULT_CSS is None:
-        DEFAULT_CSS = load_text_resource("stylesheets", "default.css")
-    return "" if DEFAULT_CSS is None else DEFAULT_CSS
+    css = []
+    css.append(load_text_resource("stylesheets", "default-html.css"))
+    css.append(load_text_resource("stylesheets", "default-markdown.css"))
+    return css
 
 
 def get_js(js, link=False):
@@ -205,14 +208,15 @@ class Html(object):
     def load_css(self, style):
         """ Load specified CSS sources """
         user_css = self.settings.get("css_style_sheets", "default")
+        css = []
         if user_css == "default" or not isinstance(user_css, list):
-            css = [get_style(get_default_css())]
+            for c in get_default_css():
+                css.append(get_style(c))
         else:
-            css = []
-
             for c in user_css:
                 if c == "default":
-                    css.append(get_style(get_default_css()))
+                    for c in get_default_css():
+                        css.append(get_style(c))
                 if re.match(RE_URL_START, c) is not None:
                     css.append(get_style(c, link=True))
                 elif exists(c) and isfile(c):

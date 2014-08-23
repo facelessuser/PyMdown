@@ -87,11 +87,15 @@ title: This title will be overridden by YAML
 ---
 
 ***
+
+___
 ```
 
 ---
 
 ***
+
+___
 
 ## Paragraphs
 ```
