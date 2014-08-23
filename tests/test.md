@@ -494,14 +494,14 @@ function doIt() {
 | _Colors_      | Fruits          | Vegetable         |
 | ------------- |:---------------:| -----------------:|
 | Red           | *Apple*         | [Pepper](#Tables) |
-| ~~Orange~~    | Oranges         | **Carrot**        |
+| ~~Orange~~    | `Oranges`       | **Carrot**        |
 | Green         | ~~***Pears***~~ | Spinach           |
 ```
 
 | _Colors_      | Fruits          | Vegetable    |
 | ------------- |:---------------:| ------------:|
 | Red           | *Apple*         | Pepper       |
-| ~~Orange~~    | Oranges         | **Carrot**   |
+| ~~Orange~~    | `Oranges  `     | **Carrot**   |
 | Green         | ~~***Pears***~~ | Spinach      |
 
 ## Smart Strong
@@ -580,7 +580,7 @@ Modified Text
     | _Colors_      | Fruits          | Vegetable    |
     | ------------- |:---------------:| ------------:|
     | Red           | *Apple*         | Pepper       |
-    | ~~Orange~~    | Oranges         | **Carrot**   |
+    | ~~Orange~~    | `Oranges`       | **Carrot**   |
     | Green         | ~~***Pears***~~ | Spinach      |
 
 !!! Unknown "Title"
@@ -614,7 +614,7 @@ Modified Text
     | _Colors_      | Fruits          | Vegetable    |
     | ------------- |:---------------:| ------------:|
     | Red           | *Apple*         | Pepper       |
-    | ~~Orange~~    | Oranges         | **Carrot**   |
+    | ~~Orange~~    | `Oranges`       | **Carrot**   |
     | Green         | ~~***Pears***~~ | Spinach      |
 
 !!! Unknown "Title"
