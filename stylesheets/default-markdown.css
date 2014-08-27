@@ -187,7 +187,7 @@
   color: #777;
   margin: 0;
   padding: 0 15px;
-  border-left: 4px #ddd solid;
+  border-left: 4px solid #ddd;
 }
 
 /* Raw Blocks */
@@ -195,26 +195,27 @@
 .markdown-body code,
 .markdown-body kbd,
 .markdown-body samp {
-  color: #333;
   font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
   border: 0;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
   font-size: 0.88em;
-  background-color: rgba(0, 0, 0, 0.04);
 }
 
 .markdown-body code,
 .markdown-body kbd,
 .markdown-body samp {
-  padding-top: 0.2em;
-  padding-bottom: 0.2em;
+  color: inherit;
+  padding: 0.2em 0;
+  background-color: rgba(0, 0, 0, 0.04);
 }
 
 .markdown-body pre {
+  color: #333;
   padding: 10px;
   overflow: auto;
+  background-color: #f7f7f7;
 }
 
 .markdown-body pre code {
@@ -388,11 +389,16 @@ div.codehilite pre { color: <your default foreground font color here>; }
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
-  font-size: 0.88em;
   padding: 0.5em 1em 0.5em 1em;
   margin: 10px auto;
-  background-color: #FEFEFE;
-  border: 1px solid #CCC;
+  color: #888888;
+  background-color: #F7F7F7;
+  border: 1px solid #888888;
+}
+
+.markdown-body .admonition blockquote {
+  color: rgba(136, 136, 136, 0.5);
+  border-left: 4px solid rgba(136, 136, 136, 0.5);
 }
 
 .markdown-body .admonition p {
@@ -449,6 +455,41 @@ div.codehilite pre { color: <your default foreground font color here>; }
   color: #9F6000;
   background-color: #FEEFB3;
   border: 1px solid #9F6000;
+}
+
+.markdown-body .attention {
+  color: #4F8A10;
+  background-color: #DFF2BF;
+  border: 1px solid #4F8A10;
+}
+
+.markdown-body .caution blockquote {
+  color: rgba(214, 51, 1, .5);
+  border-left: 4px solid rgba(214, 51, 1, .5);
+}
+
+.markdown-body .hint blockquote {
+  color: rgba(0, 82, 155, .5);
+  border-left: 4px solid rgba(0, 82, 155, .5);
+}
+
+.markdown-body .danger blockquote {
+  color: rgba(216, 0, 12, .5);
+  border-left: 4px solid rgba(216, 0, 12, .5);
+}
+
+.markdown-body .question blockquote {
+  color: rgba(0, 4, 155, .5);
+  border-left: 4px solid rgba(0, 4, 155, .5);;
+}
+
+.markdown-body .note blockquote {
+  color: rgba(159, 96, 0, .5);
+  border-left: 4px solid rgba(159, 96, 0, .5);
+}
+
+.markdown-body .admonition-icon:before {
+  content: "\f055\00a0";
 }
 
 .markdown-body .attention > .admonition-icon:before {
