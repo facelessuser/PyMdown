@@ -498,11 +498,11 @@ function doIt() {
 | Green         | ~~***Pears***~~ | Spinach           |
 ```
 
-| _Colors_      | Fruits          | Vegetable    |
-| ------------- |:---------------:| ------------:|
-| Red           | *Apple*         | Pepper       |
-| ~~Orange~~    | `Oranges  `     | **Carrot**   |
-| Green         | ~~***Pears***~~ | Spinach      |
+| _Colors_      | Fruits          | Vegetable         |
+| ------------- |:---------------:| -----------------:|
+| Red           | *Apple*         | [Pepper](#Tables) |
+| ~~Orange~~    | `Oranges`       | **Carrot**        |
+| Green         | ~~***Pears***~~ | Spinach           |
 
 ## Smart Strong
 ```
