@@ -17,11 +17,15 @@
   color:#333;
   font-family: Helvetica, arial, freesans, clean, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol";
   background: #fefefe;
-  border: 1px solid #ddd;
   padding: 30px;
   overflow: hidden;
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
+}
+
+.markdown-body * {
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 /* Headers */
@@ -70,17 +74,52 @@
 }
 
 /* Header Anchor Links*/
+.markdown-body h1 .headeranchor,
+.markdown-body h2 .headeranchor,
+.markdown-body h3 .headeranchor,
+.markdown-body h4 .headeranchor,
+.markdown-body h5 .headeranchor,
+.markdown-body h6 .headeranchor {
+  display: none;
+  color: #000;
+  vertical-align: middle;
+}
+
+.markdown-body h1:hover .headeranchor-link,
+.markdown-body h2:hover .headeranchor-link,
+.markdown-body h3:hover .headeranchor-link,
+.markdown-body h4:hover .headeranchor-link,
+.markdown-body h5:hover .headeranchor-link,
+.markdown-body h6:hover .headeranchor-link {
+    height:1em;
+    padding-left:8px;
+    margin-left:-30px;
+    line-height:1;
+    text-decoration:none
+}
+
+.markdown-body h1:hover .headeranchor-link .headeranchor,
+.markdown-body h2:hover .headeranchor-link .headeranchor,
+.markdown-body h3:hover .headeranchor-link .headeranchor,
+.markdown-body h4:hover .headeranchor-link .headeranchor,
+.markdown-body h5:hover .headeranchor-link .headeranchor,
+.markdown-body h6:hover .headeranchor-link .headeranchor {
+    display:inline-block
+}
+
 .markdown-body .headeranchor-link {
-  color: #333;
-  border: 0;
-  margin-left: -20px;
-  padding-right: 6px;
-  cursor: pointer;
   position: absolute;
-  display: block;
   top: 0;
-  left: 0;
   bottom: 0;
+  left: 0;
+  display: block;
+  padding-right: 6px;
+  padding-left: 30px;
+  margin-left: -30px;
+}
+
+.markdown-body .headeranchor-link:focus {
+  outline: none;
 }
 
 .markdown-body .headeranchor {
@@ -93,20 +132,7 @@
   user-select: none;
 }
 
-.markdown-body .headeranchor-link:hover,
-.markdown-body .headeranchor-link:visited,
-.markdown-body .headeranchor-link:active {
-  text-decoration: none;
-  color: #333;
-}
-
-.markdown-body .headeranchor-link:hover .headeranchor:before,
-.markdown-body h1:hover .headeranchor:before,
-.markdown-body h2:hover .headeranchor:before,
-.markdown-body h3:hover .headeranchor:before,
-.markdown-body h4:hover .headeranchor:before,
-.markdown-body h5:hover .headeranchor:before,
-.markdown-body h6:hover .headeranchor:before {
+.headeranchor:before {
   content: '\f05c';
 }
 
@@ -119,30 +145,21 @@
     background-color: #e7e7e7;
     height: 4px;
     border: 0;
+    -moz-box-sizing: content-box;
+    box-sizing: content-box;
 }
 
 /* Links */
 .markdown-body a{
-  color: #06d;
+  background: transparent;
+  color: #4183c4;
   text-decoration: none;
 }
 
-.markdown-body a:hover {
-  color: #06e;
-  text-decoration: underline;
-}
-
-.markdown-body a:active {
-  color: #faa700;
-}
-
-.markdown-body a:focus {
-  outline: thin dotted;
-}
-
 .markdown-body a:hover,
+.markdown-body a:focus,
 .markdown-body a:active {
-  outline: 0;
+  text-decoration: underline;
 }
 
 .markdown-body ::-moz-selection {
@@ -175,11 +192,13 @@
   border: 0;
   -ms-interpolation-mode: bicubic;
   vertical-align: middle;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
 }
 
 /* Paragraphs */
 .markdown-body p {
-  margin:1em 0;
+  margin: 1em 0;
 }
 
 /* Block Quotes */
@@ -230,7 +249,7 @@
 
 .markdown-body pre code:before,
 .markdown-body pre code:after {
-  content: none;
+  content: normal;
 }
 
 /* Inlines */
@@ -267,7 +286,20 @@
 /* Lists */
 .markdown-body ul,
 .markdown-body ol {
-  padding-left: 30px;
+  padding: 0;
+  padding-left: 2em;
+  margin-top: 0;
+  margin-bottom: 0
+}
+
+.markdown-body ul {
+  display: block;
+  list-style-type: disc;
+}
+
+.markdown-body ol {
+  display: block;
+  list-style-type: decimal;
 }
 
 .markdown-body ol ol,
@@ -275,11 +307,27 @@
   list-style-type: lower-roman;
 }
 
+.markdown-body ul ul,
+.markdown-body ol ul {
+  list-style-type: circle;
+}
+
 .markdown-body ul ul ol,
 .markdown-body ul ol ol,
 .markdown-body ol ul ol,
 .markdown-body ol ol ol {
-  list-style-type:lower-alpha
+  list-style-type: lower-alpha;
+}
+
+.markdown-body ol ol ul,
+.markdown-body ol ul ul,
+.markdown-body ul ol ul,
+.markdown-body ul ul ul {
+  list-style-type: square;
+}
+
+.markdown-body li>p {
+  margin-top: 16px;
 }
 
 .markdown-body .task-list-item {
@@ -287,26 +335,30 @@
 }
 
 .markdown-body .task-list-item input {
-  float:left;
-  margin-left: -20px;
+  float: left;
+  margin-left: -2em;
   margin-top: 6px;
 }
 
-.markdown-body dt {
-  font-weight: bold;
-  font-style: italic;
+.markdown-body dl {
+  padding: 0;
 }
 
 .markdown-body dd {
-  margin: 0 0 0 2em;
+  margin-left: 0;
 }
 
-.markdown-body>*:first-child {
-  margin-top: 0 !important;
+.markdown-body dl dt {
+  padding: 0;
+  margin-top: 16px;
+  font-size: 1em;
+  font-style: italic;
+  font-weight: bold;
 }
 
-.markdown-body>*:last-child {
-  margin-bottom: 0 !important;
+.markdown-body dl dd {
+  padding: 0 16px;
+  margin-bottom: 16px;
 }
 
 /* Tables */
@@ -317,7 +369,6 @@
   overflow-y: hidden;
   display: block;
   color: #333;
-  margin: 20px 0;
 }
 
 .markdown-body table tr {
@@ -410,7 +461,6 @@ div.codehilite pre { color: <your default foreground font color here>; }
   -moz-border-radius: 3px;
   border-radius: 3px;
   padding: 0.5em 1em 0.5em 1em;
-  margin: 10px auto;
   color: #888888;
   background-color: #F7F7F7;
   border: 1px solid #888888;
@@ -698,6 +748,35 @@ div.codehilite pre { color: <your default foreground font color here>; }
 .markdown-body .critic_comment {
   color: #8e908c;
   font-style: italic;
+}
+
+/* General item formatting*/
+.markdown-body p,
+.markdown-body blockquote,
+.markdown-body ul,
+.markdown-body ol,
+.markdown-body dl,
+.markdown-body table,
+.markdown-body pre,
+.markdown-body .admonition {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.markdown-body ol ol,
+.markdown-body ul ul,
+.markdown-body ol ul,
+.markdown-body ul ol {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.markdown-body>*:first-child {
+  margin-top: 0 !important;
+}
+
+.markdown-body>*:last-child {
+  margin-bottom: 0 !important;
 }
 
 /* Media */
