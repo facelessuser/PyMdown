@@ -4,3 +4,7 @@ body {
   outline: 1300px solid #f8f8f8;
   margin: 16px auto;
 }
+
+body .markdown-body {
+  padding: 30px;
+}
