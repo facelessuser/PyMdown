@@ -475,6 +475,10 @@ function doIt() {
 }
 ```
 
+~~~{javascript}
+var Test = 0;
+~~~
+
 ```javascript
 // Fenced **with** highlighting
 function doIt() {
@@ -495,6 +499,10 @@ function doIt() {
     }
 }
 ```
+
+~~~{javascript}
+var Test = 0;
+~~~
 
 ```javascript
 // Fenced **with** highlighting
