@@ -25,8 +25,7 @@
         - meta
         - wikilinks
         - admonition
-        - mdownx.admonitionicon
-        - codehilite(guess_lang=False,pygments_style=github, noclasses=False, linenums=False)
+        - codehilite(guess_lang=False,pygments_style=github)
         - mdownx.b64(base_path=${BASE_PATH})
         - mdownx.absolutepath(base_path=${BASE_PATH})
 ---
@@ -117,6 +116,11 @@ New paragraph.
 
 <kbd>ctrl</kbd>+<kbd>alt</kbd>+<kbd>delete</kbd>
 
+<mark>highlight</mark>
+
+<cite>citation</cite>
+
+
 **bold 1** and __bold 2__
 
 *italic 1*  and _italic 2_
@@ -160,6 +164,11 @@ __~~*strike italic 1 bold 2*~~__ and *~~__strike italic 1 bold 2__~~*
 `inline block`
 
 <kbd>ctrl</kbd>+<kbd>alt</kbd>+<kbd>delete</kbd>
+
+<mark>highlight</mark>
+
+<cite>citation</cite>
+
 
 **bold 1** and __bold 2__
 
@@ -439,13 +448,18 @@ Dictionary
 
 ## Block Quotes
 ```
-> This is a block quote
+> This is a block quote.
+> <cite>--I said this</cite>
 >> How does it look?
+>> I think it looks good.
+>> <cite>--I said this too</cite>
 ```
 
 > This is a block quote.
+> <cite>--I said this</cite>
 >> How does it look?
-> I think it looks good.
+>> I think it looks good.
+>> <cite>--I said this too</cite>
 
 ## Fenced Block
 Assuming guessing is not enabled.
@@ -717,7 +731,7 @@ To turn off level classes (which are used to decide special colors for certain p
 |Division Percentage        |[== 212.2/537 "212.2/537 Testing division"]      |
 |No Label                   |[== 50%]                                         |
 |Inline                     |Before[== 50% I'm a block!]After                 |
-|No Levels and Gloss        |[== 50%]{levelclass="false" addclasses="gloss"}  |
+|No Levels                  |[== 50%]{levelclass="false"}                     |
 ```
 
 | Test                      | Result                                          |
@@ -732,4 +746,4 @@ To turn off level classes (which are used to decide special colors for certain p
 |Division Percentage        |[== 212.2/537 "212.2/537 Testing division"]      |
 |No Label                   |[== 50%]                                         |
 |Inline                     |Before[== 50% I'm a block!]After                 |
-|No Levels and Gloss        |[== 50%]{levelclass="false" addclasses="gloss"}  |
+|No Levels                  |[== 50%]{levelclass="false"}                     |
