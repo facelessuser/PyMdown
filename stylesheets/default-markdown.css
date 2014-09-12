@@ -265,7 +265,6 @@ table th {
   border-top: 1px solid #e0e0e0;
   border-bottom:1px solid #e0e0e0;
   background: #ededed;
-  text-shadow: 0 1px 0 #fff;
 }
 
 table tr:first-child th:first-child {
@@ -294,7 +293,7 @@ table td {
 }
 
 table tr:nth-child(2n) td {
-  background: #f6f6f6;
+  background: #ffffff;
 }
 
 table tr:last-child td:first-child {
@@ -307,6 +306,67 @@ table tr:last-child td:last-child {
   -moz-border-radius-bottomright:3px;
   -webkit-border-bottom-right-radius:3px;
   border-bottom-right-radius:3px;
+}
+
+/* Codehighlight table */
+.markdown-body .codehilitetable {
+  border: 0;
+  border-spacing: 0;
+  border: 1px solid #e0e0e0;
+  border-left: 6px solid #e0e0e0;
+}
+
+.markdown-body .codehilitetable tr {
+  border: 0;
+}
+
+.markdown-body .codehilitetable pre,
+.markdown-body div.codehilite {
+  margin: 0;
+}
+
+.markdown-body .linenos,
+.markdown-body .code,
+.markdown-body .codehilitetable td {
+  border: 0;
+  padding: 0;
+}
+
+.markdown-body td:not(.linenos) .linenodiv {
+  padding: 0 !important;
+}
+
+.markdown-body .code {
+  width: 100%;
+}
+
+.markdown-body .linenos div pre,
+.markdown-body .linenodiv pre,
+.markdown-body .linenodiv {
+  border: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-border-top-left-radius: 3px;
+  -webkit-border-bottom-left-radius: 3px;
+  -moz-border-radius-topleft: 3px;
+  -moz-border-radius-bottomleft: 3px;
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+}
+
+.markdown-body .code div pre,
+.markdown-body .code div {
+  border: 0;
+  -webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  border-radius: 0;
+  -webkit-border-top-right-radius: 3px;
+  -webkit-border-bottom-right-radius: 3px;
+  -moz-border-radius-topright: 3px;
+  -moz-border-radius-bottomright: 3px;
+  border-top-right-radius: 3px;
+  border-bottom-right-radius: 3px;
 }
 
 /* Images */
@@ -387,8 +447,8 @@ blockquote::after{
   padding-bottom: 0.2em;
   margin: 0;
   font-size: 85%;
-  background-color: #333;
-  color: #fff;
+  background-color: rgba(0, 0, 0, 0.04);
+  border: 1px solid rgba(0,0,0, .1);
   border-radius: 3px;
 }
 
@@ -419,7 +479,9 @@ blockquote::after{
   font-size: 85%;
   line-height: 1.45;
   border-radius: 3px;
+  background-color: #fafafa;
   border: 1px solid #e0e0e0;
+  border-left: 6px solid #e0e0e0;
 }
 
 .markdown-body .codehilite pre {
@@ -542,7 +604,7 @@ blockquote::after{
 }
 
 .markdown-body .attention>.admonition-title {
-  color: #c6d796;
+  color: #a6d796;
 }
 
 .markdown-body .caution>.admonition-title {
@@ -554,7 +616,7 @@ blockquote::after{
 }
 
 .markdown-body .danger>.admonition-title {
-  color: #d796a6;
+  color: #c25f77;
 }
 
 .markdown-body .question>.admonition-title {
@@ -603,7 +665,7 @@ blockquote::after{
 }
 
 .markdown-body .attention {
-  border-left: 6px solid #c6d796;
+  border-left: 6px solid #a6d796;
 }
 
 .markdown-body .caution {
@@ -615,7 +677,7 @@ blockquote::after{
 }
 
 .markdown-body .danger {
-  border-left: 6px solid #d796a6;
+  border-left: 6px solid #c25f77;
 }
 
 .markdown-body .question {
@@ -667,7 +729,7 @@ blockquote::after{
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
-  background-color: #34c2e3;
+  background-color: #96c6d7;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .5), inset 0 -1px 0 rgba(0, 0, 0, .1);
   background-size: 30px 30px;
   background-image: -webkit-linear-gradient(
@@ -708,27 +770,27 @@ blockquote::after{
 }
 
 .markdown-body .progress-100plus .progress-bar {
-  background-color: #1ee038;
+  background-color: #a6d796;
 }
 
 .markdown-body .progress-80plus .progress-bar {
-  background-color: #86e01e;
+  background-color: #c6d796;
 }
 
 .markdown-body .progress-60plus .progress-bar {
-  background-color: #f2d31b;
+  background-color: #d7c896;
 }
 
 .markdown-body .progress-40plus .progress-bar {
-  background-color: #f2b01e;
+  background-color: #d7a796;
 }
 
 .markdown-body .progress-20plus .progress-bar {
-  background-color: #f27011;
+  background-color: #d796a6;
 }
 
 .markdown-body .progress-0plus .progress-bar {
-  background-color: #f63a0f;
+  background-color: #c25f77;
 }
 
 .markdown-body .candystripe-animate .progress-bar{
@@ -795,6 +857,7 @@ blockquote::after{
 .markdown-body dl,
 .markdown-body table,
 .markdown-body pre,
+.markdown-body div.codehilite,
 .markdown-body .admonition {
   margin-top: 0;
   margin-bottom: 16px;
