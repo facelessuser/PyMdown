@@ -1,8 +1,13 @@
 import sys
-from file_strip.comments import Comments
 # pip install webcolors
 from webcolors import name_to_hex, normalize_hex
+from os.path import dirname, abspath, join, normpath, exists
 import re
+
+support_lib = normpath(join(dirname(abspath(__file__)), ".."))
+if exists(support_lib) and support_lib not in sys.path:
+    sys.path.append(normpath(join(dirname(abspath(__file__)), "..")))
+from file_strip.comments import Comments
 
 HEADER = '''"""
 Reverse generated from CSS back to PY via pyg_css_convert.py
