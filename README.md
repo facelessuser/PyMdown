@@ -2,7 +2,7 @@
 Mdown is CLI tool to convert or even batch convert markdown files to HTML. It can also accept a file stream.  It was inspired by https://github.com/revolunet/sublimetext-markdown-preview.
 
 # Status
-This is in an Alpha state, though it is very useable.  Because of the Alpha state, things are in flux and are subject to change without warning.
+This is in an **Beta** state.  Because of the **Beta** state, things are in flux and are subject to change without warning.
 
 # Features
 - Python 2 and 3 compatible (but executables built with Python 2 using Pyinstaller)
@@ -14,15 +14,18 @@ This is in an Alpha state, though it is very useable.  Because of the Alpha stat
 - Repo includes in `extras` a simple Sublime Text plugin to stream your files to mdown
 - Preview option to open output in a browser intead
 - Optionally all the default Markdown extensions, plus these optional mdownx extensions:
-    - **absolutepath**: Converts local file paths from relative to absolute for things like links, images, etc.  This is automatically done on all previews.  It can be configured to run all the time outside of previews in the settings file, and it can take a hardcoded path `absolutepath(base_path=/my/path)` or a dynamic path `absolutepath(base_path=${BASE_PATH})` that can take the base\_path fed in on the command line or calculated from the source files path.  If you set this in the settings file, keep in mind the settings file overrides preview's settings.
-    - **b64**: Base64 encode local image files. If can be enabled and configured in the settings file and can take a hardcoded path `b64(base_path=/my/path)` or it can take a dynamic base\_path `b64(base_path=${BASE_PATH})` fed in on the command line or calculated from the source files path.
+    - **absolutepath**: Converts local file paths from relative to absolute for things like links, images, etc.  This is automatically done on all previews.  It can be configured to run all the time outside of previews in the settings file, and it can take a hardcoded path `absolutepath(base_path=/my/path)` or a dynamic path `absolutepath(base_path=${BASE_PATH})` that can take the base_path fed in on the command line or calculated from the source files path.  If you set this in the settings file, keep in mind the settings file overrides preview's settings.
+    - **b64**: Base64 encode local image files. If can be enabled and configured in the settings file and can take a hardcoded path `b64(base_path=/my/path)` or it can take a dynamic base_path `b64(base_path=${BASE_PATH})` fed in on the command line or calculated from the source files path.
     - **insert**: Add <ins>test</ins> tags by using ++test++. Can be enabled in the settings file.
     - **delete**: Add <del>test</del> tags by using ~~test~~. Can be enabled in the settings file.
     - **magiclink**: Search for and convert http or ftp links to actual HTML links for lazy link creation. Can be enabled in the settings file.
     - **tasklist**: This adds support for github style tasklists.  Can be enabled in the settings.
     - **githubemoji**: This adds emojis.  Assets link to github's emoji icons.  Can be enabled in the settings.
     - **critic**: Cannot be set in the settings file. It is configured automatically, and its behaviour can only be modifid via the command line.  In its current form, it can output in HTML a highlighted critic form to make it more readable.  If you select `--accept` or `--reject`, it will strip out the critic marks by accepting the changes or discarding them.
-    - **mdownx**: currently loads insert, delete, b64, tasklist, githubemoji, and magiclink
+    - **headeranchor**: Insert github style header anchor on left side of h1-h6 tags.
+    - **progressbar**: Support for adding progress bars.
+    - **mdownx**: currently loads insert, delete, b64, tasklist, githubemoji, and magiclink.
+    - **github**: Adds a number of the above mentioned extensions to give a Github Flavored Markdown feel.
 
 # Styles and Configuration
 
@@ -158,27 +161,8 @@ Just drop the extra folder in your Sublime `Packages` folder and name to somethi
 - Binary will be in the `mdown/dist` folder
 
 # TODO
-- [X] Critic markup
-    - [X] Allow for easy optional visual of critic markup in HTML
-    - [X] When normal parsing of a file with critic markup:
-        - [X] Remove comments
-        - [X] ignore marks
-        - [X] don't show removed
-        - [X] show inserts as normal
-        - [X] substitute is converted to show just the inserts
-    - [X] Allow a reject option parse a file with critic markup in the reverse:
-        - [X] Remove comments
-        - [X] ignore marks
-        - [X] don't show added
-        - [X] show removed as normal
-        - [X] substitute is converted to show just the removed
-    - [X] Front in preprocessor in CLI to dump the markdown without crtic marks if desired
-- [X] Tasklist (like github's)
-- [X] Github Emoji (just link the images to github's assets)
-- [X] Option in binary to show licenses
-- [X] Yaml and json frontmatter handling
-- [X] Maybe a better batch output file pattern system
-- [ ] Maybe inject javascript into current test documents to verify certain expected things are in output HTML
+- [ ] Maybe add some builtin syntax for critic, mark, and kbd tags.  It isn't decided how many of these I will or will not add.  Support would be added via an extension.
+- [ ] Maybe add an extension for embedding content
 - ...stuff I havn't yet thought of...
 
 # License

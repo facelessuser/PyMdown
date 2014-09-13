@@ -85,16 +85,28 @@ title: This title will be overridden by YAML
 ```
 ---
 
+- - -
+
 ***
 
+* * *
+
 ___
+
+_ _ _
 ```
 
 ---
 
+- - -
+
 ***
 
+* * *
+
 ___
+
+_ _ _
 
 ## Paragraphs
 ```
@@ -116,7 +128,7 @@ New paragraph.
 
 <kbd>ctrl</kbd>+<kbd>alt</kbd>+<kbd>delete</kbd>
 
-This is a <mark>mark</mark> tag.
+This is a <mark>mark (with **bold** *italic* `code`)</mark> tag.
 
 <cite>citation</cite>
 
@@ -165,7 +177,7 @@ __~~*strike italic 1 bold 2*~~__ and *~~__strike italic 1 bold 2__~~*
 
 <kbd>ctrl</kbd>+<kbd>alt</kbd>+<kbd>delete</kbd>
 
-This is a <mark>mark</mark> tag.
+This is a <mark>mark (with **bold** *italic* `code`)</mark> tag.
 
 <cite>citation</cite>
 
