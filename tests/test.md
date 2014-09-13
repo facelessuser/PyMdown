@@ -116,7 +116,7 @@ New paragraph.
 
 <kbd>ctrl</kbd>+<kbd>alt</kbd>+<kbd>delete</kbd>
 
-<mark>highlight</mark>
+This is a <mark>mark</mark> tag.
 
 <cite>citation</cite>
 
@@ -165,7 +165,7 @@ __~~*strike italic 1 bold 2*~~__ and *~~__strike italic 1 bold 2__~~*
 
 <kbd>ctrl</kbd>+<kbd>alt</kbd>+<kbd>delete</kbd>
 
-<mark>highlight</mark>
+This is a <mark>mark</mark> tag.
 
 <cite>citation</cite>
 

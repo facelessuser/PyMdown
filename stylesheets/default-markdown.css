@@ -142,7 +142,20 @@
 }
 
 .markdown-body mark {
-  background: #ff0;
+  background: #fef56f;
+  padding: 0;
+  padding-top: 0.2em;
+  padding-bottom: 0.2em;
+  margin: 0;
+  border-radius: 3px;
+}
+
+.markdown-body mark:before,
+.markdown-body mark:after {
+  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
+  font-size: 85%;
+  letter-spacing: -0.2em;
+  content: "\00a0";
 }
 
 .markdown-body cite {
@@ -453,7 +466,11 @@ blockquote::after{
 }
 
 .markdown-body code:before,
-.markdown-body code:after {
+.markdown-body code:after,
+.markdown-body table code:before,
+.markdown-body table code:after,
+.markdown-body samp:before,
+.markdown-body samp:after {
   letter-spacing: -0.2em;
   content: "\00a0";
 }
