@@ -17,16 +17,34 @@ from __future__ import unicode_literals
 from markdown import Extension
 from markdown.inlinepatterns import SimpleTagPattern
 
+RE_SMART_INS = r'(?<![a-zA-Z\d])(\^{2})(?!\^)(.+?)(?<!\^)\2(?![a-zA-Z\d])'
 RE_INS = r"(\^{2})(.+?)\2"
 
 
 class InsertExtension(Extension):
     """Adds insert extension to Markdown class."""
 
+    def __init__(self, configs):
+        self.config = {
+            'smart_insert': [True, "Treat ^^connected^^words^^ intelligently - Default: True"]
+        }
+
+        for key, value in configs.items():
+            if value == 'True':
+                value = True
+            if value == 'False':
+                value = False
+
+            self.setConfig(key, value)
+
     def extendMarkdown(self, md, md_globals):
         """Add support for <ins>test</ins> tags as ^^test^^"""
         md.ESCAPED_CHARS.append('^')
-        md.inlinePatterns.add("ins", SimpleTagPattern(RE_INS, "ins"), "<not_strong")
+        config = self.getConfigs()
+        if config.get('smart_insert', True):
+            md.inlinePatterns.add("ins", SimpleTagPattern(RE_SMART_INS, "ins"), "<not_strong")
+        else:
+            md.inlinePatterns.add("ins", SimpleTagPattern(RE_INS, "ins"), "<not_strong")
 
 
 def makeExtension(configs={}):

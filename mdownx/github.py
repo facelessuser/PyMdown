@@ -7,6 +7,7 @@ extensions = [
     'mdownx.magiclink',
     'mdownx.tasklist',
     'mdownx.headeranchor',
+    'mdownx.smartstar',
     'nl2br'
 ]
 

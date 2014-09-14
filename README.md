@@ -16,8 +16,8 @@ This is in an **Beta** state.  Because of the **Beta** state, things are in flux
 - Optionally all the default Markdown extensions, plus these optional mdownx extensions:
     - **absolutepath**: Converts local file paths from relative to absolute for things like links, images, etc.  This is automatically done on all previews.  It can be configured to run all the time outside of previews in the settings file, and it can take a hardcoded path `absolutepath(base_path=/my/path)` or a dynamic path `absolutepath(base_path=${BASE_PATH})` that can take the base_path fed in on the command line or calculated from the source files path.  If you set this in the settings file, keep in mind the settings file overrides preview's settings.
     - **b64**: Base64 encode local image files. If can be enabled and configured in the settings file and can take a hardcoded path `b64(base_path=/my/path)` or it can take a dynamic base_path `b64(base_path=${BASE_PATH})` fed in on the command line or calculated from the source files path.
-    - **insert**: Add <ins>test</ins> tags by using ++test++. Can be enabled in the settings file.
-    - **delete**: Add <del>test</del> tags by using ~~test~~. Can be enabled in the settings file.
+    - **insert**: Add <ins>test</ins> tags by using `^^test^^`. Can be enabled in the settings file.
+    - **delete**: Add <del>test</del> tags by using `~~test~~`. Can be enabled in the settings file.
     - **magiclink**: Search for and convert http or ftp links to actual HTML links for lazy link creation. Can be enabled in the settings file.
     - **tasklist**: This adds support for github style tasklists.  Can be enabled in the settings.
     - **githubemoji**: This adds emojis.  Assets link to github's emoji icons.  Can be enabled in the settings.

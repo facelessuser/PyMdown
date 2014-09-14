@@ -140,6 +140,13 @@ This is a <mark>mark (with **bold** *italic* `code`)</mark> tag.
 ~~strike~~
 
 
+**smart**bold 1** and __smart__bold 2__
+
+*smart_italic 1* and _smart_italic 2_
+
+~~smart_strike~~
+
+
 ***bold 1 and italic 1***
 
 ___bold 2 and italic 2___
@@ -187,6 +194,13 @@ This is a <mark>mark (with **bold** *italic* `code`)</mark> tag.
 *italic 1*  and _italic 2_
 
 ~~strike~~
+
+
+**smart**bold 1** and __smart__bold 2__
+
+*smart_italic 1* and _smart_italic 2_
+
+~~smart_strike~~
 
 
 ***bold 1 and italic 1***
@@ -689,6 +703,8 @@ This is a test for emoji :smile:.  The emojis are images linked to github assets
 ```
 ^^insert^^
 
+^^smart^^insert^^
+
 ^^*insert italic*^^  *^^insert italic 2^^*
 
 ^^_insert italic_^^  _^^insert italic 2^^_
@@ -711,6 +727,8 @@ __^^*insert italic bold*^^__  *^^__insert italic bold 2__^^*
 ```
 
 ^^insert^^
+
+^^smart^^insert^^
 
 ^^*insert italic*^^  *^^insert italic 2^^*
 
