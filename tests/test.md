@@ -198,7 +198,7 @@ This is a <mark>mark (with **bold** *italic* `code`)</mark> tag.
 
 **smart**bold 1** and __smart__bold 2__
 
-*smart_italic 1* and _smart_italic 2_
+*smart*italic 1* and _smart_italic 2_
 
 ~~smart_strike~~
 
