@@ -19,6 +19,7 @@
         - mdownx.github
         - mdownx.insert
         - mdownx.progressbar
+        - mdownx.smartsymbols
         - markdown.extensions.toc
         - markdown.extensions.headerid
         - markdown.extensions.smarty
@@ -39,6 +40,7 @@ title: This title will be overridden by YAML
     - mdownx.github
     - mdownx.insert
     - mdownx.progressbar
+    - mdownx.smartsymbols
     - markdown.extensions.toc
     - markdown.extensions.headerid
     - markdown.extensions.smarty
@@ -144,7 +146,7 @@ This is a <mark>mark (with **bold** *italic* `code`)</mark> tag.
 
 *smart_italic 1* and _smart_italic 2_
 
-~~smart_strike~~
+~~smart~~strike~~
 
 
 ***bold 1 and italic 1***
@@ -200,7 +202,7 @@ This is a <mark>mark (with **bold** *italic* `code`)</mark> tag.
 
 *smart*italic 1* and _smart_italic 2_
 
-~~smart_strike~~
+~~smart~~strike~~
 
 
 ***bold 1 and italic 1***
@@ -563,6 +565,13 @@ Text with double__underscore__words.
 __Strong__ still works.
 
 __this__works__too__
+
+
+Text with single_underscore_words.
+
+_Emphasis_ still works.
+
+_this_works_too_
 ```
 
 Text with double__underscore__words.
@@ -570,6 +579,42 @@ Text with double__underscore__words.
 __Strong__ still works.
 
 __this__works__too__
+
+
+Text with single_underscore_words.
+
+_Emphasis_ still works.
+
+_this_works_too_
+
+## Smart Star
+```
+Text with double**star**words.
+
+**Strong** still works.
+
+**this**works**too**
+
+
+Text with single*star*words.
+
+*Emphasis* still works.
+
+*this*works*too*
+```
+
+Text with double**star**words.
+
+**Strong** still works.
+
+**this**works**too**
+
+
+Text with single*star*words.
+
+*Emphasis* still works.
+
+*this*works*too*
 
 ## Smarty
 ```
@@ -589,6 +634,17 @@ elipsis...
 da--sh
 
 elipsis...
+
+## Smart Symbols
+```
+Copyright (c)
+Trademark(tm)
+Registered(r)
+```
+
+Copyright (c)
+Trademark(tm)
+Registered(r)
 
 ## Attribute List
 ```
