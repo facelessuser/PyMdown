@@ -35,17 +35,17 @@ title: This title will be overridden by YAML
 !!! hint "Recommended Extentions for Testing"
     This is mainly used to test the Python Markdown parser.
 
-    - extra
+    - markdown.extensions.extra
     - mdownx.github
     - mdownx.insert
-    - toc
-    - headerid
-    - smarty
-    - meta
-    - footnotes
-    - wikilinks
-    - admonition
-    - codehilite(guess_lang=False,pygments_style=github)
+    - mdownx.progressbar
+    - markdown.extensions.toc
+    - markdown.extensions.headerid
+    - markdown.extensions.smarty
+    - markdown.extensions.meta
+    - markdown.extensions.wikilinks
+    - markdown.extensions.admonition
+    - markdown.extensions.codehilite(guess_lang=False,pygments_style=github)
     - mdownx.b64(base_path=${BASE_PATH})
     - mdownx.absolutepath(base_path=${BASE_PATH})
 
