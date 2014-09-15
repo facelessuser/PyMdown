@@ -2,6 +2,7 @@
 mdownx.smartsymbols
 Really simple plugin to add support for
   copyright, trademark, and registered symbols
+  plus/minus
 
 MIT license.
 
@@ -19,9 +20,17 @@ from markdown.inlinepatterns import HtmlPattern
 from markdown.odict import OrderedDict
 from markdown.treeprocessors import InlineProcessor
 
-RE_TRADE = (r'\(tm\)', r'&trade;')
-RE_COPY = (r'\(c\)', r'&copy;')
-RE_REG = (r'\(r\)', r'&reg;')
+RE_TRADE = ("smarttrademark", r'\(tm\)', r'&trade;')
+RE_COPY = ("smartcopyright", r'\(c\)', r'&copy;')
+RE_REG = ("smartregistered", r'\(r\)', r'&reg;')
+RE_PLUSMINUS = ("smartplusminus", r'\+\-', r'&plusmn;')
+
+REPL = {
+    'trademark': RE_TRADE,
+    'copyright': RE_COPY,
+    'registered': RE_REG,
+    'plusminus': RE_PLUSMINUS
+}
 
 
 class SmartSymbolsPattern(HtmlPattern):
@@ -42,24 +51,27 @@ class SmartSymbolsExtension(Extension):
         self.config = {
             'trademark': [True, 'Trademark'],
             'copyright': [True, 'Copyright'],
-            'registered': [True, 'Registered']
+            'registered': [True, 'Registered'],
+            'plusminus': [True, 'Plus/Minus']
         }
         super(SmartSymbolsExtension, self).__init__(*args, **kwargs)
 
-    def add_pattern(self, key, patterns, md):
+    def add_pattern(self, patterns, md):
         """ Construct the inline symbol pattern """
-        self.patterns.add(key, SmartSymbolsPattern(patterns[0], patterns[1], md), '_begin')
+        self.patterns.add(
+            patterns[0],
+            SmartSymbolsPattern(patterns[1], patterns[2], md),
+            '_begin'
+        )
 
     def extendMarkdown(self, md, md_globals):
         """ Create a dict of inline replace patterns and add to the treeprocessor """
         configs = self.getConfigs()
         self.patterns = OrderedDict()
-        if configs['trademark']:
-            self.add_pattern('smarttrademark', RE_TRADE, md)
-        if configs['copyright']:
-            self.add_pattern('smartcopyright', RE_COPY, md)
-        if configs['registered']:
-            self.add_pattern('smartregistered', RE_REG, md)
+        for k, v in REPL.items():
+            if configs[k]:
+                self.add_pattern(v, md)
+
         inlineProcessor = InlineProcessor(md)
         inlineProcessor.inlinePatterns = self.patterns
         md.treeprocessors.add('smartsymbols', inlineProcessor, '_end')
