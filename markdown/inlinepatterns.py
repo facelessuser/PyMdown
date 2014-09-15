@@ -46,13 +46,13 @@ from __future__ import unicode_literals
 from . import util
 from . import odict
 import re
-try:
+try: #pragma: no cover
     from urllib.parse import urlparse, urlunparse
-except ImportError:
+except ImportError: #pragma: no cover
     from urlparse import urlparse, urlunparse
-try:
+try: #pragma: no cover
     from html import entities
-except ImportError:
+except ImportError: #pragma: no cover
     import htmlentitydefs as entities
 
 
@@ -178,7 +178,7 @@ class Pattern(object):
         * m: A re match object containing a match of the pattern.
 
         """
-        pass
+        pass #pragma: no cover
 
     def type(self):
         """ Return class name, to define pattern type """
@@ -188,9 +188,9 @@ class Pattern(object):
         """ Return unescaped text given text with an inline placeholder. """
         try:
             stash = self.markdown.treeprocessors['inline'].stashed_nodes
-        except KeyError:
+        except KeyError: #pragma: no cover
             return text
-        def itertext(el):
+        def itertext(el): #pragma: no cover
             ' Reimplement Element.itertext for older python versions '
             tag = el.tag
             if not isinstance(tag, util.string_type) and tag is not None:
@@ -217,10 +217,7 @@ class Pattern(object):
 class SimpleTextPattern(Pattern):
     """ Return a simple text of group(2) of a Pattern. """
     def handleMatch(self, m):
-        text = m.group(2)
-        if text == util.INLINE_PLACEHOLDER_PREFIX:
-            return None
-        return text
+        return m.group(2)
 
 
 class EscapePattern(Pattern):
@@ -293,7 +290,7 @@ class HtmlPattern(Pattern):
         """ Return unescaped text given text with an inline placeholder. """
         try:
             stash = self.markdown.treeprocessors['inline'].stashed_nodes
-        except KeyError:
+        except KeyError: #pragma: no cover
             return text
         def get_stash(m):
             id = m.group(1)
@@ -350,7 +347,7 @@ class LinkPattern(Pattern):
         
         try:
             scheme, netloc, path, params, query, fragment = url = urlparse(url)
-        except ValueError:
+        except ValueError: #pragma: no cover
             # Bad url - so bad it couldn't be parsed.
             return ''
         
@@ -360,7 +357,7 @@ class LinkPattern(Pattern):
             # Not a known (allowed) scheme. Not safe.
             return ''
             
-        if netloc == '' and scheme not in locless_schemes:
+        if netloc == '' and scheme not in locless_schemes: #pragma: no cover
             # This should not happen. Treat as suspect.
             return ''
 

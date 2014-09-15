@@ -239,13 +239,13 @@ class Settings(object):
         """
         style = None
         re_pygment = r"pygments_style\s*=\s*([a-zA-Z][a-zA-Z_\d]*)"
-        re_insert_pygment = re.compile(r"(?P<bracket_start>codehilite\([^)]+?)(?P<bracket_end>\s*\)$)|(?P<start>codehilite)")
+        re_insert_pygment = re.compile(r"(?P<bracket_start>markdown\.extensions\.codehilite\([^)]+?)(?P<bracket_end>\s*\)$)|(?P<start>markdown\.extensions\.codehilite)")
         re_no_classes = re.compile(r"noclasses\s*=\s*(True|False)")
         self.pygments_noclasses = False
         count = 0
         for e in extensions:
             # Search for codhilite to see what style is being set.
-            if e.startswith("codehilite"):
+            if e.startswith("markdown.extensions.codehilite"):
                 pygments_style = re.search(re_pygment, e)
                 if pygments_style is None:
                     # Explicitly define a pygment style and store the name

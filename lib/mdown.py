@@ -52,13 +52,18 @@ class MdWrapper(Markdown):
         """
         from markdown import util
         from markdown.extensions import Extension
+        import logging
+
+        logger =  logging.getLogger('MARKDOWN')
 
         for ext in extensions:
             try:
                 if isinstance(ext, util.string_type):
-                    ext = self.build_extension(ext, configs.get(ext, []))
+                    ext = self.build_extension(ext, configs.get(ext, {}))
                 if isinstance(ext, Extension):
                     ext.extendMarkdown(self, globals())
+                    logger.info('Successfully loaded extension "%s.%s".'
+                                % (ext.__class__.__module__, ext.__class__.__name__))
                 elif ext is not None:
                     raise TypeError(
                         'Extension "%s.%s" must be of type: "markdown.Extension"'
@@ -66,6 +71,7 @@ class MdWrapper(Markdown):
             except:
                 # print(str(traceback.format_exc()))
                 continue
+
         return self
 
 
@@ -85,9 +91,9 @@ class Mdown(object):
         """ Check the extensions and see if anything needs to be modified """
         if isinstance(extensions, string_type) and extensions == "default":
             extensions = [
-                "extra",
-                "toc",
-                "codehilite(guess_lang=False,pygments_style=default)"
+                "markdown.extensions.extra",
+                "markdown.extensions.toc",
+                "markdown.extensions.codehilite(guess_lang=False,pygments_style=default)"
             ]
         self.extensions = []
         for e in extensions:

@@ -1,11 +1,15 @@
 """
 Table of Contents Extension for Python-Markdown
-* * *
+===============================================
 
-(c) 2008 [Jack Miller](http://codezen.org)
+See <https://pythonhosted.org/Markdown/extensions/toc.html> 
+for documentation.
 
-Dependencies:
-* [Markdown 2.1+](http://packages.python.org/Markdown/)
+Oringinal code Copyright 2008 [Jack Miller](http://codezen.org)
+
+All changes Copyright 2008-2014 The Python Markdown Project
+
+License: [BSD](http://www.opensource.org/licenses/bsd-license.php) 
 
 """
 
@@ -204,26 +208,26 @@ class TocExtension(Extension):
     
     TreeProcessorClass = TocTreeprocessor
     
-    def __init__(self, configs=[]):
-        self.config = { "marker" : ["[TOC]", 
-                            "Text to find and replace with Table of Contents -"
-                            "Defaults to \"[TOC]\""],
-                        "slugify" : [slugify,
-                            "Function to generate anchors based on header text-"
-                            "Defaults to the headerid ext's slugify function."],
-                        "title" : [None,
-                            "Title to insert into TOC <div> - "
-                            "Defaults to None"],
-                        "anchorlink" : [0,
-                            "1 if header should be a self link"
-                            "Defaults to 0"],
-                        "permalink" : [0,
-                            "1 or link text if a Sphinx-style permalink should be added",
-                            "Defaults to 0"]
-                       }
+    def __init__(self, *args, **kwargs):
+        self.config = { 
+            "marker" : ["[TOC]", 
+                "Text to find and replace with Table of Contents - "
+                "Defaults to \"[TOC]\""],
+            "slugify" : [slugify,
+                "Function to generate anchors based on header text - "
+                "Defaults to the headerid ext's slugify function."],
+            "title" : [None,
+                "Title to insert into TOC <div> - "
+                "Defaults to None"],
+            "anchorlink" : [0,
+                "1 if header should be a self link - "
+                "Defaults to 0"],
+            "permalink" : [0,
+                "1 or link text if a Sphinx-style permalink should be added - "
+                "Defaults to 0"]
+        }
 
-        for key, value in configs:
-            self.setConfig(key, value)
+        super(TocExtension, self).__init__(*args, **kwargs)
 
     def extendMarkdown(self, md, md_globals):
         tocext = self.TreeProcessorClass(md)
@@ -233,12 +237,8 @@ class TocExtension(Extension):
         # by the header id extension) if both are used. Same goes for 
         # attr_list extension. This must come last because we don't want
         # to redefine ids after toc is created. But we do want toc prettified.
-        if 'headeranchor' in md.treeprocessors.keys():
-            insertion = "<headeranchor"
-        else:
-            insertion = "_end"
-        md.treeprocessors.add("toc", tocext, insertion)
+        md.treeprocessors.add("toc", tocext, "_end")
 
 
-def makeExtension(configs={}):
-    return TocExtension(configs=configs)
+def makeExtension(*args, **kwargs):
+    return TocExtension(*args, **kwargs)

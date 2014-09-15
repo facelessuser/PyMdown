@@ -31,5 +31,5 @@ class SmartStarExtension(Extension):
         md.inlinePatterns.add('smart_star2', SimpleTagPattern(SMART_STAR2_RE, 'strong'), '<strong')
 
 
-def makeExtension(configs={}):
-    return SmartStarExtension(configs=dict(configs))
+def makeExtension(*args, **kwargs):
+    return SmartStarExtension(*args, **kwargs)

@@ -24,18 +24,12 @@ RE_DEL = r"(~{2})(.+?)\2"
 class DeleteExtension(Extension):
     """Adds delete extension to Markdown class."""
 
-    def __init__(self, configs):
+    def __init__(self, *args, **kwargs):
         self.config = {
             'smart_delete': [True, "Treat ~~connected~~words~~ intelligently - Default: True"]
         }
 
-        for key, value in configs.items():
-            if value == 'True':
-                value = True
-            if value == 'False':
-                value = False
-
-            self.setConfig(key, value)
+        super(DeleteExtension, self).__init__(*args, **kwargs)
 
     def extendMarkdown(self, md, md_globals):
         """Add support for <del>test</del> tags as ~~test~~"""
@@ -47,5 +41,5 @@ class DeleteExtension(Extension):
             md.inlinePatterns.add("del", SimpleTagPattern(RE_DEL, "del"), "<not_strong")
 
 
-def makeExtension(configs={}):
-    return DeleteExtension(configs=dict(configs))
+def makeExtension(*args, **kwargs):
+    return DeleteExtension(*args, **kwargs)

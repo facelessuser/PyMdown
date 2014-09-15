@@ -15,17 +15,17 @@
     # Settings overrides
     settings:
         extensions:
-        - extra
+        - markdown.extensions.extra
         - mdownx.github
         - mdownx.insert
         - mdownx.progressbar
-        - toc
-        - headerid
-        - smarty
-        - meta
-        - wikilinks
-        - admonition
-        - codehilite(guess_lang=False,pygments_style=github)
+        - markdown.extensions.toc
+        - markdown.extensions.headerid
+        - markdown.extensions.smarty
+        - markdown.extensions.meta
+        - markdown.extensions.wikilinks
+        - markdown.extensions.admonition
+        - markdown.extensions.codehilite(guess_lang=False,pygments_style=github)
         - mdownx.b64(base_path=${BASE_PATH})
         - mdownx.absolutepath(base_path=${BASE_PATH})
 ---

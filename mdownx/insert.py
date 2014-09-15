@@ -24,18 +24,12 @@ RE_INS = r"(\^{2})(.+?)\2"
 class InsertExtension(Extension):
     """Adds insert extension to Markdown class."""
 
-    def __init__(self, configs):
+    def __init__(self, *args, **kwargs):
         self.config = {
             'smart_insert': [True, "Treat ^^connected^^words^^ intelligently - Default: True"]
         }
 
-        for key, value in configs.items():
-            if value == 'True':
-                value = True
-            if value == 'False':
-                value = False
-
-            self.setConfig(key, value)
+        super(InsertExtension, self).__init__(*args, **kwargs)
 
     def extendMarkdown(self, md, md_globals):
         """Add support for <ins>test</ins> tags as ^^test^^"""
@@ -47,5 +41,5 @@ class InsertExtension(Extension):
             md.inlinePatterns.add("ins", SimpleTagPattern(RE_INS, "ins"), "<not_strong")
 
 
-def makeExtension(configs={}):
-    return InsertExtension(configs=dict(configs))
+def makeExtension(*args, **kwargs):
+    return InsertExtension(*args, **kwargs)

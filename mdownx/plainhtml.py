@@ -93,5 +93,5 @@ class PlainHtmlExtension(Extension):
         md.registerExtension(self)
 
 
-def makeExtension(configs={}):
-    return PlainHtmlExtension(configs=configs)
+def makeExtension(*args, **kwargs):
+    return PlainHtmlExtension(*args, **kwargs)

@@ -4,38 +4,14 @@ Meta Data Extension for Python-Markdown
 
 This extension adds Meta Data handling to markdown.
 
-Basic Usage:
+See <https://pythonhosted.org/Markdown/extensions/meta_data.html> 
+for documentation.
 
-    >>> import markdown
-    >>> text = '''Title: A Test Doc.
-    ... Author: Waylan Limberg
-    ...         John Doe
-    ... Blank_Data:
-    ...
-    ... The body. This is paragraph one.
-    ... '''
-    >>> md = markdown.Markdown(['meta'])
-    >>> print md.convert(text)
-    <p>The body. This is paragraph one.</p>
-    >>> print md.Meta
-    {u'blank_data': [u''], u'author': [u'Waylan Limberg', u'John Doe'], u'title': [u'A Test Doc.']}
+Original code Copyright 2007-2008 [Waylan Limberg](http://achinghead.com).
 
-Make sure text without Meta Data still works (markdown < 1.6b returns a <p>).
+All changes Copyright 2008-2014 The Python Markdown Project
 
-    >>> text = '    Some Code - not extra lines of meta data.'
-    >>> md = markdown.Markdown(['meta'])
-    >>> print md.convert(text)
-    <pre><code>Some Code - not extra lines of meta data.
-    </code></pre>
-    >>> md.Meta
-    {}
-
-Copyright 2007-2008 [Waylan Limberg](http://achinghead.com).
-
-Project website: <http://packages.python.org/Markdown/meta_data.html>
-Contact: markdown@freewisdom.org
-
-License: BSD (see ../LICENSE.md for details)
+License: [BSD](http://www.opensource.org/licenses/bsd-license.php) 
 
 """
 
@@ -89,5 +65,6 @@ class MetaPreprocessor(Preprocessor):
         return lines
         
 
-def makeExtension(configs={}):
-    return MetaExtension(configs=configs)
+def makeExtension(*args, **kwargs):
+    return MetaExtension(*args, **kwargs)
+

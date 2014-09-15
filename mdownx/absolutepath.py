@@ -56,7 +56,7 @@ class AbsolutepathTreeprocessor(Treeprocessor):
     def run(self, root):
         """ Replace relative paths with absolute """
 
-        if self.config['base_path'] is None:
+        if self.config['base_path'] is "":
             return root
 
         for tag in root.getiterator():
@@ -71,14 +71,15 @@ class AbsolutepathTreeprocessor(Treeprocessor):
 
 
 class AbsolutepathExtension(Extension):
-    def __init__(self, configs):
+    def __init__(self, *args, **kwargs):
         self.config = {
-            'base_path': [None, "Base path for absolute path to use to resolve paths - Default: None"]
+            'base_path': ["", "Base path for absolute path to use to resolve paths - Default: \"\""]
         }
 
-        for key, value in configs:
-            if key == "base_path" and exists(value):
-                self.setConfig(key, value)
+        if "base_path" in kwargs and not exists(kwargs["base_path"]):
+            del kwargs["base_path"]
+
+        super(AbsolutepathExtension, self).__init__(*args, **kwargs)
 
     def extendMarkdown(self, md, md_globals):
         """Add AbsolutepathTreeprocessor to Markdown instance"""
@@ -89,5 +90,5 @@ class AbsolutepathExtension(Extension):
         md.registerExtension(self)
 
 
-def makeExtension(configs={}):
-    return AbsolutepathExtension(configs=configs)
+def makeExtension(*args, **kwargs):
+    return AbsolutepathExtension(*args, **kwargs)

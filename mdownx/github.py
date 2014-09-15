@@ -8,7 +8,7 @@ extensions = [
     'mdownx.tasklist',
     'mdownx.headeranchor',
     'mdownx.smartstar',
-    'nl2br'
+    'markdown.extensions.nl2br'
 ]
 
 
@@ -20,5 +20,5 @@ class GithubExtension(Extension):
         md.registerExtensions(extensions, self.config)
 
 
-def makeExtension(configs={}):
-    return GithubExtension(configs=dict(configs))
+def makeExtension(*args, **kwargs):
+    return GithubExtension(*args, **kwargs)

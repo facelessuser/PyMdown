@@ -137,14 +137,15 @@ class CriticViewPreprocessor(Preprocessor):
 
 
 class CriticExtension(Extension):
-    def __init__(self, configs):
+    def __init__(self, *args, **kwargs):
         self.config = {
             'mode': ['ignore', "Critic mode to run in ('ignore', 'accept', or 'reject') - Default: ignore "]
         }
 
-        for key, value in configs:
-            if key == "mode" and value in ('ignore', 'accept', 'reject'):
-                self.setConfig(key, value)
+        if "mode" in kwargs and kwargs["mode"] not in ('ignore', 'accept', 'reject'):
+            del kwargs["mode"]
+
+        super(CriticExtension, self).__init__(*args, **kwargs)
 
     def extendMarkdown(self, md, md_globals):
         """ Add FencedBlockPreprocessor to the Markdown instance. """
@@ -154,5 +155,5 @@ class CriticExtension(Extension):
         md.registerExtension(self)
 
 
-def makeExtension(configs=None):
-    return CriticExtension(configs=configs)
+def makeExtension(*args, **kwargs):
+    return CriticExtension(*args, **kwargs)

@@ -79,7 +79,7 @@ def repl(path, base_path):
 class B64Treeprocessor(Treeprocessor):
     def run(self, root):
         """Replace resource with b64 encoded data"""
-        if self.config['base_path'] is None:
+        if self.config['base_path'] == "":
             return root
 
         links = root.getiterator('img')
@@ -91,14 +91,15 @@ class B64Treeprocessor(Treeprocessor):
 
 
 class B64Extension(Extension):
-    def __init__(self, configs):
+    def __init__(self, *args, **kwargs):
         self.config = {
-            'base_path': [None, "Base path for b64 to use to resolve paths Default: None"]
+            'base_path': ["", "Base path for b64 to use to resolve paths Default: \"\""]
         }
 
-        for key, value in configs:
-            if key == "base_path" and exists(value):
-                self.setConfig(key, value)
+        if "base_path" in kwargs and not exists(kwargs["base_path"]):
+            del kwargs["base_path"]
+
+        super(B64Extension, self).__init__(*args, **kwargs)
 
     def extendMarkdown(self, md, md_globals):
         """Add B64Treeprocessor to Markdown instance"""
@@ -109,5 +110,5 @@ class B64Extension(Extension):
         md.registerExtension(self)
 
 
-def makeExtension(configs={}):
-    return B64Extension(configs=configs)
+def makeExtension(*args, **kwargs):
+    return B64Extension(*args, **kwargs)

@@ -64,5 +64,5 @@ class GithubEmojiExtension(Extension):
         md.inlinePatterns.add("github_emoji_symbols", SimpleEmojiPattern(RE_EMOJI_SYMBOLS), "<not_strong")
 
 
-def makeExtension(configs={}):
-    return GithubEmojiExtension(configs=dict(configs))
+def makeExtension(*args, **kwargs):
+    return GithubEmojiExtension(*args, **kwargs)

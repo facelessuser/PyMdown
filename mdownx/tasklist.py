@@ -94,5 +94,5 @@ class TasklistExtension(Extension):
         md.registerExtension(self)
 
 
-def makeExtension(configs={}):
-    return TasklistExtension(configs=configs)
+def makeExtension(*args, **kwargs):
+    return TasklistExtension(*args, **kwargs)

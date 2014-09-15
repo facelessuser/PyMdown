@@ -4,17 +4,14 @@ CodeHilite Extension for Python-Markdown
 
 Adds code/syntax highlighting to standard Python-Markdown code blocks.
 
-Copyright 2006-2008 [Waylan Limberg](http://achinghead.com/).
+See <https://pythonhosted.org/Markdown/extensions/code_hilite.html> 
+for documentation.
 
-Project website: <http://packages.python.org/Markdown/extensions/code_hilite.html>
-Contact: markdown@freewisdom.org
+Original code Copyright 2006-2008 [Waylan Limberg](http://achinghead.com/).
 
-License: BSD (see ../LICENSE.md for details)
+All changes Copyright 2008-2014 The Python Markdown Project
 
-Dependencies:
-* [Python 2.3+](http://python.org/)
-* [Markdown 2.0+](http://packages.python.org/Markdown/)
-* [Pygments](http://pygments.org/)
+License: [BSD](http://www.opensource.org/licenses/bsd-license.php)
 
 """
 
@@ -226,7 +223,7 @@ class HiliteTreeprocessor(Treeprocessor):
 class CodeHiliteExtension(Extension):
     """ Add source code hilighting to markdown codeblocks. """
 
-    def __init__(self, configs):
+    def __init__(self, *args, **kwargs):
         # define default configs
         self.config = {
             'linenums': [None, "Use lines numbers. True=yes, False=no, None=auto"],
@@ -238,22 +235,7 @@ class CodeHiliteExtension(Extension):
             'noclasses': [False, 'Use inline styles instead of CSS classes - Default false']
             }
 
-        # Override defaults with user settings
-        for key, value in configs:
-            # convert strings to booleans
-            if value == 'True': value = True
-            if value == 'False': value = False
-            if value == 'None': value = None
-
-            if key == 'force_linenos':
-                warnings.warn('The "force_linenos" config setting'
-                    ' to the CodeHilite extension is deprecrecated.'
-                    ' Use "linenums" instead.', DeprecationWarning)
-                if value:
-                    # Carry 'force_linenos' over to new 'linenos'.
-                    self.setConfig('linenums', True)
-
-            self.setConfig(key, value)
+        super(CodeHiliteExtension, self).__init__(*args, **kwargs)
 
     def extendMarkdown(self, md, md_globals):
         """ Add HilitePostprocessor to Markdown instance. """
@@ -264,5 +246,6 @@ class CodeHiliteExtension(Extension):
         md.registerExtension(self)
 
 
-def makeExtension(configs={}):
-  return CodeHiliteExtension(configs=configs)
+def makeExtension(*args, **kwargs):
+  return CodeHiliteExtension(*args, **kwargs)
+

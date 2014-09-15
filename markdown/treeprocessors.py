@@ -38,7 +38,7 @@ class Treeprocessor(util.Processor):
         object, and the existing root ElementTree will be replaced, or it can 
         modify the current tree and return None.
         """
-        pass
+        pass #pragma: no cover
 
 
 class InlineProcessor(Treeprocessor):
@@ -358,4 +358,4 @@ class PrettifyTreeprocessor(Treeprocessor):
         pres = root.getiterator('pre')
         for pre in pres:
             if len(pre) and pre[0].tag == 'code':
-                pre[0].text = pre[0].text.rstrip() + '\n'
+                pre[0].text = util.AtomicString(pre[0].text.rstrip() + '\n')

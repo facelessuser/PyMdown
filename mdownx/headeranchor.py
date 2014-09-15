@@ -47,13 +47,14 @@ class HeaderAnchorTreeprocessor(Treeprocessor):
 
 
 class HeaderAnchorExtension(Extension):
-    def __init__(self, configs):
+    md = None
+
+    def __init__(self, *args, **kwargs):
         self.config = {
             'sep': ['-', "Separator to use when creating header ids - Default: '-'"]
         }
 
-        for key, value in configs:
-            self.setConfig(key, value)
+        super(HeaderAnchorExtension, self).__init__(*args, **kwargs)
 
     def extendMarkdown(self, md, md_globals):
         """Add HeaderAnchorTreeprocessor to Markdown instance"""
@@ -61,13 +62,15 @@ class HeaderAnchorExtension(Extension):
         self.processor = HeaderAnchorTreeprocessor(md)
         self.processor.config = self.getConfigs()
         self.processor.md = md
-        if 'toc' in md.treeprocessors.keys():
-            insertion = ">toc"
-        else:
-            insertion = "_end"
-        md.treeprocessors.add("headeranchor", self.processor, insertion)
+        HeaderAnchorExtension.md = md
+        md.treeprocessors.add("headeranchor", self.processor, "_end")
         md.registerExtension(self)
 
+    def reset(self):
+        if 'toc' in self.processor.md.treeprocessors.keys():
+            del self.processor.md.treeprocessors["headeranchor"]
+            self.processor.md.treeprocessors.add("headeranchor", self.processor, ">toc")
 
-def makeExtension(configs={}):
-    return HeaderAnchorExtension(configs=configs)
+
+def makeExtension(*args, **kwargs):
+    return HeaderAnchorExtension(*args, **kwargs)

@@ -204,24 +204,13 @@ class ProgressBarPattern(Pattern):
 
 class ProgressBarExtension(Extension):
     """Adds progressbar extension to Markdown class."""
-    def __init__(self, configs):
+    def __init__(self, *args, **kwargs):
         self.config = {
             'levelclass': [True, "Include class that defines progress level in increments of 20 - Default: True"],
             'addclasses': ['', "Add additional classes to the progress tag for styling.  Classes are separated by spaces. - Default: None"]
         }
 
-        for key, value in configs.items():
-            if value == 'True':
-                value = True
-            if value == 'False':
-                value = False
-            if value == 'None':
-                value = None
-
-            if key == 'addclasses':
-                value = str(value)
-
-            self.setConfig(key, value)
+        super(ProgressBarExtension, self).__init__(*args, **kwargs)
 
     def extendMarkdown(self, md, md_globals):
         """Add for progress bar"""
@@ -231,5 +220,5 @@ class ProgressBarExtension(Extension):
         md.inlinePatterns.add("progressbar", progress, "<not_strong")
 
 
-def makeExtension(configs={}):
-    return ProgressBarExtension(configs=dict(configs))
+def makeExtension(*args, **kwargs):
+    return ProgressBarExtension(*args, **kwargs)

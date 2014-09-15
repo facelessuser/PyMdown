@@ -65,5 +65,5 @@ class MagiclinkExtension(Extension):
         md.inlinePatterns.add("magicmail", MagicMailPattern(RE_MAIL, md), "<not_strong")
 
 
-def makeExtension(configs={}):
-    return MagiclinkExtension(configs=dict(configs))
+def makeExtension(*args, **kwargs):
+    return MagiclinkExtension(*args, **kwargs)
