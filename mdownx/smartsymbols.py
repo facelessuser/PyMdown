@@ -23,7 +23,7 @@ from markdown.treeprocessors import InlineProcessor
 RE_TRADE = ("smarttrademark", r'\(tm\)', r'&trade;')
 RE_COPY = ("smartcopyright", r'\(c\)', r'&copy;')
 RE_REG = ("smartregistered", r'\(r\)', r'&reg;')
-RE_PLUSMINUS = ("smartplusminus", r'\+\-', r'&plusmn;')
+RE_PLUSMINUS = ("smartplusminus", r'\+/\-', r'&plusmn;')
 
 REPL = {
     'trademark': RE_TRADE,

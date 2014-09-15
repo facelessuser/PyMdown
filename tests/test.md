@@ -641,14 +641,14 @@ Copyright (c)
 Trademark(tm)
 Registered(r)
 
-230 +- 10% V
+230 +/- 10% V
 ```
 
 Copyright (c)
 Trademark(tm)
 Registered(r)
 
-230 +- 10% V
+230 +/- 10% V
 
 ## Attribute List
 ```
