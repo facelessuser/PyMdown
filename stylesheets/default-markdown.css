@@ -146,6 +146,8 @@
   padding-top: 0.2em;
   padding-bottom: 0.2em;
   margin: 0;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
   border-radius: 3px;
 }
 
@@ -159,11 +161,6 @@
 
 .markdown-body cite {
   font-style: italic;
-}
-
-.markdown-body blockquote cite {
-  text-align: right;
-  display: block;
 }
 
 /* Lists */
@@ -394,8 +391,13 @@ table tr:last-child td:last-child {
   margin: 0;
   color: #777;
   position: relative;
-  padding: 0 0 0 40px;
-  display: inline-block;
+  padding: 10px 40px 10px 40px;
+  display: block;
+  border: 1px solid #e0e0e0;
+  border-left: 6px solid #e0e0e0;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;
 }
 
 .markdown-body blockquote>:first-child {
@@ -406,20 +408,35 @@ table tr:last-child td:last-child {
   margin-bottom: 0;
 }
 
-blockquote::before {
+.markdown-body blockquote cite {
+  text-align: right;
+  display: block;
+}
+
+.markdown-body blockquote::before {
   content: "\201C";
-  font-size: 60px;
-  line-height: .8;
+  font-size: 40px;
+  line-height: 1;
   font-weight: bold;
   color: #ddd;
   position: absolute;
   left: 0;
   top: 0;
+  padding-top: 10px;
+  padding-left: 10px;
 }
 
-blockquote::after{
-  /*Reset to make sure*/
-  content: normal;
+.markdown-body blockquote::after {
+  content: "\201D";
+  font-size: 40px;
+  line-height: .2;
+  font-weight: bold;
+  color: #ddd;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  padding-bottom: 10px;
+  padding-right: 10px;
 }
 
 /* Text Blocks */
@@ -445,7 +462,9 @@ blockquote::after{
   -moz-box-shadow: 0 1px 0 rgba(0,0,0,0.2),0 0 0 2px #fff inset;
   -webkit-box-shadow: 0 1px 0 rgba(0,0,0,0.2),0 0 0 2px #fff inset;
   box-shadow: 0 1px 0 rgba(0,0,0,0.2),0 0 0 2px #fff inset;
-  border-radius: 3px;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
+  border-radius: 3px;border-radius: 3px;
   display: inline-block;
   margin: 0 .1em;
   text-shadow: 0 1px 0 #fff;
@@ -461,6 +480,8 @@ blockquote::after{
   font-size: 85%;
   background-color: rgba(0, 0, 0, 0.04);
   border: 1px solid rgba(0, 0, 0, .1);
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
   border-radius: 3px;
 }
 
@@ -494,6 +515,8 @@ blockquote::after{
   overflow: auto;
   font-size: 85%;
   line-height: 1.45;
+  -webkit-border-radius: 3px;
+  -moz-border-radius: 3px;
   border-radius: 3px;
   background-color: #fafafa;
   border: 1px solid #e0e0e0;
@@ -596,10 +619,12 @@ blockquote::after{
 .markdown-body .admonition {
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
+  position: relative;
   border-radius: 3px;
   padding: 0.5em 1em 0.5em 1em;
   border: 1px solid #e0e0e0;
   border-left: 6px solid #333;
+  padding: 10px 10px 10px 40px;
 }
 
 .markdown-body .admonition table {
@@ -643,41 +668,61 @@ blockquote::after{
   color: #d7c896;
 }
 
-.markdown-body .admonition-title:before {
+.markdown-body .admonition:before,
+.markdown-body .attention:before,
+.markdown-body .caution:before,
+.markdown-body .hint:before,
+.markdown-body .danger:before,
+.markdown-body .question:before,
+.markdown-body .note:before {
   font: normal normal 16px fontawesome-mini;
   -moz-osx-font-smoothing: grayscale;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  line-height: 1.5;
+  font-weight: bold;
+  color: #333;
+  position: absolute;
+  left: 0;
+  top: 0;
+  padding-top: 10px;
+  padding-left: 10px;
 }
 
-.markdown-body .admonition > .admonition-title:before {
+.markdown-body .admonition:before {
   content: normal;
 }
 
-.markdown-body .attention > .admonition-title:before {
+.markdown-body .attention:before {
   content: "\f058\00a0";
+  color: #a6d796;
 }
 
-.markdown-body .caution > .admonition-title:before {
+.markdown-body .caution:before {
   content: "\f06a\00a0";
+  color: #d7a796;
 }
 
-.markdown-body .hint > .admonition-title:before {
+.markdown-body .hint:before {
   content: "\f05a\00a0";
+  color: #96c6d7;
 }
 
-.markdown-body .danger > .admonition-title:before {
+.markdown-body .danger:before {
   content: "\f056\00a0";
+  color: #c25f77;
 }
 
-.markdown-body .question > .admonition-title:before {
+.markdown-body .question:before {
   content: "\f059\00a0";
+  color: #96a6d7;
 }
 
-.markdown-body .note > .admonition-title:before {
+.markdown-body .note:before {
   content: "\f040\00a0";
+  color: #d7c896;
 }
 
 .markdown-body .attention {
