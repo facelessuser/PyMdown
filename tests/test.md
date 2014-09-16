@@ -18,6 +18,7 @@
         - markdown.extensions.extra
         - mdownx.github
         - mdownx.insert
+        - mdownx.mark
         - mdownx.progressbar
         - mdownx.smartsymbols
         - markdown.extensions.toc
@@ -39,6 +40,7 @@ title: This title will be overridden by YAML
     - markdown.extensions.extra
     - mdownx.github
     - mdownx.insert
+    - mdownx.mark
     - mdownx.progressbar
     - mdownx.smartsymbols
     - markdown.extensions.toc
@@ -130,23 +132,22 @@ New paragraph.
 
 <kbd>ctrl</kbd>+<kbd>alt</kbd>+<kbd>delete</kbd>
 
-This is a <mark>mark (with **bold** *italic* `code`)</mark> tag.
-
 <cite>citation</cite>
+
+
+This is a ==mark (with **bold** *italic* `code`)== tag.
+
+~~strike~~
+
+
+~~smart~~stike~~
+
+==smart==mark==
 
 
 **bold 1** and __bold 2__
 
 *italic 1*  and _italic 2_
-
-~~strike~~
-
-
-**smart**bold 1** and __smart__bold 2__
-
-*smart_italic 1* and _smart_italic 2_
-
-~~smart~~strike~~
 
 
 ***bold 1 and italic 1***
@@ -186,23 +187,22 @@ __~~*strike italic 1 bold 2*~~__ and *~~__strike italic 1 bold 2__~~*
 
 <kbd>ctrl</kbd>+<kbd>alt</kbd>+<kbd>delete</kbd>
 
-This is a <mark>mark (with **bold** *italic* `code`)</mark> tag.
-
 <cite>citation</cite>
+
+
+This is a ==mark (with **bold** *italic* `code`)== tag.
+
+~~strike~~
+
+
+~~smart~~stike~~
+
+==smart==mark==
 
 
 **bold 1** and __bold 2__
 
 *italic 1*  and _italic 2_
-
-~~strike~~
-
-
-**smart**bold 1** and __smart__bold 2__
-
-*smart*italic 1* and _smart_italic 2_
-
-~~smart~~strike~~
 
 
 ***bold 1 and italic 1***
@@ -478,16 +478,19 @@ Dictionary
 ```
 > This is a block quote.
 > <cite>--I said this</cite>
->> How does it look?
->> I think it looks good.
->> <cite>--I said this too</cite>
+> > How does it look?
+> > I think it looks good.
+> > <cite>--I said this too</cite>
 ```
 
 > This is a block quote.
+>
+> > How does it look?
+> > <cite>--I said this too</cite>
+>
+> I think it looks good.
+>
 > <cite>--I said this</cite>
->> How does it look?
->> I think it looks good.
->> <cite>--I said this too</cite>
 
 ## Fenced Block
 Assuming guessing is not enabled.
@@ -558,7 +561,7 @@ function doIt() {
 | ~~Orange~~    | `Oranges`       | **Carrot**        |
 | Green         | ~~***Pears***~~ | Spinach           |
 
-## Smart Strong
+## Smarter Bold (and Emphasis)
 ```
 Text with double__underscore__words.
 
@@ -572,23 +575,8 @@ Text with single_underscore_words.
 _Emphasis_ still works.
 
 _this_works_too_
-```
-
-Text with double__underscore__words.
-
-__Strong__ still works.
-
-__this__works__too__
 
 
-Text with single_underscore_words.
-
-_Emphasis_ still works.
-
-_this_works_too_
-
-## Smart Star
-```
 Text with double**star**words.
 
 **Strong** still works.
@@ -602,6 +590,34 @@ Text with single*star*words.
 
 *this*works*too*
 ```
+
+Text with triple___underscore___words.
+
+___Strong___ still works.
+
+___this___works___too___
+
+
+Text with double__underscore__words.
+
+__Strong__ still works.
+
+__this__works__too__
+
+
+Text with single_underscore_words.
+
+_Emphasis_ still works.
+
+_this_works_too_
+
+
+Text with triple***star***words.
+
+***Strong*** still works.
+
+***this***works***too***
+
 
 Text with double**star**words.
 
