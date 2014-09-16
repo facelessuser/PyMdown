@@ -47,8 +47,6 @@ class HeaderAnchorTreeprocessor(Treeprocessor):
 
 
 class HeaderAnchorExtension(Extension):
-    md = None
-
     def __init__(self, *args, **kwargs):
         self.config = {
             'sep': ['-', "Separator to use when creating header ids - Default: '-'"]
@@ -62,11 +60,11 @@ class HeaderAnchorExtension(Extension):
         self.processor = HeaderAnchorTreeprocessor(md)
         self.processor.config = self.getConfigs()
         self.processor.md = md
-        HeaderAnchorExtension.md = md
         md.treeprocessors.add("headeranchor", self.processor, "_end")
         md.registerExtension(self)
 
     def reset(self):
+        """ Ensure this is always after toc """
         if 'toc' in self.processor.md.treeprocessors.keys():
             del self.processor.md.treeprocessors["headeranchor"]
             self.processor.md.treeprocessors.add("headeranchor", self.processor, ">toc")
