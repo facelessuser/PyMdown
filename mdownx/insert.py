@@ -17,8 +17,8 @@ from __future__ import unicode_literals
 from markdown import Extension
 from markdown.inlinepatterns import SimpleTagPattern
 
-RE_SMART_INS = r'(?<![a-zA-Z\d])(\^{2})(?!\^)(.+?)(?<!\^)\2(?![a-zA-Z\d])'
-RE_INS = r"(\^{2})(.+?)\2"
+RE_SMART_INS = r'(?<![a-zA-Z\d\^])(\^{2})(?![\^\s])(.+?)(?<![\s])\2(?=\^*(?![a-zA-Z\d\^]))'
+RE_INS = r'(\^{2})(?!\s)(.*?)(?<!\s)\2'
 
 
 class InsertExtension(Extension):
@@ -33,7 +33,8 @@ class InsertExtension(Extension):
 
     def extendMarkdown(self, md, md_globals):
         """Add support for <ins>test</ins> tags as ^^test^^"""
-        md.ESCAPED_CHARS.append('^')
+        if "^" not in md.ESCAPED_CHARS:
+            md.ESCAPED_CHARS.append('^')
         config = self.getConfigs()
         if config.get('smart_insert', True):
             md.inlinePatterns.add("ins", SimpleTagPattern(RE_SMART_INS, "ins"), "<not_strong")

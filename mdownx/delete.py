@@ -17,8 +17,8 @@ from __future__ import unicode_literals
 from markdown import Extension
 from markdown.inlinepatterns import SimpleTagPattern
 
-RE_SMART_DEL = r'(?<![a-zA-Z\d])(~{2})(?!~)(.+?)(?<!~)\2(?![a-zA-Z\d])'
-RE_DEL = r"(~{2})(.+?)\2"
+RE_SMART_DEL = r'(?<![a-zA-Z\d~])(~{2})(?![~\s])(.+?)(?<![\s])\2(?=~*(?![a-zA-Z\d~]))'
+RE_DEL = r'(~{2})(?!\s)(.*?)(?<!\s)\2'
 
 
 class DeleteExtension(Extension):
@@ -33,7 +33,8 @@ class DeleteExtension(Extension):
 
     def extendMarkdown(self, md, md_globals):
         """Add support for <del>test</del> tags as ~~test~~"""
-        md.ESCAPED_CHARS.append('~')
+        if "~" not in md.ESCAPED_CHARS:
+            md.ESCAPED_CHARS.append('~')
         config = self.getConfigs()
         if config.get('smart_delete', True):
             md.inlinePatterns.add("del", SimpleTagPattern(RE_SMART_DEL, "del"), "<not_strong")
