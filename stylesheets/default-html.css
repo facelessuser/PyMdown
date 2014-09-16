@@ -1,10 +1,13 @@
 body {
   width: 80%;
   border: 1px solid #ddd;
-  outline: 1300px solid #fafafa;
+  background-color: #fafafa;
   margin: 16px auto;
 }
 
 body .markdown-body {
   padding: 30px;
+  -moz-box-shadow: 0px 5px 20px #888888;
+  -webkit-box-shadow: 0px 5px 20px #888888;
+  box-shadow: 0px 5px 20px #888888;
 }
