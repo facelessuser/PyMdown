@@ -391,10 +391,10 @@ table tr:last-child td:last-child {
   margin: 0;
   color: #777;
   position: relative;
-  padding: 10px 30px 10px 30px;
-  display: block;
-  border: 1px solid #e0e0e0;
-  border-left: 6px solid #e0e0e0;
+  padding: 10px 35px;
+  display: inline-block;
+  border-left: 2px solid #e0e0e0;
+  border-right: 2px solid #e0e0e0;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
@@ -408,14 +408,9 @@ table tr:last-child td:last-child {
   margin-bottom: 0;
 }
 
-.markdown-body blockquote cite {
-  text-align: right;
-  display: block;
-}
-
 .markdown-body blockquote::before,
 .markdown-body blockquote::after {
-  font: normal normal 16px fontawesome-mini;
+  font: normal normal 24px fontawesome-mini;
   -moz-osx-font-smoothing: grayscale;
   -webkit-user-select: none;
   -moz-user-select: none;
@@ -428,15 +423,15 @@ table tr:last-child td:last-child {
 
 .markdown-body blockquote::before {
   content: "\f10d\00a0";
-  padding-top: 10px;
-  padding-left: 10px;
+  /*padding-top: 10px;*/
+  padding-left: 5px;
   left: 0;
   top: 0;
 }
 
 .markdown-body blockquote::after {
-  padding-bottom: 10px;
-  padding-right: 10px;
+  /*padding-bottom: 10px;*/
+  padding-right: 5px;
   content: "\00a0\f10e";
   right: 0;
   bottom: 0;
