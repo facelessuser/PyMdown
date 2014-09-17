@@ -17,7 +17,7 @@ from __future__ import unicode_literals
 from markdown import Extension
 from markdown.inlinepatterns import SimpleTagPattern
 
-RE_SMART_DEL = r'(?<![a-zA-Z\d~])(~{2})(?![~\s])(.+?)(?<![\s])\2(?=~*(?![a-zA-Z\d~]))'
+RE_SMART_DEL = r'(?<![a-zA-Z\d~])(~{2})(?![~\s])(.+?~*?)(?<!\s)\2(?![a-zA-Z\d~])'
 RE_DEL = r'(~{2})(?!\s)(.*?)(?<!\s)\2'
 
 
