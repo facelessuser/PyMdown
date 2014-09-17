@@ -16,11 +16,6 @@
     settings:
         extensions:
         - markdown.extensions.extra
-        - mdownx.github
-        - mdownx.insert
-        - mdownx.mark
-        - mdownx.progressbar
-        - mdownx.smartsymbols
         - markdown.extensions.toc
         - markdown.extensions.headerid
         - markdown.extensions.smarty
@@ -28,6 +23,12 @@
         - markdown.extensions.wikilinks
         - markdown.extensions.admonition
         - markdown.extensions.codehilite(guess_lang=False,pygments_style=github)
+        - mdownx.github
+        - mdownx.insert
+        - mdownx.mark
+        - mdownx.progressbar
+        - mdownx.smartsymbols
+        - mdownx.scripts
         - mdownx.b64(base_path=${BASE_PATH})
         - mdownx.absolutepath(base_path=${BASE_PATH})
 ---
@@ -477,19 +478,20 @@ Dictionary
 ## Block Quotes
 ```
 > This is a block quote.
-> <cite>--I said this</cite>
+
 > > How does it look?
-> > I think it looks good.
 > > <cite>--I said this too</cite>
+
+> I think it looks good.
+> <cite>--I said this</cite>
 ```
 
 > This is a block quote.
->
+
 > > How does it look?
 > > <cite>--I said this too</cite>
->
+
 > I think it looks good.
->
 > <cite>--I said this</cite>
 
 ## Fenced Block
@@ -825,6 +827,22 @@ __^^_insert italic bold_^^__  _^^__insert italic bold 2__^^_
 **^^_insert italic bold_^^**  _^^**insert italic bold 2**^^_
 
 __^^*insert italic bold*^^__  *^^__insert italic bold 2__^^*
+
+# Subscript and Superscript
+```
+Word~(Test subscript) Word^(Test superscript)
+
+~~Word~~ ~(Test subscript. `sub` and `sup` notation can gobble up one space to the left.) ^^Word^^ ^(Test superscript. `sub` and `sup` notation can gobble up one space to the left.)
+
+~~Word~~ ~(~~Test~~subscript~~. Safe to use token inside.) ^^Word^^ ^(^^Test^^superscript^^. Safe to use token inside.)
+
+```
+
+Word~(Test subscript) Word^(Test superscript)
+
+~~Word~~ ~(Test subscript. `sub` and `sup` notation can gobble up one space to the left.) ^^Word^^ ^(Test superscript. `sub` and `sup` notation can gobble up one space to the left.)
+
+~~Word~~ ~(~~Test~~subscript~~. Safe to use token inside.) ^^Word^^ ^(^^Test^^superscript^^. Safe to use token inside.)
 
 # Progress
 Progress bars are block elements and it is recommened to put a newline before and after.  But they will be recognized inline, but they will be on their own line.
