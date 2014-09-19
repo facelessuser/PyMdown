@@ -26,14 +26,14 @@ SMART_UNDERLINE_STRONG_RE = r'(?<![a-zA-Z\d_])(_{2})(?![_\s])(.+?_*?)(?<!\s)\2(?
 SMART_UNDERLINE_TRIPLE_RE = r'(?<![a-zA-Z\d_])(_{3})(?![_\s])(.+?_*?)(?<!\s)\2(?![a-zA-Z\d_])'
 
 STAR_TRIPLE_RE = r'(\*{3})(?!\s)(.+?)(?<!\s)\2'
-UNEVEN_STAR321 = r'(\*{3})(?!\s)(.+?)(?<!\s)\*{2}(.+?)(?<!\s)\*'
-UNEVEN_STAR312 = r'(\*{3})(?!\s)(.+?)(?<!\s)\*(.+?)(?<!\s)\*{2}'
+STAR_UNEVEN_321_RE = r'(\*{3})(?!\s)(.+?)(?<!\s)\*{2}(.+?)(?<!\s)\*'
+STAR_UNEVEN_312_RE = r'(\*{3})(?!\s)(.+?)(?<!\s)\*(.+?)(?<!\s)\*{2}'
 STAR_STRONG_RE = r'(\*{2})(?!\s)(.+?)(?<!\s)\2'
 STAR_EMPHASIS_RE = r'(\*)(?!\s)(.+?)(?<!\s)\2'
 
 UNDERLINE_TRIPLE_RE = r'(_{3})(?!\s)(.+?)(?<!\s)\2'
-UNEVEN_UNDERSCORE321 = r'(_{3})(?!\s)(.+?)(?<!\s)_{2}(.+?)(?<!\s)_'
-UNEVEN_UNDERSCORE312 = r'(_{3})(?!\s)(.+?)(?<!\s)_(.+?)(?<!\s)_{2}'
+UNDERLINE_UNEVEN_321_RE = r'(_{3})(?!\s)(.+?)(?<!\s)_{2}(.+?)(?<!\s)_'
+UNDERLINE_UNEVEN_312_RE = r'(_{3})(?!\s)(.+?)(?<!\s)_(.+?)(?<!\s)_{2}'
 UNDERLINE_STRONG_RE = r'(_{2})(?!\s)(.+?)(?<!\s)\2'
 UNDERLINE_EMPHASIS_RE = r'(_)(?!\s)(.+?)(?<!\s)\2'
 
@@ -104,11 +104,11 @@ class BetterEmExtension(Extension):
         self.md.inlinePatterns["emphasis2"] = SimpleTagPattern(underline_single, 'em')
 
         if not enable_all and not enable_asterisk:
-            self.md.inlinePatterns.add('uneven_star_em', BetterDoubleTagPattern(UNEVEN_STAR321, 'strong,em'), '>strong_em')
-            self.md.inlinePatterns.add('uneven_star_em2', BetterDoubleTagPattern(UNEVEN_STAR312, 'em,strong'), '>uneven_star_em')
+            self.md.inlinePatterns.add('uneven_star_em', BetterDoubleTagPattern(STAR_UNEVEN_321_RE, 'strong,em'), '>strong_em')
+            self.md.inlinePatterns.add('uneven_star_em2', BetterDoubleTagPattern(STAR_UNEVEN_312_RE, 'em,strong'), '>uneven_star_em')
         if not enable_all and not enable_underscore:
-            self.md.inlinePatterns.add('uneven_underscore_em', BetterDoubleTagPattern(UNEVEN_UNDERSCORE321, 'strong,em'), '>strong_em2')
-            self.md.inlinePatterns.add('uneven_underscore_em2', BetterDoubleTagPattern(UNEVEN_UNDERSCORE312, 'em,strong'), '>uneven_underscore_em')
+            self.md.inlinePatterns.add('uneven_underscore_em', BetterDoubleTagPattern(UNDERLINE_UNEVEN_321_RE, 'strong,em'), '>strong_em2')
+            self.md.inlinePatterns.add('uneven_underscore_em2', BetterDoubleTagPattern(UNDERLINE_UNEVEN_312_RE, 'em,strong'), '>uneven_underscore_em')
 
     def reset(self):
         """ Wait to make sure smart_strong hasn't overwritten us. """
