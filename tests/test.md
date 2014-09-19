@@ -464,15 +464,40 @@ Dictionary
 
 ## Blocks
 ```
+Normal raw block
+
     This is a block.
-    
+
     This is more of a block.
 
+Highlighted code block
+
+    :::javascript
+    // Fenced **with** highlighting
+    function doIt() {
+        for (var i = 1; i <= slen ; i^^) {
+            setTimeout("document.z.textdisplay.value = newMake()", i*300);
+            setTimeout("window.status = newMake()", i*300);
+        }
+    }
 ```
 
+Normal raw block
+
     This is a block.
-    
+
     This is more of a block.
+
+Highlighted code block
+
+    :::javascript
+    // Fenced **with** highlighting
+    function doIt() {
+        for (var i = 1; i <= slen ; i^^) {
+            setTimeout("document.z.textdisplay.value = newMake()", i*300);
+            setTimeout("window.status = newMake()", i*300);
+        }
+    }
 
 
 ## Block Quotes
@@ -713,6 +738,15 @@ Modified Text
     | ~~Orange~~    | `Oranges`       | **Carrot**   |
     | Green         | ~~***Pears***~~ | Spinach      |
 
+    :::javascript
+    // Fenced **with** highlighting
+    function doIt() {
+        for (var i = 1; i <= slen ; i^^) {
+            setTimeout("document.z.textdisplay.value = newMake()", i*300);
+            setTimeout("window.status = newMake()", i*300);
+        }
+    }
+
 !!! Unknown "Title"
     `Default` class style
 ```
@@ -746,6 +780,15 @@ Modified Text
     | Red           | *Apple*         | Pepper       |
     | ~~Orange~~    | `Oranges`       | **Carrot**   |
     | Green         | ~~***Pears***~~ | Spinach      |
+
+        :::javascript
+        // Fenced **with** highlighting
+        function doIt() {
+            for (var i = 1; i <= slen ; i^^) {
+                setTimeout("document.z.textdisplay.value = newMake()", i*300);
+                setTimeout("window.status = newMake()", i*300);
+            }
+        }
 
 !!! Unknown "Title"
     `Default` class style

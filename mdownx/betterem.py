@@ -18,12 +18,16 @@ from markdown import Extension
 from markdown.inlinepatterns import SimpleTagPattern, DoubleTagPattern
 from markdown import util
 
-SMART_STAR_EMPHASIS_RE = r'(?<![a-zA-Z\d*])(\*)(?![\*\s])(.+?\**?)(?<!\s)\2(?![a-zA-Z\d*])'
-SMART_STAR_STRONG_RE = r'(?<![a-zA-Z\d*])(\*{2})(?![\*\s])(.+?\**?)(?<!\s)\2(?![a-zA-Z\d*])'
 SMART_STAR_TRIPLE_RE = r'(?<![a-zA-Z\d*])(\*{3})(?![\*\s])(.+?\**?)(?<!\s)\2(?![a-zA-Z\d*])'
-SMART_UNDERLINE_EMPHASIS_RE = r'(?<![a-zA-Z\d_])(_)(?![_\s])(.+?_*?)(?<!\s)\2(?![a-zA-Z\d_])'
-SMART_UNDERLINE_STRONG_RE = r'(?<![a-zA-Z\d_])(_{2})(?![_\s])(.+?_*?)(?<!\s)\2(?![a-zA-Z\d_])'
+# SMART_STAR_UNEVEN_321_RE = r'(?<![a-zA-Z\d*])(\*{3})(?![\*\s])(.+?)(?<![a-zA-Z\d*])\*{2}(?![\*\s])(.+?\**?)(?<!\s)\*(?![a-zA-Z\d*])'
+# SMART_STAR_UNEVEN_312_RE = r'(?<![a-zA-Z\d*])(\*{3})(?![\*\s])(.+?)(?<![a-zA-Z\d*])\*(?![\*\s])(.+?\**?)(?<!\s)\*{2}(?![a-zA-Z\d*])'
+SMART_STAR_STRONG_RE = r'(?<![a-zA-Z\d*])(\*{2})(?![\*\s])(.+?\**?)(?<!\s)\2(?![a-zA-Z\d*])'
+SMART_STAR_EMPHASIS_RE = r'(?<![a-zA-Z\d*])(\*)(?![\*\s])(.+?\**?)(?<!\s)\2(?![a-zA-Z\d*])'
 SMART_UNDERLINE_TRIPLE_RE = r'(?<![a-zA-Z\d_])(_{3})(?![_\s])(.+?_*?)(?<!\s)\2(?![a-zA-Z\d_])'
+# SMART_UNDERLINE_UNEVEN_321_RE = r'(?<![a-zA-Z\d_])(_{3})(?![_\s])(.+?)(?<![a-zA-Z\d_])_{2}(?![_\s])(.+?_*?)(?<!\s)_(?![a-zA-Z\d_])'
+# SMART_UNDERLINE_UNEVEN_312_RE = r'(?<![a-zA-Z\d_])(_{3})(?![_\s])(.+?)(?<![a-zA-Z\d_])_(?![_\s])(.+?_*?)(?<!\s)_{2}(?![a-zA-Z\d_])'
+SMART_UNDERLINE_STRONG_RE = r'(?<![a-zA-Z\d_])(_{2})(?![_\s])(.+?_*?)(?<!\s)\2(?![a-zA-Z\d_])'
+SMART_UNDERLINE_EMPHASIS_RE = r'(?<![a-zA-Z\d_])(_)(?![_\s])(.+?_*?)(?<!\s)\2(?![a-zA-Z\d_])'
 
 STAR_TRIPLE_RE = r'(\*{3})(?!\s)(.+?)(?<!\s)\2'
 STAR_UNEVEN_321_RE = r'(\*{3})(?!\s)(.+?)(?<!\s)\*{2}(.+?)(?<!\s)\*'
@@ -95,6 +99,10 @@ class BetterEmExtension(Extension):
         underline_triple = SMART_UNDERLINE_TRIPLE_RE if enable_all or enable_underscore else UNDERLINE_TRIPLE_RE
         underline_double = SMART_UNDERLINE_STRONG_RE if enable_all or enable_underscore else UNDERLINE_STRONG_RE
         underline_single = SMART_UNDERLINE_EMPHASIS_RE if enable_all or enable_underscore else UNDERLINE_EMPHASIS_RE
+        underline_uneven_321 = UNDERLINE_UNEVEN_321_RE
+        underline_uneven_312 = UNDERLINE_UNEVEN_312_RE
+        star_uneven_321 = STAR_UNEVEN_321_RE
+        star_uneven_312 = STAR_UNEVEN_312_RE
 
         self.md.inlinePatterns["strong_em"] = DoubleTagPattern(star_triple, 'strong,em')
         self.md.inlinePatterns.add("strong_em2", DoubleTagPattern(underline_triple, 'strong,em'), '>strong_em')
@@ -104,11 +112,11 @@ class BetterEmExtension(Extension):
         self.md.inlinePatterns["emphasis2"] = SimpleTagPattern(underline_single, 'em')
 
         if not enable_all and not enable_asterisk:
-            self.md.inlinePatterns.add('strong_em3', UnevenDoubleTagPattern(STAR_UNEVEN_321_RE, 'strong,em'), '<strong_em')
-            self.md.inlinePatterns.add('em_strong', UnevenDoubleTagPattern(STAR_UNEVEN_312_RE, 'em,strong'), '>strong_em3')
+            self.md.inlinePatterns.add('strong_em3', UnevenDoubleTagPattern(star_uneven_321, 'strong,em'), '<strong_em')
+            self.md.inlinePatterns.add('em_strong', UnevenDoubleTagPattern(star_uneven_312, 'em,strong'), '>strong_em3')
         if not enable_all and not enable_underscore:
-            self.md.inlinePatterns.add('strong_em4', UnevenDoubleTagPattern(UNDERLINE_UNEVEN_321_RE, 'strong,em'), '<strong_em2')
-            self.md.inlinePatterns.add('em_strong2', UnevenDoubleTagPattern(UNDERLINE_UNEVEN_312_RE, 'em,strong'), '>strong_em4')
+            self.md.inlinePatterns.add('strong_em4', UnevenDoubleTagPattern(underline_uneven_321, 'strong,em'), '<strong_em2')
+            self.md.inlinePatterns.add('em_strong2', UnevenDoubleTagPattern(underline_uneven_312, 'em,strong'), '>strong_em4')
 
     def reset(self):
         """ Wait to make sure smart_strong hasn't overwritten us. """
