@@ -104,11 +104,11 @@ class BetterEmExtension(Extension):
         self.md.inlinePatterns["emphasis2"] = SimpleTagPattern(underline_single, 'em')
 
         if not enable_all and not enable_asterisk:
-            self.md.inlinePatterns.add('uneven_star_em', BetterDoubleTagPattern(STAR_UNEVEN_321_RE, 'strong,em'), '>strong_em')
-            self.md.inlinePatterns.add('uneven_star_em2', BetterDoubleTagPattern(STAR_UNEVEN_312_RE, 'em,strong'), '>uneven_star_em')
+            self.md.inlinePatterns.add('strong_em3', BetterDoubleTagPattern(STAR_UNEVEN_321_RE, 'strong,em'), '>strong_em')
+            self.md.inlinePatterns.add('em_strong', BetterDoubleTagPattern(STAR_UNEVEN_312_RE, 'em,strong'), '>strong_em3')
         if not enable_all and not enable_underscore:
-            self.md.inlinePatterns.add('uneven_underscore_em', BetterDoubleTagPattern(UNDERLINE_UNEVEN_321_RE, 'strong,em'), '>strong_em2')
-            self.md.inlinePatterns.add('uneven_underscore_em2', BetterDoubleTagPattern(UNDERLINE_UNEVEN_312_RE, 'em,strong'), '>uneven_underscore_em')
+            self.md.inlinePatterns.add('strong_em4', BetterDoubleTagPattern(UNDERLINE_UNEVEN_321_RE, 'strong,em'), '>strong_em2')
+            self.md.inlinePatterns.add('em_strong2', BetterDoubleTagPattern(UNDERLINE_UNEVEN_312_RE, 'em,strong'), '>strong_em4')
 
     def reset(self):
         """ Wait to make sure smart_strong hasn't overwritten us. """
