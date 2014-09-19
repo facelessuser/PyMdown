@@ -161,7 +161,7 @@ Just drop the extra folder in your Sublime `Packages` folder and name to somethi
 - Binary will be in the `mdown/dist` folder
 
 # TODO
-- [ ] Maybe add some builtin syntax for critic, mark, and kbd tags.  It isn't decided how many of these I will or will not add.  Support would be added via an extension.
+- [ ] Maybe add some builtin syntax for subscript, superscript, cite, mark, and kbd tags.  It isn't decided how many of these I will or will not add.  Support would be added via an extension.
 - [ ] Maybe add an extension for embedding content
 - ...stuff I havn't yet thought of...
 
