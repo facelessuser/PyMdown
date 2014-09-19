@@ -57,17 +57,19 @@ class HeaderAnchorExtension(Extension):
     def extendMarkdown(self, md, md_globals):
         """Add HeaderAnchorTreeprocessor to Markdown instance"""
 
+        self.load = True
         self.processor = HeaderAnchorTreeprocessor(md)
         self.processor.config = self.getConfigs()
         self.processor.md = md
-        md.treeprocessors.add("headeranchor", self.processor, "_end")
+        md.treeprocessors.add("header-anchor", self.processor, "_end")
         md.registerExtension(self)
 
     def reset(self):
         """ Ensure this is always after toc """
-        if 'toc' in self.processor.md.treeprocessors.keys():
-            del self.processor.md.treeprocessors["headeranchor"]
-            self.processor.md.treeprocessors.add("headeranchor", self.processor, ">toc")
+        if 'toc' in self.processor.md.treeprocessors.keys() and self.load:
+            self.load = False
+            del self.processor.md.treeprocessors["header-anchor"]
+            self.processor.md.treeprocessors.add("header-anchor", self.processor, ">toc")
 
 
 def makeExtension(*args, **kwargs):

@@ -86,7 +86,7 @@ class AbsolutepathExtension(Extension):
 
         abs_path = AbsolutepathTreeprocessor(md)
         abs_path.config = self.getConfigs()
-        md.treeprocessors.add("absolutepath", abs_path, "_end")
+        md.treeprocessors.add("absolute-path", abs_path, "_end")
         md.registerExtension(self)
 
 

@@ -90,7 +90,7 @@ class TasklistExtension(Extension):
         """Add GithubChecklistsTreeprocessor to Markdown instance"""
 
         ghckl = TasklistTreeprocessor(md)
-        md.treeprocessors.add("githubchecklists", ghckl, ">inline")
+        md.treeprocessors.add("task-list", ghckl, ">inline")
         md.registerExtension(self)
 
 

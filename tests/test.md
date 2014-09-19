@@ -28,7 +28,7 @@
         - mdownx.mark
         - mdownx.progressbar
         - mdownx.smartsymbols
-        - mdownx.scripts
+        - mdownx.subsup
         - mdownx.b64(base_path=${BASE_PATH})
         - mdownx.absolutepath(base_path=${BASE_PATH})
 ---
@@ -830,19 +830,34 @@ __^^*insert italic bold*^^__  *^^__insert italic bold 2__^^*
 
 # Subscript and Superscript
 ```
-Word~(Test subscript) Word^(Test superscript)
+(~~No subscript~~. Just delete.)
 
-~~Word~~ ~(Test subscript. `sub` and `sup` notation can gobble up one space to the left.) ^^Word^^ ^(Test superscript. `sub` and `sup` notation can gobble up one space to the left.)
+(^^No superscript^^. Just insert.)
 
-~~Word~~ ~(~~Test~~subscript~~. Safe to use token inside.) ^^Word^^ ^(^^Test^^superscript^^. Safe to use token inside.)
+
+Word(~Test subscript) Word(^Test superscript)
+
+~~Word~~(~Test subscript.) ^^Word^^(^Test superscript.)
+
+~~Word~~(~~~Test subscript~~. Safe to use the `~` ~~token~~ inside.) ^^Word^^(^^^Test superscript^^. Safe to use the `^` ^^token^^ inside.)
+
+~~Word~~(~~~^^**Test subscript**^^~~. Safe to use the `~` ~~token~~ inside.) ^^Word^^(^^^~~**Test superscript**~~^^. Safe to use the `^` ^^token^^ inside.)
 
 ```
 
-Word~(Test subscript) Word^(Test superscript)
+(~~No subscript~~. Just delete.)
 
-~~Word~~ ~(Test subscript. `sub` and `sup` notation can gobble up one space to the left.) ^^Word^^ ^(Test superscript. `sub` and `sup` notation can gobble up one space to the left.)
+(^^No superscript^^. Just insert.)
 
-~~Word~~ ~(~~Test~~subscript~~. Safe to use token inside.) ^^Word^^ ^(^^Test^^superscript^^. Safe to use token inside.)
+
+Word(~Test subscript) Word(^Test superscript)
+
+~~Word~~(~Test subscript.) ^^Word^^(^Test superscript.)
+
+~~Word~~(~~~Test subscript~~. Safe to use the `~` ~~token~~ inside.) ^^Word^^(^^^Test superscript^^. Safe to use the `^` ^^token^^ inside.)
+
+~~Word~~(~~~^^**Test subscript**^^~~. Safe to use the `~` ~~token~~ inside.) ^^Word^^(^^^~~**Test superscript**~~^^. Safe to use the `^` ^^token^^ inside.)
+
 
 # Progress
 Progress bars are block elements and it is recommened to put a newline before and after.  But they will be recognized inline, but they will be on their own line.

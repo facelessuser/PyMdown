@@ -89,7 +89,7 @@ class PlainHtmlExtension(Extension):
         """Add HeaderAnchorTreeprocessor to Markdown instance"""
 
         plainhtml = PlainHtmlPostprocessor(md)
-        md.postprocessors.add("plainhtml", plainhtml, "_end")
+        md.postprocessors.add("plain-html", plainhtml, "_end")
         md.registerExtension(self)
 
 

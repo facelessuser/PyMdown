@@ -74,7 +74,7 @@ class SmartSymbolsExtension(Extension):
 
         inlineProcessor = InlineProcessor(md)
         inlineProcessor.inlinePatterns = self.patterns
-        md.treeprocessors.add('smartsymbols', inlineProcessor, '_end')
+        md.treeprocessors.add('smart-symbols', inlineProcessor, '_end')
 
 
 def makeExtension(*args, **kwargs):

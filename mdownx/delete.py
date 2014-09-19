@@ -17,8 +17,20 @@ from __future__ import unicode_literals
 from markdown import Extension
 from markdown.inlinepatterns import SimpleTagPattern
 
-RE_SMART_DEL = r'(?<![a-zA-Z\d~])(~{2})(?![~\s])(.+?~*?)(?<!\s)\2(?![a-zA-Z\d~])'
-RE_DEL = r'(~{2})(?!\s)(.*?)(?<!\s)\2'
+RE_SMART_DEL_BASE = r'(~{2})(?![~\s])(.+?~*?)(?<!\s)~{2}'
+RE_SMART_DEL = r'(?<![a-zA-Z\d~])%s(?![a-zA-Z\d~])' % RE_SMART_DEL_BASE
+RE_DEL_BASE = r'(~{2})(?!\s)(.*?)(?<!\s)~{2}'
+RE_DEL = RE_DEL_BASE
+
+# (~~~delete~~ at start of subscript) and (~~delete~~ at start of parens to protect against subscript grabbing it)
+RE_SMART_SUB = r'(?=(?:\))|(?:\(.*?\)|[^a-zA-Z\d~])(?:(?:\(.*?\)|[^\)])+?)\))'
+RE_SUB = r'(?=(?:(?:\(.*?\)|[^\)])+?)\))'
+RE_SUB_PAREN_DEL_BASE = r'(?<=\(~)%s%s'
+RE_PAREN_DEL_BASE = r'(?<=\()%s%s'
+RE_SMART_SUB_DEL = RE_SUB_PAREN_DEL_BASE % (RE_SMART_DEL_BASE, RE_SMART_SUB)
+RE_SMART_SUB_DEL2 = RE_PAREN_DEL_BASE % (RE_SMART_DEL_BASE, RE_SMART_SUB)
+RE_SUB_DEL = RE_SUB_PAREN_DEL_BASE % (RE_DEL_BASE, RE_SUB)
+RE_SUB_DEL2 = RE_PAREN_DEL_BASE % (RE_DEL_BASE, RE_SUB)
 
 
 class DeleteExtension(Extension):
@@ -40,6 +52,19 @@ class DeleteExtension(Extension):
             md.inlinePatterns.add("del", SimpleTagPattern(RE_SMART_DEL, "del"), "<not_strong")
         else:
             md.inlinePatterns.add("del", SimpleTagPattern(RE_DEL, "del"), "<not_strong")
+
+        self.md = md
+        md.registerExtension(self)
+
+    def reset(self):
+        if "sub" in self.md.inlinePatterns.keys():
+            config = self.getConfigs()
+            if config.get('smart_delete', True):
+                self.md.inlinePatterns.add("sub-del", SimpleTagPattern(RE_SMART_SUB_DEL, "del"), "<sub")
+                self.md.inlinePatterns.add("sub-del2", SimpleTagPattern(RE_SMART_SUB_DEL2, "del"), "<sub-del")
+            else:
+                self.md.inlinePatterns.add("sub-del", SimpleTagPattern(RE_SUB_DEL, "del"), "<sub")
+                self.md.inlinePatterns.add("sub-del2", SimpleTagPattern(RE_SUB_DEL2, "del"), "<sub-del")
 
 
 def makeExtension(*args, **kwargs):

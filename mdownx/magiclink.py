@@ -61,8 +61,8 @@ class MagiclinkExtension(Extension):
     def extendMarkdown(self, md, md_globals):
         """Adds support for turning html links to link tags"""
 
-        md.inlinePatterns.add("magiclink", MagiclinkPattern(RE_LINK, md), "<not_strong")
-        md.inlinePatterns.add("magicmail", MagicMailPattern(RE_MAIL, md), "<not_strong")
+        md.inlinePatterns.add("magic-link", MagiclinkPattern(RE_LINK, md), "<not_strong")
+        md.inlinePatterns.add("magic-mail", MagicMailPattern(RE_MAIL, md), "<not_strong")
 
 
 def makeExtension(*args, **kwargs):

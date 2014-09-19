@@ -1,5 +1,5 @@
 """
-mdownx.smarteremphasis
+mdownx.betterem
 Add inteligent handling of to em and strong notations
 
 MIT license.
@@ -16,6 +16,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from markdown import Extension
 from markdown.inlinepatterns import SimpleTagPattern, DoubleTagPattern
+from markdown import util
 
 SMART_STAR_EMPHASIS_RE = r'(?<![a-zA-Z\d*])(\*)(?![\*\s])(.+?\**?)(?<!\s)\2(?![a-zA-Z\d*])'
 SMART_STAR_STRONG_RE = r'(?<![a-zA-Z\d*])(\*{2})(?![\*\s])(.+?\**?)(?<!\s)\2(?![a-zA-Z\d*])'
@@ -30,13 +31,31 @@ DUMB_STAR_TRIPLE_RE = r'(\*{3})(?!\s)(.*?)(?<!\s)\2'
 DUMB_UNDERLINE_EMPHASIS_RE = r'(_)(?!\s)(.*?)(?<!\s)\2'
 DUMB_UNDERLINE_STRONG_RE = r'(_{2})(?!\s)(.*?)(?<!\s)\2'
 DUMB_UNDERLINE_TRIPLE_RE = r'(_{3})(?!\s)(.*?)(?<!\s)\2'
+# DUMB_UNEVEN_STAR321 = r'(\*{3})(?!\s)([^\*]+?)(?<!\s)\*{2}([^\*]+?)(?<!\s)\*'
+# DUMB_UNEVEN_STAR312 = r'(\*{3})(?!\s)([^\*]+?)(?<!\s)\*{1}([^\*]+?)(?<!\s)\*{2}'
+# DUMB_UNEVEN_STAR211 = r'(\*{2})(?!\s)([^\*]+?)(?<!\s)\*([^\*]+?)(?<!\s)\*'
 
 smart_enable_keys = [
     "all", "asterisk", "underscore", "none"
 ]
 
 
-class SmarterEmphasisExtension(Extension):
+class BetterDoubleTagPattern(SimpleTagPattern):
+    """Return a ElementTree element nested in tag2 nested in tag1.
+
+    Useful for strong emphasis etc.
+
+    """
+    def handleMatch(self, m):
+        tag1, tag2 = self.tag.split(",")
+        el1 = util.etree.Element(tag1)
+        el2 = util.etree.SubElement(el1, tag2)
+        el2.text = m.group(3)
+        el2.tail = m.group(4)
+        return el1
+
+
+class BetterEmExtension(Extension):
     """ Add extension to Markdown class."""
 
     def __init__(self, *args, **kwargs):
@@ -47,24 +66,26 @@ class SmarterEmphasisExtension(Extension):
         if "smart_enable" in kwargs and kwargs["smart_enable"] not in smart_enable_keys:
             del kwargs["smart_enable"]
 
-        super(SmarterEmphasisExtension, self).__init__(*args, **kwargs)
+        super(BetterEmExtension, self).__init__(*args, **kwargs)
 
     def extendMarkdown(self, md, md_globals):
         """ Modify inline patterns. """
 
         self.md = md
+        self.load = True
         md.registerExtension(self)
 
-    def make_smarter(self):
+    def make_better(self):
         """
         This should work with the default smart_strong package enabled or disabled.
         """
 
         config = self.getConfigs()
         enabled = config["smart_enable"]
-        enable_all = enabled == "all"
-        enable_underscore = enabled == "underscore"
-        enable_asterisk = enabled == "asterisk"
+        if enabled:
+            enable_all = enabled == "all"
+            enable_underscore = enabled == "underscore"
+            enable_asterisk = enabled == "asterisk"
 
         star_triple = SMART_STAR_TRIPLE_RE if enable_all or enable_asterisk else DUMB_STAR_TRIPLE_RE
         star_double = SMART_STAR_STRONG_RE if enable_all or enable_asterisk else DUMB_STAR_STRONG_RE
@@ -73,17 +94,27 @@ class SmarterEmphasisExtension(Extension):
         underline_double = SMART_UNDERLINE_STRONG_RE if enable_all or enable_underscore else DUMB_UNDERLINE_STRONG_RE
         underline_single = SMART_UNDERLINE_EMPHASIS_RE if enable_all or enable_underscore else DUMB_UNDERLINE_EMPHASIS_RE
 
-        self.md.inlinePatterns["strong_em"] = DoubleTagPattern(star_triple, 'strong,em')
-        self.md.inlinePatterns.add("strong_em2", DoubleTagPattern(underline_triple, 'strong,em'), '>strong_em')
+        self.md.inlinePatterns["strong_em"] = DoubleTagPattern(star_triple, 'em,strong')
+        self.md.inlinePatterns.add("strong_em2", DoubleTagPattern(underline_triple, 'em,strong'), '>strong_em')
         self.md.inlinePatterns['strong'] = SimpleTagPattern(star_double, 'strong')
         self.md.inlinePatterns.add('strong2', SimpleTagPattern(underline_double, 'strong'), '>strong')
         self.md.inlinePatterns["emphasis"] = SimpleTagPattern(star_single, 'em')
         self.md.inlinePatterns["emphasis2"] = SimpleTagPattern(underline_single, 'em')
 
+        # if not enable_all and not enable_asterisk:
+        #     self.md.inlinePatterns.add('uneven_star_em', BetterDoubleTagPattern(DUMB_UNEVEN_STAR321, 'strong,em'), '>strong_em')
+        #     self.md.inlinePatterns.add('uneven_star_em2', BetterDoubleTagPattern(DUMB_UNEVEN_STAR312, 'em,strong'), '>uneven_star_em')
+        #     self.md.inlinePatterns.add('uneven_star_em3', BetterDoubleTagPattern(DUMB_UNEVEN_STAR211, 'em,em'), '>strong')
+        # if not enable_all and not enable_underscore:
+        #     self.md.inlinePatterns.add('uneven_underscore_em', SimpleTagPattern(DUMB_UNEVEN_UNDERSCORE3, 'em'), '<strong_em2')
+        #     self.md.inlinePatterns.add('uneven_underscore_em2', SimpleTagPattern(DUMB_UNEVEN_UNDERSCORE2, 'em'), '<strong2')
+
     def reset(self):
         """ Wait to make sure smart_strong hasn't overwritten us."""
-        self.make_smarter()
+        if self.load:
+            self.load = False
+            self.make_better()
 
 
 def makeExtension(*args, **kwargs):
-    return SmarterEmphasisExtension(*args, **kwargs)
+    return BetterEmExtension(*args, **kwargs)

@@ -1,7 +1,7 @@
 """
 mdownx.delete
 Really simple plugin to add support for
-<del>test</del> tags as ~~test~~
+Test<sub>sub</sub> via Test(~sub) and Test<sup>super</sup> via Test(^super)
 
 MIT license.
 
@@ -15,35 +15,11 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 """
 from __future__ import unicode_literals
 from markdown import Extension
-from markdown.inlinepatterns import SimpleTagPattern
+from markdown.inlinepatterns import SimpleTagPattern, Pattern
 from markdown import util
-import re
 
-RE_SUPER = r'\s?(?<!\^)(\^)(?!\2)((?:\\ |[^\s])*)'
-RE_SUB = r'\s?(?<!~)(~)(?!\2)((?:\\ |[^\s])+)'
-RE_SUPER_B = r'\s?(?<!\^)(\^\()((?:\(.*?\)|[^\)])+?)\)'
-RE_SUB_B = r'\s?(?<!~)(~\()((?:\(.*?\)|[^\)])+?)\)'
-RE_LAZY_SPACE = r"((?<!\\)(?:\\{2})*?)(\\ )"
-
-
-class ScriptTagPattern(SimpleTagPattern):
-    """
-    Return element of type `tag` with a text attribute of group(3)
-    of a Pattern.
-
-    """
-
-    lazy_space = re.compile(RE_LAZY_SPACE)
-
-    def handleMatch(self, m):
-        el = util.etree.Element(self.tag)
-        lazy = m.group(2) in ('~', '^')
-
-        if lazy:
-            el.text = self.lazy_space.sub(r'\1 ', m.group(3)).strip()
-        else:
-            el.text = m.group(3).strip()
-        return el
+RE_SUPER = r'(\(\^)((?:\(.*?\)|[^\)])+?)\)'
+RE_SUB = r'(\(~)((?:\(.*?\)|[^\)])+?)\)'
 
 
 class ScriptExtension(Extension):
@@ -58,14 +34,16 @@ class ScriptExtension(Extension):
         super(ScriptExtension, self).__init__(*args, **kwargs)
 
     def extendMarkdown(self, md, md_globals):
-        """Add support for <sub>test</sub> and <sup>test</sup> tags as ^test\ me^ and ~test\ me~"""
+        """Add support for <sub>test</sub> and <sup>test</sup> """
         config = self.getConfigs()
+        if "^" not in md.ESCAPED_CHARS:
+            md.ESCAPED_CHARS.append('^')
+        if "~" not in md.ESCAPED_CHARS:
+            md.ESCAPED_CHARS.append('~')
         if config.get('subscript', True):
-            # md.inlinePatterns.add("subscript", ScriptTagPattern(RE_SUB, "sub"), ">entity")
-            md.inlinePatterns.add("subscript_b", ScriptTagPattern(RE_SUB_B, "sub"), "<entity")
+            md.inlinePatterns.add("sub", SimpleTagPattern(RE_SUB, "sub"), ">entity")
         if config.get('superscript', True):
-            # md.inlinePatterns.add("superscript", ScriptTagPattern(RE_SUPER, "sup"), ">entity")
-            md.inlinePatterns.add("superscript_b", ScriptTagPattern(RE_SUPER_B, "sup"), "<entity")
+            md.inlinePatterns.add("sup", SimpleTagPattern(RE_SUPER, "sup"), ">entity")
 
 
 def makeExtension(*args, **kwargs):

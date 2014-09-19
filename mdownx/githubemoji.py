@@ -57,11 +57,11 @@ class GithubEmojiExtension(Extension):
     def extendMarkdown(self, md, md_globals):
         """Add support for <del>test</del> tags as ~~test~~"""
 
-        md.inlinePatterns.add("github_emoji_people", SimpleEmojiPattern(RE_EMOJI_PEOPLE), "<not_strong")
-        md.inlinePatterns.add("github_emoji_nature", SimpleEmojiPattern(RE_EMOJI_NATURE), "<not_strong")
-        md.inlinePatterns.add("github_emoji_objects", SimpleEmojiPattern(RE_EMOJI_OBJECTS), "<not_strong")
-        md.inlinePatterns.add("github_emoji_places", SimpleEmojiPattern(RE_EMOJI_PLACES), "<not_strong")
-        md.inlinePatterns.add("github_emoji_symbols", SimpleEmojiPattern(RE_EMOJI_SYMBOLS), "<not_strong")
+        md.inlinePatterns.add("github-emoji-people", SimpleEmojiPattern(RE_EMOJI_PEOPLE), "<not_strong")
+        md.inlinePatterns.add("github-emoji-nature", SimpleEmojiPattern(RE_EMOJI_NATURE), "<not_strong")
+        md.inlinePatterns.add("github-emoji-objects", SimpleEmojiPattern(RE_EMOJI_OBJECTS), "<not_strong")
+        md.inlinePatterns.add("github-emoji-places", SimpleEmojiPattern(RE_EMOJI_PLACES), "<not_strong")
+        md.inlinePatterns.add("github-emoji-symbols", SimpleEmojiPattern(RE_EMOJI_SYMBOLS), "<not_strong")
 
 
 def makeExtension(*args, **kwargs):

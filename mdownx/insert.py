@@ -17,8 +17,20 @@ from __future__ import unicode_literals
 from markdown import Extension
 from markdown.inlinepatterns import SimpleTagPattern
 
-RE_SMART_INS = r'(?<![a-zA-Z\d\^])(\^{2})(?![\^\s])(.+?\^*?)(?<!\s)\2(?![a-zA-Z\d\^])'
-RE_INS = r'(\^{2})(?!\s)(.*?)(?<!\s)\2'
+RE_SMART_INS_BASE = r'(\^{2})(?![\^\s])(.+?\^*?)(?<!\s)\^{2}'
+RE_SMART_INS = r'(?<![a-zA-Z\d\^])%s(?![a-zA-Z\d\^])' % RE_SMART_INS_BASE
+RE_INS_BASE = r'(\^{2})(?!\s)(.*?)(?<!\s)\^{2}'
+RE_INS = RE_INS_BASE
+
+# (^^^insert^^ at start of superscript) and (^^insert^^ at start of parens to protect against superscript grabbing it)
+RE_SMART_SUP = r'(?=(?:\))|(?:\(.*?\)|[^a-zA-Z\d\^])(?:(?:\(.*?\)|[^\)])+?)\))'
+RE_SUP = r'(?=(?:(?:\(.*?\)|[^\)])+?)\))'
+RE_SUP_PAREN_INS_BASE = r'(?<=\(\^)%s%s'
+RE_PAREN_INS_BASE = r'(?<=\()%s%s'
+RE_SMART_SUP_INS = RE_SUP_PAREN_INS_BASE % (RE_SMART_INS_BASE, RE_SMART_SUP)
+RE_SMART_SUP_INS2 = RE_PAREN_INS_BASE % (RE_SMART_INS_BASE, RE_SMART_SUP)
+RE_SUP_INS = RE_SUP_PAREN_INS_BASE % (RE_INS_BASE, RE_SUP)
+RE_SUP_INS2 = RE_PAREN_INS_BASE % (RE_INS_BASE, RE_SUP)
 
 
 class InsertExtension(Extension):
@@ -40,6 +52,19 @@ class InsertExtension(Extension):
             md.inlinePatterns.add("ins", SimpleTagPattern(RE_SMART_INS, "ins"), "<not_strong")
         else:
             md.inlinePatterns.add("ins", SimpleTagPattern(RE_INS, "ins"), "<not_strong")
+
+        self.md = md
+        md.registerExtension(self)
+
+    def reset(self):
+        if "sup" in self.md.inlinePatterns.keys():
+            config = self.getConfigs()
+            if config.get('smart_insert', True):
+                self.md.inlinePatterns.add("sup-ins", SimpleTagPattern(RE_SMART_SUP_INS, "ins"), "<sup")
+                self.md.inlinePatterns.add("sup-ins2", SimpleTagPattern(RE_SMART_SUP_INS2, "ins"), "<sup-ins")
+            else:
+                self.md.inlinePatterns.add("sup-ins", SimpleTagPattern(RE_SUP_INS, "ins"), "<sup")
+                self.md.inlinePatterns.add("sup-ins2", SimpleTagPattern(RE_SUP_INS2, "ins"), "<sup-ins")
 
 
 def makeExtension(*args, **kwargs):

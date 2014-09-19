@@ -7,7 +7,7 @@ extensions = [
     'mdownx.magiclink',
     'mdownx.tasklist',
     'mdownx.headeranchor',
-    'mdownx.smarteremphasis',
+    'mdownx.betterem',
     'markdown.extensions.nl2br'
 ]
 
