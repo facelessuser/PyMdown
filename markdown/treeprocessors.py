@@ -129,11 +129,11 @@ class InlineProcessor(Treeprocessor):
             text = subnode.tail
             subnode.tail = None
 
-        childResult = self.__processPlaceholders(text, subnode)
+        childResult = self.__processPlaceholders(text, subnode, isText)
 
         if not isText and node is not subnode:
             pos = list(node).index(subnode)
-            node.remove(subnode)
+            # node.remove(subnode)
         else:
             pos = 0
 
@@ -141,7 +141,7 @@ class InlineProcessor(Treeprocessor):
         for newChild in childResult:
             node.insert(pos, newChild)
 
-    def __processPlaceholders(self, data, parent):
+    def __processPlaceholders(self, data, parent, isText=True):
         """
         Process string with placeholders and generate ElementTree tree.
 
@@ -160,6 +160,11 @@ class InlineProcessor(Treeprocessor):
                         result[-1].tail += text
                     else:
                         result[-1].tail = text
+                elif not isText:
+                    if parent.tail:
+                        parent.tail += text
+                    else:
+                        parent.tail = text
                 else:
                     if parent.text:
                         parent.text += text
