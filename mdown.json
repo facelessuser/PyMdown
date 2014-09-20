@@ -18,18 +18,22 @@
 
     // Python Markdown extensions
     "extensions": [
-        "extra",
+        "markdown.extensions.extra",
+        "markdown.extensions.toc",
+        "markdown.extensions.codehilite(guess_lang=False,pygments_style=github)",
+        "markdown.extensions.headerid",
+        "markdown.extensions.meta",
+        "markdown.extensions.smarty",
+        "markdown.extensions.wikilinks",
+        "markdown.extensions.admonition",
         "mdownx.github",
-        "mdownx.progressbar",
-        "toc",
-        "codehilite(guess_lang=False,pygments_style=github)",
         "mdownx.insert",
+        "mdownx.mark",
+        "mdownx.progressbar",
+        "mdownx.smartsymbols",
+        "mdownx.subsup",
+        "mdownx.progressbar",
         // "mdownx.absolutepath(base_path=${BASE_PATH})",
-        "mdownx.b64(base_path=${BASE_PATH})",
-        "headerid",
-        "meta",
-        "smarty",
-        "wikilinks",
-        "admonition"
+        "mdownx.b64(base_path=${BASE_PATH})"
     ]
 }
