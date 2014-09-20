@@ -42,7 +42,7 @@ smart_enable_keys = [
 ]
 
 
-class BetterDoubleTagPattern(SimpleTagPattern):
+class UnevenDoubleTagPattern(SimpleTagPattern):
     """Return a ElementTree element nested in tag2 nested in tag1.
 
     Useful for strong emphasis etc.
@@ -104,11 +104,11 @@ class BetterEmExtension(Extension):
         self.md.inlinePatterns["emphasis2"] = SimpleTagPattern(underline_single, 'em')
 
         if not enable_all and not enable_asterisk:
-            self.md.inlinePatterns.add('strong_em3', BetterDoubleTagPattern(STAR_UNEVEN_321_RE, 'strong,em'), '>strong_em')
-            self.md.inlinePatterns.add('em_strong', BetterDoubleTagPattern(STAR_UNEVEN_312_RE, 'em,strong'), '>strong_em3')
+            self.md.inlinePatterns.add('strong_em3', UnevenDoubleTagPattern(STAR_UNEVEN_321_RE, 'strong,em'), '>strong_em')
+            self.md.inlinePatterns.add('em_strong', UnevenDoubleTagPattern(STAR_UNEVEN_312_RE, 'em,strong'), '>strong_em3')
         if not enable_all and not enable_underscore:
-            self.md.inlinePatterns.add('strong_em4', BetterDoubleTagPattern(UNDERLINE_UNEVEN_321_RE, 'strong,em'), '>strong_em2')
-            self.md.inlinePatterns.add('em_strong2', BetterDoubleTagPattern(UNDERLINE_UNEVEN_312_RE, 'em,strong'), '>strong_em4')
+            self.md.inlinePatterns.add('strong_em4', UnevenDoubleTagPattern(UNDERLINE_UNEVEN_321_RE, 'strong,em'), '>strong_em2')
+            self.md.inlinePatterns.add('em_strong2', UnevenDoubleTagPattern(UNDERLINE_UNEVEN_312_RE, 'em,strong'), '>strong_em4')
 
     def reset(self):
         """ Wait to make sure smart_strong hasn't overwritten us. """
