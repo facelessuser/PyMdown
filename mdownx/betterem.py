@@ -18,12 +18,16 @@ from markdown import Extension
 from markdown.inlinepatterns import SimpleTagPattern, DoubleTagPattern
 from markdown import util
 
-SMART_STAR_EMPHASIS_RE = r'(?<![a-zA-Z\d*])(\*)(?![\*\s])(.+?\**?)(?<!\s)\2(?![a-zA-Z\d*])'
-SMART_STAR_STRONG_RE = r'(?<![a-zA-Z\d*])(\*{2})(?![\*\s])(.+?\**?)(?<!\s)\2(?![a-zA-Z\d*])'
 SMART_STAR_TRIPLE_RE = r'(?<![a-zA-Z\d*])(\*{3})(?![\*\s])(.+?\**?)(?<!\s)\2(?![a-zA-Z\d*])'
-SMART_UNDERLINE_EMPHASIS_RE = r'(?<![a-zA-Z\d_])(_)(?![_\s])(.+?_*?)(?<!\s)\2(?![a-zA-Z\d_])'
-SMART_UNDERLINE_STRONG_RE = r'(?<![a-zA-Z\d_])(_{2})(?![_\s])(.+?_*?)(?<!\s)\2(?![a-zA-Z\d_])'
+# SMART_STAR_UNEVEN_321_RE = r'(?<![a-zA-Z\d*])(\*{3})(?![\*\s])(.+?)(?<![a-zA-Z\d*])\*{2}(?![\*\s])(.+?\**?)(?<!\s)\*(?![a-zA-Z\d*])'
+# SMART_STAR_UNEVEN_312_RE = r'(?<![a-zA-Z\d*])(\*{3})(?![\*\s])(.+?)(?<![a-zA-Z\d*])\*(?![\*\s])(.+?\**?)(?<!\s)\*{2}(?![a-zA-Z\d*])'
+SMART_STAR_STRONG_RE = r'(?<![a-zA-Z\d*])(\*{2})(?![\*\s])(.+?\**?)(?<!\s)\2(?![a-zA-Z\d*])'
+SMART_STAR_EMPHASIS_RE = r'(?<![a-zA-Z\d*])(\*)(?![\*\s])(.+?\**?)(?<!\s)\2(?![a-zA-Z\d*])'
 SMART_UNDERLINE_TRIPLE_RE = r'(?<![a-zA-Z\d_])(_{3})(?![_\s])(.+?_*?)(?<!\s)\2(?![a-zA-Z\d_])'
+# SMART_UNDERLINE_UNEVEN_321_RE = r'(?<![a-zA-Z\d_])(_{3})(?![_\s])(.+?)(?<![a-zA-Z\d_])_{2}(?![_\s])(.+?_*?)(?<!\s)_(?![a-zA-Z\d_])'
+# SMART_UNDERLINE_UNEVEN_312_RE = r'(?<![a-zA-Z\d_])(_{3})(?![_\s])(.+?)(?<![a-zA-Z\d_])_(?![_\s])(.+?_*?)(?<!\s)_{2}(?![a-zA-Z\d_])'
+SMART_UNDERLINE_STRONG_RE = r'(?<![a-zA-Z\d_])(_{2})(?![_\s])(.+?_*?)(?<!\s)\2(?![a-zA-Z\d_])'
+SMART_UNDERLINE_EMPHASIS_RE = r'(?<![a-zA-Z\d_])(_)(?![_\s])(.+?_*?)(?<!\s)\2(?![a-zA-Z\d_])'
 
 STAR_TRIPLE_RE = r'(\*{3})(?!\s)(.+?)(?<!\s)\2'
 STAR_UNEVEN_321_RE = r'(\*{3})(?!\s)(.+?)(?<!\s)\*{2}(.+?)(?<!\s)\*'

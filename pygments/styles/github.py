@@ -74,8 +74,4 @@ class GithubStyle(Style):
 
         # Below are classes that could not be resolved:
         # class=.gc bold=False italic=False underline=False color=#999999 bg=#eaf2f5 border=None
-
-        # Below are invalid rules:
-        # .highlight .gd .x{color:#000000;background-color:#ffaaaa}
-        # .highlight .gi .x{color:#000000;background-color:#aaffaa}
     }
