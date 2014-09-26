@@ -17,8 +17,12 @@ from __future__ import unicode_literals
 from markdown import Extension
 from markdown.inlinepatterns import SimpleTagPattern
 
-RE_SMART_MARK = r'(?<![a-zA-Z\d=])(={2})(?![=\s])(.+?=*?)(?<!\s)\2(?![a-zA-Z\d=])'
-RE_MARK = r'(={2})(?!\s)(.*?)(?<!\s)\2'
+RE_SMART_CONTENT = r'((?:[^\=]|\=(?=[^\W]|\=))+?\=*)'
+RE_DUMB_CONTENT = r'((?:[^\=]|(?<!\=)\=(?=[^\W]|_))+?)'
+RE_SMART_MARK_BASE = r'(\={2})(?![\s\=])%s(?<!\s)\={2}' % RE_SMART_CONTENT
+RE_SMART_MARK = r'(?:(?<=_)|(?<!\w))%s(?:(?=_)|(?![\w\=]))' % RE_SMART_MARK_BASE
+RE_MARK_BASE = r'(\={2})(?!\s)%s(?<!\s)\={2}' % RE_DUMB_CONTENT
+RE_MARK = RE_MARK_BASE
 
 
 class MarkExtension(Extension):

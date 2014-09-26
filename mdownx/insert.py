@@ -17,13 +17,15 @@ from __future__ import unicode_literals
 from markdown import Extension
 from markdown.inlinepatterns import SimpleTagPattern
 
-RE_SMART_INS_BASE = r'(\^{2})(?![\^\s])(.+?\^*?)(?<!\s)\^{2}'
-RE_SMART_INS = r'(?<![a-zA-Z\d\^])%s(?![a-zA-Z\d\^])' % RE_SMART_INS_BASE
-RE_INS_BASE = r'(\^{2})(?!\s)(.*?)(?<!\s)\^{2}'
+RE_SMART_CONTENT = r'((?:[^\^]|\^(?=[^\W]|\^))+?\^*)'
+RE_DUMB_CONTENT = r'((?:[^\^]|(?<!\^)\^(?=[^\W]|_))+?)'
+RE_SMART_INS_BASE = r'(\^{2})(?![\s\^])%s(?<!\s)\^{2}' % RE_SMART_CONTENT
+RE_SMART_INS = r'(?:(?<=_)|(?<!\w))%s(?:(?=_)|(?![\w\^]))' % RE_SMART_INS_BASE
+RE_INS_BASE = r'(\^{2})(?!\s)%s(?<!\s)\^{2}' % RE_DUMB_CONTENT
 RE_INS = RE_INS_BASE
 
 # (^^^insert^^ at start of superscript) and (^^insert^^ at start of parens to protect against superscript grabbing it)
-RE_SMART_SUP = r'(?=(?:\))|(?:\(.*?\)|[^a-zA-Z\d\^])(?:(?:\(.*?\)|[^\)])+?)\))'
+RE_SMART_SUP = r'(?=(?:\))|(?:\(.*?\)|_|[^\w\^])(?:(?:\(.*?\)|[^\)])+?)\))'
 RE_SUP = r'(?=(?:(?:\(.*?\)|[^\)])+?)\))'
 RE_SUP_PAREN_INS_BASE = r'(?<=\(\^)%s%s'
 RE_PAREN_INS_BASE = r'(?<=\()%s%s'

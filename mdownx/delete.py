@@ -17,13 +17,15 @@ from __future__ import unicode_literals
 from markdown import Extension
 from markdown.inlinepatterns import SimpleTagPattern
 
-RE_SMART_DEL_BASE = r'(~{2})(?![~\s])(.+?~*?)(?<!\s)~{2}'
-RE_SMART_DEL = r'(?<![a-zA-Z\d~])%s(?![a-zA-Z\d~])' % RE_SMART_DEL_BASE
-RE_DEL_BASE = r'(~{2})(?!\s)(.*?)(?<!\s)~{2}'
+RE_SMART_CONTENT = r'((?:[^~]|~(?=[^\W]|~))+?~*)'
+RE_DUMB_CONTENT = r'((?:[^~]|(?<!~)~(?=[^\W]|_))+?)'
+RE_SMART_DEL_BASE = r'(~{2})(?![\s~])%s(?<!\s)~{2}' % RE_SMART_CONTENT
+RE_SMART_DEL = r'(?:(?<=_)|(?<!\w))%s(?:(?=_)|(?![\w~]))' % RE_SMART_DEL_BASE
+RE_DEL_BASE = r'(~{2})(?!\s)%s(?<!\s)~{2}' % RE_DUMB_CONTENT
 RE_DEL = RE_DEL_BASE
 
 # (~~~delete~~ at start of subscript) and (~~delete~~ at start of parens to protect against subscript grabbing it)
-RE_SMART_SUB = r'(?=(?:\))|(?:\(.*?\)|[^a-zA-Z\d~])(?:(?:\(.*?\)|[^\)])+?)\))'
+RE_SMART_SUB = r'(?=(?:\))|(?:\(.*?\)|_|[^\w~])(?:(?:\(.*?\)|[^\)])+?)\))'
 RE_SUB = r'(?=(?:(?:\(.*?\)|[^\)])+?)\))'
 RE_SUB_PAREN_DEL_BASE = r'(?<=\(~)%s%s'
 RE_PAREN_DEL_BASE = r'(?<=\()%s%s'
