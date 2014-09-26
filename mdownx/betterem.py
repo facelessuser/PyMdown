@@ -16,45 +16,66 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from markdown import Extension
 from markdown.inlinepatterns import SimpleTagPattern, DoubleTagPattern
-from markdown import util
 
-SMART_STAR_TRIPLE_RE = r'(?<![a-zA-Z\d*])(\*{3})(?![\*\s])(.+?\**?)(?<!\s)\2(?![a-zA-Z\d*])'
-SMART_STAR_STRONG_RE = r'(?<![a-zA-Z\d*])(\*{2})(?![\*\s])(.+?\**?)(?<!\s)\2(?![a-zA-Z\d*])'
-SMART_STAR_EMPHASIS_RE = r'(?<![a-zA-Z\d*])(\*)(?![\*\s])(.+?\**?)(?<!\s)\2(?![a-zA-Z\d*])'
-SMART_UNDERLINE_TRIPLE_RE = r'(?<![a-zA-Z\d_])(_{3})(?![_\s])(.+?_*?)(?<!\s)\2(?![a-zA-Z\d_])'
-SMART_UNDERLINE_STRONG_RE = r'(?<![a-zA-Z\d_])(_{2})(?![_\s])(.+?_*?)(?<!\s)\2(?![a-zA-Z\d_])'
-SMART_UNDERLINE_EMPHASIS_RE = r'(?<![a-zA-Z\d_])(_)(?![_\s])(.+?_*?)(?<!\s)\2(?![a-zA-Z\d_])'
+SMART_UNDER_CONTENT = r'((?:[^_]|_(?=[^\W]))+?_*)'
+SMART_STAR_CONTENT = r'((?:[^\*]|\*(?=[^\W]|\*))+?\**)'
+UNDER_CONTENT = r'(_|[^_]+?)'
+UNDER_CONTENT2 = r'((?:[^_]|(?<!_)_(?=[^\W]|_))+?)'
+STAR_CONTENT = r'(\*|[^\*]+?)'
+STAR_CONTENT2 = r'((?:[^\*]|(?<!\*)\*(?=[^\W]|_))+?)'
 
-STAR_TRIPLE_RE = r'(\*{3})(?!\s)(.+?)(?<!\s)\2'
-STAR_UNEVEN_321_RE = r'(\*{3})(?!\s)(.+?)(?<!\s)\*{2}(.+?)(?<!\s)\*'
-STAR_UNEVEN_312_RE = r'(\*{3})(?!\s)(.+?)(?<!\s)\*(.+?)(?<!\s)\*{2}'
-STAR_STRONG_RE = r'(\*{2})(?!\s)(.+?)(?<!\s)\2'
-STAR_EMPHASIS_RE = r'(\*)(?!\s)(.+?)(?<!\s)\2'
+# ***strong,em***
+STAR_STRONG_EM = r'(\*{3})(?!\s)(\*{1,2}|[^\*]+?)(?<!\s)\2'
+# ___strong,em___
+UNDER_STRONG_EM = r'(_{3})(?!\s)(_{1,2}|[^_]+?)(?<!\s)\2'
+# ***strong,em*strong**
+STAR_STRONG_EM2 = r'(\*{3})(?![\s\*])%s(?<!\s)\*%s(?<!\s)\*{2}' % (STAR_CONTENT, STAR_CONTENT2)
+# ___strong,em_strong__
+UNDER_STRONG_EM2 = r'(_{3})(?![\s_])%s(?<!\s)_%s(?<!\s)_{2}' % (UNDER_CONTENT, UNDER_CONTENT2)
+# ***em,strong**em*
+STAR_EM_STRONG = r'(\*{3})(?![\s\*])%s(?<!\s)\*{2}%s(?<!\s)\*' % (STAR_CONTENT2, STAR_CONTENT)
+# ___em,strong__em_
+UNDER_EM_STRONG = r'(_{3})(?![\s_])%s(?<!\s)_{2}%s(?<!\s)_' % (UNDER_CONTENT2, UNDER_CONTENT)
+# **strong**
+STAR_STRONG = r'(\*{2})(?!\s)%s(?<!\s)\2' % STAR_CONTENT2
+# __strong__
+UNDER_STRONG = r'(_{2})(?!\s)%s(?<!\s)\2' % UNDER_CONTENT2
+# *emphasis*
+STAR_EM = r'(\*)(?!\s)%s(?<!\s)\2' % STAR_CONTENT
+# _emphasis_
+UNDER_EM = r'(_)(?!\s)%s(?<!\s)\2' % UNDER_CONTENT
 
-UNDERLINE_TRIPLE_RE = r'(_{3})(?!\s)(.+?)(?<!\s)\2'
-UNDERLINE_UNEVEN_321_RE = r'(_{3})(?!\s)(.+?)(?<!\s)_{2}(.+?)(?<!\s)_'
-UNDERLINE_UNEVEN_312_RE = r'(_{3})(?!\s)(.+?)(?<!\s)_(.+?)(?<!\s)_{2}'
-UNDERLINE_STRONG_RE = r'(_{2})(?!\s)(.+?)(?<!\s)\2'
-UNDERLINE_EMPHASIS_RE = r'(_)(?!\s)(.+?)(?<!\s)\2'
+# Smart rules for when "smart_underscore" is enabled
+# SMART: ___strong,em___
+SMART_UNDER_STRONG_EM = r'(?<!\w)(_{3})(?![\s_])%s(?<!\s)\2(?!\w)' % SMART_UNDER_CONTENT
+# ___strong,em_strong__
+SMART_UNDER_STRONG_EM2 = \
+    r'(?<!\w)(_{3})(?![\s_])%s(?<!\s)_(?!\w)%s(?<!\s)_{2}(?!\w)' % (SMART_UNDER_CONTENT, SMART_UNDER_CONTENT)
+# ___em,strong__em_
+SMART_UNDER_EM_STRONG = \
+    r'(?<!\w)(_{3})(?![\s_])%s(?<!\s)_{2}(?!\w)%s(?<!\s)_(?!\w)' % (SMART_UNDER_CONTENT, SMART_UNDER_CONTENT)
+# __strong__
+SMART_UNDER_STRONG = r'(?<!\w)(_{2})(?![\s_])%s(?<!\s)\2(?!\w)' % SMART_UNDER_CONTENT
+# SMART _em_
+SMART_UNDER_EM = r'(?<!\w)(_)(?![\s_])%s(?<!\s)\2(?!\w)' % SMART_UNDER_CONTENT
+
+# Smart rules for when "smart_underscore" is enabled
+# SMART: ___strong,em___
+SMART_STAR_STRONG_EM = r'(?:(?=_)|(?<!\w))(\*{3})(?![\s\*])%s(?<!\s)\2(?:(?=_)|(?![\w\*]))' % SMART_STAR_CONTENT
+# ___strong,em_strong__
+SMART_STAR_STRONG_EM2 = \
+    r'(?:(?=_)|(?<!\w))(\*{3})(?![\s\*])%s(?<!\s)\*(?:(?=_)|(?![\w\*]))%s(?<!\s)\*{2}(?:(?=_)|(?![\w\*]))' % (SMART_STAR_CONTENT, SMART_STAR_CONTENT)
+# ___em,strong__em_
+SMART_STAR_EM_STRONG = \
+    r'(?:(?=_)|(?<!\w))(\*{3})(?![\s\*])%s(?<!\s)\*{2}(?:(?=_)|(?![\w\*]))%s(?<!\s)\*(?:(?=_)|(?![\w\*]))' % (SMART_STAR_CONTENT, SMART_STAR_CONTENT)
+# __strong__
+SMART_STAR_STRONG = r'(?:(?=_)|(?<!\w))(\*{2})(?![\s\*])%s(?<!\s)\2(?:(?=_)|(?![\w\*]))' % SMART_STAR_CONTENT
+# SMART _em_
+SMART_STAR_EM = r'(?:(?=_)|(?<!\w))(\*)(?![\s\*])%s(?<!\s)\2(?:(?=_)|(?![\w\*]))' % SMART_STAR_CONTENT
 
 smart_enable_keys = [
     "all", "asterisk", "underscore", "none"
 ]
-
-
-class UnevenDoubleTagPattern(SimpleTagPattern):
-    """Return a ElementTree element nested in tag2 nested in tag1.
-
-    Useful for strong emphasis etc.
-
-    """
-    def handleMatch(self, m):
-        tag1, tag2 = self.tag.split(",")
-        el1 = util.etree.Element(tag1)
-        el2 = util.etree.SubElement(el1, tag2)
-        el2.text = m.group(3)
-        el2.tail = m.group(4)
-        return el1
 
 
 class BetterEmExtension(Extension):
@@ -89,26 +110,27 @@ class BetterEmExtension(Extension):
             enable_underscore = enabled == "underscore"
             enable_asterisk = enabled == "asterisk"
 
-        star_triple = SMART_STAR_TRIPLE_RE if enable_all or enable_asterisk else STAR_TRIPLE_RE
-        star_double = SMART_STAR_STRONG_RE if enable_all or enable_asterisk else STAR_STRONG_RE
-        star_single = SMART_STAR_EMPHASIS_RE if enable_all or enable_asterisk else STAR_EMPHASIS_RE
-        underline_triple = SMART_UNDERLINE_TRIPLE_RE if enable_all or enable_underscore else UNDERLINE_TRIPLE_RE
-        underline_double = SMART_UNDERLINE_STRONG_RE if enable_all or enable_underscore else UNDERLINE_STRONG_RE
-        underline_single = SMART_UNDERLINE_EMPHASIS_RE if enable_all or enable_underscore else UNDERLINE_EMPHASIS_RE
+        star_strong_em = SMART_STAR_STRONG_EM if enable_all or enable_asterisk else STAR_STRONG_EM
+        under_strong_em = SMART_UNDER_STRONG_EM if enable_all or enable_underscore else UNDER_STRONG_EM
+        star_em_strong = SMART_STAR_EM_STRONG if enable_all or enable_asterisk else STAR_EM_STRONG
+        under_em_strong = SMART_UNDER_EM_STRONG if enable_all or enable_underscore else UNDER_EM_STRONG
+        star_strong_em2 = SMART_STAR_STRONG_EM2 if enable_all or enable_asterisk else STAR_STRONG_EM2
+        under_strong_em2 = SMART_UNDER_STRONG_EM2 if enable_all or enable_underscore else UNDER_STRONG_EM2
+        star_strong = SMART_STAR_STRONG if enable_all or enable_asterisk else STAR_STRONG
+        under_strong = SMART_UNDER_STRONG if enable_all or enable_underscore else UNDER_STRONG
+        star_emphasis = SMART_STAR_EM if enable_all or enable_asterisk else STAR_EM
+        under_emphasis = SMART_UNDER_EM if enable_all or enable_underscore else UNDER_EM
 
-        self.md.inlinePatterns["strong_em"] = DoubleTagPattern(star_triple, 'strong,em')
-        self.md.inlinePatterns.add("strong_em2", DoubleTagPattern(underline_triple, 'strong,em'), '>strong_em')
-        self.md.inlinePatterns['strong'] = SimpleTagPattern(star_double, 'strong')
-        self.md.inlinePatterns.add('strong2', SimpleTagPattern(underline_double, 'strong'), '>strong')
-        self.md.inlinePatterns["emphasis"] = SimpleTagPattern(star_single, 'em')
-        self.md.inlinePatterns["emphasis2"] = SimpleTagPattern(underline_single, 'em')
-
-        if not enable_all and not enable_asterisk:
-            self.md.inlinePatterns.add('strong_em3', UnevenDoubleTagPattern(STAR_UNEVEN_321_RE, 'strong,em'), '>strong_em')
-            self.md.inlinePatterns.add('em_strong', UnevenDoubleTagPattern(STAR_UNEVEN_312_RE, 'em,strong'), '>strong_em3')
-        if not enable_all and not enable_underscore:
-            self.md.inlinePatterns.add('strong_em4', UnevenDoubleTagPattern(UNDERLINE_UNEVEN_321_RE, 'strong,em'), '>strong_em2')
-            self.md.inlinePatterns.add('em_strong2', UnevenDoubleTagPattern(UNDERLINE_UNEVEN_312_RE, 'em,strong'), '>strong_em4')
+        self.md.inlinePatterns["strong_em"] = DoubleTagPattern(star_strong_em, 'strong,em')
+        self.md.inlinePatterns.add("strong_em2", DoubleTagPattern(under_strong_em, 'strong,em'), '>strong_em')
+        self.md.inlinePatterns.add("em_strong", DoubleTagPattern(star_em_strong, 'em,strong'), '>strong_em2')
+        self.md.inlinePatterns.add('em_strong2', DoubleTagPattern(under_em_strong, 'em,strong'), '>em_strong')
+        self.md.inlinePatterns.add('strong_em3', DoubleTagPattern(star_strong_em2, 'strong,em'), '>em_strong2')
+        self.md.inlinePatterns.add('strong_em4', DoubleTagPattern(under_strong_em2, 'strong,em'), '>strong_em3')
+        self.md.inlinePatterns["strong"] = SimpleTagPattern(star_strong, 'strong')
+        self.md.inlinePatterns.add("strong2", SimpleTagPattern(under_strong, 'strong'), '>strong')
+        self.md.inlinePatterns["emphasis"] = SimpleTagPattern(star_emphasis, 'em')
+        self.md.inlinePatterns["emphasis2"] = SimpleTagPattern(under_emphasis, 'em')
 
     def reset(self):
         """ Wait to make sure smart_strong hasn't overwritten us. """
