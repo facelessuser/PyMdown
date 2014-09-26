@@ -1,5 +1,5 @@
 """
-mdownx.critic
+pymdown.critic
 Parses critic markup and outputs the file in a more visual HTML.
 Must be the last extension loaded.
 

@@ -45,7 +45,7 @@ DEFAULT_TEMPLATE = '''<!DOCTYPE html>
 RE_URL_START = r"https?://"
 
 
-class MdownFormatterException(Exception):
+class PyMdownFormatterException(Exception):
     pass
 
 
@@ -174,7 +174,7 @@ class Html(object):
                 self.file = tempfile.NamedTemporaryFile(delete=False, suffix=".html")
         except:
             Logger.log(str(traceback.format_exc()))
-            raise MdownFormatterException("Could not open output file!")
+            raise PyMdownFormatterException("Could not open output file!")
 
     def close(self):
         """ Close the output file """
@@ -268,7 +268,7 @@ class Text(object):
                 self.encode_file = False
             except:
                 Logger.Log(str(traceback.format_exc()))
-                raise MdownFormatterException("Could not open output file!")
+                raise PyMdownFormatterException("Could not open output file!")
 
     def write(self, text):
         """ Write the content """

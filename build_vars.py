@@ -16,7 +16,7 @@ data = [
     ("stylesheets/default-html.css", "./stylesheets/default-html.css", "DATA"),
     ("stylesheets/default-markdown.css", "./stylesheets/default-markdown.css", "DATA"),
     ("LICENSE", "./LICENSE", "DATA"),
-    ("mdown.json", "./mdown.json", "DATA"),
+    ("pymdown.json", "./pymdown.json", "DATA"),
     ("markdown/LICENSE.md", "./markdown/LICENSE.md", "DATA"),
     ("pygments/LICENSE", "./pygments/LICENSE", "DATA")
 ]
@@ -37,7 +37,7 @@ imports_to_crawl = [
     "pygments/styles",
     "pygments/lexers",
     "pygments/formatters",
-    "mdownx"
+    "pymdown"
 ]
 
 for directory in imports_to_crawl:

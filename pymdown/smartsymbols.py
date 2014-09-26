@@ -1,5 +1,5 @@
 """
-mdownx.smartsymbols
+pymdown.smartsymbols
 Really simple plugin to add support for
   copyright, trademark, and registered symbols
   plus/minus

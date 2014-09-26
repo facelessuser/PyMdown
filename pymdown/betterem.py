@@ -1,5 +1,5 @@
 """
-mdownx.betterem
+pymdown.betterem
 Add inteligent handling of to em and strong notations
 
 MIT license.

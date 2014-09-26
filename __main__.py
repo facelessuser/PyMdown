@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Mdown  CLI
+PyMdown  CLI
 
 Front end CLI that allows the batch conversion of
 markdown files to HTML.  Also accepts an input stream
@@ -22,7 +22,7 @@ from lib.logger import Logger
 from lib import critic_dump as cd
 from lib.settings import Settings
 from lib.resources import load_text_resource
-from lib.mdown import Mdowns
+from lib.pymdown import PyMdowns
 from lib import formatter
 from lib.frontmatter import get_frontmatter_string
 
@@ -300,7 +300,7 @@ class Convert(object):
         if status == PASS:
             # Convert markdown to HTML
             try:
-                mdown = Mdowns(
+                pymdown = PyMdowns(
                     text,
                     base_path=self.settings["builtin"]["basepath"],
                     extensions=self.settings["extensions"]
@@ -316,11 +316,11 @@ class Convert(object):
             #     1. Frontmatter will override normal meta data.
             #     2. Meta data overrides --title option on command line.
             html.set_meta(
-                merge_meta(mdown.meta, self.settings["meta"], title=html_title)
+                merge_meta(pymdown.meta, self.settings["meta"], title=html_title)
             )
 
             # Write the markdown
-            html.write(mdown.markdown)
+            html.write(pymdown.markdown)
 
             html.close()
             if html.file.name is not None and self.config.preview and status == PASS:
@@ -367,7 +367,7 @@ if __name__ == "__main__":
     def main():
         """ Go! """
 
-        parser = argparse.ArgumentParser(prog='mdown', description='Markdown generator')
+        parser = argparse.ArgumentParser(prog='pymdown', description='Markdown generator')
         # Flag arguments
         parser.add_argument('--version', action='version', version="%(prog)s " + __version__)
         parser.add_argument('--licenses', action='store_true', default=False, help="Display licenses.")
@@ -386,9 +386,9 @@ if __name__ == "__main__":
         parser.add_argument('--output', '-o', nargs=1, default=None, help="Output file. Ignored in batch mode.")
         parser.add_argument('--batch', '-b', action='store_true', default=False, help="Batch mode output.")
         # Input configuration
-        parser.add_argument('--settings', '-s', nargs=1, default=[join(script_path, "mdown.json")], help="Load the settings file from an alternate location.")
+        parser.add_argument('--settings', '-s', nargs=1, default=[join(script_path, "pymdown.json")], help="Load the settings file from an alternate location.")
         parser.add_argument('--encoding', '-e', nargs=1, default=["utf-8"], help="Encoding for input.")
-        parser.add_argument('--basepath', nargs=1, default=None, help="The basepath location mdown should use.")
+        parser.add_argument('--basepath', nargs=1, default=None, help="The basepath location pymdown should use.")
         parser.add_argument('markdown', nargs='*', default=[], help="Markdown file(s) or file pattern(s).")
 
         args = parser.parse_args()

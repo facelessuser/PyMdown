@@ -1,5 +1,5 @@
 """
-mdownx.githubemoji
+pymdown.githubemoji
 Really simple plugin to add support for
 github emojis
 

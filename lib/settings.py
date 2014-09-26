@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Mdown Settings
+PyMdown Settings
 
 Manage Settings
 
@@ -32,7 +32,7 @@ else:
 BUILTIN_KEYS = ('destination', 'basepath', 'references')
 
 
-class MdownSettingsException(Exception):
+class PyMdownSettingsException(Exception):
     pass
 
 
@@ -74,7 +74,7 @@ class Settings(object):
 
         # Use default file if one was not provided
         if settings_path is None or not exists(settings_path):
-            settings_path = join(res.RESOURCE_PATH, "mdown.json")
+            settings_path = join(res.RESOURCE_PATH, "pymdown.json")
 
         # Get the settings if available
         self.read_settings(settings_path)
@@ -88,7 +88,7 @@ class Settings(object):
 
         # Unpack default settings file if needed
         if not exists(settings_path):
-            text = res.load_text_resource("mdown.json")
+            text = res.load_text_resource("pymdown.json")
             try:
                 with codecs.open(settings_path, "w", encoding="utf-8") as f:
                     f.write(text)
@@ -102,7 +102,7 @@ class Settings(object):
                 settings = json.loads(sanitize_json(f.read()))
         except:
             Logger.log(traceback.format_exc())
-            raise MdownSettingsException("Could not parse settings file!")
+            raise PyMdownSettingsException("Could not parse settings file!")
 
         self.settings["settings"] = settings
 
@@ -289,11 +289,11 @@ class Settings(object):
         #    - Where the plainhtml plugin is enabled
         for i in range(0, len(extensions)):
             name = extensions[i]
-            if name.startswith("mdownx.absolutepath"):
+            if name.startswith("pymdown.absolutepath"):
                 absolute = True
-            if name.startswith("mdownx.critic"):
+            if name.startswith("pymdown.critic"):
                 critic_found.append(i)
-            if name.startswith("mdownx.plainhtml"):
+            if name.startswith("pymdown.plainhtml"):
                 plain_html.append(i)
 
         indexes = list(set(critic_found + plain_html))
@@ -304,7 +304,7 @@ class Settings(object):
 
         # Ensure previews are using absolute paths if not already
         if self.preview and not absolute:
-            extensions.append("mdownx.absolutepath(base_path=${BASE_PATH})")
+            extensions.append("pymdown.absolutepath(base_path=${BASE_PATH})")
 
         # Handle the appropriate critic mode internally
         # Critic must be appended to end of extension list
@@ -314,12 +314,12 @@ class Settings(object):
                 mode = "accept"
             elif self.critic & cd.CRITIC_REJECT:
                 mode = "reject"
-            extensions.append("mdownx.critic(mode=%s)" % mode)
+            extensions.append("pymdown.critic(mode=%s)" % mode)
 
         # Handle plainhtml internally.
         # Must be appended to the end. Okay to come after critic.
         if self.plain:
-            extensions.append("mdownx.plainhtml")
+            extensions.append("pymdown.plainhtml")
 
         # Set extensions to its own key
         settings["extensions"] = extensions

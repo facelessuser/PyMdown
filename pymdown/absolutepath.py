@@ -1,5 +1,5 @@
 """
-mdownx.absolutepath
+pymdown.absolutepath
 An extension for Python Markdown.
 Given an absolute base path, this extension searches for file
 references that are relative and converts them to absolute paths.

@@ -3,36 +3,36 @@
     // Mdown
     //////////////////////////////////
     {
-        "caption": "Mdown: Preview Markdown",
-        "command": "mdown_preview",
+        "caption": "PyMdown: Preview Markdown",
+        "command": "py_mdown_preview",
         "args": {"target": "browser"}
     },
     {
-        "caption": "Mdown: Save to Disk",
-        "command": "mdown_preview",
+        "caption": "PyMdown: Save to Disk",
+        "command": "py_mdown_preview",
         "args": {"target": "save"}
     },
     {
-        "caption": "Mdown: To Clipboard",
-        "command": "mdown_preview",
+        "caption": "PyMdown: To Clipboard",
+        "command": "py_mdown_preview",
         "args": {"target": "clipboard", "plain": true}
     },
     {
-        "caption": "Mdown: Export to Sublime",
-        "command": "mdown_preview",
+        "caption": "PyMdown: Export to Sublime",
+        "command": "py_mdown_preview",
         "args": {"target": "sublime", "plain": true}
     },
     {
-        "caption": "Mdown: Preview Critic",
-        "command": "mdown_critic_preview"
+        "caption": "PyMdown: Preview Critic",
+        "command": "py_mdown_critic_preview"
     },
     {
-        "caption": "Mdown: Critic Strip Markdown (accept)",
-        "command": "mdown_critic_strip"
+        "caption": "PyMdown: Critic Strip Markdown (accept)",
+        "command": "py_mdown_critic_strip"
     },
     {
-        "caption": "Mdown: Critic Strip Markdown (reject)",
-        "command": "mdown_critic_strip",
+        "caption": "PyMdown: Critic Strip Markdown (reject)",
+        "command": "py_mdown_critic_strip",
         "args": {"reject": true}
     }
 ]

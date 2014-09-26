@@ -1,5 +1,5 @@
 """
-mdownx.progressbar
+pymdown.progressbar
 Simple plugin to add support for progress bars
 
 /* No label */

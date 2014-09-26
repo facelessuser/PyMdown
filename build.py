@@ -255,11 +255,11 @@ def main():
     inputs = parser.parse_args()
     if _PLATFORM == "windows":
         args = Args(
-            "__main__.py", "mdown", False, inputs.clean, ".exe", portable=inputs.portable
+            "__main__.py", "pymdown", False, inputs.clean, ".exe", portable=inputs.portable
         )
     else:
         args = Args(
-            "__main__.py", "mdown", False, inputs.clean, ""
+            "__main__.py", "pymdown", False, inputs.clean, ""
         )
 
     # Parse options

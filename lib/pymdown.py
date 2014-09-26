@@ -1,13 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-Mdown
-
-Wraps a https://pypi.python.org/pypi/Markdown
-and http://pygments.org/ to perform batch conversion
-of markdown files.
-
-Mdown expects a slightly modified version of the
-Markdown library to allow for optional highlight.js.
+PyMdown
 
 Licensed under MIT
 Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
@@ -29,7 +22,7 @@ else:
     string_type = basestring  # flake8: noqa
 
 
-class MdownException(Exception):
+class PyMdownException(Exception):
     pass
 
 
@@ -75,7 +68,7 @@ class MdWrapper(Markdown):
         return self
 
 
-class Mdown(object):
+class PyMdown(object):
     def __init__(
         self, file_name, encoding, base_path=None, extensions=[]
     ):
@@ -111,10 +104,10 @@ class Mdown(object):
                 except:
                     pass
         except:
-            raise MdownException(str(traceback.format_exc()))
+            raise PyMdownException(str(traceback.format_exc()))
 
 
-class Mdowns(Mdown):
+class PyMdowns(PyMdown):
     def __init__(
         self, string,
         base_path=None, extensions=[]
@@ -137,4 +130,4 @@ class Mdowns(Mdown):
             except:
                 pass
         except:
-            raise MdownException(str(traceback.format_exc()))
+            raise PyMdownException(str(traceback.format_exc()))

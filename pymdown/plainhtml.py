@@ -1,5 +1,5 @@
 """
-mdownx.plainhtml
+pymdown.plainhtml
 An extension for Python Markdown.
 Strip classes, styles, and ids from html
 

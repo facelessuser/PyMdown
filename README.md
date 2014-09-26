@@ -1,19 +1,19 @@
-# Mdown
-Mdown is CLI tool to convert or even batch convert markdown files to HTML. It can also accept a file stream.  It was inspired by https://github.com/revolunet/sublimetext-markdown-preview.
+# PyMdown
+PyMdown is CLI tool to convert or even batch convert markdown files to HTML. It can also accept a file stream.  It was inspired by https://github.com/revolunet/sublimetext-markdown-preview.
 
 # Status
-This is in an **Beta** state.  Because of the **Beta** state, things are in flux and are subject to change without warning.
+This is in a **Beta** state.  Because of the **Beta** state, things are in flux and are subject to change without warning.
 
 # Features
-- Python 2 and 3 compatible (but executables built with Python 2 using Pyinstaller)
+- Python 2 and 3 compatible (but executables are built with Python 2 using Pyinstaller)
 - Should run on OSX, Windows, and Linux
 - Receive multiple files or file patterns to process
 - Receive input file stream for conversion
 - Configurable options file to tweak Python's Markdown package behavior
 - Uses Pygments for syntax highighlighting
-- Repo includes in `extras` a simple Sublime Text plugin to stream your files to mdown
-- Preview option to open output in a browser intead
-- Optionally all the default Markdown extensions, plus these optional mdownx extensions:
+- Repo includes in `extras` a simple Sublime Text plugin to stream your files to pymdown
+- Preview option to open output in a browser instead
+- Optionally all the default Markdown extensions, plus these optional pymdown extensions:
     - **absolutepath**: Converts local file paths from relative to absolute for things like links, images, etc.  This is automatically done on all previews.  It can be configured to run all the time outside of previews in the settings file, and it can take a hardcoded path `absolutepath(base_path=/my/path)` or a dynamic path `absolutepath(base_path=${BASE_PATH})` that can take the base_path fed in on the command line or calculated from the source files path.  If you set this in the settings file, keep in mind the settings file overrides preview's settings.
     - **b64**: Base64 encode local image files. If can be enabled and configured in the settings file and can take a hardcoded path `b64(base_path=/my/path)` or it can take a dynamic base_path `b64(base_path=${BASE_PATH})` fed in on the command line or calculated from the source files path.
     - **insert**: Add <ins>test</ins> tags by using `^^test^^`. Can be enabled in the settings file.
@@ -24,7 +24,9 @@ This is in an **Beta** state.  Because of the **Beta** state, things are in flux
     - **critic**: Cannot be set in the settings file. It is configured automatically, and its behaviour can only be modifid via the command line.  In its current form, it can output in HTML a highlighted critic form to make it more readable.  If you select `--accept` or `--reject`, it will strip out the critic marks by accepting the changes or discarding them.
     - **headeranchor**: Insert github style header anchor on left side of h1-h6 tags.
     - **progressbar**: Support for adding progress bars.
-    - **mdownx**: currently loads insert, delete, b64, tasklist, githubemoji, and magiclink.
+    - **betterem**: Better emphasis and strong support.  Defaults to using a *smart* configuration, but can be disabled for a *dumb* configuration.
+    - **subsup**: [experimental] Superscript and subscript support via `(^superscript)` and `(~subscript)`.
+    - **pymdown**: currently loads insert, delete, b64, tasklist, githubemoji, and magiclink.
     - **github**: Adds a number of the above mentioned extensions to give a Github Flavored Markdown feel.
 
 # Styles and Configuration
@@ -34,9 +36,9 @@ Syntax highlighting can be done in fenced blocks when enabling the `codehilite` 
 
 ```javascript
     "extensions": [
-        "extra",
-        "toc",
-        "codehilite(guess_lang=False,pygments_style=tomorrownighteighties)"
+        "markdown.extensions.extra",
+        "markdown.extensions.toc",
+        "markdown.extensions.codehilite(guess_lang=False,pygments_style=tomorrownighteighties)"
     ]
 ```
 
@@ -72,11 +74,11 @@ This can be done here:
 # Command Line
 
 ```
-usage: mdown [-h] [--version] [--licenses] [--quiet] [--preview]
-             [--plain-html] [--title TITLE] [--accept | --reject]
-             [--critic-dump] [--no-critic] [--output OUTPUT] [--batch]
-             [--settings SETTINGS] [--encoding ENCODING] [--basepath BASEPATH]
-             [markdown [markdown ...]]
+usage: pymdown [-h] [--version] [--licenses] [--quiet] [--preview]
+               [--plain-html] [--title TITLE] [--accept | --reject]
+               [--critic-dump] [--no-critic] [--output OUTPUT] [--batch]
+               [--settings SETTINGS] [--encoding ENCODING] [--basepath BASEPATH]
+               [markdown [markdown ...]]
 
 Markdown generator
 
@@ -111,39 +113,39 @@ optional arguments:
 # Sublime Plugin
 Generally I recommend https://github.com/revolunet/sublimetext-markdown-preview.  But I wrote this program and this sublime plugin to gain certain control I didn't already have.  If for whatever reason you want to use this plugin, this is how you set it up.
 
-Just drop the extra folder in your Sublime `Packages` folder and name to something sane like `mdown`.  It currently provides only 4 commands that are accessible from the command palette:
+Just drop the extra folder in your Sublime `Packages` folder and name to something sane like `pymdown`.  It currently provides only 4 commands that are accessible from the command palette:
 
 ```javascript
     //////////////////////////////////
-    // Mdown
+    // PyMdown
     //////////////////////////////////
 
     // Preview the current mardown view in your browser
     {
-        "caption": "Mdown: Preview Markdown",
-        "command": "mdown_preview"
+        "caption": "PyMdown: Preview Markdown",
+        "command": "pymdown_preview"
     },
 
     // Preview the current markdown source in a special
     // mode that highlights critc syntax in a easier to
     // read way.
     {
-        "caption": "Mdown: Preview Critic",
-        "command": "mdown_critic_preview"
+        "caption": "PyMdown: Preview Critic",
+        "command": "pymdown_critic_preview"
     },
 
     // Strip out critic markup in your current view
     // favoring the suggested changes
     {
-        "caption": "Mdown: Critic Strip Markdown (accept)",
-        "command": "mdown_critic_strip"
+        "caption": "PyMdown: Critic Strip Markdown (accept)",
+        "command": "pymdown_critic_strip"
     },
 
     // Strip out the critic markup in your current view
     // rejecting the suggested changes
     {
-        "caption": "Mdown: Critic Strip Markdown (reject)",
-        "command": "mdown_critic_strip",
+        "caption": "PyMdown: Critic Strip Markdown (reject)",
+        "command": "pymdown_critic_strip",
         "args": {"reject": true}
     }
 ```
@@ -158,7 +160,7 @@ Just drop the extra folder in your Sublime `Packages` folder and name to somethi
 # Build
 - Download or clone Pyinstaller main branch (latest release won't work; the dev branch is needed) from github into the mdown project folder https://github.com/pyinstaller/pyinstaller
 - Using Python 2 run `python build.py -c`
-- Binary will be in the `mdown/dist` folder
+- Binary will be in the `pymdown/dist` folder
 
 # TODO
 - [ ] Maybe add some builtin syntax for subscript, superscript, cite, mark, and kbd tags.  It isn't decided how many of these I will or will not add.  Support would be added via an extension.

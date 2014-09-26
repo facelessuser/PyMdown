@@ -1,5 +1,5 @@
 """
-mdownx.delete
+pymdown.delete
 Really simple plugin to add support for
 Test<sub>sub</sub> via Test(~sub) and Test<sup>super</sup> via Test(^super)
 

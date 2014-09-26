@@ -1,5 +1,5 @@
 """
-mdownx.magiclink
+PyMdown.magiclink
 An extension for Python Markdown.
 Find http|ftp links and email address and turn them to actual links
 

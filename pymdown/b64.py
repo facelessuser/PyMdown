@@ -1,5 +1,5 @@
 """
-mdownx.b64
+pymdown.b64
 An extension for Python Markdown.
 Given an absolute base path, this extension searches for img tags,
 and if the images are local, will embed the images in base64.

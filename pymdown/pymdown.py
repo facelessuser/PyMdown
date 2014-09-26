@@ -17,16 +17,16 @@ from __future__ import unicode_literals
 from markdown import Extension
 
 extensions = [
-    'mdownx.delete',
-    'mdownx.insert',
-    'mdownx.githubemoji',
-    'mdownx.magiclink',
-    'mdownx.b64',
-    'mdownx.tasklist'
+    'pymdown.delete',
+    'pymdown.insert',
+    'pymdown.githubemoji',
+    'pymdown.magiclink',
+    'pymdown.b64',
+    'pymdown.tasklist'
 ]
 
 
-class MdownxExtension(Extension):
+class PyMdownExtension(Extension):
     """Add various extensions to Markdown class"""
 
     def extendMarkdown(self, md, md_globals):
@@ -35,4 +35,4 @@ class MdownxExtension(Extension):
 
 
 def makeExtension(*args, **kwargs):
-    return MdownxExtension(*args, **kwargs)
+    return PyMdownExtension(*args, **kwargs)

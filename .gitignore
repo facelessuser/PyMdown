@@ -4,5 +4,5 @@
 build/*
 dist/*
 pyinstaller
-mdown.spec
+pymdown.spec
 tests/*.html

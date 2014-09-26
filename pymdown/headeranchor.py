@@ -1,5 +1,5 @@
 """
-mdownx.headeranchor
+pymdown.headeranchor
 An extension for Python Markdown.
 Github header anchors
 

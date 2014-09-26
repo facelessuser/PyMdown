@@ -1,5 +1,5 @@
 """
-mdownx.tasklist
+pymdown.tasklist
 An extension for Python Markdown.
 Github style tasklists
 

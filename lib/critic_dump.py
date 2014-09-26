@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Mdown  critic_dump
+pymdown.critic_dump
 
 Strips and returns the the markdown with critic marks removed
 
@@ -30,11 +30,6 @@ RE_CRITIC = re.compile(
     ''',
     re.MULTILINE | re.DOTALL | re.VERBOSE
 )
-
-
-class MdownCriticDumpException(Exception):
-    pass
-
 
 class CriticDump(object):
 

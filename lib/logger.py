@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-Mdown logger
+PyMdown logger
 
 Simple class for controlling when to log to stdout
 

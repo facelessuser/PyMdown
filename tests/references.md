@@ -1,1 +1,1 @@
-[1]: https://github.com/facelessuser/mdown
+[1]: https://github.com/facelessuser/pymdown

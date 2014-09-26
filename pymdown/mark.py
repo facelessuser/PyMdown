@@ -1,5 +1,5 @@
 """
-mdownx.mark
+pymdown.mark
 Really simple plugin to add support for
 <mark>test</mark> tags as ==test==
 

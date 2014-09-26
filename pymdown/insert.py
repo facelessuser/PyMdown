@@ -1,5 +1,5 @@
 """
-mdownx.delete
+pymdown.delete
 Really simple plugin to add support for
 <ins>test</ins> tags as ^^test^^
 

@@ -1,0 +1,12 @@
+{
+    // By default, pymdown accepts proposed critic markups,
+    // you can change this behaviour to reject the markups
+    "reject": false,
+
+    // Point to the mdown binary
+    "binary": {
+        "windows": "pymdown.exe",
+        "osx": "pymdown",
+        "linux": "pymdown"
+    }
+}

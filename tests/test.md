@@ -23,14 +23,14 @@
         - markdown.extensions.wikilinks
         - markdown.extensions.admonition
         - markdown.extensions.codehilite(guess_lang=False,pygments_style=github)
-        - mdownx.github
-        - mdownx.insert
-        - mdownx.mark
-        - mdownx.progressbar
-        - mdownx.smartsymbols
-        - mdownx.subsup
-        - mdownx.b64(base_path=${BASE_PATH})
-        - mdownx.absolutepath(base_path=${BASE_PATH})
+        - pymdown.github
+        - pymdown.insert
+        - pymdown.mark
+        - pymdown.progressbar
+        - pymdown.smartsymbols
+        - pymdown.subsup
+        - pymdown.b64(base_path=${BASE_PATH})
+        - pymdown.absolutepath(base_path=${BASE_PATH})
 ---
 test: This tests the meta extension
 title: This title will be overridden by YAML
@@ -39,11 +39,6 @@ title: This title will be overridden by YAML
     This is mainly used to test the Python Markdown parser.
 
     - markdown.extensions.extra
-    - mdownx.github
-    - mdownx.insert
-    - mdownx.mark
-    - mdownx.progressbar
-    - mdownx.smartsymbols
     - markdown.extensions.toc
     - markdown.extensions.headerid
     - markdown.extensions.smarty
@@ -51,14 +46,20 @@ title: This title will be overridden by YAML
     - markdown.extensions.wikilinks
     - markdown.extensions.admonition
     - markdown.extensions.codehilite(guess_lang=False,pygments_style=github)
-    - mdownx.b64(base_path=${BASE_PATH})
-    - mdownx.absolutepath(base_path=${BASE_PATH})
+    - pymdown.github
+    - pymdown.insert
+    - pymdown.mark
+    - pymdown.progressbar
+    - pymdown.smartsymbols
+    - pymdown.subsup
+    - pymdown.b64(base_path=${BASE_PATH})
+    - pymdown.absolutepath(base_path=${BASE_PATH})
 
     !!! Caution "Testing Note"
         - `sane_lists` will alter the results of the second test in [Mixed Lists](#mixed-lists). When turned off, this test will have all list items mixed and aligned proper.  With `sane_lists` on, some will not be recognized, and some items may be aligned in different lists.
         - having `guess_lang=False` allows the testing of the selective highlighting.  When omitted or set `true`, it can be expected that all of the blocks will be highlighted to some extent.
         - Most tests are spot checked at this point or a link can be clicked to verify it is working.
-        - mdown.b64 check requires looking at the source of one of the images to see if conversion occured.
+        - pymdown.b64 check requires looking at the source of one of the images to see if conversion occured.
 
 
 # Cheat Sheet and Test
@@ -249,15 +250,15 @@ Footnotes[^1] have a label[^label] and a definition[^!DEF]
 
 [Link to Picture](bg.png "Link")
 
-https://github.com/facelessuser/mdown
+https://github.com/facelessuser/pymdown
 
-This is a link https://github.com/facelessuser/mdown.
+This is a link https://github.com/facelessuser/pymdown.
 
-This is a link "https://github.com/facelessuser/mdown".
+This is a link "https://github.com/facelessuser/pymdown".
 
-With this link (https://github.com/facelessuser/mdown), it still works.
+With this link (https://github.com/facelessuser/pymdown), it still works.
 
-    [1]: https://github.com/facelessuser/mdown
+    [1]: https://github.com/facelessuser/pymdown
     [^1]: This is a footnote
     [^label]: A footnote on "label"
     [^!DEF]: The footnote for definition
@@ -275,13 +276,13 @@ www.google.com
 
 isaacmuse@gmail.com
 
-https://github.com/facelessuser/mdown
+https://github.com/facelessuser/pymdown
 
-This is a link https://github.com/facelessuser/mdown.
+This is a link https://github.com/facelessuser/pymdown.
 
-This is a link "https://github.com/facelessuser/mdown".
+This is a link "https://github.com/facelessuser/pymdown".
 
-With this link (https://github.com/facelessuser/mdown), it still works.
+With this link (https://github.com/facelessuser/pymdown), it still works.
 
 ## Abbreviation
 Abreviations source are found at the bottom of the page
