@@ -276,6 +276,8 @@ class DoubleTagPattern(SimpleTagPattern):
         el1 = util.etree.Element(tag1)
         el2 = util.etree.SubElement(el1, tag2)
         el2.text = m.group(3)
+        if len(m.groups()) == 5:
+            el2.tail = m.group(4)
         return el1
 
 
@@ -476,4 +478,3 @@ class AutomailPattern(Pattern):
                           ord(letter) for letter in mailto])
         el.set('href', mailto)
         return el
-
