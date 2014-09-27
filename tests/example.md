@@ -4,10 +4,10 @@
         - references.md
         - abbreviations.md
         - footnotes.md
-    destination: Test Page.html
+    destination: Example.html
 
     # Meta Data
-    title: Test Page
+    title: PyMdown Example
     author:
         - John Doe
         - Jane Doe
@@ -26,13 +26,12 @@
         - pymdown.pymdown
         - pymdown.mark
         - pymdown.b64(base_path=${BASE_PATH})
-        - pymdown.absolutepath(base_path=${BASE_PATH})
 ---
-test: This tests the meta extension
+test: This example of normal meta extension
 title: This title will be overridden by YAML
 
-!!! hint "Recommended Extentions for Testing"
-    This is mainly visually inspect the Python Markdown parser.  This isn't a real test.
+!!! hint "Extensions Used in this Document"
+    This is mainly visually inspect markdown output offered by PyMdown.  This isn't a real test.
 
     - markdown.extensions.extra
     - markdown.extensions.toc
@@ -47,11 +46,11 @@ title: This title will be overridden by YAML
     - pymdown.b64(base_path=${BASE_PATH})
     - pymdown.absolutepath(base_path=${BASE_PATH})
 
-    !!! Caution "Testing Note"
-        - `sane_lists` will alter the results of the second test in [Mixed Lists](#mixed-lists). When turned off, this test will have all list items mixed and aligned proper.  With `sane_lists` on, some will not be recognized, and some items may be aligned in different lists.
-        - having `guess_lang=False` allows the testing of the selective highlighting.  When omitted or set `true`, it can be expected that all of the blocks will be highlighted to some extent.
-        - This is only for a genral visual inspection.
-        - pymdown.b64 check requires looking at the source of one of the images to see if conversion occured.
+    !!! Caution "Notes"
+        - `sane_lists` will alter the results of the second test in [Mixed Lists](#mixed-lists). When turned off, this document will have all list items mixed and aligned proper.  With `sane_lists` on, some will not be recognized, and some items may be aligned in different lists. `sane_lists` is disabled in this example.
+        - having `guess_lang=False` allows selective highlighting of only the blocks that specify a language.  When omitted or set `true`, it can be expected that all of the blocks will be highlighted to some extent (in some cases very wrong).  `guess_lang` is disabled in this example.
+        - This is only for a general visual inspection.
+        - pymdown.b64 can be verified by checking the source of one of the images to see if conversion occured.
 
 
 # Cheat Sheet and Test
