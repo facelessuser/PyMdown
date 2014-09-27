@@ -17,12 +17,16 @@ from __future__ import unicode_literals
 from markdown import Extension
 
 extensions = [
-    'pymdown.delete',
-    'pymdown.insert',
-    'pymdown.githubemoji',
     'pymdown.magiclink',
-    'pymdown.b64',
-    'pymdown.tasklist'
+    'pymdown.betterem',
+    'pymdown.tilde',
+    'pymdown.caret',
+    'pymdown.smartsymbols',
+    'pymdown.githubemoji',
+    'pymdown.tasklist',
+    'pymdown.progressbar',
+    'pymdown.headeranchor',
+    'markdown.extensions.nl2br'
 ]
 
 

@@ -17,8 +17,8 @@ from __future__ import unicode_literals
 from markdown import Extension
 from markdown.inlinepatterns import SimpleTagPattern, DoubleTagPattern
 
-SMART_UNDER_CONTENT = r'((?:[^_]|_(?=\w))+?_*)'
-SMART_STAR_CONTENT = r'((?:[^\*]|\*(?=[^\W_]|\*))+?\**)'
+SMART_UNDER_CONTENT = r'((?:[^_]|_(?=\w)|(?<=\s)_+?(?=\s))+?_*)'
+SMART_STAR_CONTENT = r'((?:[^\*]|\*(?=[^\W_]|\*)|(?<=\s)\*+?(?=\s))+?\**)'
 UNDER_CONTENT = r'(_|[^_]+?)'
 UNDER_CONTENT2 = r'((?:[^_]|(?<!_)_(?=\w))+?)'
 STAR_CONTENT = r'(\*|[^\*]+?)'

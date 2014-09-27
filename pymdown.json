@@ -26,14 +26,9 @@
         "markdown.extensions.smarty",
         "markdown.extensions.wikilinks",
         "markdown.extensions.admonition",
-        "mdownx.github",
-        "mdownx.insert",
-        "mdownx.mark",
-        "mdownx.progressbar",
-        "mdownx.smartsymbols",
-        "mdownx.subsup",
-        "mdownx.progressbar",
+        "pymdown.pymdown",
+        // "pymdown.mark",
         // "mdownx.absolutepath(base_path=${BASE_PATH})",
-        "mdownx.b64(base_path=${BASE_PATH})"
+        "pymdown.b64(base_path=${BASE_PATH})"
     ]
 }

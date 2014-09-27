@@ -2,12 +2,12 @@ from __future__ import unicode_literals
 from markdown import Extension
 
 extensions = [
-    'pymdown.delete',
-    'pymdown.githubemoji',
     'pymdown.magiclink',
+    'pymdown.betterem',
+    'pymdown.tilde(subscript=False)',
+    'pymdown.githubemoji',
     'pymdown.tasklist',
     'pymdown.headeranchor',
-    'pymdown.betterem',
     'markdown.extensions.nl2br'
 ]
 

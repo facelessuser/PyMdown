@@ -14,21 +14,21 @@ This is in a **Beta** state.  Because of the **Beta** state, things are in flux 
 - Repo includes in `extras` a simple Sublime Text plugin to stream your files to pymdown
 - Preview option to open output in a browser instead
 - Optionally all the default Markdown extensions, plus these optional pymdown extensions:
-    - **absolutepath**: Converts local file paths from relative to absolute for things like links, images, etc.  This is automatically done on all previews.  It can be configured to run all the time outside of previews in the settings file, and it can take a hardcoded path `absolutepath(base_path=/my/path)` or a dynamic path `absolutepath(base_path=${BASE_PATH})` that can take the base_path fed in on the command line or calculated from the source files path.  If you set this in the settings file, keep in mind the settings file overrides preview's settings.
-    - **b64**: Base64 encode local image files. If can be enabled and configured in the settings file and can take a hardcoded path `b64(base_path=/my/path)` or it can take a dynamic base_path `b64(base_path=${BASE_PATH})` fed in on the command line or calculated from the source files path.
-    - **insert**: Add <ins>test</ins> tags by using `^^test^^`. Can be enabled in the settings file.
-    - **delete**: Add <del>test</del> tags by using `~~test~~`. Can be enabled in the settings file.
+    - **caret**: Add <ins>insert</ins> by using `^^insert^^` and/or Pandoc style <sup>superscript</sub> by using `^superscript^`. Can be enabled in the settings file.
+    - **tilde**: Add <del>delete</del> tags by using `~~delete~~` and/or Pandoc style <sub>subscript</sub> by using `~subscript~`.. Can be enabled in the settings file.
+    - **mark**: Experimental extension to add <mark>mark</mark> by using `==mark==`.
     - **magiclink**: Search for and convert http or ftp links to actual HTML links for lazy link creation. Can be enabled in the settings file.
     - **tasklist**: This adds support for github style tasklists.  Can be enabled in the settings.
     - **githubemoji**: This adds emojis.  Assets link to github's emoji icons.  Can be enabled in the settings.
-    - **critic**: Cannot be set in the settings file. It is configured automatically, and its behaviour can only be modifid via the command line.  In its current form, it can output in HTML a highlighted critic form to make it more readable.  If you select `--accept` or `--reject`, it will strip out the critic marks by accepting the changes or discarding them.
     - **headeranchor**: Insert github style header anchor on left side of h1-h6 tags.
     - **progressbar**: Support for adding progress bars.
     - **betterem**: Better emphasis and strong support.  Defaults to using a *smart* configuration, but can be disabled for a *dumb* configuration.
-    - **subsup**: [experimental] Superscript and subscript support via `(^superscript)` and `(~subscript)`.
-    - **pymdown**: currently loads insert, delete, b64, tasklist, githubemoji, and magiclink.
-    - **github**: Adds a number of the above mentioned extensions to give a Github Flavored Markdown feel.
-
+    - **github**: Adds `magiclink`, `betterem`, `tilde` (just delete), `githubemoji`, `tasklist`, `headeranchor`, and `nl2br` to get a github feel. It is advised to pair this with `extra`.
+    - **pymdown**: Adds `magiclink`, `betterem`, `tilde`, `caret`, `githubemoji`, `tasklist`, `headeranchor`, `nl2br`, `smartsymbols`, and `progressbar`.  It is advised to pair this with `extra`.
+    - **absolutepath**: Converts local file paths from relative to absolute for things like links, images, etc.  This is automatically done on all previews.  It can be configured to run all the time outside of previews in the settings file, and it can take a hardcoded path `absolutepath(base_path=/my/path)` or a dynamic path `absolutepath(base_path=${BASE_PATH})` that can take the base_path fed in on the command line or calculated from the source files path.  If you set this in the settings file, keep in mind the settings file overrides preview's settings.
+    - **b64**: Base64 encode local image files. If can be enabled and configured in the settings file and can take a hardcoded path `b64(base_path=/my/path)` or it can take a dynamic base_path `b64(base_path=${BASE_PATH})` fed in on the command line or calculated from the source files path.
+- Special extensions:
+    - **critic**: Cannot be set in the settings file. It is configured automatically, and its behaviour can only be modifid via the command line.  In its current form, it can output in HTML a highlighted critic form to make it more readable.  If you select `--accept` or `--reject`, it will strip out the critic marks by accepting the changes or discarding them.
 # Styles and Configuration
 
 ## Syntax Highlighting with Pygments
@@ -163,8 +163,8 @@ Just drop the extra folder in your Sublime `Packages` folder and name to somethi
 - Binary will be in the `pymdown/dist` folder
 
 # TODO
-- [ ] Maybe add some builtin syntax for subscript, superscript, cite, mark, and kbd tags.  It isn't decided how many of these I will or will not add.  Support would be added via an extension.
-- [ ] Maybe add an extension for embedding content
+- [ ] Maybe add some notation for cite and kbd tags?  It isn't decided if I will do any of these.  Support would be added via an extension.
+- [ ] Maybe add an extension for embedding content?
 - ...stuff I havn't yet thought of...
 
 # License

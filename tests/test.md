@@ -23,12 +23,8 @@
         - markdown.extensions.wikilinks
         - markdown.extensions.admonition
         - markdown.extensions.codehilite(guess_lang=False,pygments_style=github)
-        - pymdown.github
-        - pymdown.insert
+        - pymdown.pymdown
         - pymdown.mark
-        - pymdown.progressbar
-        - pymdown.smartsymbols
-        - pymdown.subsup
         - pymdown.b64(base_path=${BASE_PATH})
         - pymdown.absolutepath(base_path=${BASE_PATH})
 ---
@@ -36,7 +32,7 @@ test: This tests the meta extension
 title: This title will be overridden by YAML
 
 !!! hint "Recommended Extentions for Testing"
-    This is mainly used to test the Python Markdown parser.
+    This is mainly visually inspect the Python Markdown parser.  This isn't a real test.
 
     - markdown.extensions.extra
     - markdown.extensions.toc
@@ -46,19 +42,15 @@ title: This title will be overridden by YAML
     - markdown.extensions.wikilinks
     - markdown.extensions.admonition
     - markdown.extensions.codehilite(guess_lang=False,pygments_style=github)
-    - pymdown.github
-    - pymdown.insert
+    - pymdown.pymdown
     - pymdown.mark
-    - pymdown.progressbar
-    - pymdown.smartsymbols
-    - pymdown.subsup
     - pymdown.b64(base_path=${BASE_PATH})
     - pymdown.absolutepath(base_path=${BASE_PATH})
 
     !!! Caution "Testing Note"
         - `sane_lists` will alter the results of the second test in [Mixed Lists](#mixed-lists). When turned off, this test will have all list items mixed and aligned proper.  With `sane_lists` on, some will not be recognized, and some items may be aligned in different lists.
         - having `guess_lang=False` allows the testing of the selective highlighting.  When omitted or set `true`, it can be expected that all of the blocks will be highlighted to some extent.
-        - Most tests are spot checked at this point or a link can be clicked to verify it is working.
+        - This is only for a genral visual inspection.
         - pymdown.b64 check requires looking at the source of one of the images to see if conversion occured.
 
 
@@ -873,35 +865,44 @@ __^^_insert italic bold_^^__  _^^__insert italic bold 2__^^_
 __^^*insert italic bold*^^__  *^^__insert italic bold 2__^^*
 
 # Subscript and Superscript
+Pandoc style subscript and superscripts
 ```
-(~~No subscript~~. Just delete.)
+CH~3~CH~2~OH
 
-(^^No superscript^^. Just insert.)
+[ClO~2~]^+^
 
+x^2^ + y^2^ = 4
 
-Word(~Test subscript) Word(^Test superscript)
+Text^superscript^
 
-~~Word~~(~Test subscript.) ^^Word^^(^Test superscript.)
+Text^superscript failed^
 
-~~Word~~(~~~Test subscript~~. Safe to use the `~` ~~token~~ inside.) ^^Word^^(^^^Test superscript^^. Safe to use the `^` ^^token^^ inside.)
+Text^superscript\ success^
 
-~~Word~~(~~~^^**Test subscript**^^~~. Safe to use the `~` ~~token~~ inside.) ^^Word^^(^^^~~**Test superscript**~~^^. Safe to use the `^` ^^token^^ inside.)
+Text~subscript~
 
+Text~subscript failed~
+
+Text~subscript\ success~
 ```
 
-(~~No subscript~~. Just delete.)
+CH~3~CH~2~OH
 
-(^^No superscript^^. Just insert.)
+[ClO~2~]^+^
 
+x^2^ + y^2^ = 4
 
-Word(~Test subscript) Word(^Test superscript)
+Text^superscript^
 
-~~Word~~(~Test subscript.) ^^Word^^(^Test superscript.)
+Text^superscript failed^
 
-~~Word~~(~~~Test subscript~~. Safe to use the `~` ~~token~~ inside.) ^^Word^^(^^^Test superscript^^. Safe to use the `^` ^^token^^ inside.)
+Text^superscript\ success^
 
-~~Word~~(~~~^^**Test subscript**^^~~. Safe to use the `~` ~~token~~ inside.) ^^Word^^(^^^~~**Test superscript**~~^^. Safe to use the `^` ^^token^^ inside.)
+Text~subscript~
 
+Text~subscript failed~
+
+Text~subscript\ success~
 
 # Progress
 Progress bars are block elements and it is recommened to put a newline before and after.  But they will be recognized inline, but they will be on their own line.

@@ -26,7 +26,7 @@ from lib.pymdown import PyMdowns
 from lib import formatter
 from lib.frontmatter import get_frontmatter_string
 
-__version_info__ = (0, 6, 0)
+__version_info__ = (0, 7, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
 if sys.platform.startswith('win'):
