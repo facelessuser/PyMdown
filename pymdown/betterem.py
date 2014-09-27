@@ -17,12 +17,12 @@ from __future__ import unicode_literals
 from markdown import Extension
 from markdown.inlinepatterns import SimpleTagPattern, DoubleTagPattern
 
-SMART_UNDER_CONTENT = r'((?:[^_]|_(?=[^\W]))+?_*)'
-SMART_STAR_CONTENT = r'((?:[^\*]|\*(?=[^\W]|\*))+?\**)'
+SMART_UNDER_CONTENT = r'((?:[^_]|_(?=\w))+?_*)'
+SMART_STAR_CONTENT = r'((?:[^\*]|\*(?=[^\W_]|\*))+?\**)'
 UNDER_CONTENT = r'(_|[^_]+?)'
-UNDER_CONTENT2 = r'((?:[^_]|(?<!_)_(?=[^\W]|_))+?)'
+UNDER_CONTENT2 = r'((?:[^_]|(?<!_)_(?=\w))+?)'
 STAR_CONTENT = r'(\*|[^\*]+?)'
-STAR_CONTENT2 = r'((?:[^\*]|(?<!\*)\*(?=[^\W]|_))+?)'
+STAR_CONTENT2 = r'((?:[^\*]|(?<!\*)\*(?=[^\W_]|\*))+?)'
 
 # ***strong,em***
 STAR_STRONG_EM = r'(\*{3})(?!\s)(\*{1,2}|[^\*]+?)(?<!\s)\2'
@@ -45,7 +45,7 @@ STAR_EM = r'(\*)(?!\s)%s(?<!\s)\2' % STAR_CONTENT
 # _emphasis_
 UNDER_EM = r'(_)(?!\s)%s(?<!\s)\2' % UNDER_CONTENT
 
-# Smart rules for when "smart_underscore" is enabled
+# Smart rules for when "smart underscore" is enabled
 # SMART: ___strong,em___
 SMART_UNDER_STRONG_EM = r'(?<!\w)(_{3})(?![\s_])%s(?<!\s)\2(?!\w)' % SMART_UNDER_CONTENT
 # ___strong,em_strong__
@@ -59,18 +59,18 @@ SMART_UNDER_STRONG = r'(?<!\w)(_{2})(?![\s_])%s(?<!\s)\2(?!\w)' % SMART_UNDER_CO
 # SMART _em_
 SMART_UNDER_EM = r'(?<!\w)(_)(?![\s_])%s(?<!\s)\2(?!\w)' % SMART_UNDER_CONTENT
 
-# Smart rules for when "smart_underscore" is enabled
-# SMART: ___strong,em___
+# Smart rules for when "smart asterisk" is enabled
+# SMART: ***strong,em***
 SMART_STAR_STRONG_EM = r'(?:(?<=_)|(?<!\w))(\*{3})(?![\s\*])%s(?<!\s)\2(?:(?=_)|(?![\w\*]))' % SMART_STAR_CONTENT
-# ___strong,em_strong__
+# ***strong,em*strong**
 SMART_STAR_STRONG_EM2 = \
     r'(?:(?<=_)|(?<!\w))(\*{3})(?![\s\*])%s(?<!\s)\*(?:(?=_)|(?![\w\*]))%s(?<!\s)\*{2}(?:(?=_)|(?![\w\*]))' % (SMART_STAR_CONTENT, SMART_STAR_CONTENT)
-# ___em,strong__em_
+# ***em,strong**em*
 SMART_STAR_EM_STRONG = \
     r'(?:(?<=_)|(?<!\w))(\*{3})(?![\s\*])%s(?<!\s)\*{2}(?:(?=_)|(?![\w\*]))%s(?<!\s)\*(?:(?=_)|(?![\w\*]))' % (SMART_STAR_CONTENT, SMART_STAR_CONTENT)
-# __strong__
+# **strong**
 SMART_STAR_STRONG = r'(?:(?<=_)|(?<!\w))(\*{2})(?![\s\*])%s(?<!\s)\2(?:(?=_)|(?![\w\*]))' % SMART_STAR_CONTENT
-# SMART _em_
+# SMART *em*
 SMART_STAR_EM = r'(?:(?<=_)|(?<!\w))(\*)(?![\s\*])%s(?<!\s)\2(?:(?=_)|(?![\w\*]))' % SMART_STAR_CONTENT
 
 smart_enable_keys = [
