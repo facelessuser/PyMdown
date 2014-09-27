@@ -20,7 +20,7 @@ from markdown.inlinepatterns import SimpleTagPattern
 RE_SMART_CONTENT = r'((?:[^~]|~(?=[^\W_]|~))+?~*)'
 RE_DUMB_CONTENT = r'((?:[^~]|(?<!~)~(?=[^\W_]|~))+?)'
 RE_SMART_DEL_BASE = r'(~{2})(?![\s~])%s(?<!\s)~{2}' % RE_SMART_CONTENT
-RE_SMART_DEL = r'(?:(?<=_)|(?<!\w))%s(?:(?=_)|(?![\w~]))' % RE_SMART_DEL_BASE
+RE_SMART_DEL = r'(?:(?<=_)|(?<![\w~]))%s(?:(?=_)|(?![\w~]))' % RE_SMART_DEL_BASE
 RE_DEL_BASE = r'(~{2})(?!\s)%s(?<!\s)~{2}' % RE_DUMB_CONTENT
 RE_DEL = RE_DEL_BASE
 

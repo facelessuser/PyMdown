@@ -61,17 +61,17 @@ SMART_UNDER_EM = r'(?<!\w)(_)(?![\s_])%s(?<!\s)\2(?!\w)' % SMART_UNDER_CONTENT
 
 # Smart rules for when "smart asterisk" is enabled
 # SMART: ***strong,em***
-SMART_STAR_STRONG_EM = r'(?:(?<=_)|(?<!\w))(\*{3})(?![\s\*])%s(?<!\s)\2(?:(?=_)|(?![\w\*]))' % SMART_STAR_CONTENT
+SMART_STAR_STRONG_EM = r'(?:(?<=_)|(?<![\w\*]))(\*{3})(?![\s\*])%s(?<!\s)\2(?:(?=_)|(?![\w\*]))' % SMART_STAR_CONTENT
 # ***strong,em*strong**
 SMART_STAR_STRONG_EM2 = \
-    r'(?:(?<=_)|(?<!\w))(\*{3})(?![\s\*])%s(?<!\s)\*(?:(?=_)|(?![\w\*]))%s(?<!\s)\*{2}(?:(?=_)|(?![\w\*]))' % (SMART_STAR_CONTENT, SMART_STAR_CONTENT)
+    r'(?:(?<=_)|(?<![\w\*]))(\*{3})(?![\s\*])%s(?<!\s)\*(?:(?=_)|(?![\w\*]))%s(?<!\s)\*{2}(?:(?=_)|(?![\w\*]))' % (SMART_STAR_CONTENT, SMART_STAR_CONTENT)
 # ***em,strong**em*
 SMART_STAR_EM_STRONG = \
-    r'(?:(?<=_)|(?<!\w))(\*{3})(?![\s\*])%s(?<!\s)\*{2}(?:(?=_)|(?![\w\*]))%s(?<!\s)\*(?:(?=_)|(?![\w\*]))' % (SMART_STAR_CONTENT, SMART_STAR_CONTENT)
+    r'(?:(?<=_)|(?<![\w\*]))(\*{3})(?![\s\*])%s(?<!\s)\*{2}(?:(?=_)|(?![\w\*]))%s(?<!\s)\*(?:(?=_)|(?![\w\*]))' % (SMART_STAR_CONTENT, SMART_STAR_CONTENT)
 # **strong**
-SMART_STAR_STRONG = r'(?:(?<=_)|(?<!\w))(\*{2})(?![\s\*])%s(?<!\s)\2(?:(?=_)|(?![\w\*]))' % SMART_STAR_CONTENT
+SMART_STAR_STRONG = r'(?:(?<=_)|(?<![\w\*]))(\*{2})(?![\s\*])%s(?<!\s)\2(?:(?=_)|(?![\w\*]))' % SMART_STAR_CONTENT
 # SMART *em*
-SMART_STAR_EM = r'(?:(?<=_)|(?<!\w))(\*)(?![\s\*])%s(?<!\s)\2(?:(?=_)|(?![\w\*]))' % SMART_STAR_CONTENT
+SMART_STAR_EM = r'(?:(?<=_)|(?<![\w\*]))(\*)(?![\s\*])%s(?<!\s)\2(?:(?=_)|(?![\w\*]))' % SMART_STAR_CONTENT
 
 smart_enable_keys = [
     "all", "asterisk", "underscore", "none"
@@ -107,19 +107,19 @@ class BetterEmExtension(Extension):
         enabled = config["smart_enable"]
         if enabled:
             enable_all = enabled == "all"
-            enable_underscore = enabled == "underscore"
-            enable_asterisk = enabled == "asterisk"
+            enable_under = enabled == "underscore" or enable_all
+            enable_star = enabled == "asterisk" or enable_all
 
-        star_strong_em = SMART_STAR_STRONG_EM if enable_all or enable_asterisk else STAR_STRONG_EM
-        under_strong_em = SMART_UNDER_STRONG_EM if enable_all or enable_underscore else UNDER_STRONG_EM
-        star_em_strong = SMART_STAR_EM_STRONG if enable_all or enable_asterisk else STAR_EM_STRONG
-        under_em_strong = SMART_UNDER_EM_STRONG if enable_all or enable_underscore else UNDER_EM_STRONG
-        star_strong_em2 = SMART_STAR_STRONG_EM2 if enable_all or enable_asterisk else STAR_STRONG_EM2
-        under_strong_em2 = SMART_UNDER_STRONG_EM2 if enable_all or enable_underscore else UNDER_STRONG_EM2
-        star_strong = SMART_STAR_STRONG if enable_all or enable_asterisk else STAR_STRONG
-        under_strong = SMART_UNDER_STRONG if enable_all or enable_underscore else UNDER_STRONG
-        star_emphasis = SMART_STAR_EM if enable_all or enable_asterisk else STAR_EM
-        under_emphasis = SMART_UNDER_EM if enable_all or enable_underscore else UNDER_EM
+        star_strong_em = SMART_STAR_STRONG_EM if enable_star else STAR_STRONG_EM
+        under_strong_em = SMART_UNDER_STRONG_EM if enable_under else UNDER_STRONG_EM
+        star_em_strong = SMART_STAR_EM_STRONG if enable_star else STAR_EM_STRONG
+        under_em_strong = SMART_UNDER_EM_STRONG if enable_under else UNDER_EM_STRONG
+        star_strong_em2 = SMART_STAR_STRONG_EM2 if enable_star else STAR_STRONG_EM2
+        under_strong_em2 = SMART_UNDER_STRONG_EM2 if enable_under else UNDER_STRONG_EM2
+        star_strong = SMART_STAR_STRONG if enable_star else STAR_STRONG
+        under_strong = SMART_UNDER_STRONG if enable_under else UNDER_STRONG
+        star_emphasis = SMART_STAR_EM if enable_star else STAR_EM
+        under_emphasis = SMART_UNDER_EM if enable_under else UNDER_EM
 
         self.md.inlinePatterns["strong_em"] = DoubleTagPattern(star_strong_em, 'strong,em')
         self.md.inlinePatterns.add("strong_em2", DoubleTagPattern(under_strong_em, 'strong,em'), '>strong_em')

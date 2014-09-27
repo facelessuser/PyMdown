@@ -15,8 +15,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 """
 from __future__ import unicode_literals
 from markdown import Extension
-from markdown.inlinepatterns import SimpleTagPattern, Pattern
-from markdown import util
+from markdown.inlinepatterns import SimpleTagPattern
 
 RE_SUPER = r'(\(\^)((?:\(.*?\)|[^\)])+?)\)'
 RE_SUB = r'(\(~)((?:\(.*?\)|[^\)])+?)\)'
