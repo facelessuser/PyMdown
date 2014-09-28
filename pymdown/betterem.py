@@ -123,7 +123,8 @@ class BetterEmExtension(Extension):
 
         self.md.inlinePatterns["strong_em"] = DoubleTagPattern(star_strong_em, 'strong,em')
         self.md.inlinePatterns.add("strong_em2", DoubleTagPattern(under_strong_em, 'strong,em'), '>strong_em')
-        self.md.inlinePatterns.add("em_strong", DoubleTagPattern(star_em_strong, 'em,strong'), '>strong_em2')
+        self.md.inlinePatterns.link("em_strong", ">strong_em2")
+        self.md.inlinePatterns["em_strong"] = DoubleTagPattern(star_em_strong, 'em,strong')
         self.md.inlinePatterns.add('em_strong2', DoubleTagPattern(under_em_strong, 'em,strong'), '>em_strong')
         self.md.inlinePatterns.add('strong_em3', DoubleTagPattern(star_strong_em2, 'strong,em'), '>em_strong2')
         self.md.inlinePatterns.add('strong_em4', DoubleTagPattern(under_strong_em2, 'strong,em'), '>strong_em3')
