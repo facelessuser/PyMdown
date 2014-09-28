@@ -20,16 +20,22 @@ from markdown.inlinepatterns import HtmlPattern
 from markdown.odict import OrderedDict
 from markdown.treeprocessors import InlineProcessor
 
-RE_TRADE = ("smarttrademark", r'\(tm\)', r'&trade;')
-RE_COPY = ("smartcopyright", r'\(c\)', r'&copy;')
-RE_REG = ("smartregistered", r'\(r\)', r'&reg;')
-RE_PLUSMINUS = ("smartplusminus", r'\+/\-', r'&plusmn;')
+RE_TRADE = ("smart-trademark", r'\(tm\)', r'&trade;')
+RE_COPY = ("smart-copyright", r'\(c\)', r'&copy;')
+RE_REG = ("smart-registered", r'\(r\)', r'&reg;')
+RE_PLUSMINUS = ("smart-plus-minus", r'\+/-', r'&plusmn;')
+RE_DOUBLE_ARROW = ("smart-double-arrow", r'\<(?:-{2}|–)\>', r'&harr;')
+RE_RIGHT_ARROW = ("smart-right-arrow", r'(?:-{2}|–)\>', r'&rarr;')
+RE_LEFT_ARROW = ("smart-left-arrow", r'\<(?:-{2}|–)', r'&larr;')
+RE_NOT_EQUAL = ("smart-not-equal", r'!=', r'&ne;')
 
 REPL = {
     'trademark': RE_TRADE,
     'copyright': RE_COPY,
     'registered': RE_REG,
-    'plusminus': RE_PLUSMINUS
+    'plusminus': RE_PLUSMINUS,
+    'arrows': (RE_LEFT_ARROW, RE_RIGHT_ARROW, RE_DOUBLE_ARROW),
+    'notequal': RE_NOT_EQUAL
 }
 
 
@@ -52,7 +58,9 @@ class SmartSymbolsExtension(Extension):
             'trademark': [True, 'Trademark'],
             'copyright': [True, 'Copyright'],
             'registered': [True, 'Registered'],
-            'plusminus': [True, 'Plus/Minus']
+            'plusminus': [True, 'Plus/Minus'],
+            'arrows': [True, 'Arrows'],
+            'notequal': [True, 'Not Equal']
         }
         super(SmartSymbolsExtension, self).__init__(*args, **kwargs)
 
@@ -68,13 +76,20 @@ class SmartSymbolsExtension(Extension):
         """ Create a dict of inline replace patterns and add to the treeprocessor """
         configs = self.getConfigs()
         self.patterns = OrderedDict()
+
         for k, v in REPL.items():
             if configs[k]:
-                self.add_pattern(v, md)
+                if isinstance(v[0], (list, tuple)):
+                    for subv in v:
+                        self.add_pattern(subv, md)
+                else:
+                    self.add_pattern(v, md)
 
         inlineProcessor = InlineProcessor(md)
         inlineProcessor.inlinePatterns = self.patterns
         md.treeprocessors.add('smart-symbols', inlineProcessor, '_end')
+        if "smarty" in md.treeprocessors.keys():
+            md.treeprocessors.link('smarty', '_end')
 
 
 def makeExtension(*args, **kwargs):
