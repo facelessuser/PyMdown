@@ -148,6 +148,13 @@ class Html(object):
         template = self.settings.get("html_template", "default")
         if template == "default" or not exists(template):
             template = get_default_template()
+        else:
+            try:
+                with codecs.open(template, "r", encoding="utf-8") as f:
+                    template = f.read()
+            except:
+                Logger.log(str(traceback.format_exc()))
+                template = get_default_template()
         self.template = template
 
         if self.template != "":
