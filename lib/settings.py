@@ -271,12 +271,53 @@ class Settings(object):
             count += 1
         return style
 
+    def process_file_paths(self, settings):
+
+        def process_path(pth, base):
+            file_path = self.resolve_meta_path(
+                pth,
+                base
+            )
+            if file_path is None or isdir(file_path):
+                file_path = None
+            else:
+                file_path = normpath(file_path)
+            return file_path
+
+        base = settings["builtin"]["basepath"]
+        template = process_path(
+            settings["settings"].get("html_template", None),
+            base
+        )
+
+        settings["settings"]["html_template"] = template if template is not None else "default"
+
+        css = []
+        for c in settings["settings"].get("css_style_sheets", []):
+            normalized = process_path(c, base)
+            if normalized != None:
+                css.append(normalized)
+        if len(css) == 0:
+            css.append("default")
+
+        settings["settings"]["css_style_sheets"] = css
+
+        js = []
+        for j in settings["settings"].get("js_scripts"):
+            normalized = process_path(j, base)
+            if normalized != None:
+                js.append(normalized)
+
+        settings["settings"]["js_scripts"] = js
+
     def post_process_settings(self, settings):
         """ Process the settings files making needed adjustements """
 
         absolute = False
         critic_found = []
         plain_html = []
+
+        self.process_file_paths(settings)
 
         # Copy extensions; we will move it to its own key later
         if "extensions" in settings["settings"]:
