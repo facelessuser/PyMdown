@@ -152,13 +152,28 @@ class Settings(object):
             settings["builtin"]["basepath"] = self.get_base_path(value)
             del frontmatter["basepath"]
 
+        base = settings["builtin"]["basepath"]
+
         for key, value in frontmatter.items():
             if key == "settings" and isinstance(value, dict):
                 for subkey, subvalue in value.items():
-                    settings[key][subkey] = subvalue
+                    if subkey == "html_template":
+                        pth = self.process_settings_path(subvalue, base)
+                        settings[key][subkey] = pth if pth is not None else "default"
+                    elif subkey in ("css_style_sheets", "css_style_sheets"):
+                        items = []
+                        for i in subvalue:
+                            pth = self.process_settings_path(unicode_string(pth), base)
+                            if pth != None:
+                                items.append(pth)
+                        if subkey == "css_style_sheets" and len(items) == 0:
+                            item.append("default")
+                        settings[key][subkey] = items
+                    else:
+                        settings[key][subkey] = subvalue
             elif key in BUILTIN_KEYS:
                 if key == "destination":
-                    file_name = self.resolve_meta_path(dirname(value), settings["builtin"]["basepath"])
+                    file_name = self.resolve_meta_path(dirname(value), base)
                     if file_name is not None and isdir(file_name):
                         value = normpath(join(file_name, basename(value)))
                         if exists(value) and isdir(value):
@@ -171,7 +186,7 @@ class Settings(object):
                         value = [value]
                     refs = []
                     for v in value:
-                        file_name = self.resolve_meta_path(v, settings["builtin"]["basepath"])
+                        file_name = self.resolve_meta_path(v, base)
                         if file_name is not None and not isdir(file_name):
                             refs.append(normpath(file_name))
                     settings["builtin"][key] = refs
@@ -271,44 +286,16 @@ class Settings(object):
             count += 1
         return style
 
-    def process_file_paths(self, settings):
-
-        def process_path(pth, base):
-            file_path = self.resolve_meta_path(
-                pth,
-                base
-            )
-            if file_path is None or isdir(file_path):
-                file_path = None
-            else:
-                file_path = normpath(file_path)
-            return file_path
-
-        base = settings["builtin"]["basepath"]
-        template = process_path(
-            settings["settings"].get("html_template", None),
+    def process_settings_path(self, pth, base):
+        file_path = self.resolve_meta_path(
+            pth,
             base
         )
-
-        settings["settings"]["html_template"] = template if template is not None else "default"
-
-        css = []
-        for c in settings["settings"].get("css_style_sheets", []):
-            normalized = process_path(c, base)
-            if normalized != None:
-                css.append(normalized)
-        if len(css) == 0:
-            css.append("default")
-
-        settings["settings"]["css_style_sheets"] = css
-
-        js = []
-        for j in settings["settings"].get("js_scripts"):
-            normalized = process_path(j, base)
-            if normalized != None:
-                js.append(normalized)
-
-        settings["settings"]["js_scripts"] = js
+        if file_path is None or isdir(file_path):
+            file_path = None
+        else:
+            file_path = normpath(file_path)
+        return file_path
 
     def post_process_settings(self, settings):
         """ Process the settings files making needed adjustements """
@@ -316,8 +303,6 @@ class Settings(object):
         absolute = False
         critic_found = []
         plain_html = []
-
-        self.process_file_paths(settings)
 
         # Copy extensions; we will move it to its own key later
         if "extensions" in settings["settings"]:
