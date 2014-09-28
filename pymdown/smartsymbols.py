@@ -24,9 +24,9 @@ RE_TRADE = ("smart-trademark", r'\(tm\)', r'&trade;')
 RE_COPY = ("smart-copyright", r'\(c\)', r'&copy;')
 RE_REG = ("smart-registered", r'\(r\)', r'&reg;')
 RE_PLUSMINUS = ("smart-plus-minus", r'\+/-', r'&plusmn;')
-RE_DOUBLE_ARROW = ("smart-double-arrow", r'\<(?:-{2}|–)\>', r'&harr;')
-RE_RIGHT_ARROW = ("smart-right-arrow", r'(?:-{2}|–)\>', r'&rarr;')
-RE_LEFT_ARROW = ("smart-left-arrow", r'\<(?:-{2}|–)', r'&larr;')
+RE_DOUBLE_ARROW = ("smart-double-arrow", r'\<-{2}\>', r'&harr;')
+RE_RIGHT_ARROW = ("smart-right-arrow", r'-{2}\>', r'&rarr;')
+RE_LEFT_ARROW = ("smart-left-arrow", r'\<-{2}', r'&larr;')
 RE_NOT_EQUAL = ("smart-not-equal", r'!=', r'&ne;')
 
 REPL = {
