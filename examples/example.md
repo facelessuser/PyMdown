@@ -32,7 +32,7 @@ test: This example of normal meta extension
 title: This title will be overridden by YAML
 
 !!! hint "Extensions Used in this Document"
-    This is mainly to visually inspect markdown output offered by PyMdown.  This isn't a real test.
+    This is mainly to visually inspect markdown output offered by PyMdown.  This isn't a real test.  Here are the enabled extensions:
 
     - markdown.extensions.extra
     - markdown.extensions.toc
@@ -45,16 +45,12 @@ title: This title will be overridden by YAML
     - pymdown.pymdown
     - pymdown.mark
     - pymdown.b64(base_path=${BASE_PATH})
-    - pymdown.absolutepath(base_path=${BASE_PATH})
 
     !!! Caution "Notes"
-        - `sane_lists` will alter the results of the second test in [Mixed Lists](#mixed-lists). When turned off, this document will have all list items mixed and aligned proper.  With `sane_lists` on, some will not be recognized, and some items may be aligned in different lists. `sane_lists` is disabled in this example.
+        - `sane_lists` will alter the results of [Mixed Lists](#mixed-lists). When turned off, this document will have all list items mixed and aligned proper.  With `sane_lists` on, some will not be recognized, and some items may be aligned in different lists. `sane_lists` is disabled in this example.
         - having `guess_lang=False` allows selective highlighting of only the blocks that specify a language.  When omitted or set `true`, it can be expected that all of the blocks will be highlighted to some extent (in some cases very wrong).  `guess_lang` is disabled in this example.
-        - This is only for a general visual inspection.
         - pymdown.b64 can be verified by checking the source of one of the images to see if conversion occured.
 
-
-# Cheat Sheet and Test
 [TOC]
 
 ## Headers
@@ -678,6 +674,12 @@ Trademark(tm)
 Registered(r)
 
 230 +/- 10% V
+
+A != B
+
+right arrow -->
+left arrow <--
+double arrow <-->
 ```
 
 Copyright (c)
@@ -685,6 +687,12 @@ Trademark(tm)
 Registered(r)
 
 230 +/- 10% V
+
+A != B
+
+right arrow -->
+left arrow <--
+double arrow <-->
 
 ## Attribute List
 ```
