@@ -28,35 +28,6 @@ if PY3:
 else:
     unicode_string = unicode  # flake8: noqa
 
-
-DEFAULT_TEMPLATE = '''<!DOCTYPE html>
-<html>
-<head>
-<style>
-body {
-  width: 80%;
-  border: 1px solid #ddd;
-  background-color: #fafafa;
-  margin: 16px auto;
-}
-
-body .markdown-body {
-  padding: 30px;
-  -moz-box-shadow: 0px 5px 20px #888888;
-  -webkit-box-shadow: 0px 5px 20px #888888;
-  box-shadow: 0px 5px 20px #888888;
-}
-</style>
-{{ HEAD }}
-</head>
-<body>
-<article class="markdown-body">
-{{ BODY }}
-</article>
-</body>
-</html>
-'''
-
 RE_URL_START = r"https?://"
 
 
@@ -66,7 +37,7 @@ class PyMdownFormatterException(Exception):
 
 def get_default_template():
     """ Return the default template """
-    return DEFAULT_TEMPLATE
+    return load_text_resource("stylesheets", "default-template.html")
 
 
 def get_default_css():
