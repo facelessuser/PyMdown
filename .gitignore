@@ -5,4 +5,3 @@ build/*
 dist/*
 pyinstaller
 pymdown.spec
-examples/*.html

@@ -14,6 +14,7 @@
 
     # Settings overrides
     settings:
+        html_template: example-template.html
         extensions:
         - markdown.extensions.extra
         - markdown.extensions.toc
@@ -31,7 +32,7 @@ test: This example of normal meta extension
 title: This title will be overridden by YAML
 
 !!! hint "Extensions Used in this Document"
-    This is mainly visually inspect markdown output offered by PyMdown.  This isn't a real test.
+    This is mainly to visually inspect markdown output offered by PyMdown.  This isn't a real test.
 
     - markdown.extensions.extra
     - markdown.extensions.toc
