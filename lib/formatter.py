@@ -230,11 +230,9 @@ class Html(object):
         """ Load specified CSS sources """
         user_css = self.settings.get("css_style_sheets", "default")
         css = []
-        if user_css == "default" or not isinstance(user_css, list):
-            for c in get_default_css():
-                css.append(get_style(c))
-        else:
-            for c in user_css:
+        if isinstance(user_css, list) and len(user_css):
+            for pth in user_css:
+                c = unicode_string(pth)
                 if c == "default":
                     for c in get_default_css():
                         css.append(get_style(c))
@@ -255,7 +253,8 @@ class Html(object):
         user_js = self.settings.get("js_scripts", [])
         scripts = []
         if isinstance(user_js, list) and len(user_js):
-            for js in user_js:
+            for pth in user_js:
+                js = unicode_string(pth)
                 if exists(js):
                     try:
                         with codecs.open(js, "r", encoding="utf-8") as f:

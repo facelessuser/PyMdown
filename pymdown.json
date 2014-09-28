@@ -2,14 +2,15 @@
     // Select your CSS for you output html
     // or you can have it all contained in your HTML template
     //
-    // Can be an array of stylesheets or "default"
-    // "default" can also be an entry in the array.
+    // Is an array of stylesheets (path or link).
+    // "default" can also be as an entry in the array to use the PyMdowns.
+    // default css for the markdown.
     // If it points to a physical file, it will be included.
     "css_style_sheets": ["default"],
 
     // Load up js scripts
     //
-    // Can be an array of scripts.
+    // Is an array of scripts (path or link).
     // If it points to a physical file, it will be included.
     "js_scripts": [],
 
