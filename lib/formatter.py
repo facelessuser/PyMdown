@@ -150,6 +150,8 @@ class Html(object):
                 self.write(
                     template[0:m.start(0)].replace(
                         "{{ HEAD }}", meta + self.head + title, 1
+                    ).replace(
+                        "{{ TITLE }}", cgi.escape(self.title)
                     )
                 )
                 self.body_end = m.end(0)

@@ -69,6 +69,8 @@ This can be done here:
     "html_template": "default",
 ```
 
+Templates should use `{{ HEAD }}` to receive heder info like CSS and JS files.  `{{ BODY }}` to receive markdown content, and optionally `{{ TITLE }}` to receive the title.
+
 # Command Line
 
 ```
