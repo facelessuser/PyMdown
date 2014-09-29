@@ -123,8 +123,6 @@ class Html(object):
         """ Output the HTML head and body up to the {{ BODY }} specifier """
         template = self.settings.get("html_template", None)
         app_path = join(self.script_path, template) if self.script_path is not None and template is not None else None
-        print(template)
-        print(app_path)
         if template is not None and exists(template) and isfile(template):
             try:
                 with codecs.open(template, "r", encoding="utf-8") as f:
@@ -157,7 +155,7 @@ class Html(object):
                         "{{ TITLE }}", cgi.escape(self.title)
                     )
                 )
-                self.body_no_bodyend = m.end(0)
+                self.body_end = m.end(0)
 
     def set_output(self, output, preview):
         """ Set and create the output target and target related flags """
