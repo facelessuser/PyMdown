@@ -23,10 +23,6 @@
         "args": {"target": "sublime", "plain": true}
     },
     {
-        "caption": "PyMdown: Preview Critic",
-        "command": "py_mdown_critic_preview"
-    },
-    {
         "caption": "PyMdown: Critic Strip Markdown (accept)",
         "command": "py_mdown_critic_strip"
     },

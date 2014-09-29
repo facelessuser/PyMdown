@@ -104,13 +104,13 @@ def auto_open(name):
 def get_critic_mode(args):
     """ Setp the critic mode """
     critic_mode = cd.CRITIC_IGNORE
-    if not args.no_critic:
-        if args.accept or args.reject:
-            critic_mode |= cd.CRITIC_ACCEPT if args.accept else cd.CRITIC_REJECT
-        if args.critic_dump:
-            critic_mode |= cd.CRITIC_DUMP
-    else:
-        critic_mode |= cd.CRITIC_OFF
+    # if not args.no_critic:
+    if args.accept or args.reject:
+        critic_mode |= cd.CRITIC_ACCEPT if args.accept else cd.CRITIC_REJECT
+    if args.critic_dump:
+        critic_mode |= cd.CRITIC_DUMP
+    # else:
+    #     critic_mode |= cd.CRITIC_OFF
     return critic_mode
 
 
@@ -384,7 +384,7 @@ if __name__ == "__main__":
         critic_group.add_argument('--accept', '-a', action='store_true', default=False, help="Accept propossed critic marks when using in normal processing and --critic-dump processing")
         critic_group.add_argument('--reject', '-r', action='store_true', default=False, help="Reject propossed critic marks when using in normal processing and --critic-dump processing")
         parser.add_argument('--critic-dump', action='store_true', default=False, help="Process critic marks, dumps file(s), and exits.")
-        parser.add_argument('--no-critic', action='store_true', default=False, help="Turn off critic feature completely")
+        # parser.add_argument('--no-critic', action='store_true', default=False, help="Turn off critic feature completely")
         # Output
         parser.add_argument('--output', '-o', nargs=1, default=None, help="Output file. Ignored in batch mode.")
         parser.add_argument('--batch', '-b', action='store_true', default=False, help="Batch mode output.")

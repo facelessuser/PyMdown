@@ -191,23 +191,23 @@ class PyMdownPreviewCommand(PyMdownCommand):
             self.output(rbfr)
 
 
-class PyMdownCriticPreviewCommand(PyMdownCommand):
-    message = "pymdown failed to generate your preview!"
+# class PyMdownCriticPreviewCommand(PyMdownCommand):
+#     message = "pymdown failed to generate your preview!"
 
-    def run(self, edit, alternate_settings=None):
-        self.setup(alternate_settings)
-        if self.binary:
-            self.convert(edit)
+#     def run(self, edit, alternate_settings=None):
+#         self.setup(alternate_settings)
+#         if self.binary:
+#             self.convert(edit)
 
-    def convert(self, edit):
-        self.cmd.append("-p")
-        self.cmd.append("-c")
+#     def convert(self, edit):
+#         self.cmd.append("-p")
+#         self.cmd.append("-c")
 
-        print(self.call())
-        if self.returncode:
-            self.error_message()
-        else:
-            notify("Conversion complete!\nOpening in browser...")
+#         print(self.call())
+#         if self.returncode:
+#             self.error_message()
+#         else:
+#             notify("Conversion complete!\nOpening in browser...")
 
 
 class PyMdownCriticStripCommand(PyMdownCommand):

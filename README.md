@@ -76,8 +76,9 @@ Templates should use `{{ HEAD }}` to receive heder info like CSS and JS files.  
 ```
 usage: pymdown [-h] [--version] [--licenses] [--quiet] [--preview]
                [--plain-html] [--title TITLE] [--accept | --reject]
-               [--critic-dump] [--no-critic] [--output OUTPUT] [--batch]
-               [--settings SETTINGS] [--encoding ENCODING] [--basepath BASEPATH]
+               [--critic-dump] [--output OUTPUT] [--batch]
+               [--settings SETTINGS] [--encoding ENCODING]
+               [--basepath BASEPATH]
                [markdown [markdown ...]]
 
 Markdown generator
@@ -99,7 +100,6 @@ optional arguments:
   --reject, -r          Reject propossed critic marks when using in normal
                         processing and --critic-dump processing
   --critic-dump         Process critic marks, dumps file(s), and exits.
-  --no-critic           Turn off critic feature completely
   --output OUTPUT, -o OUTPUT
                         Output file. Ignored in batch mode.
   --batch, -b           Batch mode output.
@@ -107,7 +107,7 @@ optional arguments:
                         Load the settings file from an alternate location.
   --encoding ENCODING, -e ENCODING
                         Encoding for input.
-  --basepath BASEPATH   The basepath location mdown should use.
+  --basepath BASEPATH   The basepath location pymdown should use.
 ```
 
 # Sublime Plugin
@@ -124,14 +124,6 @@ Just drop the extra folder in your Sublime `Packages` folder and name to somethi
     {
         "caption": "PyMdown: Preview Markdown",
         "command": "pymdown_preview"
-    },
-
-    // Preview the current markdown source in a special
-    // mode that highlights critc syntax in a easier to
-    // read way.
-    {
-        "caption": "PyMdown: Preview Critic",
-        "command": "pymdown_critic_preview"
     },
 
     // Strip out critic markup in your current view
