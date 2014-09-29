@@ -15,6 +15,8 @@ from os.path import join, exists, abspath, dirname
 import codecs
 
 RESOURCE_PATH = abspath(join(dirname(__file__), ".."))
+DEFAULT_CSS = "default-markdown.css"
+DEFAULT_TEMPLATE = "default-template.html"
 
 
 def load_text_resource(*args):

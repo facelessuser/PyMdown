@@ -15,7 +15,7 @@ import traceback
 import re
 import tempfile
 from pygments.formatters import HtmlFormatter
-from os.path import exists, isfile
+from os.path import exists, isfile, join
 from .resources import load_text_resource
 from .logger import Logger
 import cgi
@@ -33,18 +33,6 @@ RE_URL_START = r"https?://"
 
 class PyMdownFormatterException(Exception):
     pass
-
-
-def get_default_template():
-    """ Return the default template """
-    return load_text_resource("stylesheets", "default-template.html")
-
-
-def get_default_css():
-    """ Get the default CSS style """
-    css = []
-    css.append(load_text_resource("stylesheets", "default-markdown.css"))
-    return css
 
 
 def get_js(js, link=False):
@@ -90,15 +78,18 @@ class Terminal(object):
 class Html(object):
     def __init__(
         self, output, preview=False, title=None,
-        plain=False, noclasses=False, settings={}
+        plain=False, noclasses=False, script_path=None,
+        settings={}
     ):
         self.settings = settings
         self.encode_file = True
         self.body_end = None
+        self.no_body = True
         self.plain = plain
         self.template = ''
         self.noclasses = noclasses
         self.title = "Untitled"
+        self.script_path = script_path
         self.set_output(output, preview)
         self.load_header(
             self.settings.get("style", None)
@@ -130,21 +121,33 @@ class Html(object):
 
     def write_html_start(self):
         """ Output the HTML head and body up to the {{ BODY }} specifier """
-        template = self.settings.get("html_template", "default")
-        if template == "default" or not exists(template):
-            template = get_default_template()
-        else:
+        template = self.settings.get("html_template", None)
+        app_path = join(self.script_path, template) if self.script_path is not None and template is not None else None
+        print(template)
+        print(app_path)
+        if template is not None and exists(template) and isfile(template):
             try:
                 with codecs.open(template, "r", encoding="utf-8") as f:
                     template = f.read()
             except:
                 Logger.log(str(traceback.format_exc()))
-                template = get_default_template()
+        elif app_path is not None and exists(app_path) and isfile(app_path):
+            try:
+                with codecs.open(app_path, "r", encoding="utf-8") as f:
+                    template = f.read()
+            except:
+                Logger.log(str(traceback.format_exc()))
         self.template = template
 
-        if self.template != "":
+        # If template isn't found, we will still output markdown html
+        if self.template is not None:
+            # We have a template.  Look for {{ BODY }}
+            # so we know where to insert the markdown.
+            # If we can't find an insertion point, the html
+            # will have no markdown content.
             m = re.search(r"\{\{ BODY \}\}", template)
             if m:
+                self.no_body = False
                 meta = '\n'.join(self.meta) + '\n'
                 title = '<title>%s</title>\n' % cgi.escape(self.title)
                 self.write(
@@ -154,7 +157,7 @@ class Html(object):
                         "{{ TITLE }}", cgi.escape(self.title)
                     )
                 )
-                self.body_end = m.end(0)
+                self.body_no_bodyend = m.end(0)
 
     def set_output(self, output, preview):
         """ Set and create the output target and target related flags """
@@ -182,9 +185,10 @@ class Html(object):
             # If we haven't already, print the file head
             self.started = True
             self.write_html_start()
-        self.file.write(
-            text.encode("utf-8", errors="xmlcharrefreplace") if self.encode_file else text
-        )
+        if not self.no_body:
+            self.file.write(
+                text.encode("utf-8", errors="xmlcharrefreplace") if self.encode_file else text
+            )
 
     def load_highlight(self, highlight_style):
         """ Load Syntax highlighter CSS """
@@ -199,45 +203,48 @@ class Html(object):
 
         return css
 
-    def load_css(self, style):
-        """ Load specified CSS sources """
-        user_css = self.settings.get("css_style_sheets", "default")
-        css = []
-        if isinstance(user_css, list) and len(user_css):
-            for pth in user_css:
-                c = unicode_string(pth)
-                if c == "default":
-                    for c in get_default_css():
-                        css.append(get_style(c))
-                if re.match(RE_URL_START, c) is not None:
-                    css.append(get_style(c, link=True))
-                elif exists(c) and isfile(c):
+    def load_resources(self, key, res_get):
+        user_res = self.settings.get(key, [])
+        res = []
+        if isinstance(user_res, list) and len(user_res):
+            for pth in user_res:
+                r = unicode_string(pth)
+                app_path = join(self.script_path, r) if self.script_path is not None else None
+                direct_include = not r.startswith('!')
+                if not direct_include:
+                    # Remove inclusion reject marker
+                    r = r.replace('!', '', 1)
+                if not direct_include or re.match(RE_URL_START, r) is not None:
+                    # Don't include content, just reference link
+                    res.append(res_get(r, link=True))
+                elif exists(r) and isfile(r):
+                    # Look at specified location to find the file
                     try:
-                        with codecs.open(c, "r", "utf-8") as f:
-                            css.append(get_style(f.read()))
+                        with codecs.open(r, "r", "utf-8") as f:
+                            res.append(res_get(f.read()))
                     except:
                         Logger.log(str(traceback.format_exc()))
+                elif app_path is not None and exists(app_path) and isfile(app_path):
+                    # Look where app binary resides to find the file
+                    try:
+                        with codecs.open(app_path, "r", "utf-8") as f:
+                            res.append(res_get(f.read()))
+                    except:
+                        Logger.log(str(traceback.format_exc()))
+                else:
+                    # Could not find file, just add it as a link
+                    res.append(res_get(r, link=True))
+        return res
 
+    def load_css(self, style):
+        """ Load specified CSS sources """
+        css = self.load_resources("css_style_sheets", get_style)
         css += self.load_highlight(style)
         return ''.join(css)
 
     def load_js(self):
         """ Load specified JS sources """
-        user_js = self.settings.get("js_scripts", [])
-        scripts = []
-        if isinstance(user_js, list) and len(user_js):
-            for pth in user_js:
-                js = unicode_string(pth)
-                if exists(js):
-                    try:
-                        with codecs.open(js, "r", encoding="utf-8") as f:
-                            scripts.append(
-                                get_js(f.read())
-                            )
-                    except:
-                        Logger.log(str(traceback.format_exc()))
-                else:
-                    scripts.append(get_js(js, link=True))
+        scripts = self.load_resources("js_scripts", get_js)
         return ''.join(scripts)
 
     def load_header(self, style):

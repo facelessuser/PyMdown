@@ -17,7 +17,7 @@ import sys
 import subprocess
 import webbrowser
 import traceback
-from os.path import dirname, abspath, normpath, exists, basename, join
+from os.path import dirname, abspath, normpath, exists, basename, join, isfile
 from lib.logger import Logger
 from lib import critic_dump as cd
 from lib.settings import Settings
@@ -40,6 +40,8 @@ else:
 
 PASS = 0
 FAIL = 1
+
+script_path = dirname(abspath(__file__))
 
 
 def get_files(file_patterns):
@@ -117,10 +119,17 @@ def get_critic_mode(args):
 def get_references(file_name, encoding):
     """ Get footnote and general references from outside source """
     text = ''
+    app_path = join(script_path, file_name)
     if file_name is not None:
-        if exists(file_name):
+        if exists(file_name) and isfile(file_name):
             try:
                 with codecs.open(file_name, "r", encoding=encoding) as f:
+                    text = f.read()
+            except:
+                Logger.log(traceback.format_exc())
+        elif exists(app_path) and isfile(app_path):
+            try:
+                with codecs.open(app_path, "r", encoding=encoding) as f:
                     text = f.read()
             except:
                 Logger.log(traceback.format_exc())
@@ -294,7 +303,7 @@ class Convert(object):
                 html = formatter.Html(
                     self.settings["builtin"]["destination"], preview=self.config.preview,
                     plain=self.config.plain, settings=self.settings["settings"],
-                    noclasses=self.config.pygments_noclasses
+                    noclasses=self.config.pygments_noclasses, script_path=script_path
                 )
             except:
                 Logger.log(traceback.format_exc())
@@ -370,6 +379,7 @@ if __name__ == "__main__":
     def main():
         """ Go! """
 
+        global script_path
         parser = argparse.ArgumentParser(prog='pymdown', description='Markdown generator')
         # Flag arguments
         parser.add_argument('--version', action='version', version="%(prog)s " + __version__)
@@ -429,9 +439,8 @@ if __name__ == "__main__":
         ).convert(files)
 
     script_path = dirname(abspath(sys.argv[0]))
+
     try:
         sys.exit(main())
     except KeyboardInterrupt:
         sys.exit(1)
-else:
-    script_path = dirname(abspath(__file__))

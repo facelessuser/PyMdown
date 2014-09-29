@@ -3,19 +3,20 @@
     // or you can have it all contained in your HTML template
     //
     // Is an array of stylesheets (path or link).
-    // "default" can also be as an entry in the array to use the PyMdowns.
-    // default css for the markdown.
     // If it points to a physical file, it will be included.
-    "css_style_sheets": ["default"],
+    // PyMdown will look relative to the binary if it can't find the file.
+    "css_style_sheets": ["default-markdown.css"],
 
     // Load up js scripts
     //
     // Is an array of scripts (path or link).
     // If it points to a physical file, it will be included.
+    // PyMdown will look relative to the binary if it can't find the file.
     "js_scripts": [],
 
     // Your HTML template
-    "html_template": "default",
+    // PyMdown will look relative to the binary if it can't find the file.
+    "html_template": "default-template.html",
 
     // Python Markdown extensions
     "extensions": [

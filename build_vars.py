@@ -13,8 +13,6 @@
 import os
 
 data = [
-    ("stylesheets/default-template.html", "./stylesheets/default-template.html", "DATA"),
-    ("stylesheets/default-markdown.css", "./stylesheets/default-markdown.css", "DATA"),
     ("LICENSE", "./LICENSE", "DATA"),
     ("pymdown.json", "./pymdown.json", "DATA"),
     ("markdown/LICENSE.md", "./markdown/LICENSE.md", "DATA"),

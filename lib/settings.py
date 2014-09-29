@@ -158,14 +158,18 @@ class Settings(object):
             if key == "settings" and isinstance(value, dict):
                 for subkey, subvalue in value.items():
                     if subkey == "html_template":
-                        pth = self.process_settings_path(subvalue, base)
-                        settings[key][subkey] = pth if pth is not None else "default"
+                        org_pth = unicode_string(subvalue)
+                        new_pth = self.process_settings_path(org_pth, base)
+                        settings[key][subkey] = new_pth if new_pth is not None and isfile(new_pth) else org_pth
                     elif subkey in ("css_style_sheets", "js_scripts"):
                         items = []
                         for i in subvalue:
-                            org_pth = unicode_string(pth)
-                            new_pth = self.process_settings_path(org_pth, base)
-                            if new_pth != None:
+                            org_pth = unicode_string(i)
+                            if org_pth.startswith('!'):
+                                new_pth = None
+                            else:
+                                new_pth = self.process_settings_path(org_pth, base)
+                            if new_pth is not None and isfile(new_pth):
                                 items.append(new_pth)
                             else:
                                 items.append(org_pth)
@@ -174,7 +178,7 @@ class Settings(object):
                         settings[key][subkey] = subvalue
             elif key in BUILTIN_KEYS:
                 if key == "destination":
-                    file_name = self.resolve_meta_path(dirname(value), base)
+                    file_name = self.resolve_meta_path(dirname(unicode_string(value)), base)
                     if file_name is not None and isdir(file_name):
                         value = normpath(join(file_name, basename(value)))
                         if exists(value) and isdir(value):
@@ -187,9 +191,12 @@ class Settings(object):
                         value = [value]
                     refs = []
                     for v in value:
-                        file_name = self.resolve_meta_path(v, base)
-                        if file_name is not None and not isdir(file_name):
+                        org_file = unicode_string(v)
+                        file_name = self.resolve_meta_path(org_file, base)
+                        if file_name is not None and isfile(file_name):
                             refs.append(normpath(file_name))
+                        else:
+                            refs.append(org_file)
                     settings["builtin"][key] = refs
             else:
                 if isinstance(value, list):
