@@ -29,6 +29,8 @@ from lib.frontmatter import get_frontmatter_string
 __version_info__ = (0, 7, 0)
 __version__ = '.'.join(map(str, __version_info__))
 
+PY3 = sys.version_info >= (3, 0)
+
 if sys.platform.startswith('win'):
     _PLATFORM = "windows"
 elif sys.platform == "darwin":
@@ -64,7 +66,7 @@ def get_file_stream(encoding):
     text = []
     try:
         for line in fileinput.input():
-            text.append(line.decode(encoding))
+            text.append(line if PY3 else line.decode(encoding))
         stream = ''.join(text)
     except:
         Logger.log(traceback.format_exc())
@@ -123,7 +125,7 @@ def get_references(file_name, encoding):
             except:
                 Logger.log(traceback.format_exc())
         else:
-            Logger.log("Could not find reference file %s!", file_name)
+            Logger.log("Could not find reference file %s!" % file_name)
     return text
 
 
@@ -153,7 +155,8 @@ def get_title(file_name, title_val):
 
 def merge_meta(meta1, meta2, title=None):
     """ Merge meta1 and meta2.  Add title to meta data if needed. """
-    meta = dict(meta1.items() + meta2.items())
+    meta = meta1.copy()
+    meta.update(meta2)
     if "title" not in meta and title is not None:
         if title is not None:
             meta["title"] = title

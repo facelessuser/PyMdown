@@ -1,5 +1,6 @@
 #!/usr/bin/python
 from __future__ import print_function
+# from __future__ import unicode_literals
 import sys
 from os.path import dirname, abspath, join
 from os import path, mkdir, chdir
@@ -13,6 +14,11 @@ except:
         imports = []
         data = []
 
+PY3 = sys.version_info >= (3, 0)
+if PY3:
+    unicode_str = str
+else:
+    unicode_str = unicode
 
 if sys.platform.startswith('win'):
     _PLATFORM = "windows"
@@ -20,7 +26,6 @@ elif sys.platform == "darwin":
     _PLATFORM = "osx"
 else:
     _PLATFORM = "linux"
-
 
 SPEC = '''# -*- mode: python -*-
 
@@ -31,11 +36,9 @@ a = Analysis(%(main)s,
              pathex=%(directory)s,
              hiddenimports=%(hidden)s,
              hookspath=None,
-             runtime_hooks=None,
-             cipher=block_cipher)
+             runtime_hooks=None)
 a.datas = %(data)s
-pyz = PYZ(a.pure,
-             cipher=block_cipher)
+pyz = PYZ(a.pure)
 exe = EXE(pyz,
           a.scripts,
           a.binaries,
@@ -226,7 +229,7 @@ def build(obj):
     )
 
     for line in iter(process.stdout.readline, b''):
-        sys.stdout.write(line)
+        sys.stdout.write(line.decode('utf-8') if PY3 else line)
     process.communicate()
 
     # Check for bad error code
