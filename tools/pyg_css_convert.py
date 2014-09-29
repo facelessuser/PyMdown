@@ -6,8 +6,8 @@ import re
 
 support_lib = normpath(join(dirname(abspath(__file__)), ".."))
 if exists(support_lib) and support_lib not in sys.path:
-    sys.path.append(normpath(join(dirname(abspath(__file__)), "..")))
-from file_strip.comments import Comments
+    sys.path.append(support_lib)
+from lib.file_strip.comments import Comments
 
 HEADER = '''"""
 Reverse generated from CSS back to PY via pyg_css_convert.py
@@ -32,6 +32,10 @@ from pygments.token import STANDARD_TYPES as st
 
 prefix = sys.argv[1]
 name = sys.argv[2]
+css_file = sys.argv[3]
+folder = dirname(abspath(css_file))
+if folder == "":
+    folder == '.'
 lname = name.lower()
 
 print(prefix)
@@ -167,7 +171,7 @@ def format_rules(rules, undetected, invalid, max_length):
     return text
 
 
-with open("%s.css" % lname, "r") as r:
+with open(css_file, "r") as r:
     text = []
     source = Comments('css', False).strip(r.read())
     m = re.search(r"(^\s*|\}\n*\s*)\s*%s\s*\{(?P<b_rule>[^}]+?)\}\s*" % prefix, source)
@@ -234,7 +238,7 @@ with open("%s.css" % lname, "r") as r:
     text.append(["Text", [fg], fg_comment])
     text.sort()
 
-    with open("%s.py" % lname, "w") as w:
+    with open(join(folder, "%s.py" % lname), "w") as w:
         w.write(
             HEADER + (
                 CLASS_START % (
