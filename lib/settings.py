@@ -341,7 +341,8 @@ class Settings(object):
                 mode = "accept"
             elif self.critic & cd.CRITIC_REJECT:
                 mode = "reject"
-            extensions.append("pymdown.critic(mode=%s)" % mode)
+            if mode != "ignore":
+                extensions.append("pymdown.critic(mode=%s)" % mode)
 
         # Handle plainhtml internally.
         # Must be appended to the end. Okay to come after critic.
