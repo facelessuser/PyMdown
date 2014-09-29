@@ -160,14 +160,12 @@ class Settings(object):
                     if subkey == "html_template":
                         pth = self.process_settings_path(subvalue, base)
                         settings[key][subkey] = pth if pth is not None else "default"
-                    elif subkey in ("css_style_sheets", "css_style_sheets"):
+                    elif subkey in ("css_style_sheets", "js_scripts"):
                         items = []
                         for i in subvalue:
                             pth = self.process_settings_path(unicode_string(pth), base)
                             if pth != None:
                                 items.append(pth)
-                        if subkey == "css_style_sheets" and len(items) == 0:
-                            item.append("default")
                         settings[key][subkey] = items
                     else:
                         settings[key][subkey] = subvalue
