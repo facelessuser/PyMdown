@@ -163,9 +163,12 @@ class Settings(object):
                     elif subkey in ("css_style_sheets", "js_scripts"):
                         items = []
                         for i in subvalue:
-                            pth = self.process_settings_path(unicode_string(pth), base)
-                            if pth != None:
-                                items.append(pth)
+                            org_pth = unicode_string(pth)
+                            new_pth = self.process_settings_path(org_pth, base)
+                            if new_pth != None:
+                                items.append(new_pth)
+                            else:
+                                items.append(org_pth)
                         settings[key][subkey] = items
                     else:
                         settings[key][subkey] = subvalue
