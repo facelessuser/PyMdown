@@ -26,6 +26,7 @@ extensions = [
     'pymdown.tasklist',
     'pymdown.progressbar',
     'pymdown.headeranchor',
+    'pymdown.smartfenced',
     'markdown.extensions.nl2br'
 ]
 
