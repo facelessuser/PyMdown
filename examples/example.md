@@ -684,6 +684,18 @@ double arrow <-->
 Fraction 1/2
 Fraction 1/4
 Fraction 3/4
+Fraction 1/3
+Fraction 2/3
+Fraction 1/5
+Fraction 2/5
+Fraction 3/5
+Fraction 4/5
+Fraction 1/6
+Fraction 5/6
+Fraction 1/8
+Fraction 3/8
+Fraction 5/8
+Fraction 7/8
 ```
 
 Copyright (c)
@@ -701,6 +713,18 @@ double arrow <-->
 Fraction 1/2
 Fraction 1/4
 Fraction 3/4
+Fraction 1/3
+Fraction 2/3
+Fraction 1/5
+Fraction 2/5
+Fraction 3/5
+Fraction 4/5
+Fraction 1/6
+Fraction 5/6
+Fraction 1/8
+Fraction 3/8
+Fraction 5/8
+Fraction 7/8
 
 ## Attribute List
 ```

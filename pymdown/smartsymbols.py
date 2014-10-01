@@ -26,7 +26,11 @@ RE_REG = ("smart-registered", r'\(r\)', r'&reg;')
 RE_PLUSMINUS = ("smart-plus-minus", r'\+/-', r'&plusmn;')
 RE_ARROWS = ("smart-arrows", r'(?P<arrows>\<-{2}\>|(?<!-)-{2}\>|\<-{2}(?!-))', lambda m: ARR[m.group('arrows')])
 RE_NOT_EQUAL = ("smart-not-equal", r'!=', r'&ne;')
-RE_FRACTIONS = ("smart-fractions", r'(?<!\d)(?P<fractions>1/4|1/2|3/4)(?!\d)', lambda m: FRAC[m.group('fractions')])
+RE_FRACTIONS = (
+    "smart-fractions",
+    r'(?<!\d)(?P<fractions>1/4|1/2|3/4|1/3|2/3|1/5|2/5|3/5|4/5|1/6|5/6|1/8|3/8|5/8|7/8)(?!\d)',
+    lambda m: FRAC[m.group('fractions')]
+)
 
 REPL = {
     'trademark': RE_TRADE,
@@ -41,7 +45,19 @@ REPL = {
 FRAC = {
     "1/4": "&frac14;",
     "1/2": "&frac12;",
-    "3/4": "&frac34;"
+    "3/4": "&frac34;",
+    "1/3": "&#8531;",
+    "2/3": "&#8532;",
+    "1/5": "&#8533;",
+    "2/5": "&#8534;",
+    "3/5": "&#8535;",
+    "4/5": "&#8536;",
+    "1/6": "&#8537;",
+    "5/6": "&#8538;",
+    "1/8": "&#8539;",
+    "3/8": "&#8540;",
+    "5/8": "&#8541;",
+    "7/8": "&#8542;"
 }
 
 ARR = {
