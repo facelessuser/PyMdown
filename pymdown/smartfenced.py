@@ -3,7 +3,7 @@ pymdown.smartfence
 Smart Fenced Code Blocks
 
 This is a modification of the original Fenced Code Extension.
-Algorithm has been changed to allow for fenced blocks in blockquotes,
+Algorithm has been rewritten to allow for fenced blocks in blockquotes,
 lists, etc.
 
 Fenced Code Extension for Python Markdown
@@ -59,6 +59,9 @@ class SmartFencedCodeExtension(Extension):
             )
 
     def reset(self):
+        # People should use smartfenced or or fenced_code
+        # but to make it easy on people who include all of
+        # "extra", we will patch over fenced_code.
         self.patch_fenced_rule()
 
 
