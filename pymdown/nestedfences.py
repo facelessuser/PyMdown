@@ -1,10 +1,14 @@
 """
-pymdown.smartfence
-Smart Fenced Code Blocks
+---
+pymdown.nestedfences
+Neseted Fenced Code Blocks
 
 This is a modification of the original Fenced Code Extension.
 Algorithm has been rewritten to allow for fenced blocks in blockquotes,
 lists, etc.
+
+Modified: 2014 Isaac Muse <isaacmuse@gmail.com>
+---
 
 Fenced Code Extension for Python Markdown
 =========================================
@@ -26,7 +30,9 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from markdown.extensions import Extension
 from markdown.preprocessors import Preprocessor
+from markdown.blockprocessors import BlockProcessor
 from markdown.extensions.codehilite import CodeHilite, CodeHiliteExtension, parse_hl_lines
+from markdown import util
 import re
 
 FENCED_START = r'''(?x)
@@ -40,38 +46,40 @@ FENCED_END = r'^%s[ ]*$'
 WS = r'^([\> ]{0,%d})(.*)'
 
 
-class SmartFencedCodeExtension(Extension):
+class NestedFencesCodeExtension(Extension):
 
     def extendMarkdown(self, md, md_globals):
         """ Add FencedBlockPreprocessor to the Markdown instance. """
         md.registerExtension(self)
-        self.md = md
+        self.markdown = md
 
     def patch_fenced_rule(self):
-        fenced = SmartFencedBlockPreprocessor(self.md)
-        if 'fenced_code_block' in self.md.preprocessors.keys():
-            self.md.preprocessors['fenced_code_block'] = fenced
+        fenced = NestedFencesBlockPreprocessor(self.markdown)
+        self.markdown.parser.blockprocessors['code'] = NestedFencesCodeBlockProcessor(self)
+        if 'fenced_code_block' in self.markdown.preprocessors.keys():
+            self.markdown.preprocessors['fenced_code_block'] = fenced
         else:
-            self.md.preprocessors.add(
+            self.markdown.preprocessors.add(
                 'fenced_code_block',
                 fenced,
                 ">normalize_whitespace"
             )
 
     def reset(self):
-        # People should use smartfenced or or fenced_code
+        # People should use nestedfenced **or** fenced_code,
         # but to make it easy on people who include all of
-        # "extra", we will patch over fenced_code.
+        # "extra", we will patch fenced_code after fenced_code
+        # has been loaded.
         self.patch_fenced_rule()
 
 
-class SmartFencedBlockPreprocessor(Preprocessor):
+class NestedFencesBlockPreprocessor(Preprocessor):
     fence_start = re.compile(FENCED_START)
     CODE_WRAP = '<pre><code%s>%s</code></pre>'
     LANG_TAG = ' class="%s"'
 
     def __init__(self, md):
-        super(SmartFencedBlockPreprocessor, self).__init__(md)
+        super(NestedFencesBlockPreprocessor, self).__init__(md)
 
         self.checked_for_codehilite = False
         self.codehilite_conf = {}
@@ -205,8 +213,8 @@ class SmartFencedBlockPreprocessor(Preprocessor):
 
     def highlight(self, source, start, end):
         """
-        If config is not empty, then the codehighlite extension
-        is enabled, so we call it to highlight the code
+        If config is not empty, then the codehlite extension
+        is enabled, so we call into to highlight the code.
         """
         if self.codehilite_conf:
             code = CodeHilite(
@@ -223,8 +231,8 @@ class SmartFencedBlockPreprocessor(Preprocessor):
             lang = lang = self.LANG_TAG % self.lang if self.lang else ''
             code = self.CODE_WRAP % (lang, self._escape(source))
 
+        # Save the fenced blocks to add once we are done iterating the lines
         placeholder = self.markdown.htmlStash.store(code, safe=True)
-
         self.stack.append(('%s%s' % (self.ws, placeholder), start, end))
 
     def _escape(self, txt):
@@ -236,5 +244,80 @@ class SmartFencedBlockPreprocessor(Preprocessor):
         return txt
 
 
+class NestedFencesCodeBlockProcessor(BlockProcessor):
+    """ Process code blocks. """
+    FENCED_BLOCK_RE = re.compile(r'^[\> ]*%s$' % (util.HTML_PLACEHOLDER % r'([0-9]+)'))
+
+    def test(self, parent, block):
+        return True
+
+    def break_out_fences(self, block):
+        pieces = []
+        piece = []
+        for line in block.split('\n'):
+            fence = None
+            if self.FENCED_BLOCK_RE.match(line):
+                if len(piece):
+                    pieces.append('\n'.join(piece))
+                pieces.append(line)
+                piece = []
+            else:
+                piece.append(line)
+        if len(piece):
+            pieces.append('\n'.join(piece))
+            piece = []
+        return pieces
+
+    def run(self, parent, blocks):
+        """ Look for and parse code block """
+        handled = False
+
+        if blocks[0].startswith(' '*self.tab_length):
+            block = blocks.pop(0)
+            theRest = ''
+            pieces = self.break_out_fences(block)
+            piece = pieces.pop(0)
+            sibling = self.lastChild(parent)
+            handled = True
+
+            if self.FENCED_BLOCK_RE.match(piece) is not None:
+                # Fenced block was found, append to sibling's tail
+                # or to the parent's text if sibling not found.
+                if sibling is not None:
+                    if sibling.tail is None:
+                        sibling.tail = piece
+                    else:
+                        sibling.tail += piece
+                else:
+                    if parent.text is None:
+                        parent.text = piece
+                    else:
+                        parent.text += piece
+                theRest = pieces[0]
+                pieces = []
+            elif sibling is not None and sibling.tag == "pre" and len(sibling) \
+                        and sibling[0].tag == "code":
+                # The previous block was a code block. As blank lines do not start
+                # new code blocks, append this block to the previous, adding back
+                # linebreaks removed from the split into a list.
+                code = sibling[0]
+                piece, theRest = self.detab(piece)
+                code.text = util.AtomicString('%s\n%s\n' % (code.text, piece.rstrip()))
+            else:
+                # This is a new codeblock. Create the elements and insert text.
+                pre = util.etree.SubElement(parent, 'pre')
+                code = util.etree.SubElement(pre, 'code')
+                piece, theRest = self.detab(piece)
+                code.text = util.AtomicString('%s\n' % piece.rstrip())
+            if theRest:
+                # This block contained unindented line(s) after the first indented 
+                # line. Insert these lines as the first block of the master blocks
+                # list for future processing.
+                theReset = '\n'.join([theRest] + pieces)
+                blocks.insert(0, theRest)
+
+        return handled
+
+
 def makeExtension(*args, **kwargs):
-    return SmartFencedCodeExtension(*args, **kwargs)
+    return NestedFencesCodeExtension(*args, **kwargs)
