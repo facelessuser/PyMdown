@@ -24,18 +24,30 @@ RE_TRADE = ("smart-trademark", r'\(tm\)', r'&trade;')
 RE_COPY = ("smart-copyright", r'\(c\)', r'&copy;')
 RE_REG = ("smart-registered", r'\(r\)', r'&reg;')
 RE_PLUSMINUS = ("smart-plus-minus", r'\+/-', r'&plusmn;')
-RE_DOUBLE_ARROW = ("smart-double-arrow", r'\<-{2}\>', r'&harr;')
-RE_RIGHT_ARROW = ("smart-right-arrow", r'-{2}\>', r'&rarr;')
-RE_LEFT_ARROW = ("smart-left-arrow", r'\<-{2}', r'&larr;')
+RE_ARROWS = ("smart-arrows", r'(?P<arrows>\<-{2}\>|(?<!-)-{2}\>|\<-{2}(?!-))', lambda m: ARR[m.group('arrows')])
 RE_NOT_EQUAL = ("smart-not-equal", r'!=', r'&ne;')
+RE_FRACTIONS = ("smart-fractions", r'(?<!\d)(?P<fractions>1/4|1/2|3/4)(?!\d)', lambda m: FRAC[m.group('fractions')])
 
 REPL = {
     'trademark': RE_TRADE,
     'copyright': RE_COPY,
     'registered': RE_REG,
     'plusminus': RE_PLUSMINUS,
-    'arrows': (RE_LEFT_ARROW, RE_RIGHT_ARROW, RE_DOUBLE_ARROW),
-    'notequal': RE_NOT_EQUAL
+    'arrows': RE_ARROWS,
+    'notequal': RE_NOT_EQUAL,
+    'fractions': RE_FRACTIONS
+}
+
+FRAC = {
+    "1/4": "&frac14;",
+    "1/2": "&frac12;",
+    "3/4": "&frac34;"
+}
+
+ARR = {
+    '-->': "&rarr;",
+    '<--': "&larr;",
+    '<-->': "&harr;"
 }
 
 
@@ -48,7 +60,10 @@ class SmartSymbolsPattern(HtmlPattern):
 
     def handleMatch(self, m):
         """ Replace symbol """
-        return self.md.htmlStash.store(m.expand(self.replace), safe=True)
+        return self.md.htmlStash.store(
+            m.expand(self.replace(m) if callable(self.replace) else self.replace),
+            safe=True
+        )
 
 
 class SmartSymbolsExtension(Extension):
@@ -60,7 +75,8 @@ class SmartSymbolsExtension(Extension):
             'registered': [True, 'Registered'],
             'plusminus': [True, 'Plus/Minus'],
             'arrows': [True, 'Arrows'],
-            'notequal': [True, 'Not Equal']
+            'notequal': [True, 'Not Equal'],
+            'fractions': [True, 'Fractions']
         }
         super(SmartSymbolsExtension, self).__init__(*args, **kwargs)
 
@@ -79,11 +95,7 @@ class SmartSymbolsExtension(Extension):
 
         for k, v in REPL.items():
             if configs[k]:
-                if isinstance(v[0], (list, tuple)):
-                    for subv in v:
-                        self.add_pattern(subv, md)
-                else:
-                    self.add_pattern(v, md)
+                self.add_pattern(v, md)
 
         inlineProcessor = InlineProcessor(md)
         inlineProcessor.inlinePatterns = self.patterns

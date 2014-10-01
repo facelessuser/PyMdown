@@ -680,6 +680,10 @@ A != B
 right arrow -->
 left arrow <--
 double arrow <-->
+
+Fraction 1/2
+Fraction 1/4
+Fraction 3/4
 ```
 
 Copyright (c)
@@ -693,6 +697,10 @@ A != B
 right arrow -->
 left arrow <--
 double arrow <-->
+
+Fraction 1/2
+Fraction 1/4
+Fraction 3/4
 
 ## Attribute List
 ```
