@@ -217,7 +217,7 @@ class ProgressBarExtension(Extension):
         progress = ProgressBarPattern(RE_PROGRESS)
         progress.config = self.getConfigs()
         progress.markdown = md
-        md.inlinePatterns.add("progress-bar", progress, "<not_strong")
+        md.inlinePatterns.add("progress-bar", progress, ">entity")
 
 
 def makeExtension(*args, **kwargs):
