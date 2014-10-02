@@ -1,0 +1,87 @@
+/* Solarized Dark
+
+For use with Jekyll and Pygments
+
+http://ethanschoonover.com/solarized
+
+SOLARIZED HEX      ROLE
+--------- -------- ------------------------------------------
+base03    #002b36  background
+base01    #586e75  comments / secondary content
+base1     #93a1a1  body text / default code / primary content
+orange    #cb4b16  constants
+red       #dc322f  regex, special keywords
+blue      #268bd2  reserved keywords
+cyan      #2aa198  strings, numbers
+green     #859900  operators, other keywords
+*/
+
+.codehilte {background-color:#002b36;color:#93a1a1 }
+.codehilte .c{color:#586e75}
+.codehilte .err{color:#93a1a1}
+.codehilte .g{color:#93a1a1}
+.codehilte .k{color:#859900}
+.codehilte .l{color:#93a1a1}
+.codehilte .n{color:#93a1a1}
+.codehilte .o{color:#859900}
+.codehilte .x{color:#cb4b16}
+.codehilte .p{color:#93a1a1}
+.codehilte .cm{color:#586e75}
+.codehilte .cp{color:#859900}
+.codehilte .c1{color:#586e75}
+.codehilte .cs{color:#859900}
+.codehilte .gd{color:#2aa198}
+.codehilte .ge{color:#93a1a1;font-style:italic}
+.codehilte .gr{color:#dc322f}
+.codehilte .gh{color:#cb4b16}
+.codehilte .gi{color:#859900}
+.codehilte .go{color:#93a1a1}
+.codehilte .gp{color:#93a1a1}
+.codehilte .gs{color:#93a1a1;font-weight:bold}
+.codehilte .gu{color:#cb4b16}
+.codehilte .gt{color:#93a1a1}
+.codehilte .kc{color:#cb4b16}
+.codehilte .kd{color:#268bd2}
+.codehilte .kn{color:#859900}
+.codehilte .kp{color:#859900}
+.codehilte .kr{color:#268bd2}
+.codehilte .kt{color:#dc322f}
+.codehilte .ld{color:#93a1a1}
+.codehilte .m{color:#2aa198}
+.codehilte .s{color:#2aa198}
+.codehilte .na{color:#93a1a1}
+.codehilte .nb{color:#B58900}
+.codehilte .nc{color:#268bd2}
+.codehilte .no{color:#cb4b16}
+.codehilte .nd{color:#268bd2}
+.codehilte .ni{color:#cb4b16}
+.codehilte .ne{color:#cb4b16}
+.codehilte .nf{color:#268bd2}
+.codehilte .nl{color:#93a1a1}
+.codehilte .nn{color:#93a1a1}
+.codehilte .nx{color:#93a1a1}
+.codehilte .py{color:#93a1a1}
+.codehilte .nt{color:#268bd2}
+.codehilte .nv{color:#268bd2}
+.codehilte .ow{color:#859900}
+.codehilte .w{color:#93a1a1}
+.codehilte .mf{color:#2aa198}
+.codehilte .mh{color:#2aa198}
+.codehilte .mi{color:#2aa198}
+.codehilte .mo{color:#2aa198}
+.codehilte .sb{color:#586e75}
+.codehilte .sc{color:#2aa198}
+.codehilte .sd{color:#93a1a1}
+.codehilte .s2{color:#2aa198}
+.codehilte .se{color:#cb4b16}
+.codehilte .sh{color:#93a1a1}
+.codehilte .si{color:#2aa198}
+.codehilte .sx{color:#2aa198}
+.codehilte .sr{color:#dc322f}
+.codehilte .s1{color:#2aa198}
+.codehilte .ss{color:#2aa198}
+.codehilte .bp{color:#268bd2}
+.codehilte .vc{color:#268bd2}
+.codehilte .vg{color:#268bd2}
+.codehilte .vi{color:#268bd2}
+.codehilte .il{color:#2aa198}
