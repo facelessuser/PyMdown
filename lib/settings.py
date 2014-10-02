@@ -259,7 +259,7 @@ class Settings(object):
 
         return basepath
 
-    def set_style(self, extensions):
+    def set_style(self, extensions, settings):
         """
         Search the extensions for the style to be used and return it.
         If it is not explicitly set, go ahead and insert the default
@@ -269,7 +269,6 @@ class Settings(object):
         re_pygment = r"pygments_style\s*=\s*([a-zA-Z][a-zA-Z_\d]*)"
         re_insert_pygment = re.compile(r"(?P<bracket_start>markdown\.extensions\.codehilite\([^)]+?)(?P<bracket_end>\s*\)$)|(?P<start>markdown\.extensions\.codehilite)")
         re_no_classes = re.compile(r"noclasses\s*=\s*(True|False)")
-        self.pygments_noclasses = False
         count = 0
         for e in extensions:
             # Search for codhilite to see what style is being set.
@@ -295,9 +294,9 @@ class Settings(object):
                 # Track if the "noclasses" settings option is enabled
                 noclasses = re_no_classes.search(e)
                 if noclasses is not None and noclasses.group(1) == "True":
-                    self.pygments_noclasses = True
+                    settings["settings"]["use_pygments_css"] = False
             count += 1
-        return style
+        settings["settings"]["style"] = style
 
     def process_settings_path(self, pth, base):
         file_path = self.resolve_meta_path(
@@ -364,4 +363,4 @@ class Settings(object):
         settings["extensions"] = extensions
 
         # Set style
-        settings["settings"]["style"] = self.set_style(extensions)
+        self.set_style(extensions, settings)

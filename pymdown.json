@@ -7,6 +7,9 @@
     // PyMdown will look relative to the binary if it can't find the file.
     "css_style_sheets": ["default-markdown.css"],
 
+    // Include the pygments css when using codehilite extension
+    "use_pygments_css": true,
+
     // Load up js scripts
     //
     // Is an array of scripts (path or link).

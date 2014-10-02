@@ -78,8 +78,7 @@ class Terminal(object):
 class Html(object):
     def __init__(
         self, output, preview=False, title=None,
-        plain=False, noclasses=False, script_path=None,
-        settings={}
+        plain=False, script_path=None, settings={}
     ):
         self.settings = settings
         self.encode_file = True
@@ -87,7 +86,6 @@ class Html(object):
         self.no_body = False
         self.plain = plain
         self.template = ''
-        self.noclasses = noclasses
         self.title = "Untitled"
         self.script_path = script_path
         self.set_output(output, preview)
@@ -192,7 +190,7 @@ class Html(object):
     def load_highlight(self, highlight_style):
         """ Load Syntax highlighter CSS """
         style = None
-        if highlight_style is not None and not self.noclasses:
+        if highlight_style is not None and bool(self.settings.get("use_pygments_css", True)):
             # Ensure pygments is enabled in the highlighter
             style = get_pygment_style(highlight_style)
 

@@ -303,7 +303,7 @@ class Convert(object):
                 html = formatter.Html(
                     self.settings["builtin"]["destination"], preview=self.config.preview,
                     plain=self.config.plain, settings=self.settings["settings"],
-                    noclasses=self.config.pygments_noclasses, script_path=script_path
+                    script_path=script_path
                 )
             except:
                 Logger.log(traceback.format_exc())
