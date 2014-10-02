@@ -47,11 +47,15 @@ def parse_file_name(file_name):
     return title, basepath
 
 
+def handle_line_endings(text):
+    return text.replace('\r\n', '\n').replace('\r', '\n')
+
+
 class PyMdownInsertText(sublime_plugin.TextCommand):
     wbfr = None
 
     def run(self, edit, save=False):
-        self.view.insert(edit, 0, PyMdownInsertText.wbfr)
+        self.view.insert(edit, 0, handle_line_endings(PyMdownInsertText.wbfr))
         PyMdownInsertText.clear_wbfr()
         if save:
             self.view.run_command('save')
@@ -129,6 +133,7 @@ class PyMdownPreviewCommand(PyMdownCommand):
         if self.target == "browser":
             # Nothing to do
             notify("Conversion complete!\nOpening in browser...")
+            # print(handle_line_endings(rbfr))
         elif self.target == "clipboard":
             sublime.set_clipboard(rbfr)
             notify("Conversion complete!\nResult copied to clipbaord.")
@@ -211,5 +216,5 @@ class PyMdownCriticStripCommand(PyMdownCommand):
         if self.returncode:
             self.error_message()
         else:
-            self.view.replace(edit, sublime.Region(0, self.view.size()), text)
+            self.view.replace(edit, sublime.Region(0, self.view.size()), handle_line_endings(text))
             notify("Critic stripping succesfully completed!")
