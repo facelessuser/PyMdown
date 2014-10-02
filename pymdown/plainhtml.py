@@ -19,60 +19,25 @@ from markdown.postprocessors import Postprocessor
 import re
 
 
-# Strip out id, class and style attributes for a simple html output
-# Since we are stripping out two attributes, we need to set up the groups in such
-# a way so we can retrieve the data we don't want to throw away
-# up to these worst case scenarios:
-#
-# <tag attr=""... (id|class|style)=""... attr=""... (id|class|style)=""... attr=""... (id|class|style)=""...>
-# <tag (id|class|style)=""... attr=""... (id|class|style)=""... attr=""... (id|class|style)=""... attr=""...>
-RE_STRIP_HTML = re.compile(
-    r'''
-        (?P<open><[\w\:\.\-]+)                                                            # Tag open
-        (?:
-            (?P<attr1>(?:\s+(?!id|class|style)[\w\-:]+(?:\s*=\s*(?:"[^"]*"|'[^']*'))?)*)  # Attributes to keep
-          | (?P<target1>\s+(?:id|class|style)(?:\s*=\s*(?:"[^"]*"|'[^']*'))*)             # Attributes to delte
-        )
-        (?:
-            (?P<attr2>(?:\s+(?!id|class|style)[\w\-:]+(?:\s*=\s*(?:"[^"]*"|'[^']*'))?)*)  # Attributes to keep
-          | (?P<target2>\s+(?:id|class|style)(?:\s*=\s*(?:"[^"]*"|'[^']*'))*)             # Attributes to delte
-        )?
-        (?:
-            (?P<attr3>(?:\s+(?!id|class|style)[\w\-:]+(?:\s*=\s*(?:"[^"]*"|'[^']*'))?)*)  # Attributes to keep
-          | (?P<target3>\s+(?:id|class|style)(?:\s*=\s*(?:"[^"]*"|'[^']*'))*)             # Attributes to delte
-        )?
-        (?:
-            (?P<attr4>(?:\s+(?!id|class|style)[\w\-:]+(?:\s*=\s*(?:"[^"]*"|'[^']*'))?)*)  # Attributes to keep
-          | (?P<target4>\s+(?:id|class|style)(?:\s*=\s*(?:"[^"]*"|'[^']*'))*)             # Attributes to delte
-        )?
-        (?:
-            (?P<attr5>(?:\s+(?!id|class|style)[\w\-:]+(?:\s*=\s*(?:"[^"]*"|'[^']*'))?)*)  # Attributes to keep
-          | (?P<target5>\s+(?:id|class|style)(?:\s*=\s*(?:"[^"]*"|'[^']*'))*)             # Attributes to delte
-        )?
-        (?:
-            (?P<attr6>(?:\s+(?!id|class|style)[\w\-:]+(?:\s*=\s*(?:"[^"]*"|'[^']*'))?)*)  # Attributes to keep
-          | (?P<target6>\s+(?:id|class|style)(?:\s*=\s*(?:"[^"]*"|'[^']*'))*)             # Attributes to delte
-        )?
-        (?P<close>\s*(?:\/?)>)                                                            # Tag end
+# Strip out id, class, on<word>, and style attributes for a simple html output
+RE_TAG_HTML = re.compile(
+    r'''(?x)
+        (?P<open><[\w\:\.\-]+)
+        (?P<attr>(?:\s+[\w\-:]+(?:\s*=\s*(?:"[^"]*"|'[^']*'))?)*)
+        (?P<close>\s*(?:\/?)>)
     ''',
-    re.MULTILINE | re.DOTALL | re.VERBOSE
+    re.DOTALL | re.UNICODE
+)
+
+RE_TAG_BAD_ATTR = re.compile(
+    r'''(?P<attr>(?:\s+(?:id|class|style|on[\w]+)(?:\s*=\s*(?:"[^"]*"|'[^']*'))?)*)''',
+    re.DOTALL | re.UNICODE
 )
 
 
 def repl(m):
     tag = m.group('open')
-    if m.group('attr1'):
-        tag += m.group('attr1')
-    if m.group('attr2'):
-        tag += m.group('attr2')
-    if m.group('attr3'):
-        tag += m.group('attr3')
-    if m.group('attr4'):
-        tag += m.group('attr4')
-    if m.group('attr5'):
-        tag += m.group('attr5')
-    if m.group('attr6'):
-        tag += m.group('attr6')
+    tag += RE_TAG_BAD_ATTR.sub('', m.group('attr'))
     tag += m.group('close')
     return tag
 
@@ -81,7 +46,7 @@ class PlainHtmlPostprocessor(Postprocessor):
     def run(self, text):
         ''' Strip out ids and classes for a simplified HTML output '''
 
-        return RE_STRIP_HTML.sub(repl, text)
+        return RE_TAG_HTML.sub(repl, text)
 
 
 class PlainHtmlExtension(Extension):

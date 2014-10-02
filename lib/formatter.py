@@ -84,7 +84,7 @@ class Html(object):
         self.settings = settings
         self.encode_file = True
         self.body_end = None
-        self.no_body = True
+        self.no_body = False
         self.plain = plain
         self.template = ''
         self.noclasses = noclasses
@@ -139,6 +139,7 @@ class Html(object):
 
         # If template isn't found, we will still output markdown html
         if self.template is not None:
+            self.no_body = True
             # We have a template.  Look for {{ BODY }}
             # so we know where to insert the markdown.
             # If we can't find an insertion point, the html
