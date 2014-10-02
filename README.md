@@ -1,5 +1,5 @@
 # PyMdown
-PyMdown is CLI tool to convert or even batch convert markdown files to HTML. It can also accept a file stream.  It was inspired by https://github.com/revolunet/sublimetext-markdown-preview.
+PyMdown is CLI tool to convert or even batch convert markdown files to HTML.  It can also generate HTML previews of markdown and autoopen them in a webbrowser. It can also accept a file stream.
 
 # Status
 This is in a **Beta** state.  Because of the **Beta** state, things are in flux and are subject to change without warning.
@@ -11,24 +11,35 @@ This is in a **Beta** state.  Because of the **Beta** state, things are in flux 
 - Receive input file stream for conversion
 - Configurable options file to tweak Python's Markdown package behavior
 - Uses Pygments for syntax highighlighting
-- Repo includes in `extras` a simple Sublime Text plugin to stream your files to pymdown
-- Preview option to open output in a browser instead
+- Preview option to preview output in a browser
 - Optionally all the default Markdown extensions, plus these optional pymdown extensions:
-    - **caret**: Add <ins>insert</ins> by using `^^insert^^` and/or Pandoc style <sup>superscript</sub> by using `^superscript^`. Can be enabled in the settings file.
-    - **tilde**: Add <del>delete</del> tags by using `~~delete~~` and/or Pandoc style <sub>subscript</sub> by using `~subscript~`.. Can be enabled in the settings file.
-    - **mark**: Experimental extension to add <mark>mark</mark> by using `==mark==`.
-    - **magiclink**: Search for and convert http or ftp links to actual HTML links for lazy link creation. Can be enabled in the settings file.
-    - **tasklist**: This adds support for github style tasklists.  Can be enabled in the settings.
-    - **githubemoji**: This adds emojis.  Assets link to github's emoji icons.  Can be enabled in the settings.
-    - **headeranchor**: Insert github style header anchor on left side of h1-h6 tags.
-    - **progressbar**: Support for adding progress bars.
-    - **betterem**: Better emphasis and strong support.  Defaults to using a *smart* configuration, but can be disabled for a *dumb* configuration.
-    - **github**: Adds `magiclink`, `betterem`, `tilde` (just delete), `githubemoji`, `tasklist`, `headeranchor`, and `nl2br` to get a github feel. It is advised to pair this with `extra`.
-    - **pymdown**: Adds `magiclink`, `betterem`, `tilde`, `caret`, `githubemoji`, `tasklist`, `headeranchor`, `nl2br`, `smartsymbols`, and `progressbar`.  It is advised to pair this with `extra`.
-    - **absolutepath**: Converts local file paths from relative to absolute for things like links, images, etc.  This is automatically done on all previews.  It can be configured to run all the time outside of previews in the settings file, and it can take a hardcoded path `absolutepath(base_path=/my/path)` or a dynamic path `absolutepath(base_path=${BASE_PATH})` that can take the base_path fed in on the command line or calculated from the source files path.  If you set this in the settings file, keep in mind the settings file overrides preview's settings.
-    - **b64**: Base64 encode local image files. If can be enabled and configured in the settings file and can take a hardcoded path `b64(base_path=/my/path)` or it can take a dynamic base_path `b64(base_path=${BASE_PATH})` fed in on the command line or calculated from the source files path.
-- Special extensions:
-    - **critic**: Cannot be set in the settings file. It is configured automatically, and its behaviour can only be modifid via the command line.  In its current form, it can output in HTML a highlighted critic form to make it more readable.  If you select `--accept` or `--reject`, it will strip out the critic marks by accepting the changes or discarding them.
+
+    | Extension    | Description |
+    |--------------|-------------|
+    | caret        | Add <ins>insert</ins> by using `^^insert^^` and/or Pandoc style <sup>superscript</sub> by using `^superscript^`. Can be enabled in the settings file. |
+    | tilde        | Add <del>delete</del> tags by using `~~delete~~` and/or Pandoc style <sub>subscript</sub> by using `~subscript~`.. Can be enabled in the settings file. |
+    | mark         | Experimental extension to add <mark>mark</mark> by using `==mark==`. |
+    | magiclink    | Search for and convert http or ftp links to actual HTML links for lazy link creation. Can be enabled in the settings file. |
+    | htmlcomments | Remove html comments from the final output. |
+    | tasklist     | This adds support for github style tasklists.  Can be enabled in the settings. |
+    | githubemoji  | This adds emojis.  Assets link to github's emoji icons.  Can be enabled in the settings. |
+    | headeranchor | Insert github style header anchor on left side of h1-h6 tags. |
+    | progressbar  | Support for adding progress bars. |
+    | betterem     | Better emphasis and strong support.  Defaults to using a *smart* configuration, but can be disabled for a *dumb* configuration. |
+    | nestedfences | Allow the nesting of fences in blockquotes, lists, admonitions etc.  Can also disable support for indented code blocks. |
+    | smartsymbols | Add support for auto convrting syntax for things like copyrite, trademark, registered, not equal, plus/minus, arrows, and selected fractions. |
+    | github       | Adds `magiclink`, `betterem`, `tilde` (just delete), `githubemoji`, `tasklist`, `headeranchor`, and `nl2br` to get a github feel. It is advised to pair this with `extra`. |
+    | pymdown      | Adds `magiclink`, `betterem`, `tilde`, `caret`, `githubemoji`, `tasklist`, `headeranchor`, `nl2br`, `smartsymbols`, `htmlcomments`, `nestedfences` and `progressbar`.  It is advised to pair this with `extra`. |
+    | absolutepath | Converts local file paths from relative to absolute for things like links, images, etc.  This is automatically done on all previews.  It can be configured to run all the time outside of previews in the settings file, and it can take a hardcoded path `absolutepath(base_path=/my/path)` or a dynamic path `absolutepath(base_path=${BASE_PATH})` that can take the base_path fed in on the command line or calculated from the source files path.  If you set this in the settings file, keep in mind the settings file overrides preview's settings. |
+    | b64          | Base64 encode local image files. If can be enabled and configured in the settings file and can take a hardcoded path `b64(base_path=/my/path)` or it can take a dynamic base_path `b64(base_path=${BASE_PATH})` fed in on the command line or calculated from the source files path. |
+
+- Non-configurable  extensions that extend PyMdowns abilities (cannot be set in the settings file):
+
+    | Extension    | Description |
+    |--------------|-------------|
+    | critic       | It is configured automatically based on command line inputs.  In its current form, it can output in HTML a highlighted critic form to make it more readable.  If you select `--accept` or `--reject`, it will strip out the critic marks by accepting the changes or discarding them. |
+    | plainhtml    | It is configured automatically based on command line inputs.  This extension strips out things like id's, styles etc. to give a more simple, plain HTML output. |
+
 # Styles and Configuration
 
 ## Syntax Highlighting with Pygments
@@ -48,16 +59,22 @@ Notice the syntax style is set with the `pygments_style` key.
 Add them to the provided settings:
 
 ```javascript
+    // Select your CSS for you output html
+    // or you can have it all contained in your HTML template
+    //
     // Is an array of stylesheets (path or link).
-    // "default" can also be as an entry in the array to use the PyMdowns.
-    // default css for the markdown.
     // If it points to a physical file, it will be included.
-    "css_style_sheets": ["default"],
+    // PyMdown will look relative to the binary if it can't find the file.
+    "css_style_sheets": ["default-markdown.css"],
+
+    // Include the pygments css when using codehilite extension
+    "use_pygments_css": true,
 
     // Load up js scripts
     //
     // Is an array of scripts (path or link).
     // If it points to a physical file, it will be included.
+    // PyMdown will look relative to the binary if it can't find the file.
     "js_scripts": [],
 ```
 
@@ -66,10 +83,11 @@ This can be done here:
 
 ```javascript
     // Your HTML template
-    "html_template": "default",
+    // PyMdown will look relative to the binary if it can't find the file.
+    "html_template": "default-template.html",
 ```
 
-Templates should use `{{ HEAD }}` to receive heder info like CSS and JS files.  `{{ BODY }}` to receive markdown content, and optionally `{{ TITLE }}` to receive the title.
+Templates can use `{{ HEAD }}` to receive header info like CSS and JS files.  `{{ BODY }}` is used to receive markdown content. Optionally `{{ TITLE }}` i sused to receive the title.
 
 # Command Line
 
@@ -113,41 +131,49 @@ optional arguments:
 # Sublime Plugin
 Generally I recommend https://github.com/revolunet/sublimetext-markdown-preview.  But I wrote this program and this sublime plugin to gain certain control I didn't already have.  If for whatever reason you want to use this plugin, this is how you set it up.
 
-Just drop the extra folder in your Sublime `Packages` folder and name to something sane like `pymdown`.  It currently provides only 4 commands that are accessible from the command palette:
+Just drop the extra folder in your Sublime `Packages` folder and name to something sane like `pymdown`.  It currently provides the following commands that are accessible from the command palette:
 
 ```javascript
     //////////////////////////////////
     // PyMdown
     //////////////////////////////////
-
-    // Preview the current mardown view in your browser
     {
         "caption": "PyMdown: Preview Markdown",
-        "command": "pymdown_preview"
+        "command": "py_mdown_preview",
+        "args": {"target": "browser"}
     },
-
-    // Strip out critic markup in your current view
-    // favoring the suggested changes
+    {
+        "caption": "PyMdown: Save to Disk",
+        "command": "py_mdown_preview",
+        "args": {"target": "save"}
+    },
+    {
+        "caption": "PyMdown: To Clipboard",
+        "command": "py_mdown_preview",
+        "args": {"target": "clipboard", "plain": true}
+    },
+    {
+        "caption": "PyMdown: Export to Sublime",
+        "command": "py_mdown_preview",
+        "args": {"target": "sublime", "plain": true}
+    },
     {
         "caption": "PyMdown: Critic Strip Markdown (accept)",
-        "command": "pymdown_critic_strip"
+        "command": "py_mdown_critic_strip"
     },
-
-    // Strip out the critic markup in your current view
-    // rejecting the suggested changes
     {
         "caption": "PyMdown: Critic Strip Markdown (reject)",
-        "command": "pymdown_critic_strip",
+        "command": "py_mdown_critic_strip",
         "args": {"reject": true}
     }
 ```
 
-
 # Credits
-- Uses a slightly modified https://pypi.python.org/pypi/Markdown
-- Uses the development branch of Pygments for Python 3 supporthttp://pygments.org/
-- Borrowed and modified default CSS file from https://github.com/revolunet/sublimetext-markdown-preview.  Also, the original inspiration for this project.
+- Uses a slightly modified https://pypi.python.org/pypi/Markdown so that the codehilite extension works in a pyinstaller environment.  I may submit a patch for the future 
+- Uses the development branch of Pygments for Python 3 support http://pygments.org/.  This will hopefully be physically removed from the repo as soon as it is released, but it will remain a requirment.
 - Includes Tomorrow Themes for Pygment from https://github.com/MozMorris/tomorrow-pygments
+- Provides a github CSS theme for pygments
+- It was inspired by https://github.com/revolunet/sublimetext-markdown-preview.
 
 # Build
 - Download or clone Pyinstaller main branch (latest release won't work; the dev branch is needed) from github into the mdown project folder https://github.com/pyinstaller/pyinstaller
@@ -155,9 +181,11 @@ Just drop the extra folder in your Sublime `Packages` folder and name to somethi
 - Binary will be in the `pymdown/dist` folder
 
 # TODO
-- [ ] Maybe add some notation for cite and kbd tags?  It isn't decided if I will do any of these.  Support would be added via an extension.
+- [ ] Better CSS in the default CSS file for print mode in webbrowsers
 - [ ] Maybe add an extension for embedding content?
-- ...stuff I havn't yet thought of...
+- [ ] Unit tests
+
+Potentially anything else I haven't yet thought of.
 
 # License
 MIT license.
