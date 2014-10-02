@@ -15,10 +15,12 @@ import traceback
 import sys
 from copy import deepcopy
 from os.path import dirname, abspath, exists, normpath, expanduser
+import pygments.styles as pyg_styles
 from os.path import isfile, isdir, splitext, join, basename
 from . import resources as res
 from .logger import Logger
 from .file_strip.json import sanitize_json
+from .resources import resource_exists
 
 PY3 = sys.version_info >= (3, 0)
 
@@ -266,20 +268,26 @@ class Settings(object):
         style (github).
         """
         style = None
-        re_pygment = r"pygments_style\s*=\s*([a-zA-Z][a-zA-Z_\d]*)"
+        re_pygment = r"pygments_style\s*=\s*([a-zA-Z][a-zA-Z_\d]*)\s*(,?)"
         re_insert_pygment = re.compile(r"(?P<bracket_start>markdown\.extensions\.codehilite\([^)]+?)(?P<bracket_end>\s*\)$)|(?P<start>markdown\.extensions\.codehilite)")
         re_no_classes = re.compile(r"noclasses\s*=\s*(True|False)")
+
         count = 0
         for e in extensions:
             # Search for codhilite to see what style is being set.
             if e.startswith("markdown.extensions.codehilite"):
+                # Track if the "noclasses" settings option is enabled
+                noclasses = re_no_classes.search(e)
+                if noclasses is not None and noclasses.group(1) == "True":
+                    settings["settings"]["use_pygments_css"] = False
+
                 pygments_style = re.search(re_pygment, e)
                 if pygments_style is None:
                     # Explicitly define a pygment style and store the name
                     # This is to ensure the "noclasses" option always works
-                    style = "github"
+                    style = "default"
                     m = re_insert_pygment.match(e)
-                    if m is not None:
+                    if m is not None and not settings["settings"].get("use_pygments_css", True):
                         if m.group('bracket_start'):
                             start = m.group('bracket_start') + ',pygments_style='
                             end = ")"
@@ -289,12 +297,20 @@ class Settings(object):
                         extensions[count] = start + style + end
                 else:
                     # Store pygment style name
-                    style = "github" if pygments_style is None else pygments_style.group(1)
+                    style = "default" if pygments_style is None else pygments_style.group(1)
+                    try:
+                        # Check if the desired style exists internally
+                        pyg_styles.get_style_by_name(style)
+                        internal_style = style
+                    except:
+                        internal_style = "default"
+                        #  Check if style exists as an included CSS style
+                        if resource_exists(join('stylesheets', 'pygments'), "%s.css" % style) is None:
+                            # Just set it to default then
+                            style = "default"
+                    comma = ',' if pygments_style.group(2) is not None and pygments_style.group(2) != '' else ''
+                    extensions[count] = e.replace(pygments_style.group(0), 'pygments_style=%s%s' % (internal_style, comma))
 
-                # Track if the "noclasses" settings option is enabled
-                noclasses = re_no_classes.search(e)
-                if noclasses is not None and noclasses.group(1) == "True":
-                    settings["settings"]["use_pygments_css"] = False
             count += 1
         settings["settings"]["style"] = style
 

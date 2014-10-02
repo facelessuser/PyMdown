@@ -19,7 +19,9 @@ data = [
     ("pygments/LICENSE", "./pygments/LICENSE", "DATA")
 ]
 
-data_to_crawl = []
+data_to_crawl = [
+    "stylesheets/pygments"
+]
 
 for directory in data_to_crawl:
     for f in os.listdir(directory):
