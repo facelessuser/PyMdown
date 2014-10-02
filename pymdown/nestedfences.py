@@ -68,11 +68,8 @@ class NestedFencesCodeExtension(Extension):
         if 'fenced_code_block' in self.markdown.preprocessors.keys():
             self.markdown.preprocessors['fenced_code_block'] = fenced
         else:
-            self.markdown.preprocessors.add(
-                'fenced_code_block',
-                fenced,
-                ">normalize_whitespace"
-            )
+            pos = ">critic" if ['critic'] in self.markdown.preprocessors.keys() else ">normalize_whitespace"
+            self.markdown.preprocessors.add('fenced_code_block', fenced, pos)
 
     def reset(self):
         # People should use nestedfenced **or** fenced_code,
