@@ -31,6 +31,7 @@ for directory in data_to_crawl:
 imports = []
 
 imports_to_crawl = [
+    "lexers",
     "markdown/extensions",
     "pygments/styles",
     "pygments/lexers",
