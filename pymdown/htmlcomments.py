@@ -1,7 +1,7 @@
 """
-mdownx
-Import all of the mdownx plugins
-(except for those that shouldn't regularly be used)
+pymdown.htmlcomments
+An extension for Python Markdown.
+Strip classes, styles, and ids from html
 
 MIT license.
 
@@ -15,30 +15,27 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 """
 from __future__ import unicode_literals
 from markdown import Extension
+from markdown.postprocessors import Postprocessor
+import re
 
-extensions = [
-    'pymdown.magiclink',
-    'pymdown.betterem',
-    'pymdown.tilde',
-    'pymdown.caret',
-    'pymdown.smartsymbols',
-    'pymdown.githubemoji',
-    'pymdown.tasklist',
-    'pymdown.progressbar',
-    'pymdown.headeranchor',
-    'pymdown.nestedfences',
-    'pymdown.htmlcomments',
-    'markdown.extensions.nl2br'
-]
+RE_HTML_COMMENTS = re.compile(r'<!--[\s\S]*?-->')
 
 
-class PyMdownExtension(Extension):
-    """Add various extensions to Markdown class"""
+class HtmlCommentsPostprocessor(Postprocessor):
+    def run(self, text):
+        """ Strip comments """
 
+        return RE_HTML_COMMENTS.sub('', text)
+
+
+class HtmlCommentsExtension(Extension):
     def extendMarkdown(self, md, md_globals):
-        """Register extension instances"""
-        md.registerExtensions(extensions, self.config)
+        """ Add HtmlCommentsPostprocessor """
+
+        htmlcomments = HtmlCommentsPostprocessor(md)
+        md.postprocessors.add("html-comments", htmlcomments, "_end")
+        md.registerExtension(self)
 
 
 def makeExtension(*args, **kwargs):
-    return PyMdownExtension(*args, **kwargs)
+    return HtmlCommentsExtension(*args, **kwargs)

@@ -24,8 +24,12 @@ RE_TRADE = ("smart-trademark", r'\(tm\)', r'&trade;')
 RE_COPY = ("smart-copyright", r'\(c\)', r'&copy;')
 RE_REG = ("smart-registered", r'\(r\)', r'&reg;')
 RE_PLUSMINUS = ("smart-plus-minus", r'\+/-', r'&plusmn;')
-RE_ARROWS = ("smart-arrows", r'(?P<arrows>\<-{2}\>|(?<!-)-{2}\>|\<-{2}(?!-))', lambda m: ARR[m.group('arrows')])
 RE_NOT_EQUAL = ("smart-not-equal", r'!=', r'&ne;')
+RE_ARROWS = (
+    "smart-arrows",
+    r'(?P<arrows>\<-{2}\>|(?<!-)-{2}\>|\<-{2}(?!-))',
+    lambda m: ARR[m.group('arrows')]
+)
 RE_FRACTIONS = (
     "smart-fractions",
     r'(?<!\d)(?P<fractions>1/4|1/2|3/4|1/3|2/3|1/5|2/5|3/5|4/5|1/6|5/6|1/8|3/8|5/8|7/8)(?!\d)',

@@ -44,14 +44,14 @@ def repl(m):
 
 class PlainHtmlPostprocessor(Postprocessor):
     def run(self, text):
-        ''' Strip out ids and classes for a simplified HTML output '''
+        """ Strip out ids and classes for a simplified HTML output """
 
         return RE_TAG_HTML.sub(repl, text)
 
 
 class PlainHtmlExtension(Extension):
     def extendMarkdown(self, md, md_globals):
-        """Add HeaderAnchorTreeprocessor to Markdown instance"""
+        """ Strip unwanted attributes to give a plain HTML """
 
         plainhtml = PlainHtmlPostprocessor(md)
         md.postprocessors.add("plain-html", plainhtml, "_end")
