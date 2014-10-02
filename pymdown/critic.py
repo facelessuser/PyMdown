@@ -119,7 +119,7 @@ class CriticViewPreprocessor(Preprocessor):
         text = ''
         processor = self.critic_ignore
 
-        if self.config['mode'] == "ignore":
+        if self.config['mode'] == "view":
             processor = self.critic_view
 
         for m in self.RE_CRITIC.finditer('\n'.join(lines)):
@@ -139,10 +139,10 @@ class CriticViewPreprocessor(Preprocessor):
 class CriticExtension(Extension):
     def __init__(self, *args, **kwargs):
         self.config = {
-            'mode': ['ignore', "Critic mode to run in ('ignore', 'accept', or 'reject') - Default: ignore "]
+            'mode': ['view', "Critic mode to run in ('view', 'accept', or 'reject') - Default: view "]
         }
 
-        if "mode" in kwargs and kwargs["mode"] not in ('ignore', 'accept', 'reject'):
+        if "mode" in kwargs and kwargs["mode"] not in ('view', 'accept', 'reject'):
             del kwargs["mode"]
 
         super(CriticExtension, self).__init__(*args, **kwargs)
