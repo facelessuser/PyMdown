@@ -19,8 +19,9 @@ import webbrowser
 import traceback
 from os.path import dirname, abspath, normpath, exists, basename, join, isfile
 from lib.logger import Logger
-from lib import critic_dump as cd
 from lib.settings import Settings
+from lib.settings import CRITIC_IGNORE, CRITIC_ACCEPT, CRITIC_REJECT, CRITIC_DUMP
+import lib.critic_dump as critic_dump
 from lib.resources import load_text_resource
 from lib.pymdown import PyMdowns
 from lib import formatter
@@ -105,14 +106,13 @@ def auto_open(name):
 
 def get_critic_mode(args):
     """ Setp the critic mode """
-    critic_mode = cd.CRITIC_IGNORE
-    # if not args.no_critic:
-    if args.accept or args.reject:
-        critic_mode |= cd.CRITIC_ACCEPT if args.accept else cd.CRITIC_REJECT
+    critic_mode = CRITIC_IGNORE
+    if args.accept:
+        critic_mode |= CRITIC_ACCEPT
+    elif args.reject:
+        critic_mode |= CRITIC_REJECT
     if args.critic_dump:
-        critic_mode |= cd.CRITIC_DUMP
-    # else:
-    #     critic_mode |= cd.CRITIC_OFF
+        critic_mode |= CRITIC_DUMP
     return critic_mode
 
 
@@ -261,7 +261,7 @@ class Convert(object):
                 status = FAIL
 
         if status == PASS:
-            if not (self.config.critic & (cd.CRITIC_REJECT | cd.CRITIC_ACCEPT)):
+            if not (self.config.critic & (CRITIC_REJECT | CRITIC_ACCEPT)):
                 Logger.log("Acceptance or rejection was not specified for critic dump!")
                 status = FAIL
             else:
@@ -273,7 +273,7 @@ class Convert(object):
                     status = FAIL
 
         if status == PASS:
-            text = cd.CriticDump().dump(text, self.config.critic & cd.CRITIC_ACCEPT)
+            text = critic_dump.CriticDump().dump(text, self.config.critic & CRITIC_ACCEPT)
             txt.write(text)
             txt.close()
 
@@ -363,7 +363,7 @@ class Convert(object):
                     file_name = md_file if not self.config.is_stream else None
                     text = None if not self.config.is_stream else md_file
                     md_file = None
-                    if self.config.critic & cd.CRITIC_DUMP:
+                    if self.config.critic & CRITIC_DUMP:
                         status = self.critic_dump(file_name, text)
                     else:
                         status = self.html_dump(file_name, text)
@@ -394,7 +394,6 @@ if __name__ == "__main__":
         critic_group.add_argument('--accept', '-a', action='store_true', default=False, help="Accept propossed critic marks when using in normal processing and --critic-dump processing")
         critic_group.add_argument('--reject', '-r', action='store_true', default=False, help="Reject propossed critic marks when using in normal processing and --critic-dump processing")
         parser.add_argument('--critic-dump', action='store_true', default=False, help="Process critic marks, dumps file(s), and exits.")
-        # parser.add_argument('--no-critic', action='store_true', default=False, help="Turn off critic feature completely")
         # Output
         parser.add_argument('--output', '-o', nargs=1, default=None, help="Output file. Ignored in batch mode.")
         parser.add_argument('--batch', '-b', action='store_true', default=False, help="Batch mode output.")

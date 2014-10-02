@@ -62,7 +62,7 @@ class MdWrapper(Markdown):
                         'Extension "%s.%s" must be of type: "markdown.Extension"'
                         % (ext.__class__.__module__, ext.__class__.__name__))
             except:
-                print(str(traceback.format_exc()))
+                # print(str(traceback.format_exc()))
                 continue
 
         return self

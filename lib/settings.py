@@ -16,7 +16,6 @@ import sys
 from copy import deepcopy
 from os.path import dirname, abspath, exists, normpath, expanduser
 from os.path import isfile, isdir, splitext, join, basename
-from . import critic_dump as cd
 from . import resources as res
 from .logger import Logger
 from .file_strip.json import sanitize_json
@@ -30,6 +29,12 @@ else:
 
 
 BUILTIN_KEYS = ('destination', 'basepath', 'references')
+
+CRITIC_IGNORE = 0
+CRITIC_ACCEPT = 1
+CRITIC_REJECT = 2
+CRITIC_VIEW = 4
+CRITIC_DUMP = 8
 
 
 class PyMdownSettingsException(Exception):
@@ -51,7 +56,7 @@ def is_abs(pth):
 class Settings(object):
     def __init__(
         self, settings_path=None, stream=False,
-        batch=False, critic=cd.CRITIC_IGNORE,
+        batch=False, critic=CRITIC_IGNORE,
         plain=False, preview=False, encoding='utf-8'
     ):
         """ Initialize """
@@ -208,7 +213,7 @@ class Settings(object):
     def get_output(self, out_name):
         """ Get the path to output the file. """
 
-        critic_enabled = self.critic & cd.CRITIC_ACCEPT or self.critic & cd.CRITIC_REJECT
+        critic_enabled = self.critic & (CRITIC_ACCEPT | CRITIC_REJECT)
         output = None
         if out_name is not None:
             out_name = expanduser(out_name)
@@ -223,8 +228,8 @@ class Settings(object):
                     Logger.log("'%s' directory does not exist!" % name)
         else:
             name = abspath(self.file_name)
-            if self.critic & cd.CRITIC_DUMP and critic_enabled:
-                if self.critic & cd.CRITIC_REJECT:
+            if self.critic & CRITIC_DUMP and critic_enabled:
+                if self.critic & CRITIC_REJECT:
                     label = ".rejected"
                 else:
                     label = ".accepted"
@@ -342,14 +347,13 @@ class Settings(object):
 
         # Handle the appropriate critic mode internally
         # Critic must be appended to end of extension list
-        if self.critic != cd.CRITIC_OFF:
-            mode = "ignore"
-            if self.critic & cd.CRITIC_ACCEPT:
-                mode = "accept"
-            elif self.critic & cd.CRITIC_REJECT:
-                mode = "reject"
-            if mode != "ignore":
-                extensions.append("pymdown.critic(mode=%s)" % mode)
+        mode = "ignore"
+        if self.critic & CRITIC_ACCEPT:
+            mode = "accept"
+        elif self.critic & CRITIC_REJECT:
+            mode = "reject"
+        if mode != "ignore":
+            extensions.append("pymdown.critic(mode=%s)" % mode)
 
         # Handle plainhtml internally.
         # Must be appended to the end. Okay to come after critic.

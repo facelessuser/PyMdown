@@ -137,7 +137,7 @@ class PyMdownPreviewCommand(PyMdownCommand):
             if window is not None:
                 view = window.new_file()
                 PyMdownInsertText.set_wbfr(rbfr)
-                view.run_command("pymdown_insert_text")
+                view.run_command("py_mdown_insert_text")
                 notify("Conversion complete!\nResult exported to Sublime.")
             else:
                 error("Could not export!\nView has no window")
@@ -189,25 +189,6 @@ class PyMdownPreviewCommand(PyMdownCommand):
             self.error_message()
         else:
             self.output(rbfr)
-
-
-# class PyMdownCriticPreviewCommand(PyMdownCommand):
-#     message = "pymdown failed to generate your preview!"
-
-#     def run(self, edit, alternate_settings=None):
-#         self.setup(alternate_settings)
-#         if self.binary:
-#             self.convert(edit)
-
-#     def convert(self, edit):
-#         self.cmd.append("-p")
-#         self.cmd.append("-c")
-
-#         print(self.call())
-#         if self.returncode:
-#             self.error_message()
-#         else:
-#             notify("Conversion complete!\nOpening in browser...")
 
 
 class PyMdownCriticStripCommand(PyMdownCommand):

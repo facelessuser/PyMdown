@@ -9,13 +9,6 @@ Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
 """
 import re
 
-CRITIC_IGNORE = 0
-CRITIC_ACCEPT = 1
-CRITIC_REJECT = 2
-CRITIC_VIEW = 4
-CRITIC_DUMP = 8
-CRITIC_OFF = 16
-
 RE_CRITIC = re.compile(
     r'''
         ((?P<open>\{)
@@ -31,8 +24,8 @@ RE_CRITIC = re.compile(
     re.MULTILINE | re.DOTALL | re.VERBOSE
 )
 
-class CriticDump(object):
 
+class CriticDump(object):
     def process(self, m):
         if self.accept:
             if m.group('ins_open'):
