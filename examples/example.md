@@ -526,7 +526,7 @@ function doIt() {
 var Test = 0;
 ~~~
 
-```javascript
+```javascript hl_lines="4 5"
 // Fenced **with** highlighting
 function doIt() {
     for (var i = 1; i <= slen ; i^^) {
@@ -551,7 +551,7 @@ function doIt() {
 var Test = 0;
 ~~~
 
-```javascript
+```javascript hl_lines="4 5"
 // Fenced **with** highlighting
 function doIt() {
     for (var i = 1; i <= slen ; i^^) {

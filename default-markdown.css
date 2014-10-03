@@ -558,6 +558,10 @@ table tr:last-child td:last-child {
   content: normal;
 }
 
+.markdown-body .codehilite .hll {
+  display: inherit;
+}
+
 /* Header Anchors */
 .markdown-body .headeranchor-link {
   position: absolute;
