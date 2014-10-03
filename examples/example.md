@@ -23,7 +23,7 @@
         - markdown.extensions.meta
         - markdown.extensions.wikilinks
         - markdown.extensions.admonition
-        - markdown.extensions.codehilite(guess_lang=False,pygments_style=github)
+        - markdown.extensions.codehilite(guess_lang=False,pygments_style=github2)
         - pymdown.pymdown
         - pymdown.mark
         - pymdown.b64(base_path=${BASE_PATH})

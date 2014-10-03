@@ -369,6 +369,10 @@ table tr:last-child td:last-child {
   border-bottom-left-radius: 3px;
 }
 
+.markdown-body .linenodiv {
+  border-right: 1px solid #e0e0e0;
+}
+
 .markdown-body .code div pre,
 .markdown-body .code div {
   border: 0;
