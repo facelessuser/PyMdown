@@ -343,6 +343,7 @@ table tr:last-child td:last-child {
 
 .markdown-body .codehilitetable div.codehilite {
   border-radius: 0 !important;
+  margin-bottom: 0 !important;
 }
 
 .markdown-body td:not(.linenos) .linenodiv {
