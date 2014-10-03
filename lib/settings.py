@@ -304,10 +304,14 @@ class Settings(object):
                         internal_style = style
                     except:
                         internal_style = "default"
+                        if noclasses:
+                            Logger.log("'noclasses' option only works with builtin Pygments styles.  Falling back to 'default' style.")
+
                         #  Check if style exists as an included CSS style
                         if resource_exists(join('stylesheets', 'pygments'), "%s.css" % style) is None:
                             # Just set it to default then
                             style = "default"
+                            Logger.log("Cannot find style! Falling back to 'default' style.")
                     comma = ',' if pygments_style.group(2) is not None and pygments_style.group(2) != '' else ''
                     extensions[count] = e.replace(pygments_style.group(0), 'pygments_style=%s%s' % (internal_style, comma))
 
