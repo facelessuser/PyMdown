@@ -52,16 +52,23 @@ def crawl_eggs(src):
                     os.mkdir(egg_dir)
                 if os.path.exists(egg_dir):
                     location = os.path.join(directory, 'dist')
-                    egg_extension = "py%d.%d.egg" % (sys.version_info.major, sys.version_info.minor)
+                    egg_extension = "py%d.%d.egg" % (
+                        sys.version_info.major,
+                        sys.version_info.minor
+                    )
                     egg_start = "pymdown"
                     for f in os.listdir(location):
                         target = os.path.abspath(os.path.join(location, f))
                         if (
-                            os.path.isfile(target) and f.endswith(egg_extension) and
+                            os.path.isfile(target) and
+                            f.endswith(egg_extension) and
                             f.startswith(egg_start)
                         ):
                             if target not in sys.path:
-                                shutil.copyfile(target, os.path.join(egg_dir, os.path.basename(target)))
+                                shutil.copyfile(
+                                    target,
+                                    os.path.join(egg_dir, os.path.basename(target))
+                                )
                                 print("Egg created!")
             else:
                 print("Failed to generate egg for %s" % directory)

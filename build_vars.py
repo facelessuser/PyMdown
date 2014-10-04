@@ -1,14 +1,9 @@
 #####################################
-# For pyinstaller build to ensure
-# all modules are found.  Due to
-# sneaky importing because of the
-# dynamic nature of the modules,
+# To ensure all modules are found
+# for Pyinstaller builds. Due to
+# dynamic importing of the modules,
 # not all modules are found by
-# pyinstaller.
-#
-# Not all of this crap is needed,
-# but I don't feel like figuring out
-# which ones shouldn't be included.
+# Pyinstaller.
 #####################################
 import os
 import sys
