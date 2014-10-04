@@ -17,7 +17,5 @@ setup(
     name='pymdown-styles',
     version='1.0',
     packages=find_packages(),
-    include_package_data=True,
-    entry_points=entry_points,
-    zip_safe=True
+    entry_points=entry_points
 )

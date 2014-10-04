@@ -1,6 +1,6 @@
 from pygments.lexer import RegexLexer, include, bygroups
-from pygments.lexers._mapping import LEXERS
 from pygments.token import *
+from os.path import basename
 
 __all__ = ["TrexLexer"]
 
@@ -10,6 +10,7 @@ class TrexLexer(RegexLexer):
     aliases = ['trex', 'windex', 'sasdex', 'lindex']
     filenames = ['*.trex', '*.trx', '*.def']
     mimetypes = ['text/trex']
+    module = basename(__file__)[:-3]
 
     tokens = {
         'root': [
@@ -56,13 +57,3 @@ class TrexLexer(RegexLexer):
             (r'//.*\n', Comment.Single),
         ]
     }
-
-
-# Add to mapping
-LEXERS["TrexLexer"] = (
-    "pygments.lexers.TrexLexer",
-    TrexLexer.name,
-    tuple(TrexLexer.aliases),
-    tuple(TrexLexer.filenames),
-    tuple(TrexLexer.mimetypes)
-)
