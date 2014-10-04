@@ -57,7 +57,7 @@ def build_spec_file(obj):
         f.write(
             SPEC % {
                 "main": repr([obj.script]),
-                "directory": repr(path.dirname(obj.script)),
+                "directory": repr([path.dirname(obj.script)] + build_vars.eggs),
                 "hidden": repr(build_vars.imports),
                 "data": repr(build_vars.data),
                 "exe": repr(path.basename(obj.app)),

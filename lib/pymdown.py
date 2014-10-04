@@ -8,7 +8,6 @@ Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
 from __future__ import unicode_literals
 from __future__ import print_function
 from markdown import Markdown
-import lexers
 import codecs
 import sys
 import traceback
@@ -21,9 +20,6 @@ if PY3:
     string_type = str
 else:
     string_type = basestring  # flake8: noqa
-
-# Add custom lexers
-lexers.add_lexers()
 
 
 class PyMdownException(Exception):

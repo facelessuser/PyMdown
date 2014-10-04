@@ -69,9 +69,6 @@ def get_settings(rule):
         "foreground": None,
         "background": None,
         "border": None
-        # roman
-        # sans
-        # mono
     }
 
     if re.search(r"(?<!-)\bfont-weight\s*:\s*bold", rule) is not None:
