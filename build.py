@@ -1,6 +1,5 @@
 #!/usr/bin/python
 from __future__ import print_function
-# from __future__ import unicode_literals
 import sys
 from os.path import dirname, abspath, join
 from os import path, mkdir, chdir
@@ -11,14 +10,18 @@ try:
     import build_vars
 except:
     class build_vars(object):
-        imports = []
+        hidden_imports = []
         data = []
+        eggs = []
+
+        def print_all_vars():
+            pass
 
 PY3 = sys.version_info >= (3, 0)
 if PY3:
     unicode_str = str
 else:
-    unicode_str = unicode
+    unicode_str = unicode  # flake8: noqa
 
 if sys.platform.startswith('win'):
     _PLATFORM = "windows"
@@ -53,12 +56,14 @@ exe = EXE(pyz,
 
 
 def build_spec_file(obj):
+    build_vars.print_all_vars()
+
     with open("%s.spec" % obj.name, "w") as f:
         f.write(
             SPEC % {
                 "main": repr([obj.script]),
                 "directory": repr([path.dirname(obj.script)] + build_vars.eggs),
-                "hidden": repr(build_vars.imports),
+                "hidden": repr(build_vars.hidden_imports),
                 "data": repr(build_vars.data),
                 "exe": repr(path.basename(obj.app)),
                 "icon": repr(obj.icon)
@@ -69,8 +74,7 @@ def build_spec_file(obj):
 class Args(object):
     def __init__(
         self, script, name, gui, clean, ext,
-        icon=None, portable=False,
-        imports=build_vars.imports, data=build_vars.data
+        icon=None
     ):
         """
         Build arguments
@@ -82,9 +86,6 @@ class Args(object):
         self.icon = abspath(icon) if icon is not None else icon
         self.script = script
         self.extension = ext
-        self.portable = portable
-        self.imports = imports if imports is not None else []
-        self.data = data if data is not None else []
 
 
 class BuildParams(object):
@@ -102,9 +103,6 @@ class BuildParams(object):
     clean = None
     extension = None
     icon = None
-    portable = None
-    imports = None
-    data = None
 
 
 def parse_settings(args, obj):
@@ -125,9 +123,6 @@ def parse_settings(args, obj):
     obj.script = path.abspath(path.normpath(args.script))
     obj.icon = args.icon
     obj.clean = args.clean
-    obj.portable = args.portable
-    obj.imports = args.imports
-    obj.data = args.data
 
     if not path.exists(obj.script):
         print("Could not find %s!" % obj.script)
@@ -202,7 +197,7 @@ def parse_options(args, obj):
     # Construct build params for build processs
     if not err:
         obj.params = (
-            [("python" if obj.portable else obj.python_bin), obj.pyinstaller_script, '-F'] +
+            [obj.python_bin, obj.pyinstaller_script, '-F'] +
             (['--clean'] if args.clean is not None else []) +
             (['-w', '--workpath=%s' % obj.out_dir] if args.gui else ['--workpath=%s' % obj.out_dir]) +
             ['--distpath=%s' % obj.dist_path] +
@@ -218,8 +213,6 @@ def build(obj):
 
     err = False
 
-    if obj.portable:
-        chdir(obj.python_bin_path)
     # Setup build process
     process = subprocess.Popen(
         obj.params,
@@ -250,7 +243,6 @@ def main():
     parser.add_argument('--version', action='version', version='%(prog)s 1.0.0')
     parser.add_argument('--clean', '-c', action='store_true', default=False, help='Clean build before re-building.')
     parser.add_argument('--gui', '-g', action='store_true', default=False, help='GUI app')
-    parser.add_argument('--portable', '-p', action='store_true', default=False, help='Build with portable python (windows)')
     # parser.add_argument('--imports', default=None, nargs="*", help='Include hidden imports')
     parser.add_argument('--icon', '-i', default=None, nargs="?", help='App icon')
     # parser.add_argument('script', default=None, help='Main script')
@@ -258,7 +250,7 @@ def main():
     inputs = parser.parse_args()
     if _PLATFORM == "windows":
         args = Args(
-            "__main__.py", "pymdown", False, inputs.clean, ".exe", portable=inputs.portable
+            "__main__.py", "pymdown", False, inputs.clean, ".exe"
         )
     else:
         args = Args(

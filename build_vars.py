@@ -16,6 +16,69 @@ import sys
 
 PY3 = sys.version_info >= (3, 0)
 
+#####################################
+# Vairables to be used in spec file
+#####################################
+data = []
+eggs = []
+hidden_imports = [
+    # This should get automated in the future
+    "pymdown_lexers.trex",
+    "pymdown_styles.tomorrow",
+    "pymdown_styles.tomorrownight",
+    "pymdown_styles.tomorrownightblue",
+    "pymdown_styles.tomorrownightbright",
+    "pymdown_styles.tomorrownighteighties",
+    "pymdown_styles.github",
+    "pymdown_styles.github2"
+]
+
+#####################################
+# This are files or directories to
+# process
+#####################################
+data_to_crawl = [
+    "LICENSE",
+    "pymdown.json",
+    "markdown/LICENSE.md",
+    "pygments/LICENSE"
+]
+
+eggs_to_crawl = [
+    "pymdown-lexers",
+    "pymdown-styles"
+]
+
+hidden_imports_to_crawl = [
+    "markdown/extensions",
+    "pygments/styles",
+    "pygments/lexers",
+    "pygments/formatters",
+    "pymdown"
+]
+
+
+#####################################
+# Crawl Functions
+#####################################
+def crawl_data(src, dest):
+    for target in src:
+        if os.path.isfile(target):
+            dest.append((target, "./%s" % target, "DATA"))
+        else:
+            for f in os.listdir(target):
+                if f.endswith(".css"):
+                    name = '/'.join([target, f])
+                    dest.append((name, "./%s" % name, "DATA"))
+
+
+def crawl_hidden_imports(src, dest):
+    for directory in src:
+        dest.append(directory.replace('/', '.'))
+        for f in os.listdir(directory):
+            if f != "__init__.py" and f.endswith('.py'):
+                dest.append('/'.join([directory, f])[:-3].replace('/', '.'))
+
 
 def create_egg(directory):
     """
@@ -54,66 +117,36 @@ def create_egg(directory):
 
     return okay
 
-data = [
-    ("LICENSE", "./LICENSE", "DATA"),
-    ("pymdown.json", "./pymdown.json", "DATA"),
-    ("markdown/LICENSE.md", "./markdown/LICENSE.md", "DATA"),
-    ("pygments/LICENSE", "./pygments/LICENSE", "DATA")
-]
 
-data_to_crawl = [
-]
+def crawl_eggs(src, dest):
+    for directory in src:
+        setup = os.path.join(directory, "setup.py")
+        if os.path.exists(setup):
+            if create_egg(directory):
+                dist = os.path.join(directory, 'dist')
+                for f in os.listdir(dist):
+                    if f.endswith('.egg'):
+                        dest.append(os.path.abspath(os.path.join(dist, f)))
+            else:
+                print("Failed to generate egg for %s" % directory)
 
-for directory in data_to_crawl:
-    for f in os.listdir(directory):
-        if f.endswith(".css"):
-            name = '/'.join([directory, f])
-            data.append((name, "./%s" % name, "DATA"))
+crawl_eggs(eggs_to_crawl, eggs)
+crawl_data(data_to_crawl, data)
+crawl_hidden_imports(hidden_imports_to_crawl, hidden_imports)
 
-imports = [
-    # This should get automated in the future
-    "pymdown_lexers.trex",
-    "pymdown_styles.tomorrow",
-    "pymdown_styles.tomorrownight",
-    "pymdown_styles.tomorrownightblue",
-    "pymdown_styles.tomorrownightbright",
-    "pymdown_styles.tomorrownighteighties",
-    "pymdown_styles.github",
-    "pymdown_styles.github2"
-]
 
-imports_to_crawl = [
-    "markdown/extensions",
-    "pygments/styles",
-    "pygments/lexers",
-    "pygments/formatters",
-    "pymdown"
-]
+#####################################
+# Print Results
+#####################################
+def print_vars(label, src):
+    print("--- %s ---" % label)
+    for s in src:
+        print(s)
+    print('')
 
-for directory in imports_to_crawl:
-    imports.append(directory.replace('/', '.'))
-    for f in os.listdir(directory):
-        if f != "__init__.py" and f.endswith('.py'):
-            imports.append('/'.join([directory, f])[:-3].replace('/', '.'))
 
-eggs = []
-
-egg_folders_to_crawl = [
-    "pymdown-lexers",
-    "pymdown-styles"
-]
-
-for directory in egg_folders_to_crawl:
-    setup = os.path.join(directory, "setup.py")
-    if os.path.exists(setup):
-        if create_egg(directory):
-            dist = os.path.join(directory, 'dist')
-            for f in os.listdir(dist):
-                if f.endswith('.egg'):
-                    eggs.append(os.path.abspath(os.path.join(dist, f)))
-        else:
-            print("Failed to generate egg for %s" % directory)
-
-# print(data)
-# print(imports)
-# print(eggs)
+def print_all_vars():
+    print('====== Processed Spec Variables =====')
+    print_vars('Data', data)
+    print_vars('Hidden Imports', hidden_imports)
+    print_vars('Eggs', eggs)
