@@ -12,11 +12,26 @@ from __future__ import unicode_literals
 from __future__ import print_function
 import sys
 from os.path import join, exists, abspath, dirname, isfile
+from os import listdir
 import codecs
 
 RESOURCE_PATH = abspath(join(dirname(__file__), ".."))
 DEFAULT_CSS = "default-markdown.css"
 DEFAULT_TEMPLATE = "default-template.html"
+
+
+def load_egg_resources():
+    if getattr(sys, "_MEIPASS", None) is not None and exists('eggs') and not isfile('eggs'):
+        egg_extension = "py%d.%d.egg" % (sys.version_info.major, sys.version_info.minor)
+        egg_start = "pymdown"
+        for f in listdir("eggs"):
+            target = abspath(join('eggs', f))
+            if (
+                isfile(target) and f.endswith(egg_extension) and
+                f.startswith(egg_start)
+            ):
+                if target not in sys.path:
+                    sys.path.append(target)
 
 
 def resource_exists(*args):

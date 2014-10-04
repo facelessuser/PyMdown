@@ -22,7 +22,7 @@ from lib.logger import Logger
 from lib.settings import Settings
 from lib.settings import CRITIC_IGNORE, CRITIC_ACCEPT, CRITIC_REJECT, CRITIC_DUMP
 import lib.critic_dump as critic_dump
-from lib.resources import load_text_resource
+from lib.resources import load_text_resource, load_egg_resources
 from lib.pymdown import PyMdowns
 from lib import formatter
 from lib.frontmatter import get_frontmatter_string
@@ -43,6 +43,7 @@ PASS = 0
 FAIL = 1
 
 script_path = dirname(abspath(__file__))
+load_egg_resources()
 
 
 def get_files(file_patterns):

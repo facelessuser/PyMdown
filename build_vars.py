@@ -11,8 +11,8 @@
 # which ones shouldn't be included.
 #####################################
 import os
-import subprocess
 import sys
+import zipfile
 
 PY3 = sys.version_info >= (3, 0)
 
@@ -20,18 +20,8 @@ PY3 = sys.version_info >= (3, 0)
 # Vairables to be used in spec file
 #####################################
 data = []
+hidden_imports = []
 eggs = []
-hidden_imports = [
-    # This should get automated in the future
-    "pymdown_lexers.trex",
-    "pymdown_styles.tomorrow",
-    "pymdown_styles.tomorrownight",
-    "pymdown_styles.tomorrownightblue",
-    "pymdown_styles.tomorrownightbright",
-    "pymdown_styles.tomorrownighteighties",
-    "pymdown_styles.github",
-    "pymdown_styles.github2"
-]
 
 #####################################
 # This are files or directories to
@@ -44,17 +34,16 @@ data_to_crawl = [
     "pygments/LICENSE"
 ]
 
-eggs_to_crawl = [
-    "pymdown-lexers",
-    "pymdown-styles"
-]
-
 hidden_imports_to_crawl = [
     "markdown/extensions",
     "pygments/styles",
     "pygments/lexers",
     "pygments/formatters",
     "pymdown"
+]
+
+eggs_to_crawl = [
+    'eggs'
 ]
 
 
@@ -80,59 +69,44 @@ def crawl_hidden_imports(src, dest):
                 dest.append('/'.join([directory, f])[:-3].replace('/', '.'))
 
 
-def create_egg(directory):
-    """
-    Launch the build process
-    """
-
-    okay = True
-
-    cwd = os.getcwd()
-    os.chdir(directory)
-
-    # Setup build process
-    for command in ('build', 'bdist_egg'):
-        if command == 'build':
-            print("Building egg in %s..." % directory)
-        elif command == 'bdist_egg':
-            print("Creating egg in %s..." % directory)
-        process = subprocess.Popen(
-            [sys.executable, 'setup.py', command],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.STDOUT,
-            shell=False
+def crawl_eggs(src, dest, egg_modules):
+    def is_egg(egg_file):
+        egg_extension = "py%d.%d.egg" % (sys.version_info.major, sys.version_info.minor)
+        egg_start = "pymdown"
+        return (
+            os.path.isfile(egg_file) and
+            os.path.basename(egg_file).endswith(egg_extension) and
+            os.path.basename(egg_file).startswith(egg_start)
         )
 
-        for line in iter(process.stdout.readline, b''):
-            sys.stdout.write(line.decode('utf-8') if PY3 else line)
-        process.communicate()
+    def hidden_egg_modules(src, dest):
+        with zipfile.ZipFile(target, 'r') as z:
+            text = z.read(z.getinfo('EGG-INFO/SOURCES.txt')).decode('utf-8')
+            for line in text.split('\n'):
+                line = line.replace('\r', '')
+                if (
+                    line.endswith('.py') and
+                    not line.endswith('/__init__.py') and
+                    line != 'setup.py'
+                ):
+                    dest.append(line.replace('/', '.'))
 
-        # Check for bad error code
-        if process.returncode:
-            print("Compilation failed!")
-            okay = False
-            break
+    for location in src:
+        if os.path.exists(location) and os.path.isdir(location):
+            for f in os.listdir(location):
+                target = os.path.abspath(os.path.join(location, f))
+                if is_egg(target):
+                    dest.append(target)
+                    hidden_egg_modules(target, egg_modules)
 
-    os.chdir(cwd)
+        elif os.path.isfile(location):
+            target = os.path.abspath(location)
+            if is_egg(target):
+                dest.append(target)
 
-    return okay
-
-
-def crawl_eggs(src, dest):
-    for directory in src:
-        setup = os.path.join(directory, "setup.py")
-        if os.path.exists(setup):
-            if create_egg(directory):
-                dist = os.path.join(directory, 'dist')
-                for f in os.listdir(dist):
-                    if f.endswith('.egg'):
-                        dest.append(os.path.abspath(os.path.join(dist, f)))
-            else:
-                print("Failed to generate egg for %s" % directory)
-
-crawl_eggs(eggs_to_crawl, eggs)
 crawl_data(data_to_crawl, data)
 crawl_hidden_imports(hidden_imports_to_crawl, hidden_imports)
+crawl_eggs(eggs_to_crawl, eggs, hidden_imports)
 
 
 #####################################
@@ -149,4 +123,8 @@ def print_all_vars():
     print('====== Processed Spec Variables =====')
     print_vars('Data', data)
     print_vars('Hidden Imports', hidden_imports)
-    print_vars('Eggs', eggs)
+    print_vars("Eggs", eggs)
+
+
+if __name__ == "__main__":
+    print_all_vars()
