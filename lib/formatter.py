@@ -16,7 +16,7 @@ import codecs
 import traceback
 import re
 import tempfile
-from pygments.formatters.html import HtmlFormatter
+from pygments.formatters import get_formatter_by_name
 from os.path import exists, isfile, join
 from .resources import load_text_resource
 from .logger import Logger
@@ -60,10 +60,10 @@ def get_pygment_style(style):
         print("its None!")
         try:
             # Try and request pygments to generate it
-            text = HtmlFormatter(style=style).get_style_defs('.codehilite')
+            text = get_formatter_by_name('html', style=style).get_style_defs('.codehilite')
         except:
             # Try and request pygments to generate default
-            text = HtmlFormatter(style="github").get_style_defs('.codehilite')
+            text = get_formatter_by_name('html', style="default").get_style_defs('.codehilite')
     return '<style>\n%s\n</style>\n' % text if text is not None else ""
 
 

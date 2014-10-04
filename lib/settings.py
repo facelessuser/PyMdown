@@ -15,7 +15,7 @@ import traceback
 import sys
 from copy import deepcopy
 from os.path import dirname, abspath, exists, normpath, expanduser
-import pygments.styles as pyg_styles
+from pygments.styles import get_style_by_name
 from os.path import isfile, isdir, splitext, join, basename
 from . import resources as res
 from .logger import Logger
@@ -300,7 +300,7 @@ class Settings(object):
                     style = "default" if pygments_style is None else pygments_style.group(1)
                     try:
                         # Check if the desired style exists internally
-                        pyg_styles.get_style_by_name(style)
+                        get_style_by_name(style)
                         internal_style = style
                     except:
                         internal_style = "default"
