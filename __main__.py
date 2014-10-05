@@ -91,7 +91,7 @@ def open_with_osx_browser(filename):
     p = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
     p.stdin.write(content)
     out, err = p.communicate()
-    plist = json.loads(out)
+    plist = json.loads(out.decode('utf-8') if PY3 else out)
     for handler in plist['LSHandlers']:
         if handler.get('LSHandlerURLScheme', '') == "http":
             web_handler = handler.get('LSHandlerRoleAll', None)
@@ -104,8 +104,10 @@ def auto_open(name):
 
     # Maybe just use desktop
     if _PLATFORM == "osx":
-        # subprocess.Popen(['open', name])
-        open_with_osx_browser(name)
+        try:
+            open_with_osx_browser(name)
+        except:
+            subprocess.Popen(['open', name])
     elif _PLATFORM == "windows":
         webbrowser.open(name, new=2)
     else:

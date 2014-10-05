@@ -7,3 +7,4 @@ dist/*
 pyinstaller
 pymdown.spec
 */*egg-info/*
+pymdown-lexers/pymdown_lexers/trex.py
