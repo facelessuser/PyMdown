@@ -54,16 +54,12 @@ def get_style(style, link=False):
 
 def get_pygment_style(style):
     """ Get the specified pygments sytle CSS """
-
-    text = load_text_resource(join('stylesheets', 'pygments'), "%s.css" % style)
-    if text is None:
-        print("its None!")
-        try:
-            # Try and request pygments to generate it
-            text = get_formatter_by_name('html', style=style).get_style_defs('.codehilite')
-        except:
-            # Try and request pygments to generate default
-            text = get_formatter_by_name('html', style="default").get_style_defs('.codehilite')
+    try:
+        # Try and request pygments to generate it
+        text = get_formatter_by_name('html', style=style).get_style_defs('.codehilite')
+    except:
+        # Try and request pygments to generate default
+        text = get_formatter_by_name('html', style="default").get_style_defs('.codehilite')
     return '<style>\n%s\n</style>\n' % text if text is not None else ""
 
 

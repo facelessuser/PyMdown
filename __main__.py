@@ -12,17 +12,20 @@ Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
 from __future__ import unicode_literals
 from __future__ import absolute_import
 from __future__ import print_function
+# Egg resoures must be loaded before Pygments gets loaded
+from lib.resources import load_text_resource, load_egg_resources
+load_egg_resources()
 import codecs
 import sys
 import subprocess
 import webbrowser
 import traceback
-from os.path import dirname, abspath, normpath, exists, basename, join, isfile
+import json
+from os.path import dirname, abspath, normpath, exists, basename, join, isfile, expanduser
 from lib.logger import Logger
 from lib.settings import Settings
 from lib.settings import CRITIC_IGNORE, CRITIC_ACCEPT, CRITIC_REJECT, CRITIC_DUMP
 import lib.critic_dump as critic_dump
-from lib.resources import load_text_resource, load_egg_resources
 from lib.pymdown import PyMdowns
 from lib import formatter
 from lib.frontmatter import get_frontmatter_string
@@ -43,7 +46,6 @@ PASS = 0
 FAIL = 1
 
 script_path = dirname(abspath(__file__))
-load_egg_resources()
 
 
 def get_files(file_patterns):
@@ -79,20 +81,31 @@ def get_file_stream(encoding):
     return stream
 
 
+def open_with_osx_browser(filename):
+    """ Open file with  """
+    web_handler = None
+    launch_services = expanduser('~/Library/Preferences/com.apple.LaunchServices.plist')
+    with open(launch_services, "rb") as f:
+        content = f.read()
+    args = ["plutil", "-convert", "json", "-o", "-", "--", "-"]
+    p = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+    p.stdin.write(content)
+    out, err = p.communicate()
+    plist = json.loads(out)
+    for handler in plist['LSHandlers']:
+        if handler.get('LSHandlerURLScheme', '') == "http":
+            web_handler = handler.get('LSHandlerRoleAll', None)
+    if web_handler is not None:
+        subprocess.Popen(['open', '-b', web_handler, filename])
+
+
 def auto_open(name):
     """ Auto open HTML """
 
-    # Maybe just use destop
+    # Maybe just use desktop
     if _PLATFORM == "osx":
-        # TODO: parse plist for default browser
-        # Probably should parse com.apple.LaunchServices.plist for
-        # <dict>
-        #     <key>LSHandlerRoleAll</key>
-        #     <string>com.google.chrome</string> <--To get this
-        #     <key>LSHandlerURLScheme</key>
-        #     <string>http</string>              <--Parse for this
-        # </dict>
-        subprocess.Popen(['open', name])
+        # subprocess.Popen(['open', name])
+        open_with_osx_browser(name)
     elif _PLATFORM == "windows":
         webbrowser.open(name, new=2)
     else:

@@ -21,8 +21,18 @@ DEFAULT_TEMPLATE = "default-template.html"
 
 
 def load_egg_resources():
-    if getattr(sys, "_MEIPASS", None) is not None and exists('eggs') and not isfile('eggs'):
-        egg_extension = "py%d.%d.egg" % (sys.version_info.major, sys.version_info.minor)
+    """
+    Add egg to system path if the name indicates it
+    is for the current python version and for pymdown.
+    This only runs if we are not in a pyinstaller environment.
+    """
+    if (
+        not bool(getattr(sys, "frozen", 0)) and
+        exists('eggs') and not isfile('eggs')
+    ):
+        egg_extension = "py%d.%d.egg" % (
+            sys.version_info.major, sys.version_info.minor
+        )
         egg_start = "pymdown"
         for f in listdir("eggs"):
             target = abspath(join('eggs', f))
@@ -30,16 +40,15 @@ def load_egg_resources():
                 isfile(target) and f.endswith(egg_extension) and
                 f.startswith(egg_start)
             ):
-                if target not in sys.path:
-                    sys.path.append(target)
+                sys.path.append(target)
 
 
 def resource_exists(*args):
     """ If resource could be found return path else None """
     base = None
-    try:
+    if getattr(sys, "frozen", 0):
         base = sys._MEIPASS
-    except:
+    else:
         base = RESOURCE_PATH
 
     path = join(base, *args)

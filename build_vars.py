@@ -76,7 +76,7 @@ def crawl_eggs(src, dest, egg_modules):
 
     def hidden_egg_modules(src, dest):
         with zipfile.ZipFile(target, 'r') as z:
-            text = z.read(z.getinfo('EGG-INFO/SOURCES.txt')).decode('utf-8')
+            text = z.read(z.getinfo('EGG-INFO/SOURCES.txt'))
             for line in text.split('\n'):
                 line = line.replace('\r', '')
                 if (
@@ -84,7 +84,7 @@ def crawl_eggs(src, dest, egg_modules):
                     not line.endswith('/__init__.py') and
                     line != 'setup.py'
                 ):
-                    dest.append(line.replace('/', '.'))
+                    dest.append(line.replace('/', '.')[:-3])
 
     for location in src:
         if os.path.exists(location) and os.path.isdir(location):

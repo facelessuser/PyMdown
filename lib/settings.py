@@ -38,6 +38,17 @@ CRITIC_REJECT = 2
 CRITIC_VIEW = 4
 CRITIC_DUMP = 8
 
+RE_PYGMENT = re.compile(r"pygments_style\s*=\s*([a-zA-Z][a-zA-Z_\d]*)\s*(,?)")
+RE_INSERT_PYGMENT = re.compile(
+    r"""(?x)
+    (?P<bracket_start>markdown\.extensions\.codehilite\(
+    [^)]+?)
+    (?P<bracket_end>\s*\)$)|
+    (?P<start>markdown\.extensions\.codehilite)
+    """
+)
+RE_NO_CLASSES = re.compile(r"noclasses\s*=\s*(True|False)")
+
 
 class PyMdownSettingsException(Exception):
     pass
@@ -268,25 +279,22 @@ class Settings(object):
         style (github).
         """
         style = None
-        re_pygment = r"pygments_style\s*=\s*([a-zA-Z][a-zA-Z_\d]*)\s*(,?)"
-        re_insert_pygment = re.compile(r"(?P<bracket_start>markdown\.extensions\.codehilite\([^)]+?)(?P<bracket_end>\s*\)$)|(?P<start>markdown\.extensions\.codehilite)")
-        re_no_classes = re.compile(r"noclasses\s*=\s*(True|False)")
 
         count = 0
         for e in extensions:
             # Search for codhilite to see what style is being set.
             if e.startswith("markdown.extensions.codehilite"):
                 # Track if the "noclasses" settings option is enabled
-                noclasses = re_no_classes.search(e)
+                noclasses = RE_NO_CLASSES.search(e)
                 if noclasses is not None and noclasses.group(1) == "True":
                     settings["settings"]["use_pygments_css"] = False
 
-                pygments_style = re.search(re_pygment, e)
+                pygments_style = RE_PYGMENT.search(e)
                 if pygments_style is None:
                     # Explicitly define a pygment style and store the name
                     # This is to ensure the "noclasses" option always works
                     style = "default"
-                    m = re_insert_pygment.match(e)
+                    m = RE_INSERT_PYGMENT.match(e)
                     if m is not None and not settings["settings"].get("use_pygments_css", True):
                         if m.group('bracket_start'):
                             start = m.group('bracket_start') + ',pygments_style='
@@ -301,19 +309,11 @@ class Settings(object):
                     try:
                         # Check if the desired style exists internally
                         get_style_by_name(style)
-                        internal_style = style
                     except:
-                        internal_style = "default"
-                        if noclasses:
-                            Logger.log("'noclasses' option only works with builtin Pygments styles.  Falling back to 'default' style.")
-
-                        #  Check if style exists as an included CSS style
-                        if resource_exists(join('stylesheets', 'pygments'), "%s.css" % style) is None:
-                            # Just set it to default then
-                            style = "default"
-                            Logger.log("Cannot find style! Falling back to 'default' style.")
+                        Logger.log("Cannot find style: %s! Falling back to 'default' style." % style)
+                        style = "default"
                     comma = ',' if pygments_style.group(2) is not None and pygments_style.group(2) != '' else ''
-                    extensions[count] = e.replace(pygments_style.group(0), 'pygments_style=%s%s' % (internal_style, comma))
+                    extensions[count] = e.replace(pygments_style.group(0), 'pygments_style=%s%s' % (style, comma))
 
             count += 1
         settings["settings"]["style"] = style
