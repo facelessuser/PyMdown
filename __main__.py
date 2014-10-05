@@ -191,26 +191,7 @@ def merge_meta(meta1, meta2, title=None):
 def display_licenses():
     """ Display licenses """
     status = PASS
-    text = load_text_resource("LICENSE")
-    if text is not None:
-        print(text)
-    else:
-        status = FAIL
-    print("")
-    print("Idea based off of the Markdown Preview plugin:")
-    print("https://github.com/revolunet/sublimetext-markdown-preview")
-    print("http://revolunet.mit-license.org/")
-    print("")
-    print("\n===== 3rd Party Licenses =====")
-    print("Markdown - https://pythonhosted.org/Markdown/")
-    text = load_text_resource("markdown", "LICENSE.md")
-    if text is not None:
-        print(text)
-    else:
-        status = FAIL
-    print("")
-    print("Pygments - http://pygments.org/")
-    text = load_text_resource("pygments", "LICENSE")
+    text = load_text_resource(join('data', 'licenses.txt'))
     if text is not None:
         print(text)
     else:

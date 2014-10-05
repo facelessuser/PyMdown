@@ -24,7 +24,7 @@ hookpaths = ['pyinstaller_hooks']
 # process
 #####################################
 data_to_crawl = [
-    "LICENSE",
+    "data/licenses.txt",
     "pymdown.json"
 ]
 
