@@ -11,7 +11,7 @@ def get_submodules(module):
     mod_path = os.path.join(exec_statement(statement))
     files = glob.glob(mod_path + '/*.py')
     modules = []
-    print(mod_path)
+    # print('=== %s ===' % mod_path)
 
     for f in files:
         mod = os.path.splitext(os.path.basename(f))[0]
@@ -19,6 +19,6 @@ def get_submodules(module):
         if mod == '__init__':
             continue
         modules.append('%s.%s' % (module, mod))
-        print('%s.%s' % (module, mod))
+        # print('%s.%s' % (module, mod))
 
     return modules
