@@ -4,6 +4,13 @@ PyMdown is CLI tool to convert or even batch convert markdown files to HTML.  It
 # Status
 This is in a **Beta** state.  Because of the **Beta** state, things are in flux and are subject to change without warning.
 
+# Requirements
+The following must be installed in your Python
+
+- Python-Markdown 2.5.1+
+- Pygments 2.0 Dev branch
+- PyYaml
+
 # Features
 - Python 2 and 3 compatible (but executables are built with Python 2 using Pyinstaller)
 - Should run on OSX, Windows, and Linux
