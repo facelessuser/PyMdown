@@ -17,6 +17,7 @@ PY3 = sys.version_info >= (3, 0)
 data = []
 hidden_imports = []
 eggs = []
+hookpaths = ['pyinstaller_hooks']
 
 #####################################
 # This are files or directories to
@@ -24,18 +25,10 @@ eggs = []
 #####################################
 data_to_crawl = [
     "LICENSE",
-    "pymdown.json",
-    "markdown/LICENSE.md",
-    "pygments/LICENSE"
+    "pymdown.json"
 ]
 
-hidden_imports_to_crawl = [
-    "markdown/extensions",
-    "pygments/styles",
-    "pygments/lexers",
-    "pygments/formatters",
-    "pymdown"
-]
+hidden_imports_to_crawl = []
 
 eggs_to_crawl = [
     'eggs'

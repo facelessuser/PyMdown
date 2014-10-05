@@ -38,7 +38,7 @@ block_cipher = None
 a = Analysis(%(main)s,
              pathex=%(directory)s,
              hiddenimports=%(hidden)s,
-             hookspath=None,
+             hookspath=%(hook)s,
              runtime_hooks=None)
 a.datas = %(data)s
 pyz = PYZ(a.pure)
@@ -64,6 +64,7 @@ def build_spec_file(obj):
                 "main": repr([obj.script]),
                 "directory": repr([path.dirname(obj.script)] + build_vars.eggs),
                 "hidden": repr(build_vars.hidden_imports),
+                "hook": repr(build_vars.hookpaths),
                 "data": repr(build_vars.data),
                 "exe": repr(path.basename(obj.app)),
                 "icon": repr(obj.icon)
@@ -202,6 +203,7 @@ def parse_options(args, obj):
             (['-w', '--workpath=%s' % obj.out_dir] if args.gui else ['--workpath=%s' % obj.out_dir]) +
             ['--distpath=%s' % obj.dist_path] +
             ['-y', "%s.spec" % obj.name]
+            # ['--log-level=DEBUG']
         )
     return err
 
