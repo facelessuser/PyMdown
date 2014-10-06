@@ -21,6 +21,7 @@ extensions = [
     'pymdown.betterem',
     'pymdown.tilde',
     'pymdown.caret',
+    'pymdown.mark',
     'pymdown.smartsymbols',
     'pymdown.githubemoji',
     'pymdown.tasklist',

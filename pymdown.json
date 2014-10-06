@@ -32,7 +32,6 @@
         "markdown.extensions.wikilinks",
         "markdown.extensions.admonition",
         "pymdown.pymdown",
-        // "pymdown.mark",
         // "mdownx.absolutepath(base_path=${BASE_PATH})",
         "pymdown.b64(base_path=${BASE_PATH})"
     ]
