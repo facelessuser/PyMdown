@@ -1,13 +1,22 @@
 import os
 import glob
 from PyInstaller.hooks.hookutils import exec_statement
+from PyInstaller.utils.misc import get_code_object
+
+
+def retarget(mod, new_file):
+    mod.__init__(
+        mod.__name__,
+        new_file,
+        get_code_object(new_file)
+    )
 
 
 def get_submodules(module):
     """
     Get list of markdown extensions
     """
-    statement = 'import %s; print %s.__path__[0]' % (module, module)
+    statement = 'import %s; print(%s.__path__[0])' % (module, module)
     mod_path = os.path.join(exec_statement(statement))
     files = glob.glob(mod_path + '/*.py')
     modules = []

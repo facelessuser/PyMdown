@@ -2,7 +2,7 @@
 from __future__ import print_function
 import sys
 from os.path import dirname, abspath, join
-from os import path, mkdir, chdir
+from os import path, mkdir
 import shutil
 import argparse
 import subprocess
@@ -13,7 +13,9 @@ except:
         hidden_imports = []
         data = []
         eggs = []
+        hookpaths = []
 
+        @staticmethod
         def print_all_vars():
             pass
 

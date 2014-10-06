@@ -70,6 +70,8 @@ def crawl_eggs(src, dest, egg_modules):
     def hidden_egg_modules(src, dest):
         with zipfile.ZipFile(target, 'r') as z:
             text = z.read(z.getinfo('EGG-INFO/SOURCES.txt'))
+            if PY3:
+                text = text.decode('utf-8')
             for line in text.split('\n'):
                 line = line.replace('\r', '')
                 if (
