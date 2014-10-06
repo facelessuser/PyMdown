@@ -4,7 +4,6 @@ from setuptools import setup, find_packages
 
 entry_points = '''
 [pygments.lexers]
-trex=pymdown_lexers:TrexLexer
 '''
 
 setup(
