@@ -1,15 +1,18 @@
 import os
-import sys
-# For some reason when this file is called for
-# the hook method, relative imports no longer works
-# so let's patch that.
-HOOK_DIR = os.path.abspath(os.path.dirname(__file__))
-sys.path.append(HOOK_DIR)
-from hook_helper import retarget
+from PyInstaller.utils.misc import get_code_object
+
+
+def retarget(mod, new_file):
+    mod.__init__(
+        mod.__name__,
+        new_file,
+        get_code_object(new_file)
+    )
 
 
 def hook(mod):
     # Replace mod with fake 'codehilite' module that works with pyinstaller.
-    fake_file = os.path.join(HOOK_DIR, 'fake', 'fake-codehilite.py')
+    hook_dir = os.path.abspath(os.path.dirname(__file__))
+    fake_file = os.path.join(hook_dir, 'fake', 'fake-codehilite.py')
     retarget(mod, fake_file)
     return mod
