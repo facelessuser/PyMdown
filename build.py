@@ -2,22 +2,10 @@
 from __future__ import print_function
 import sys
 from os.path import dirname, abspath, join
-from os import path, mkdir
+from os import path, mkdir, chdir
 import shutil
 import argparse
 import subprocess
-try:
-    import build_vars
-except:
-    class build_vars(object):
-        hidden_imports = []
-        data = []
-        eggs = []
-        hookpaths = []
-
-        @staticmethod
-        def print_all_vars():
-            pass
 
 PY3 = sys.version_info >= (3, 0)
 if PY3:
@@ -58,13 +46,32 @@ exe = EXE(pyz,
 
 
 def build_spec_file(obj):
+    proj_path = path.dirname(obj.script)
+    sys.path.append(proj_path)
+    try:
+        import build_vars
+    except:
+        class build_vars(object):
+            hidden_imports = []
+            data = []
+            hookpaths = []
+            paths = []
+
+            @staticmethod
+            def print_vars(label, src):
+                pass
+
+            @staticmethod
+            def print_all_vars():
+                pass
+
     build_vars.print_all_vars()
 
     with open("%s.spec" % obj.name, "w") as f:
         f.write(
             SPEC % {
                 "main": repr([obj.script]),
-                "directory": repr([path.dirname(obj.script)] + build_vars.eggs),
+                "directory": repr([path.dirname(obj.script)] + build_vars.paths),
                 "hidden": repr(build_vars.hidden_imports),
                 "hook": repr(build_vars.hookpaths),
                 "data": repr(build_vars.data),
@@ -77,7 +84,7 @@ def build_spec_file(obj):
 class Args(object):
     def __init__(
         self, script, name, gui, clean, ext,
-        icon=None
+        icon=None, portable=False
     ):
         """
         Build arguments
@@ -89,6 +96,7 @@ class Args(object):
         self.icon = abspath(icon) if icon is not None else icon
         self.script = script
         self.extension = ext
+        self.portable = portable
 
 
 class BuildParams(object):
@@ -106,6 +114,8 @@ class BuildParams(object):
     clean = None
     extension = None
     icon = None
+    portable = None
+    spec_path = None
 
 
 def parse_settings(args, obj):
@@ -126,6 +136,8 @@ def parse_settings(args, obj):
     obj.script = path.abspath(path.normpath(args.script))
     obj.icon = args.icon
     obj.clean = args.clean
+    obj.portable = args.portable
+    obj.spec = path.join(path.dirname(obj.script), '%s.spec' % obj.name)
 
     if not path.exists(obj.script):
         print("Could not find %s!" % obj.script)
@@ -200,11 +212,11 @@ def parse_options(args, obj):
     # Construct build params for build processs
     if not err:
         obj.params = (
-            [obj.python_bin, obj.pyinstaller_script, '-F'] +
+            [("python" if obj.portable else obj.python_bin), obj.pyinstaller_script, '-F'] +
             (['--clean'] if args.clean is not None else []) +
             (['-w', '--workpath=%s' % obj.out_dir] if args.gui else ['--workpath=%s' % obj.out_dir]) +
             ['--distpath=%s' % obj.dist_path] +
-            ['-y', "%s.spec" % obj.name]
+            ['-y', obj.spec]
             # ['--log-level=DEBUG']
         )
     return err
@@ -216,6 +228,9 @@ def build(obj):
     """
 
     err = False
+
+    if obj.portable:
+        chdir(obj.python_bin_path)
 
     # Setup build process
     process = subprocess.Popen(
@@ -247,6 +262,7 @@ def main():
     parser.add_argument('--version', action='version', version='%(prog)s 1.0.0')
     parser.add_argument('--clean', '-c', action='store_true', default=False, help='Clean build before re-building.')
     parser.add_argument('--gui', '-g', action='store_true', default=False, help='GUI app')
+    parser.add_argument('--portable', '-p', action='store_true', default=False, help='Build with portable python (windows)')
     # parser.add_argument('--imports', default=None, nargs="*", help='Include hidden imports')
     parser.add_argument('--icon', '-i', default=None, nargs="?", help='App icon')
     # parser.add_argument('script', default=None, help='Main script')
@@ -254,11 +270,15 @@ def main():
     inputs = parser.parse_args()
     if _PLATFORM == "windows":
         args = Args(
-            "__main__.py", "pymdown", False, inputs.clean, ".exe"
+            "__main__.py", "pymdown", inputs.gui, inputs.clean, ".exe", inputs.icon, inputs.portable
+        )
+    elif _PLATFORM == "osx":
+        args = Args(
+            "__main__.py", "pymdown", inputs.gui, inputs.clean, ".app" if not inputs.gui else '', inputs.icon
         )
     else:
         args = Args(
-            "__main__.py", "pymdown", False, inputs.clean, ""
+            "__main__.py", "pymdown", inputs.gui, inputs.clean, '', inputs.icon
         )
 
     # Parse options

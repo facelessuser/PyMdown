@@ -16,7 +16,7 @@ PY3 = sys.version_info >= (3, 0)
 #####################################
 data = []
 hidden_imports = []
-eggs = []
+paths = []
 hookpaths = ['pyinstaller_hooks']
 
 #####################################
@@ -96,7 +96,7 @@ def crawl_eggs(src, dest, egg_modules):
 
 crawl_data(data_to_crawl, data)
 crawl_hidden_imports(hidden_imports_to_crawl, hidden_imports)
-crawl_eggs(eggs_to_crawl, eggs, hidden_imports)
+crawl_eggs(eggs_to_crawl, paths, hidden_imports)
 
 
 #####################################
@@ -113,7 +113,7 @@ def print_all_vars():
     print('====== Processed Spec Variables =====')
     print_vars('Data', data)
     print_vars('Hidden Imports', hidden_imports)
-    print_vars("Eggs", eggs)
+    print_vars("Paths", paths)
 
 
 if __name__ == "__main__":
