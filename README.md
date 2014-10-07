@@ -174,23 +174,23 @@ Just drop the extra folder in your Sublime `Packages` folder and name to somethi
     //////////////////////////////////
     {
         "caption": "PyMdown: Preview Markdown",
-        "command": "py_mdown_preview",
+        "command": "py_mdown_convert",
         "args": {"target": "browser"}
     },
     {
         "caption": "PyMdown: Save to Disk",
-        "command": "py_mdown_preview",
+        "command": "py_mdown_convert",
         "args": {"target": "save"}
     },
     {
         "caption": "PyMdown: To Clipboard",
-        "command": "py_mdown_preview",
-        "args": {"target": "clipboard", "plain": true}
+        "command": "py_mdown_convert",
+        "args": {"target": "clipboard", "modes": ["template", "plain", "no_template"]}
     },
     {
         "caption": "PyMdown: Export to Sublime",
-        "command": "py_mdown_preview",
-        "args": {"target": "sublime", "plain": true}
+        "command": "py_mdown_convert",
+        "args": {"target": "sublime", "modes": ["template", "plain", "no_template"]}
     },
     {
         "caption": "PyMdown: Critic Strip Markdown (accept)",

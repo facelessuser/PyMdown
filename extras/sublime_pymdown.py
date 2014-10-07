@@ -64,7 +64,7 @@ def parse_file_name(file_name):
 
 
 def handle_line_endings(text):
-    return text.replace('\r\n', '\n').replace('\r', '\n')
+    return text.replace('\r', '')
 
 
 ###############################
@@ -298,19 +298,60 @@ class PyMdownCommand(sublime_plugin.TextCommand):
     def error_message(self):
         error(self.message)
 
+    def is_enabled(self, *args, **kwargs):
+        return not PyMdownWorker.working
 
-class PyMdownPreviewCommand(PyMdownCommand):
+
+class PyMdownConvertCommand(PyMdownCommand):
     message = "pymdown failed to generate html!"
 
     def run(
-        self, edit, target="browser", plain=False,
-        alternate_settings=None, ignore_template=False
+        self, edit, target="browser",
+        alternate_settings=None,
+        modes=['template']
     ):
+        window = self.view.window()
+        if window is None:
+            return
+
         self.setup(alternate_settings)
         self.target = target
+
+        plain = False
+        ignore_template = False
+        self.modes = []
+        options = []
+        if 'template' in modes:
+            self.modes.append('template')
+            options.append('Template')
+        if 'plain' in modes:
+            plain = True
+            self.modes.append('plain')
+            options.append('Plain HTML')
+        if 'no_template' in modes:
+            ignore_template = True
+            self.modes.append('no_template')
+            options.append('No Template')
+        if len(options) > 1:
+            window.show_quick_panel(options, self.process_choice)
+        else:
+            self.launch_mode(plain, ignore_template)
+
+    def process_choice(self, value):
+        if value >= 0:
+            plain = False
+            ignore_template = False
+            mode = self.modes[value]
+            if mode == 'plain':
+                plain = True
+            elif mode == 'no_template':
+                ignore_template = True
+            self.launch_mode(plain, ignore_template)
+
+    def launch_mode(self, plain=False, ignore_template=False):
         self.plain = plain
         self.ignore_template = ignore_template
-        self.convert(edit)
+        self.convert()
 
     def output(self, results):
         if self.target == "browser":
@@ -346,7 +387,7 @@ class PyMdownPreviewCommand(PyMdownCommand):
         else:
             error("Unknown output type!")
 
-    def convert(self, edit):
+    def convert(self):
         if self.target == "browser":
             self.options['preview'] = True
         else:
@@ -398,9 +439,9 @@ class PyMdownCriticStripCommand(PyMdownCommand):
     def run(self, edit, reject=False, alternate_settings=None):
         self.setup(alternate_settings)
         self.reject = reject
-        self.convert(edit)
+        self.convert()
 
-    def convert(self, edit):
+    def convert(self):
         self.options['critic_dump'] = True
         self.options['quiet'] = True
         self.options['force_stdout'] = True
