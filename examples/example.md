@@ -25,7 +25,6 @@
         - markdown.extensions.admonition
         - markdown.extensions.codehilite(guess_lang=False,pygments_style=github2)
         - pymdown.pymdown
-        - pymdown.mark
         - pymdown.b64(base_path=${BASE_PATH})
 ---
 test: This example of normal meta extension
@@ -951,8 +950,8 @@ Normally you would just globally set your additional classes: `progressbar(add_c
 
 To turn off level classes (which are used to decide special colors for certain percentages) you could just use `progressbar(level_class=False)`.
 ```
-| Test               | Result                                     |
-|--------------------|--------------------------------------------|
+| Test               | Result                                    |
+|--------------------|-------------------------------------------|
 |Animated: 0%        |[=0% "0%"]{: .candystripe-animate}         |
 |Animated: 5%        |[=5% "5%"]{: .candystripe-animate}         |
 |Animated: 25%       |[=25% "25%"]{: .candystripe-animate}       |
@@ -962,11 +961,11 @@ To turn off level classes (which are used to decide special colors for certain p
 |Animated: 100%      |[=100% "100%"]{: .candystripe-animate}     |
 |Division Percentage |[= 212.2/537 "212.2/537 Testing division"] |
 |No Label            |[= 50%]                                    |
-|Inline              |Before[= 50% "I'm a block!"]After            |
+|Inline              |Before[= 50% "I'm a block!"]After          |
 ```
 
-| Test               | Result                                     |
-|--------------------|--------------------------------------------|
+| Test               | Result                                    |
+|--------------------|-------------------------------------------|
 |Animated: 0%        |[=0% "0%"]{: .candystripe-animate}         |
 |Animated: 5%        |[=5% "5%"]{: .candystripe-animate}         |
 |Animated: 25%       |[=25% "25%"]{: .candystripe-animate}       |
@@ -976,4 +975,4 @@ To turn off level classes (which are used to decide special colors for certain p
 |Animated: 100%      |[=100% "100%"]{: .candystripe-animate}     |
 |Division Percentage |[= 212.2/537 "212.2/537 Testing division"] |
 |No Label            |[= 50%]                                    |
-|Inline              |Before[= 50% "I'm a block!"]After            |
+|Inline              |Before[= 50% "I'm a block!"]After          |
