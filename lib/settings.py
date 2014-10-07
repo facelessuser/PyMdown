@@ -71,7 +71,7 @@ class Settings(object):
         self, settings_path=None, stream=False,
         batch=False, critic=CRITIC_IGNORE,
         plain=False, preview=False, encoding='utf-8',
-        force_stdout=False
+        force_stdout=False, force_no_template=False
     ):
         """ Initialize """
         self.critic = critic
@@ -82,6 +82,7 @@ class Settings(object):
         self.is_stream = stream
         self.pygments_noclasses = False
         self.force_stdout = force_stdout
+        self.force_no_template = force_no_template
         self.settings = {
             "builtin": {
                 "destination": None,
@@ -136,6 +137,8 @@ class Settings(object):
             self.apply_frontmatter(frontmatter, settings)
         if self.force_stdout:
             settings["builtin"]["destination"] = None
+        if self.force_no_template:
+            settings['settings']['html_template'] = None
         self.post_process_settings(settings)
         return settings
 

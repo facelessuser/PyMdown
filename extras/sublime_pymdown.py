@@ -236,10 +236,14 @@ class PyMdownCommand(sublime_plugin.TextCommand):
 class PyMdownPreviewCommand(PyMdownCommand):
     message = "pymdown failed to generate html!"
 
-    def run(self, edit, target="browser", plain=False, alternate_settings=None):
+    def run(
+        self, edit, target="browser", plain=False,
+        alternate_settings=None, ignore_template=False
+    ):
         self.setup(alternate_settings)
         self.target = target
         self.plain = plain
+        self.ignore_template = ignore_template
         if self.binary:
             self.convert(edit)
 
@@ -292,11 +296,13 @@ class PyMdownPreviewCommand(PyMdownCommand):
         else:
             self.cmd.append("-q")
 
-        if self.target in ("sublime", "clipboard"):
+        if self.target in ("sublime", "clipboard", "save"):
             self.cmd.append('--force-stdout')
 
         if self.plain:
             self.cmd.append("-P")
+        elif self.ignore_template:
+            self.cmd.append("--force-no-template")
 
         if self.reject:
             self.cmd.append("-r")
