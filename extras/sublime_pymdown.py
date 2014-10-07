@@ -292,6 +292,9 @@ class PyMdownPreviewCommand(PyMdownCommand):
         else:
             self.cmd.append("-q")
 
+        if self.target in ("sublime", "clipboard"):
+            self.cmd.append('--force-stdout')
+
         if self.plain:
             self.cmd.append("-P")
 
@@ -320,7 +323,7 @@ class PyMdownCriticStripCommand(PyMdownCommand):
             self.convert(edit)
 
     def convert(self, edit):
-        self.cmd += ["--critic-dump", "-q"]
+        self.cmd += ["--critic-dump", "-q", '--force-stdout']
         if self.reject:
             self.cmd.append("-r")
         else:

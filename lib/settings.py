@@ -70,7 +70,8 @@ class Settings(object):
     def __init__(
         self, settings_path=None, stream=False,
         batch=False, critic=CRITIC_IGNORE,
-        plain=False, preview=False, encoding='utf-8'
+        plain=False, preview=False, encoding='utf-8',
+        force_stdout=False
     ):
         """ Initialize """
         self.critic = critic
@@ -80,6 +81,7 @@ class Settings(object):
         self.preview = preview
         self.is_stream = stream
         self.pygments_noclasses = False
+        self.force_stdout = force_stdout
         self.settings = {
             "builtin": {
                 "destination": None,
@@ -132,6 +134,8 @@ class Settings(object):
         settings["builtin"]["basepath"] = self.get_base_path(basepath)
         if frontmatter is not None:
             self.apply_frontmatter(frontmatter, settings)
+        if self.force_stdout:
+            settings["builtin"]["destination"] = None
         self.post_process_settings(settings)
         return settings
 
@@ -225,6 +229,9 @@ class Settings(object):
 
     def get_output(self, out_name):
         """ Get the path to output the file. """
+
+        if self.force_stdout:
+            return None
 
         critic_enabled = self.critic & (CRITIC_ACCEPT | CRITIC_REJECT)
         output = None
