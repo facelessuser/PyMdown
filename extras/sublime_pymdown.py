@@ -1,6 +1,7 @@
 import sublime
 import sublime_plugin
-from os.path import basename, dirname, exists, splitext
+from os.path import join, basename, dirname, exists, splitext
+import _thread as thread
 import codecs
 import subprocess
 import sys
@@ -19,6 +20,76 @@ elif sys.platform == "darwin":
     _PLATFORM = "osx"
 else:
     _PLATFORM = "linux"
+
+
+def worker_thread(worker_in, worker_out):
+    """
+    Start worker thread
+    """
+
+    WorkerStatus.working
+
+    for pth in worker_in.paths:
+        cmd = [worker_in.binary]
+        if worker_in.title:
+            cmd.append("--title=%s" % worker_in.title)
+        if worker_in.basepath:
+            cmd.append("--basepath=%s" % worker_in.basepath)
+        if worker_in.settings:
+            cmd.append("-s", worker_in.settings)
+        if worker_in.critic_accept:
+            cmd.append('-a')
+        else:
+            cmd.append('-r')
+        if worker_in.batch:
+            cmd.append('-b')
+        if worker_in.preview:
+            cmd.append('-p')
+
+        try:
+            if len(worker_in.patterns):
+                cmd += [join(pth, p) for p in worker_in.patterns]
+
+                if _PLATFORM == "windows":
+                    startupinfo = subprocess.STARTUPINFO()
+                    startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+                    p = subprocess.Popen(
+                        cmd, startupinfo=startupinfo,
+                        stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+                    )
+                else:
+                    p = subprocess.Popen(
+                        cmd,
+                        stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE
+                    )
+
+                text = p.communicate()[0].decode("utf-8")
+                status = p.returncode
+
+                worker_out.complete(text, status)
+                sublime.set_timeout(lambda x=text: worker_report(x), 0)
+                if p.returncode:
+                    sublime.set_timeout(
+                        lambda x="PyModown: Batch Processing Error Occured!": worker_thread(x, True, True)
+                    )
+        except:
+            sublime.set_timeout(lambda x=str(traceback.format_exc()): worker_report(x), 0)
+            sublime.set_timeout(
+                lambda x="PyModown: A Batch Command Failed!": worker_thread(x, True, True)
+            )
+
+    sublime.set_timeout(lambda x="PyMdown: Batch Job Completed!": worker_report(x, True), 0)
+    WorkerStatus.working = False
+
+
+def worker_report(text, user_notify=False, is_error=False):
+    if user_notify:
+        if is_error:
+            error(text)
+        else:
+            notify(text)
+    else:
+        print(text)
 
 
 def notify(msg):
@@ -49,6 +120,49 @@ def parse_file_name(file_name):
 
 def handle_line_endings(text):
     return text.replace('\r\n', '\n').replace('\r', '\n')
+
+
+class WorkerStatus(object):
+    working = False
+
+
+class WorkerInput(object):
+    def __init__(self):
+        self.binary = None
+        self.critic_accept = True
+        self.paths = []
+        self.patterns = ['*.mdown', '*.markdown', '*.markdn', '*.md']
+        self.title = None
+        self.basepath = None
+        self.batch = False
+        self.preview = False
+        self.settings = None
+        self.callback = None
+
+
+class WorkerOutput(object):
+    def __init__(self):
+        self.result = ''
+        self.status = 0
+
+    def complete(self, result, status):
+        self.result = result
+        self.status = status
+
+
+class PyMdownBatchCommand(sublime_plugin.WindowCommand):
+    def run(self, paths=[], preview=False):
+        if not WorkerStatus.working:
+            w_in = WorkerInput()
+            w_in.binary = sublime.load_settings("pymdown.sublime-settings").get("binary", {}).get(_PLATFORM, "")
+            w_in.critic_accept = sublime.load_settings("pymdown.sublime-settings").get("critic_reject", False)
+            w_in.batch = True
+            w_in.paths = paths
+            w_in.preview = preview
+            thread.start_new_thread(worker_thread, (w_in, WorkerOutput()))
+
+    def is_enabled(self, paths=[], patterns=[]):
+        return not WorkerStatus.working
 
 
 class PyMdownInsertText(sublime_plugin.TextCommand):
@@ -136,7 +250,7 @@ class PyMdownPreviewCommand(PyMdownCommand):
             # print(handle_line_endings(rbfr))
         elif self.target == "clipboard":
             sublime.set_clipboard(rbfr)
-            notify("Conversion complete!\nResult copied to clipbaord.")
+            notify("Conversion complete!\nResult copied to clipboard.")
         elif self.target == "sublime":
             window = self.view.window()
             if window is not None:
@@ -206,7 +320,7 @@ class PyMdownCriticStripCommand(PyMdownCommand):
             self.convert(edit)
 
     def convert(self, edit):
-        self.cmd += ["--critic-dump", "-p", "-q"]
+        self.cmd += ["--critic-dump", "-q"]
         if self.reject:
             self.cmd.append("-r")
         else:
