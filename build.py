@@ -263,7 +263,6 @@ def main():
     parser.add_argument('--clean', '-c', action='store_true', default=False, help='Clean build before re-building.')
     parser.add_argument('--gui', '-g', action='store_true', default=False, help='GUI app')
     parser.add_argument('--portable', '-p', action='store_true', default=False, help='Build with portable python (windows)')
-    # parser.add_argument('--imports', default=None, nargs="*", help='Include hidden imports')
     parser.add_argument('--icon', '-i', default=None, nargs="?", help='App icon')
     # parser.add_argument('script', default=None, help='Main script')
     # parser.add_argument('name', default=None, help='Name of app')
