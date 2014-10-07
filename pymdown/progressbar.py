@@ -97,11 +97,10 @@ from __future__ import unicode_literals
 from markdown import Extension
 from markdown.inlinepatterns import Pattern, dequote
 from markdown import util
-from markdown.extensions import attr_list
-import re
+from markdown.extensions.attr_list import AttrListTreeprocessor
 
 RE_PROGRESS = r'''(?x)
-\[=\s*                                                            # Opening
+\[=\s*                                                             # Opening
 (?:
   (?P<percent>100(?:.0+)?|[1-9]?[0-9](?:.\d+)?)% |                 # Percent
   (?:(?P<frac_num>\d+(?:.\d+)?)\s*/\s*(?P<frac_den>\d+(?:.\d+)?))  # Fraction
@@ -119,7 +118,7 @@ CLASS_20PLUS = "progress-20plus"
 CLASS_0PLUS = "progress-0plus"
 
 
-class ProgressBarTreeProcessor(attr_list.AttrListTreeprocessor):
+class ProgressBarTreeProcessor(AttrListTreeprocessor):
     def run(self, elem):
         # inline: check for attrs at start of tail
         if elem.tail:
@@ -150,9 +149,10 @@ class ProgressBarPattern(Pattern):
         p = util.etree.SubElement(bar, 'p')
         p.set('class', 'progress-label')
         p.text = label
-        if alist is not None and 'attr_list' in self.markdown.treeprocessors.keys():
+        if alist is not None:
             el.tail = alist
-            ProgressBarTreeProcessor(self.markdown).run(el)
+            if 'attr_list' in self.markdown.treeprocessors.keys():
+                ProgressBarTreeProcessor(self.markdown).run(el)
         return el
 
     def handleMatch(self, m):
