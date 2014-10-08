@@ -478,8 +478,10 @@ table tr:last-child td:last-child {
   padding-bottom: 0.2em;
   margin: 0;
   font-size: 85%;
-  background-color: rgba(0, 0, 0, 0.04);
-  border: 1px solid rgba(0, 0, 0, .1);
+  background-color: #fafafa;
+  border: 1px solid #e0e0e0;
+  /*background-color: rgba(0, 0, 0, 0.016);*/
+  /*border: 1px solid rgba(0, 0, 0, .1);*/
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
