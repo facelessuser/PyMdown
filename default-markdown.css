@@ -69,25 +69,20 @@
 
 /* Header Rows */
 .markdown-body hr {
-  height: 4px;
-  margin: 16px 0;
-  overflow: hidden;
-  background: transparent;
-  background-color: #e7e7e7;
-  border: 0 None;
-  border-bottom: 1px solid #ddd;
-  -moz-box-sizing: content-box;
-  box-sizing: content-box;
-}
-
-.markdown-body hr:before,
-.markdown-body hr:after {
-  display: table;
-  content: " ";
+  height: 1px;
+  margin: 2em 8em 4em 8em;
+  text-align: center;
+  border-color: #ededed;
+  border-width: 0;
+  color: #ededed;
+  border-style: dotted;
 }
 
 .markdown-body hr:after {
-  clear: both;
+  content: "\00a0\2022\2022\2022";
+  font-size: 1.25em;
+  letter-spacing: 2em;
+  white-space: nowrap;
 }
 
 /* Links */

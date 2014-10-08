@@ -3,62 +3,17 @@
 <head>
 <style>
 body {
+  width: 80%;
+  border: 1px solid #ddd;
   background-color: #fafafa;
-  margin: 0 auto 16px auto;
-  font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
-  font-size: 16px;
+  margin: 16px auto;
 }
 
-.doc-container {
-  padding: 0;
-  width: 80%;
-  margin: 20px auto;
-  padding-top: 20px;
-  position:relative;
-  z-index:1;
-  background:#fff;
-  border: 1px solid #ddd;
+body .markdown-body {
+  padding: 30px;
   -moz-box-shadow: 0px 3px 5px #CCCCCC;
   -webkit-box-shadow: 0px 3px 5px #CCCCCC;
   box-shadow: 0px 3px 5px #CCCCCC;
-}
-
-.doc-header {
-    position:relative;
-    margin:0 -11px 20px;
-    font-size:28px;
-    text-align:center;
-    color: #fafafa;
-    text-shadow: 0 1px 0 #333;
-    padding: 20px 10px;
-    background-color: #71b2c9;
-    text-shadow:0 1px 2px rgba(0,0,0,0.5);
-    -webkit-box-shadow:0 1px 1px rgba(0,0,0,0.2);
-    -moz-box-shadow:0 1px 1px rgba(0,0,0,0.2);
-    box-shadow: 0 1px 1px rgba(0,0,0,0.2);
-    zoom:1;
-}
-
-.doc-header:before,
-.doc-header:after {
-    content:"";
-    position:absolute;
-    z-index:-1;
-    top:100%;
-    left:0;
-    border-width:0 10px 10px 0;
-    border-style:solid;
-    border-color:transparent #3b819a;
-}
-
-.doc-header:after {
-    left:auto;
-    right:0;
-    border-width:0 0 10px 10px;
-}
-
-.markdown-body {
-  padding: 30px;
 }
 </style>
 <meta charset="utf-8">
@@ -134,7 +89,7 @@ body {
 
 /* Header Rows */
 .markdown-body hr {
-  height: 4px;
+  /*height: 4px;
   margin: 16px 0;
   overflow: hidden;
   background: transparent;
@@ -142,14 +97,25 @@ body {
   border: 0 None;
   border-bottom: 1px solid #ddd;
   -moz-box-sizing: content-box;
-  box-sizing: content-box;
+  box-sizing: content-box;*/
+  height: 1px;
+  margin: 2em 1em 4em 0;
+  text-align: center;
+  border-color: #333;
+  border-width: 0;
+  border-style: dotted;
 }
 
-.markdown-body hr:before,
+.markdown-body hr:after {
+  content: "···";
+  letter-spacing: 2em;
+}
+
+/*.markdown-body hr:before,
 .markdown-body hr:after {
   display: table;
   content: " ";
-}
+}*/
 
 .markdown-body hr:after {
   clear: both;
@@ -1176,9 +1142,8 @@ table tr:last-child td:last-child {
 
 </head>
 <body>
-<div class="doc-container">
-<h1 class="doc-header">nested_fences.md</h1>
-<article class="markdown-body"><p>Paragraph with words</p>
+<article class="markdown-body">
+<p>Paragraph with words</p>
 <div class="codehilite"><pre>Normal fenced block
 
 Still works
@@ -1294,7 +1259,7 @@ Still works
 </p>
 </blockquote>
 </blockquote>
-</div></article>
 </div>
+</article>
 </body>
 </html>
