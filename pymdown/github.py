@@ -8,6 +8,7 @@ extensions = [
     'pymdown.githubemoji',
     'pymdown.tasklist',
     'pymdown.headeranchor',
+    'pymdown.nestedfences',
     'markdown.extensions.nl2br'
 ]
 
