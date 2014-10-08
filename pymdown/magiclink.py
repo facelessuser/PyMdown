@@ -18,7 +18,7 @@ from markdown import Extension
 from markdown.inlinepatterns import LinkPattern
 from markdown import util
 
-RE_MAIL = r'''(?i)((?:[\-+\w]([\w\-+]|\.(?!\.))+)@(?:[\w\-]+\.)(([\w\-]|(?<!\.)\.(?!\.))*)[a-z](?![\d.\-+_]))'''
+RE_MAIL = r'''(?i)((?:[\-+\w]([\w\-+]|\.(?!\.))+)@(?:[\w\-]+\.)(([\w\-]|(?<!\.)\.(?!\.))*)[a-z](?![\d\-_@]))'''
 
 RE_LINK = r'''(?x)(?i)
     (
