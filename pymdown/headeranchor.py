@@ -51,13 +51,12 @@ class HeaderAnchorExtension(Extension):
         self.config = {
             'sep': ['-', "Separator to use when creating header ids - Default: '-'"]
         }
-
+        self.configured = False
         super(HeaderAnchorExtension, self).__init__(*args, **kwargs)
 
     def extendMarkdown(self, md, md_globals):
         """Add HeaderAnchorTreeprocessor to Markdown instance"""
 
-        self.load = True
         self.processor = HeaderAnchorTreeprocessor(md)
         self.processor.config = self.getConfigs()
         self.processor.md = md
@@ -66,8 +65,8 @@ class HeaderAnchorExtension(Extension):
 
     def reset(self):
         """ Ensure this is always after toc """
-        if 'toc' in self.processor.md.treeprocessors.keys() and self.load:
-            self.load = False
+        if 'toc' in self.processor.md.treeprocessors.keys() and not self.configured:
+            self.configured = True
             del self.processor.md.treeprocessors["header-anchor"]
             self.processor.md.treeprocessors.add("header-anchor", self.processor, ">toc")
 

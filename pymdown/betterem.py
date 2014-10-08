@@ -89,13 +89,14 @@ class BetterEmExtension(Extension):
         if "smart_enable" in kwargs and kwargs["smart_enable"] not in smart_enable_keys:
             del kwargs["smart_enable"]
 
+        self.configured = False
+
         super(BetterEmExtension, self).__init__(*args, **kwargs)
 
     def extendMarkdown(self, md, md_globals):
         """ Modify inline patterns. """
 
         self.md = md
-        self.load = True
         md.registerExtension(self)
 
     def make_better(self):
@@ -135,8 +136,8 @@ class BetterEmExtension(Extension):
 
     def reset(self):
         """ Wait to make sure smart_strong hasn't overwritten us. """
-        if self.load:
-            self.load = False
+        if not self.configured:
+            self.configured = True
             self.make_better()
 
 
