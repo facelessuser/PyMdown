@@ -53,14 +53,14 @@ def get_files(file_patterns):
 
     import glob
     files = []
-    all_files = []
+    all_files = set()
     assert len(file_patterns), "No file patterns"
     if len(file_patterns):
         for pattern in file_patterns:
             files += glob.glob(pattern)
     for f in files:
-        all_files.append(abspath(normpath(f)))
-    return all_files
+        all_files.add(abspath(normpath(f)))
+    return list(all_files)
 
 
 def get_file_stream(encoding):
