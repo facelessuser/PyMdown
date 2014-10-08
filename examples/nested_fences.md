@@ -6,6 +6,19 @@ Normal fenced block
 Still works
 ```
 
+Indented block
+
+    ```javascript
+    // Fenced **with** highlighting
+
+    function doIt() {
+        for (var i = 1; i <= slen ; i^^) {
+            setTimeout("document.z.textdisplay.value = newMake()", i*300);
+            setTimeout("window.status = newMake()", i*300);
+        }
+    }
+    ```
+
 
 !!! danger "admonition"
     Some words
@@ -58,16 +71,18 @@ Still works
 
             - test
 
-                ```javascript
-                // Fenced **with** highlighting
+                Indented code block
 
-                function doIt() {
-                    for (var i = 1; i <= slen ; i^^) {
-                        setTimeout("document.z.textdisplay.value = newMake()", i*300);
-                        setTimeout("window.status = newMake()", i*300);
+                    ```javascript
+                    // Fenced **with** highlighting
+
+                    function doIt() {
+                        for (var i = 1; i <= slen ; i^^) {
+                            setTimeout("document.z.textdisplay.value = newMake()", i*300);
+                            setTimeout("window.status = newMake()", i*300);
+                        }
                     }
-                }
-                ```
+                    ```
 
                 ```
               Unaligned text

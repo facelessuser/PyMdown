@@ -46,13 +46,37 @@ FENCED_END = r'^%s[ ]*$'
 WS = r'^([\> ]{0,%d})(.*)'
 
 
+class CodeStash(object):
+    """
+    Store original fenced code here in case we were
+    to greedy and need to restore in an indented code
+    block.
+    """
+
+    def __init__(self):
+        self.stash = {}
+
+    def remove_stash(self, key):
+        code = self.stash.get(key, None)
+        if code is not None:
+            del self.stash[key]
+        return code
+
+    def store(self, key, code):
+        self.stash[key] = code
+
+    def clear_stash(self):
+        self.stash = {}
+
+
+
 class NestedFencesCodeExtension(Extension):
 
     def __init__(self, *args, **kwargs):
         self.config = {
             'disable_indented_code_blocks': [False, "Disable indented code blocks - Default: False"]
         }
-
+        self.configured = False
         super(NestedFencesCodeExtension, self).__init__(*args, **kwargs)
 
     def extendMarkdown(self, md, md_globals):
@@ -61,9 +85,13 @@ class NestedFencesCodeExtension(Extension):
         self.markdown = md
 
     def patch_fenced_rule(self):
+        codestash = CodeStash()
         fenced = NestedFencesBlockPreprocessor(self.markdown)
         indented_code = NestedFencesCodeBlockProcessor(self)
         indented_code.config = self.getConfigs()
+        indented_code.markdown = self.markdown
+        indented_code.codestash = codestash
+        fenced.codestash = codestash
         self.markdown.parser.blockprocessors['code'] = indented_code
         if 'fenced_code_block' in self.markdown.preprocessors.keys():
             self.markdown.preprocessors['fenced_code_block'] = fenced
@@ -76,7 +104,11 @@ class NestedFencesCodeExtension(Extension):
         # but to make it easy on people who include all of
         # "extra", we will patch fenced_code after fenced_code
         # has been loaded.
-        self.patch_fenced_rule()
+        if not self.configured:
+            self.patch_fenced_rule()
+            self.configured = True
+        else:
+            self.markdown.parser.blockprocessors['fenced_code_block'].codestash.clear_stash()
 
 
 class NestedFencesBlockPreprocessor(Preprocessor):
@@ -90,9 +122,9 @@ class NestedFencesBlockPreprocessor(Preprocessor):
         self.checked_for_codehilite = False
         self.codehilite_conf = {}
 
-    def deindent(self, lines, ws):
+    def rebuild_block(self, lines):
         """ Deindent the fenced block lines """
-        return '\n'.join([line.replace(self.ws, "", 1) for line in lines]) + '\n'
+        return '\n'.join(lines) + '\n'
 
     def check_codehilite(self):
         """ Check for code hilite extension """
@@ -126,7 +158,8 @@ class NestedFencesBlockPreprocessor(Preprocessor):
             self.clear()
         elif self.fence_end.match(m.group(0)) is not None:
             # End of fence
-            self.highlight(self.deindent(self.code, self.ws), start, end)
+            self.last = m.group(0).lstrip()
+            self.highlight(self.rebuild_block(self.code), start, end)
             self.clear()
         else:
             # Content line
@@ -152,7 +185,8 @@ class NestedFencesBlockPreprocessor(Preprocessor):
                 self.clear()
             elif self.fence_end.match(m.group(0)) is not None:
                 # End of fence
-                self.highlight(self.deindent(self.code, self.ws), start, end)
+                self.last = m.group(0).lstrip()
+                self.highlight(self.rebuild_block(self.code), start, end)
                 self.clear()
             else:
                 # Content line
@@ -172,6 +206,7 @@ class NestedFencesBlockPreprocessor(Preprocessor):
                 m = self.fence_start.match(line)
                 if m is not None:
                     start = count
+                    self.first = m.group(0).lstrip()
                     self.ws = m.group('ws') if m.group('ws') else ''
                     self.ws_len = len(self.ws)
                     self.quote_level = self.ws.count(">")
@@ -240,6 +275,8 @@ class NestedFencesBlockPreprocessor(Preprocessor):
         # Save the fenced blocks to add once we are done iterating the lines
         placeholder = self.markdown.htmlStash.store(code, safe=True)
         self.stack.append(('%s%s' % (self.ws, placeholder), start, end))
+        # If an indented block consumes this placeholder, we can unback the original source
+        self.codestash.store(placeholder[1:-1], "%s\n%s%s" % (self.first, source, self.last))
 
     def _escape(self, txt):
         """ basic html escaping """
@@ -252,26 +289,35 @@ class NestedFencesBlockPreprocessor(Preprocessor):
 
 class NestedFencesCodeBlockProcessor(BlockProcessor):
     """ Process code blocks. """
-    FENCED_BLOCK_RE = re.compile(r'^[\> ]*%s$' % (util.HTML_PLACEHOLDER % r'([0-9]+)'))
+    FENCED_BLOCK_RE = re.compile(r'^[\> ]*%s(%s)%s$' % (
+            util.HTML_PLACEHOLDER[0],
+            util.HTML_PLACEHOLDER[1:-1] % r'([0-9]+)',
+            util.HTML_PLACEHOLDER[-1]
+        )
+    )
 
     def test(self, parent, block):
         return True
 
-    def break_out_fences(self, block):
-        pieces = []
-        piece = []
+    def reindent(self, text, level):
+        if text is None:
+            return None
+        indented = []
+        for line in text.split('\n'):
+            indented.append((' ' * level) + line)
+        return '\n'.join(indented)
+
+    def revert_greedy_fences(self, block):
+        new_block = []
         for line in block.split('\n'):
-            if self.FENCED_BLOCK_RE.match(line):
-                if len(piece):
-                    pieces.append('\n'.join(piece))
-                pieces.append(line)
-                piece = []
+            m = self.FENCED_BLOCK_RE.match(line)
+            if m:
+                ws = re.match(r'^([ ]*).*$', line).group(1)
+                code = self.reindent(self.codestash.remove_stash(m.group(1)), len(ws))
+                new_block.append(code if code is not None else line)
             else:
-                piece.append(line)
-        if len(piece):
-            pieces.append('\n'.join(piece))
-            piece = []
-        return pieces
+                new_block.append(line)
+        return '\n'.join(new_block)
 
     def run(self, parent, blocks):
         """ Look for and parse code block """
@@ -283,47 +329,28 @@ class NestedFencesCodeBlockProcessor(BlockProcessor):
         ):
             block = blocks.pop(0)
             theRest = ''
-            pieces = self.break_out_fences(block)
-            piece = pieces.pop(0)
+            block = self.revert_greedy_fences(block)
             sibling = self.lastChild(parent)
             handled = True
 
-            if self.FENCED_BLOCK_RE.match(piece) is not None:
-                # Fenced block was found, append to sibling's tail
-                # or to the parent's text if sibling not found.
-                if sibling is not None:
-                    if sibling.tail is None:
-                        sibling.tail = piece
-                    else:
-                        sibling.tail += piece
-                else:
-                    if parent.text is None:
-                        parent.text = piece
-                    else:
-                        parent.text += piece
-                theRest = pieces[:]
-                pieces = []
-            elif (
-                sibling is not None and sibling.tag == "pre" and len(sibling) and
-                sibling[0].tag == "code"
-            ):
+            if sibling is not None and sibling.tag == "pre" and len(sibling) \
+                    and sibling[0].tag == "code":
                 # The previous block was a code block. As blank lines do not start
                 # new code blocks, append this block to the previous, adding back
                 # linebreaks removed from the split into a list.
                 code = sibling[0]
-                piece, theRest = self.detab(piece)
-                code.text = util.AtomicString('%s\n%s\n' % (code.text, piece.rstrip()))
+                block, theRest = self.detab(block)
+                code.text = util.AtomicString('%s\n%s\n' % (code.text, block.rstrip()))
             else:
                 # This is a new codeblock. Create the elements and insert text.
                 pre = util.etree.SubElement(parent, 'pre')
                 code = util.etree.SubElement(pre, 'code')
-                piece, theRest = self.detab(piece)
-                code.text = util.AtomicString('%s\n' % piece.rstrip())
+                block, theRest = self.detab(block)
+                code.text = util.AtomicString('%s\n' % block.rstrip())
             if theRest:
                 # This block contained unindented line(s) after the first indented
                 # line. Insert these lines as the first block of the master blocks
                 # list for future processing.
-                theRest = '\n'.join([theRest] + pieces)
                 blocks.insert(0, theRest)
 
         return handled
