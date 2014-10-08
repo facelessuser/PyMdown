@@ -164,44 +164,7 @@ optional arguments:
 ```
 
 # Sublime Plugin
-Generally I recommend https://github.com/revolunet/sublimetext-markdown-preview.  But I wrote this program and this sublime plugin to gain certain control I didn't already have.  If for whatever reason you want to use this plugin, this is how you set it up.
-
-Just drop the extra folder in your Sublime `Packages` folder and name to something sane like `pymdown`.  It currently provides the following commands that are accessible from the command palette:
-
-```javascript
-    //////////////////////////////////
-    // PyMdown
-    //////////////////////////////////
-    {
-        "caption": "PyMdown: Preview Markdown",
-        "command": "py_mdown_convert",
-        "args": {"target": "browser"}
-    },
-    {
-        "caption": "PyMdown: Save to Disk",
-        "command": "py_mdown_convert",
-        "args": {"target": "save"}
-    },
-    {
-        "caption": "PyMdown: To Clipboard",
-        "command": "py_mdown_convert",
-        "args": {"target": "clipboard", "modes": ["template", "plain", "no_template"]}
-    },
-    {
-        "caption": "PyMdown: Export to Sublime",
-        "command": "py_mdown_convert",
-        "args": {"target": "sublime", "modes": ["template", "plain", "no_template"]}
-    },
-    {
-        "caption": "PyMdown: Critic Strip Markdown (accept)",
-        "command": "py_mdown_critic_strip"
-    },
-    {
-        "caption": "PyMdown: Critic Strip Markdown (reject)",
-        "command": "py_mdown_critic_strip",
-        "args": {"reject": true}
-    }
-```
+A sublime plugin that utilizes this app is found here: [sublime-pymdown](https://github.com/facelessuser/sublime-pymdown)
 
 # Credits
 - Built on top of https://pypi.python.org/pypi/Markdown
