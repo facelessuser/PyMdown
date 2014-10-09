@@ -34,8 +34,7 @@ from __future__ import unicode_literals
 from markdown import Extension
 from markdown.inlinepatterns import Pattern
 from markdown.extensions.codehilite import CodeHiliteExtension
-from markdown import util
-import traceback
+# import traceback
 try:
     from pygments import highlight
     from pygments.lexers import get_lexer_by_name, guess_lexer
@@ -45,7 +44,10 @@ try:
 except ImportError:
     pygments = False
 
-BACKTICK_CODE_RE = r'(\:{3}(?P<lang>[a-zA-Z0-9_+-]*))?(?P<tic>`+)(?P<code>.+?)(?<!`)(?P=tic)(?!`)'
+BACKTICK_CODE_RE = r'''(?x)
+(\:{3}(?P<lang>[a-zA-Z0-9_+-]*))?            # language
+(?P<tic>`+)(?P<code>.+?)(?<!`)(?P=tic)(?!`)' # code
+'''
 
 
 class InlineCodeHtmlFormatter(HtmlFormatter):
