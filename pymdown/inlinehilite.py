@@ -33,6 +33,8 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from markdown import Extension
 from markdown.inlinepatterns import Pattern
+from markdown.extensions.codehilite import CodeHiliteExtension
+from markdown import util
 import traceback
 try:
     from pygments import highlight
@@ -43,7 +45,7 @@ try:
 except ImportError:
     pygments = False
 
-BACKTICK_CODE_RE = r'\:{3}(?P<lang>[a-zA-Z0-9_+-]*)(?P<tic>`+)(?P<code>.+?)(?<!`)(?P=tic)(?!`)'
+BACKTICK_CODE_RE = r'(\:{3}(?P<lang>[a-zA-Z0-9_+-]*))?(?P<tic>`+)(?P<code>.+?)(?<!`)(?P=tic)(?!`)'
 
 
 class InlineCodeHtmlFormatter(HtmlFormatter):
@@ -55,7 +57,7 @@ class InlineCodeHtmlFormatter(HtmlFormatter):
         """ Return source wrapped in simple inline <code> block """
         yield 0, '<code class="%s">' % self.cssclass
         for i, t in source:
-            yield i, t
+            yield i, t.strip()
         yield 0, '</code>'
 
 
@@ -80,9 +82,7 @@ class InlineHilitePattern(Pattern):
                     break
             self.checked_for_codehilite = True
 
-    def handleMatch(self, m):
-        lang = m.group('lang')
-        src = m.group('code')
+    def codehilite(self, lang, src):
         if pygments:
             try:
                 lexer = get_lexer_by_name(lang)
@@ -109,9 +109,14 @@ class InlineHilitePattern(Pattern):
             class_str = ''
             if len(classes):
                 class_str = ' class="%s"' % ' '.join(classes)
-            code = '<code%s>%s</code>'% (class_str, txt)
+            code = '<code%s>%s</code>' % (class_str, txt)
         placeholder = self.markdown.htmlStash.store(code, safe=True)
         return placeholder
+
+    def handleMatch(self, m):
+        lang = m.group('lang') if m.group('lang') else 'text'
+        src = m.group('code').strip()
+        return self.codehilite(lang, src)
 
 
 class InlineHiliteExtension(Extension):
@@ -123,7 +128,7 @@ class InlineHiliteExtension(Extension):
     def extendMarkdown(self, md, md_globals):
         """ Add support for :::language`code` code hiliting """
         inline_hilite = InlineHilitePattern(BACKTICK_CODE_RE, md)
-        md.inlinePatterns.add("inline-hilite", inline_hilite, "<backtick")
+        md.inlinePatterns['backtick'] = inline_hilite
 
 
 def makeExtension(*args, **kwargs):
