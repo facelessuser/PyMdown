@@ -46,7 +46,7 @@ except ImportError:
 
 BACKTICK_CODE_RE = r'''(?x)
 (\:{3}(?P<lang>[a-zA-Z0-9_+-]*))?            # language
-(?P<tic>`+)(?P<code>.+?)(?<!`)(?P=tic)(?!`)' # code
+(?P<tic>`+)(?P<code>.+?)(?<!`)(?P=tic)(?!`)  # code
 '''
 
 
