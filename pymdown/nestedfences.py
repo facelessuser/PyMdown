@@ -69,7 +69,6 @@ class CodeStash(object):
         self.stash = {}
 
 
-
 class NestedFencesCodeExtension(Extension):
 
     def __init__(self, *args, **kwargs):
@@ -289,7 +288,8 @@ class NestedFencesBlockPreprocessor(Preprocessor):
 
 class NestedFencesCodeBlockProcessor(BlockProcessor):
     """ Process code blocks. """
-    FENCED_BLOCK_RE = re.compile(r'^[\> ]*%s(%s)%s$' % (
+    FENCED_BLOCK_RE = re.compile(
+        r'^[\> ]*%s(%s)%s$' % (
             util.HTML_PLACEHOLDER[0],
             util.HTML_PLACEHOLDER[1:-1] % r'([0-9]+)',
             util.HTML_PLACEHOLDER[-1]
