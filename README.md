@@ -8,6 +8,7 @@ This is in a **Beta** state.  Because of the **Beta** state, things are in flux 
 The following must be installed in your Python
 
 - [Python-Markdown 2.5.1+](https://pypi.python.org/pypi/Markdown)
+    - Until the next version drops: https://github.com/waylan/Python-Markdown/archive/57633f1743cc16e16c140cc92f860c62d872b6cc.zip must specifically be used if the compiled version is desired.  A workaround hook was removed as this revision fixes the issue.  As soon as 2.5.2 or greater releases, the official channel can be used.
 - [Pygments 2.0 Dev branch](https://bitbucket.org/birkenfeld/pygments-main/overview)
 - [PyYaml](http://pyyaml.org)
 
