@@ -19,13 +19,15 @@ from markdown import Extension
 from markdown.preprocessors import Preprocessor
 import re
 
-CRITIC_P = '\n\n'
-CRITIC_INSERT = '<ins class="critic">%s</ins>'
 CRITIC_DELETE = '<del class="critic">%s</del>'
-CRITIC_DELETE_P = '<del class="critic break">&nbsp;</del>'
-CRITIC_INSERT_P = '\n\n<ins class="critic break">&nbsp;</ins>\n\n'
+CRITIC_INSERT = '<ins class="critic">%s</ins>'
 CRITIC_MARK = '<mark class="critic">%s</mark>'
 CRITIC_COMMENT = '<span class="critic">%s</span>'
+
+CRITIC_DELETE_P = '<del class="critic break">&nbsp;</del>'
+CRITIC_INSERT_P = '\n\n<ins class="critic break">&nbsp;</ins>\n\n'
+CRITIC_MARK_P = '<br><br>'
+CRITIC_COMMENT_P = ' '
 
 
 class CriticViewPreprocessor(Preprocessor):
@@ -45,48 +47,68 @@ class CriticViewPreprocessor(Preprocessor):
     )
     nl2br = False
 
-    def _replace(self, text, replace, br):
+    def _edits(self, text, replace, br, changes=False, strip_nl=False):
         parts = text.split('\n')
         queue = ''
         text = ''
         last_break = False
         for part in parts:
             if part == '':
-                if queue:
-                    # Convert previous text first
-                    text += replace % self._escape(queue)
-                    queue = ''
-                    last_break = False
+                if changes:
+                    if queue:
+                        # Convert previous text first
+                        text += replace % self._escape(queue)
+                        queue = ''
 
-                if not last_break:
-                    # No previous new lines
-                    text += br
+                    if not last_break:
+                        # No previous new lines
+                        text += br
+                        last_break = True
+
+                elif not last_break:
+                    queue += br
                     last_break = True
+
             else:
-                if queue:
-                    queue += '\n'
-                queue += part
+                if queue and not last_break:
+                    part = '\n' + part
+                queue += part if changes else self._escape(part, strip_nl)
+                last_break = False
+
         if queue:
-            text += replace % self._escape(queue)
+            text += replace % (self._escape(queue, strip_nl) if changes else queue)
             queue = ''
         return text
 
     def _ins(self, text, escapes=''):
-        return escapes + self._replace(text, CRITIC_INSERT, CRITIC_INSERT_P)
+        if self.raw:
+            return CRITIC_INSERT % self._escape(text)
+        else:
+            return escapes + self._edits(text, CRITIC_INSERT, CRITIC_INSERT_P, changes=True)
 
     def _del(self, text, escapes):
-        return escapes + self._replace(text, CRITIC_DELETE, CRITIC_DELETE_P)
+        if self.raw:
+            return CRITIC_DELETE % self._escape(text)
+        else:
+            return escapes + self._edits(text, CRITIC_DELETE, CRITIC_DELETE_P, changes=True)
 
     def _mark(self, text, escapes):
-        return escapes + self._replace(text, CRITIC_MARK, CRITIC_P)
+        if self.raw:
+            return CRITIC_MARK % self._escape(text)
+        else:
+            return escapes + self._edits(text, CRITIC_MARK, CRITIC_MARK_P)
 
     def _comment(self, text, escapes):
-        return escapes + self._replace(text, CRITIC_COMMENT, CRITIC_P)
+        if self.raw:
+            return CRITIC_COMMENT % self._escape(text, strip_nl=True)
+        else:
+            return escapes + self._edits(text, CRITIC_COMMENT, CRITIC_COMMENT_P, strip_nl=True)
 
     def critic_view(self, m):
         escapes = m.group('escapes')
         if escapes and len(escapes) % 2:
-            return "%s%s" % (escapes[:-1], m.group('critic'))
+            escaped = "%s%s" % (escapes[:-1], m.group('critic'))
+            return self._escape(escaped) if self.raw else escaped
         if escapes is None:
             escapes = ''
         if m.group('ins_open'):
@@ -103,9 +125,9 @@ class CriticViewPreprocessor(Preprocessor):
                 self._ins(m.group('sub_ins_text'))
             )
         else:
-            return m.group(0)
+            return self._escape(m.group(0)) if self.raw else m.group(0)
 
-    def critic_ignore(self, m):
+    def critic_parse(self, m):
         accept = self.config["mode"] == 'accept'
         escapes = m.group('escapes')
         if escapes and len(escapes) % 2:
@@ -128,29 +150,35 @@ class CriticViewPreprocessor(Preprocessor):
     def run(self, lines):
         """ Match and store Fenced Code Blocks in the HtmlStash. """
         text = ''
-        processor = self.critic_ignore
+        processor = self.critic_parse
+        view_mode = self.config['mode'] == "view"
 
-        if self.config['mode'] == "view":
+        if view_mode:
             processor = self.critic_view
+
+        self.raw = bool(self.config['raw_view']) and view_mode
 
         for m in self.RE_CRITIC.finditer('\n'.join(lines)):
             text += processor(m)
+        if self.raw:
+            text = '<pre class="critic-pre">%s</pre>' % text
         return text.split('\n')
 
-    def _escape(self, txt):
+    def _escape(self, txt, strip_nl=False):
         """ basic html escaping """
         txt = txt.replace('&', '&amp;')
         txt = txt.replace('<', '&lt;')
         txt = txt.replace('>', '&gt;')
         txt = txt.replace('"', '&quot;')
-        txt = txt.replace("\n", "<br>" if self.nl2br else ' ')
+        txt = txt.replace("\n", "<br>" if (self.nl2br or self.raw) and not strip_nl else ' ')
         return txt
 
 
 class CriticExtension(Extension):
     def __init__(self, *args, **kwargs):
         self.config = {
-            'mode': ['view', "Critic mode to run in ('view', 'accept', or 'reject') - Default: view "]
+            'mode': ['view', "Critic mode to run in ('view', 'accept', or 'reject') - Default: view "],
+            'raw_view': [False, "Raw view keeps the output as the raw markup for view mode - Default False"]
         }
 
         if "mode" in kwargs and kwargs["mode"] not in ('view', 'accept', 'reject'):
@@ -166,7 +194,7 @@ class CriticExtension(Extension):
         md.registerExtension(self)
 
     def insert_critic(self):
-        critic = CriticViewPreprocessor()
+        critic = CriticViewPreprocessor(self.md)
         critic.config = self.getConfigs()
         self.md.preprocessors.add('critic', critic, "_begin")
 
