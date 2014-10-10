@@ -904,23 +904,32 @@ table tr:last-child td:last-child {
 }
 
 /* Multimarkdown Critic Blocks */
-.markdown-body .critic_mark {
-  background: #ff0;
+.markdown-body mark.critic {
+  border: 1px solid #ff8600;
+  background: none;
 }
 
-.markdown-body .critic_delete {
-  color: #c82829;
-  text-decoration: line-through;
+.markdown-body del.critic {
+  color: #dd0000;
 }
 
-.markdown-body .critic_insert {
-  color: #718c00 ;
-  text-decoration: underline;
+.markdown-body ins.critic {
+  color: #00bb00;
 }
 
-.markdown-body .critic_comment {
-  color: #8e908c;
-  font-style: italic;
+.markdown-body ins.break,
+.markdown-body del.break {
+  font-size: 0;
+}
+
+.markdown-body ins.break:before,
+.markdown-body del.break:before {
+  content: '\b6';
+  font-size: initial;
+}
+
+.markdown-body span.critic {
+  color: #0000bb;
 }
 
 /* Block Format */

@@ -236,7 +236,7 @@ class Settings(object):
         if self.force_stdout:
             return None
 
-        critic_enabled = self.critic & (CRITIC_ACCEPT | CRITIC_REJECT)
+        critic_enabled = self.critic & (CRITIC_ACCEPT | CRITIC_REJECT | CRITIC_VIEW)
         output = None
         if out_name is not None:
             out_name = expanduser(out_name)
@@ -254,8 +254,10 @@ class Settings(object):
             if self.critic & CRITIC_DUMP and critic_enabled:
                 if self.critic & CRITIC_REJECT:
                     label = ".rejected"
-                else:
+                elif self.critic & CRITIC_ACCEPT:
                     label = ".accepted"
+                else:
+                    label = '.view'
                 base, ext = splitext(abspath(self.file_name))
                 output = join(name, "%s%s%s" % (base, label, ext))
             else:
@@ -351,22 +353,33 @@ class Settings(object):
             extensions = deepcopy(settings["settings"].get("extensions", []))
             del settings["settings"]["extensions"]
 
+        # See if we need to handle the appropriate critic from CLI
+        # Critic will be appended to end of extension list if CLI requested it.
+        critic_mode = "ignore"
+        if self.critic & CRITIC_ACCEPT:
+            critic_mode = "accept"
+        elif self.critic & CRITIC_REJECT:
+            critic_mode = "reject"
+        elif self.critic & CRITIC_VIEW:
+            critic_mode = "view"
+
         # Log whether:
         #    - absolute paths is enabled,
         #    - Where the critic extension is enabled
         #    - Where the plainhtml plugin is enabled
+        # Only add to list for removal if we are overriding them.
         for i in range(0, len(extensions)):
             name = extensions[i]
             if name.startswith("pymdown.absolutepath"):
                 absolute = True
-            if name.startswith("pymdown.critic"):
+            if name.startswith("pymdown.critic") and critic_mode != 'ignore':
                 critic_found.append(i)
-            if name.startswith("pymdown.plainhtml"):
+            if name.startswith("pymdown.plainhtml") and self.plain:
                 plain_html.append(i)
 
         indexes = list(set(critic_found + plain_html))
         indexes.sort()
-        # Ensure the user can never set critic and plain text mode directly
+        # Remove plainhtml and critic because CLI is overriding them
         for index in reversed(indexes):
             del extensions[index]
 
@@ -374,18 +387,12 @@ class Settings(object):
         if self.preview and not absolute:
             extensions.append("pymdown.absolutepath(base_path=${BASE_PATH})")
 
-        # Handle the appropriate critic mode internally
-        # Critic must be appended to end of extension list
-        mode = "ignore"
-        if self.critic & CRITIC_ACCEPT:
-            mode = "accept"
-        elif self.critic & CRITIC_REJECT:
-            mode = "reject"
-        if mode != "ignore":
-            extensions.append("pymdown.critic(mode=%s)" % mode)
+        # Most reliable when applied to the end.
+        if critic_mode != "ignore":
+            extensions.append("pymdown.critic(mode=%s)" % critic_mode)
 
-        # Handle plainhtml internally.
-        # Must be appended to the end. Okay to come after critic.
+        # Append plainhtml.
+        # Most reliable when applied to the end. Okay to come after critic.
         if self.plain:
             extensions.append("pymdown.plainhtml")
 
