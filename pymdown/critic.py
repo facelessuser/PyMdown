@@ -148,12 +148,28 @@ class CriticExtension(Extension):
 
         super(CriticExtension, self).__init__(*args, **kwargs)
 
+        self.configured = False
+
     def extendMarkdown(self, md, md_globals):
         """ Add FencedBlockPreprocessor to the Markdown instance. """
+        self.md = md
+        md.registerExtension(self)
+
+    def insert_critic(self):
         critic = CriticViewPreprocessor()
         critic.config = self.getConfigs()
-        md.preprocessors.add('critic', critic, ">normalize_whitespace")
-        md.registerExtension(self)
+        self.md.preprocessors.add('critic', critic, ">normalize_whitespace")
+
+    def reset(self):
+        """
+        Wait to until after all extensions have been loaded
+        so we can be as sure as we can that this is the first
+        thing run after "normalize_whitespace"
+        """
+
+        if not self.configured:
+            self.configured = True
+            self.insert_critic()
 
 
 def makeExtension(*args, **kwargs):

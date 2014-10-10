@@ -396,7 +396,7 @@ if __name__ == "__main__":
         critic_group = parser.add_mutually_exclusive_group()
         critic_group.add_argument('--accept', '-a', action='store_true', default=False, help="Accept propossed critic marks when using in normal processing and --critic-dump processing")
         critic_group.add_argument('--reject', '-r', action='store_true', default=False, help="Reject propossed critic marks when using in normal processing and --critic-dump processing")
-        # critic_group.add_argument('--view', '-v', action='store_true', default=False, help="View critic marks in HTML.")
+        critic_group.add_argument('--view', '-v', action='store_true', default=False, help=argparse.SUPPRESS)
         parser.add_argument('--critic-dump', action='store_true', default=False, help="Process critic marks, dumps file(s), and exits.")
         # Output
         parser.add_argument('--output', '-o', nargs=1, default=None, help="Output file. Ignored in batch mode.")
