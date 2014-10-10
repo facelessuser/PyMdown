@@ -31,7 +31,7 @@ CRITIC_COMMENT = '<span class="critic">%s</span>'
 class CriticViewPreprocessor(Preprocessor):
     RE_CRITIC = re.compile(
         r'''
-            ((?P<escapes>\\*)(?P<open>\{)
+            ((?P<escapes>\\*)(?P<critic>(?P<open>\{)
                 (?:
                     (?P<ins_open>\+{2})(?P<ins_text>.*?)(?P<ins_close>\+{2})
                   | (?P<del_open>\-{2})(?P<del_text>.*?)(?P<del_close>\-{2})
@@ -39,7 +39,7 @@ class CriticViewPreprocessor(Preprocessor):
                   | (?P<comment>(?P<com_open>\>{2})(?P<com_text>.*?)(?P<com_close>\<{2}))
                   | (?P<sub_open>\~{2})(?P<sub_del_text>.*?)(?P<sub_mid>\~\>)(?P<sub_ins_text>.*?)(?P<sub_close>\~{2})
                 )
-            (?P<close>\})|.)
+            (?P<close>\}))|.)
         ''',
         re.MULTILINE | re.DOTALL | re.VERBOSE
     )
@@ -71,32 +71,35 @@ class CriticViewPreprocessor(Preprocessor):
             queue = ''
         return text
 
-    def _ins(self, text):
-        return self._replace(text, CRITIC_INSERT, CRITIC_INSERT_P)
+    def _ins(self, text, escapes=''):
+        return escapes + self._replace(text, CRITIC_INSERT, CRITIC_INSERT_P)
 
-    def _del(self, text):
-        return self._replace(text, CRITIC_DELETE, CRITIC_DELETE_P)
+    def _del(self, text, escapes):
+        return escapes + self._replace(text, CRITIC_DELETE, CRITIC_DELETE_P)
 
-    def _mark(self, text):
-        return self._replace(text, CRITIC_MARK, CRITIC_P)
+    def _mark(self, text, escapes):
+        return escapes + self._replace(text, CRITIC_MARK, CRITIC_P)
 
-    def _comment(self, text):
-        return self._replace(text, CRITIC_COMMENT, CRITIC_P)
+    def _comment(self, text, escapes):
+        return escapes + self._replace(text, CRITIC_COMMENT, CRITIC_P)
 
     def critic_view(self, m):
-        if m.group('escapes') and len(m.group('escapes')) % 2:
-            return m.group(0)
-        elif m.group('ins_open'):
-            return self._ins(m.group('ins_text'))
+        escapes = m.group('escapes')
+        if escapes and len(escapes) % 2:
+            return "%s%s" % (escapes[:-1], m.group('critic'))
+        if escapes is None:
+            escapes = ''
+        if m.group('ins_open'):
+            return self._ins(m.group('ins_text'), escapes)
         elif m.group('del_open'):
-            return self._del(m.group('del_text'))
+            return self._del(m.group('del_text'), escapes)
         elif m.group('mark_open'):
-            return self._mark(m.group('mark_text'))
+            return self._mark(m.group('mark_text'), escapes)
         elif m.group('com_open'):
-            return self._comment(m.group('com_text'))
+            return self._comment(m.group('com_text'), escapes)
         elif m.group('sub_open'):
             return (
-                self._del(m.group('sub_del_text')) +
+                self._del(m.group('sub_del_text'), escapes) +
                 self._ins(m.group('sub_ins_text'))
             )
         else:
@@ -104,18 +107,21 @@ class CriticViewPreprocessor(Preprocessor):
 
     def critic_ignore(self, m):
         accept = self.config["mode"] == 'accept'
-        if m.group('escapes') and len(m.group('escapes')) % 2:
-            return m.group(0)
-        elif m.group('ins_open'):
-            return m.group('ins_text') if accept else ''
+        escapes = m.group('escapes')
+        if escapes and len(escapes) % 2:
+            return "%s%s" % (escapes[:-1], m.group('critic'))
+        if escapes is None:
+            escapes = ''
+        if m.group('ins_open'):
+            return '%s%s' % (escapes, m.group('ins_text') if accept else '')
         elif m.group('del_open'):
-            return '' if accept else m.group('del_text')
+            return '%s%s' % (escapes, '' if accept else m.group('del_text'))
         elif m.group('mark_open'):
-            return m.group('mark_text')
+            return '%s%s' % (escapes, m.group('mark_text'))
         elif m.group('com_open'):
-            return '' if accept else ''
+            return escapes
         elif m.group('sub_open'):
-            return m.group('sub_ins_text') if accept else ('sub_del_text')
+            return '%s%s' % (escapes, m.group('sub_ins_text') if accept else ('sub_del_text'))
         else:
             return m.group(0)
 
