@@ -106,7 +106,7 @@ RE_PROGRESS = r'''(?x)
   (?:(?P<frac_num>\d+(?:.\d+)?)\s*/\s*(?P<frac_den>\d+(?:.\d+)?))  # Fraction
 )
 (?P<title>\s+(?P<quote>['"]).*?(?P=quote))?\s*                     # Title
-\]                                                                 # Closing
+\]\s*                                                              # Closing
 (?P<attr_list>\{\:?([^\}]*)\})?                                    # Optional attr list
 '''
 
