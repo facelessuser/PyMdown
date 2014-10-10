@@ -25,14 +25,15 @@
     "extensions": [
         "markdown.extensions.extra",
         "markdown.extensions.toc",
-        "markdown.extensions.codehilite(guess_lang=False,pygments_style=github)",
+        "markdown.extensions.codehilite(guess_lang=False)",
         "markdown.extensions.headerid",
-        "markdown.extensions.meta",
         "markdown.extensions.smarty",
         "markdown.extensions.wikilinks",
         "markdown.extensions.admonition",
         "pymdown.pymdown",
         // "mdownx.absolutepath(base_path=${BASE_PATH})",
-        "pymdown.b64(base_path=${BASE_PATH})"
+        "pymdown.b64(base_path=${BASE_PATH})",
+        // Run critic last to make sure it gets run first
+        "pymdown.critic"
     ]
 }
