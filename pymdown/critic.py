@@ -31,7 +31,7 @@ CRITIC_COMMENT = '<span class="critic">%s</span>'
 class CriticViewPreprocessor(Preprocessor):
     RE_CRITIC = re.compile(
         r'''
-            ((?P<open>\{)
+            ((?P<escapes>\\*)(?P<open>\{)
                 (?:
                     (?P<ins_open>\+{2})(?P<ins_text>.*?)(?P<ins_close>\+{2})
                   | (?P<del_open>\-{2})(?P<del_text>.*?)(?P<del_close>\-{2})
@@ -84,7 +84,9 @@ class CriticViewPreprocessor(Preprocessor):
         return self._replace(text, CRITIC_COMMENT, CRITIC_P)
 
     def critic_view(self, m):
-        if m.group('ins_open'):
+        if m.group('escapes') and len(m.group('escapes')) % 2:
+            return m.group(0)
+        elif m.group('ins_open'):
             return self._ins(m.group('ins_text'))
         elif m.group('del_open'):
             return self._del(m.group('del_text'))
@@ -102,7 +104,9 @@ class CriticViewPreprocessor(Preprocessor):
 
     def critic_ignore(self, m):
         accept = self.config["mode"] == 'accept'
-        if m.group('ins_open'):
+        if m.group('escapes') and len(m.group('escapes')) % 2:
+            return m.group(0)
+        elif m.group('ins_open'):
             return m.group('ins_text') if accept else ''
         elif m.group('del_open'):
             return '' if accept else m.group('del_text')
@@ -158,7 +162,7 @@ class CriticExtension(Extension):
     def insert_critic(self):
         critic = CriticViewPreprocessor()
         critic.config = self.getConfigs()
-        self.md.preprocessors.add('critic', critic, ">normalize_whitespace")
+        self.md.preprocessors.add('critic', critic, "_begin")
 
     def reset(self):
         """
