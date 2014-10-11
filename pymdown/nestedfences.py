@@ -49,18 +49,22 @@ WS = r'^([\> ]{0,%d})(.*)'
 class CodeStash(object):
     """
     Store original fenced code here in case we were
-    to greedy and need to restore in an indented code
+    too greedy and need to restore in an indented code
     block.
     """
 
     def __init__(self):
         self.stash = {}
 
-    def remove_stash(self, key):
-        code = self.stash.get(key, None)
-        if code is not None:
-            del self.stash[key]
+    def __len__(self):
+        return len(self.stash)
+
+    def get(self, key, default=None):
+        code = self.stash.get(key, default)
         return code
+
+    def remove(self, key):
+        del self.stash[key]
 
     def store(self, key, code):
         self.stash[key] = code
@@ -84,13 +88,13 @@ class NestedFencesCodeExtension(Extension):
         self.markdown = md
 
     def patch_fenced_rule(self):
-        codestash = CodeStash()
+        self.code_stash = CodeStash()
         fenced = NestedFencesBlockPreprocessor(self.markdown)
         indented_code = NestedFencesCodeBlockProcessor(self)
         indented_code.config = self.getConfigs()
         indented_code.markdown = self.markdown
-        indented_code.codestash = codestash
-        fenced.codestash = codestash
+        indented_code.code_stash = self.code_stash
+        fenced.code_stash = self.code_stash
         self.markdown.parser.blockprocessors['code'] = indented_code
         if 'fenced_code_block' in self.markdown.preprocessors.keys():
             self.markdown.preprocessors['fenced_code_block'] = fenced
@@ -107,7 +111,7 @@ class NestedFencesCodeExtension(Extension):
             self.patch_fenced_rule()
             self.configured = True
         else:
-            self.markdown.parser.blockprocessors['fenced_code_block'].codestash.clear_stash()
+            self.code_stash.clear_stash()
 
 
 class NestedFencesBlockPreprocessor(Preprocessor):
@@ -275,7 +279,7 @@ class NestedFencesBlockPreprocessor(Preprocessor):
         placeholder = self.markdown.htmlStash.store(code, safe=True)
         self.stack.append(('%s%s' % (self.ws, placeholder), start, end))
         # If an indented block consumes this placeholder, we can unback the original source
-        self.codestash.store(placeholder[1:-1], "%s\n%s%s" % (self.first, source, self.last))
+        self.code_stash.store(placeholder[1:-1], "%s\n%s%s" % (self.first, source, self.last))
 
     def _escape(self, txt):
         """ basic html escaping """
@@ -313,8 +317,9 @@ class NestedFencesCodeBlockProcessor(BlockProcessor):
             m = self.FENCED_BLOCK_RE.match(line)
             if m:
                 ws = re.match(r'^([ ]*).*$', line).group(1)
-                code = self.reindent(self.codestash.remove_stash(m.group(1)), len(ws))
+                code = self.reindent(self.code_stash.get(m.group(1)), len(ws))
                 new_block.append(code if code is not None else line)
+                self.code_stash.remove(m.group(1))
             else:
                 new_block.append(line)
         return '\n'.join(new_block)
