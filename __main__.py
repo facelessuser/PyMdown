@@ -123,12 +123,12 @@ def auto_open(name):
 def get_critic_mode(args):
     """ Setp the critic mode """
     critic_mode = CRITIC_IGNORE
-    if args.accept:
+    if args.accept and args.reject:
+        critic_mode |= CRITIC_VIEW
+    elif args.accept:
         critic_mode |= CRITIC_ACCEPT
     elif args.reject:
         critic_mode |= CRITIC_REJECT
-    elif args.view:
-        critic_mode |= CRITIC_VIEW
     if args.critic_dump:
         critic_mode |= CRITIC_DUMP
     return critic_mode
@@ -393,10 +393,8 @@ if __name__ == "__main__":
         parser.add_argument('--plain-html', '-P', action='store_true', default=False, help="Strip out CSS, style, ids, etc.  Just show tags.")
         parser.add_argument('--title', nargs=1, default=None, help="Title for HTML.")
         # Critic features
-        critic_group = parser.add_mutually_exclusive_group()
-        critic_group.add_argument('--accept', '-a', action='store_true', default=False, help="Accept propossed critic marks when using in normal processing and --critic-dump processing")
-        critic_group.add_argument('--reject', '-r', action='store_true', default=False, help="Reject propossed critic marks when using in normal processing and --critic-dump processing")
-        critic_group.add_argument('--view', '-v', action='store_true', default=False, help=argparse.SUPPRESS)
+        parser.add_argument('--accept', '-a', action='store_true', default=False, help="Accept propossed critic marks when using in normal processing and --critic-dump processing")
+        parser.add_argument('--reject', '-r', action='store_true', default=False, help="Reject propossed critic marks when using in normal processing and --critic-dump processing")
         parser.add_argument('--critic-dump', action='store_true', default=False, help="Process critic marks, dumps file(s), and exits.")
         # Output
         parser.add_argument('--output', '-o', nargs=1, default=None, help="Output file. Ignored in batch mode.")

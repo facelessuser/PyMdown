@@ -17,135 +17,179 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from markdown import Extension
 from markdown.preprocessors import Preprocessor
+from markdown.postprocessors import Postprocessor
 import re
 
-CRITIC_DELETE = '<del class="critic">%s</del>'
-CRITIC_INSERT = '<ins class="critic">%s</ins>'
-CRITIC_MARK = '<mark class="critic">%s</mark>'
-CRITIC_COMMENT = '<span class="critic">%s</span>'
+STX = '\u0002'
+ETX = '\u0003'
+CRITIC_KEY = "czjqqkd:%s"
+CRITIC_PLACEHOLDER = "%s" % CRITIC_KEY % r'[0-9]+'
+CRITIC_PLACEHOLDER_RE = re.compile(
+    r"""(?x)
+    (?:
+        \<p\>%(stx)s(?P<p_key>%(key)s)%(etx)s\</p\> |
+        %(stx)s(?P<key>%(key)s)%(etx)s
+    )
+    """ % {"key": CRITIC_PLACEHOLDER, "stx": STX, "etx": ETX}
+)
 
-CRITIC_DELETE_P = '<del class="critic break">&nbsp;</del>'
-CRITIC_INSERT_P = '\n\n<ins class="critic break">&nbsp;</ins>\n\n'
-CRITIC_MARK_P = '<br><br>'
-CRITIC_COMMENT_P = ' '
+RE_CRITIC = re.compile(
+    r'''
+        ((?P<escapes>\\?)(?P<critic>(?P<open>\{)
+            (?:
+                (?P<ins_open>\+{2})(?P<ins_text>.*?)(?P<ins_close>\+{2})
+              | (?P<del_open>\-{2})(?P<del_text>.*?)(?P<del_close>\-{2})
+              | (?P<mark_open>\={2})(?P<mark_text>.*?)(?P<mark_close>\={2})
+              | (?P<comment>(?P<com_open>\>{2})(?P<com_text>.*?)(?P<com_close>\<{2}))
+              | (?P<sub_open>\~{2})(?P<sub_del_text>.*?)(?P<sub_mid>\~\>)(?P<sub_ins_text>.*?)(?P<sub_close>\~{2})
+            )
+        (?P<close>\}))|.)
+    ''',
+    re.MULTILINE | re.DOTALL | re.VERBOSE
+)
+
+RE_BLOCK_SEP = re.compile(r'^\n{2,}$')
+
+
+class CriticStash(object):
+    """
+    Critic Stash
+    """
+
+    def __init__(self):
+        self.stash = {}
+        self.count = 0
+
+    def __len__(self):
+        return len(self.stash)
+
+    def get(self, key, default=None):
+        code = self.stash.get(key, default)
+        return code
+
+    def remove(self, key):
+        del self.stash[key]
+
+    def store(self, code):
+        key = CRITIC_KEY % str(self.count)
+        self.stash[key] = code
+        self.count += 1
+        return STX + key + ETX
+
+    def clear_stash(self):
+        self.stash = {}
+        self.count = 0
+
+
+class CriticsPostprocessor(Postprocessor):
+    def __init__(self, critic_stash):
+        super(CriticsPostprocessor, self).__init__()
+        self.critic_stash = critic_stash
+
+    def run(self, text):
+        """ Replace critic placeholders """
+
+        stack = []
+
+        for m in CRITIC_PLACEHOLDER_RE.finditer(text):
+            if m.group('p_key') is not None:
+                key = m.group('p_key')
+            else:
+                key = m.group('key')
+            content = self.critic_stash.get(key)
+            if content is not None:
+                stack.append((m.start(), m.end(), content))
+                self.critic_stash.remove(key)
+
+        for item in reversed(stack):
+            text = text[:item[0]] + item[2] + text[item[1]:]
+
+        return text
 
 
 class CriticViewPreprocessor(Preprocessor):
-    RE_CRITIC = re.compile(
-        r'''
-            ((?P<escapes>\\*)(?P<critic>(?P<open>\{)
-                (?:
-                    (?P<ins_open>\+{2})(?P<ins_text>.*?)(?P<ins_close>\+{2})
-                  | (?P<del_open>\-{2})(?P<del_text>.*?)(?P<del_close>\-{2})
-                  | (?P<mark_open>\={2})(?P<mark_text>.*?)(?P<mark_close>\={2})
-                  | (?P<comment>(?P<com_open>\>{2})(?P<com_text>.*?)(?P<com_close>\<{2}))
-                  | (?P<sub_open>\~{2})(?P<sub_del_text>.*?)(?P<sub_mid>\~\>)(?P<sub_ins_text>.*?)(?P<sub_close>\~{2})
-                )
-            (?P<close>\}))|.)
-        ''',
-        re.MULTILINE | re.DOTALL | re.VERBOSE
-    )
-    nl2br = False
+    def __init__(self, critic_stash):
+        super(CriticViewPreprocessor, self).__init__()
+        self.critic_stash = critic_stash
 
-    def _edits(self, text, replace, br, changes=False, strip_nl=False):
-        parts = text.split('\n')
-        queue = ''
-        text = ''
-        last_break = False
-        for part in parts:
-            if part == '':
-                if changes:
-                    if queue:
-                        # Convert previous text first
-                        text += replace % self._escape(queue)
-                        queue = ''
+    def _ins(self, text):
+        if RE_BLOCK_SEP.match(text):
+            return self.critic_stash.store('<br><ins class="critic break">&nbsp;</ins><br>')
+        return (
+            self.critic_stash.store('<ins class="critic">') +
+            text +
+            self.critic_stash.store('</ins>')
+        )
 
-                    if not last_break:
-                        # No previous new lines
-                        text += br
-                        last_break = True
+    def _del(self, text):
+        if RE_BLOCK_SEP.match(text):
+            return self.critic_stash.store('<del class="critic break">&nbsp;</del>')
+        return (
+            self.critic_stash.store('<del class="critic">') +
+            text +
+            self.critic_stash.store('</del>')
+        )
 
-                elif not last_break:
-                    queue += br
-                    last_break = True
+    def _mark(self, text):
+        return (
+            self.critic_stash.store('<mark class="critic">') +
+            text +
+            self.critic_stash.store('</mark>')
+        )
 
-            else:
-                if queue and not last_break:
-                    part = '\n' + part
-                queue += part if changes else self._escape(part, strip_nl)
-                last_break = False
-
-        if queue:
-            text += replace % (self._escape(queue, strip_nl) if changes else queue)
-            queue = ''
-        return text
-
-    def _ins(self, text, escapes=''):
-        if self.raw:
-            return CRITIC_INSERT % self._escape(text)
-        else:
-            return escapes + self._edits(text, CRITIC_INSERT, CRITIC_INSERT_P, changes=True)
-
-    def _del(self, text, escapes):
-        if self.raw:
-            return CRITIC_DELETE % self._escape(text)
-        else:
-            return escapes + self._edits(text, CRITIC_DELETE, CRITIC_DELETE_P, changes=True)
-
-    def _mark(self, text, escapes):
-        if self.raw:
-            return CRITIC_MARK % self._escape(text)
-        else:
-            return escapes + self._edits(text, CRITIC_MARK, CRITIC_MARK_P)
-
-    def _comment(self, text, escapes):
-        if self.raw:
-            return CRITIC_COMMENT % self._escape(text, strip_nl=True)
-        else:
-            return escapes + self._edits(text, CRITIC_COMMENT, CRITIC_COMMENT_P, strip_nl=True)
+    def _comment(self, text):
+        return (
+            self.critic_stash.store(
+                '<span class="critic comment">' +
+                self._escape(text, strip_nl=True) +
+                '</span>'
+            )
+        )
 
     def critic_view(self, m):
-        escapes = m.group('escapes')
-        if escapes and len(escapes) % 2:
-            escaped = "%s%s" % (escapes[:-1], m.group('critic'))
-            return self._escape(escaped) if self.raw else escaped
-        if escapes is None:
-            escapes = ''
+        if m.group('escapes'):
+            return m.group('critic')
         if m.group('ins_open'):
-            return self._ins(m.group('ins_text'), escapes)
+            return self._ins(m.group('ins_text'))
         elif m.group('del_open'):
-            return self._del(m.group('del_text'), escapes)
-        elif m.group('mark_open'):
-            return self._mark(m.group('mark_text'), escapes)
-        elif m.group('com_open'):
-            return self._comment(m.group('com_text'), escapes)
+            return self._del(m.group('del_text'))
         elif m.group('sub_open'):
             return (
-                self._del(m.group('sub_del_text'), escapes) +
+                self._del(m.group('sub_del_text')) +
                 self._ins(m.group('sub_ins_text'))
             )
+        elif m.group('mark_open'):
+            return self._mark(m.group('mark_text'))
+        elif m.group('com_open'):
+            return self._comment(m.group('com_text'))
         else:
-            return self._escape(m.group(0)) if self.raw else m.group(0)
+            return m.group(0)
 
     def critic_parse(self, m):
         accept = self.config["mode"] == 'accept'
-        escapes = m.group('escapes')
-        if escapes and len(escapes) % 2:
-            return "%s%s" % (escapes[:-1], m.group('critic'))
-        if escapes is None:
-            escapes = ''
+        if m.group('escapes'):
+            return m.group('critic')
         if m.group('ins_open'):
-            return '%s%s' % (escapes, m.group('ins_text') if accept else '')
+            return m.group('ins_text') if accept else ''
         elif m.group('del_open'):
-            return '%s%s' % (escapes, '' if accept else m.group('del_text'))
+            return '' if accept else m.group('del_text')
         elif m.group('mark_open'):
-            return '%s%s' % (escapes, m.group('mark_text'))
+            return m.group('mark_text')
         elif m.group('com_open'):
-            return escapes
+            return ''
         elif m.group('sub_open'):
-            return '%s%s' % (escapes, m.group('sub_ins_text') if accept else ('sub_del_text'))
+            return m.group('sub_ins_text') if accept else ('sub_del_text')
         else:
             return m.group(0)
+
+    def _escape(self, txt, strip_nl=False):
+        """ basic html escaping """
+        txt = txt.replace('&', '&amp;')
+        txt = txt.replace('<', '&lt;')
+        txt = txt.replace('>', '&gt;')
+        txt = txt.replace('"', '&quot;')
+        txt = txt.replace("\n", "<br>" if not strip_nl else ' ')
+        return txt
 
     def run(self, lines):
         """ Match and store Fenced Code Blocks in the HtmlStash. """
@@ -156,22 +200,10 @@ class CriticViewPreprocessor(Preprocessor):
         if view_mode:
             processor = self.critic_view
 
-        self.raw = bool(self.config['raw_view']) and view_mode
-
-        for m in self.RE_CRITIC.finditer('\n'.join(lines)):
+        for m in RE_CRITIC.finditer('\n'.join(lines)):
             text += processor(m)
-        if self.raw:
-            text = '<pre class="critic-pre">%s</pre>' % text
-        return text.split('\n')
 
-    def _escape(self, txt, strip_nl=False):
-        """ basic html escaping """
-        txt = txt.replace('&', '&amp;')
-        txt = txt.replace('<', '&lt;')
-        txt = txt.replace('>', '&gt;')
-        txt = txt.replace('"', '&quot;')
-        txt = txt.replace("\n", "<br>" if (self.nl2br or self.raw) and not strip_nl else ' ')
-        return txt
+        return text.split('\n')
 
 
 class CriticExtension(Extension):
@@ -194,9 +226,12 @@ class CriticExtension(Extension):
         md.registerExtension(self)
 
     def insert_critic(self):
-        critic = CriticViewPreprocessor(self.md)
+        self.critic_stash = CriticStash()
+        post = CriticsPostprocessor(self.critic_stash)
+        critic = CriticViewPreprocessor(self.critic_stash)
         critic.config = self.getConfigs()
-        self.md.preprocessors.add('critic', critic, "_begin")
+        self.md.preprocessors.add('critic', critic, ">normalize_whitespace")
+        self.md.postprocessors.add("critic-post", post, ">raw_html")
 
     def reset(self):
         """
@@ -208,6 +243,8 @@ class CriticExtension(Extension):
         if not self.configured:
             self.configured = True
             self.insert_critic()
+        else:
+            self.critic_stash.clear()
 
 
 def makeExtension(*args, **kwargs):
