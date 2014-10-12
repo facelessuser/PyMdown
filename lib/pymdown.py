@@ -15,11 +15,27 @@ import re
 from os.path import exists, isfile, dirname, abspath, join
 
 PY3 = sys.version_info >= (3, 0)
+RE_TAGS = re.compile(r'''</?[^>]*>''')
+RE_WORD = re.compile(r'''[^\w\- ]''')
 
 if PY3:
+    from urllib.parse import quote
     string_type = str
 else:
+    from urllib import quote
     string_type = basestring  # flake8: noqa
+
+
+def slugify(text, sep):
+    if text is None:
+        return ''
+    # Strip html tags and lower
+    id = RE_TAGS.sub('', text).lower()
+    # Remove non word characters or non spaces and dashes
+    # Then convert spaces to dashes
+    id = RE_WORD.sub('', id).replace(' ', sep)
+    # Encode anything that needs to be
+    return quote(id)
 
 
 class PyMdownException(Exception):
@@ -51,8 +67,11 @@ class MdWrapper(Markdown):
 
         for ext in extensions:
             try:
+                conf = configs.get(ext, {})
+                if ext in ('markdown.extensions.headerid', 'markdown.extensions.toc', 'pymdown.headeranchor'):
+                    conf['slugify'] = slugify
                 if isinstance(ext, util.string_type):
-                    ext = self.build_extension(ext, configs.get(ext, {}))
+                    ext = self.build_extension(ext, conf)
                 if isinstance(ext, Extension):
                     ext.extendMarkdown(self, globals())
                     logger.info('Successfully loaded extension "%s.%s".'
