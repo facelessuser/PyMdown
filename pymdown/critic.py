@@ -132,6 +132,12 @@ class CriticsPostprocessor(Postprocessor):
             content = self.critic_stash.get(key)
         return content
 
+    def block_edit(self, m):
+        if 'break' in m.group(4).split(' '):
+            return m.group(0)
+        else:
+            return m.group(1) + m.group(2) + m.group(4) + ' block-edit' + m.group(5)
+
     def restore(self, m):
         """ Replace placeholders with actual critic tags """
         content = None
@@ -140,7 +146,7 @@ class CriticsPostprocessor(Postprocessor):
                 self.subrestore, m.group('block_keys')
             )
             if content is not None:
-                content = RE_CRITIC_BLOCK.sub(r'\1\2\4 block-edit\5', content)
+                content = RE_CRITIC_BLOCK.sub(self.block_edit, content)
         else:
             text = self.critic_stash.get(m.group('key'))
             if text is not None:
@@ -163,7 +169,7 @@ class CriticViewPreprocessor(Preprocessor):
     def _ins(self, text):
         """ Handle critic inserts """
         if RE_BLOCK_SEP.match(text):
-            return self.critic_stash.store('<br><ins class="critic break">&nbsp;</ins><br>')
+            return '\n\n%s\n\n' % self.critic_stash.store('<ins class="critic break">&nbsp;</ins>')
         return (
             self.critic_stash.store('<ins class="critic">') +
             text +
