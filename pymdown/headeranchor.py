@@ -44,7 +44,7 @@ class HeaderAnchorTreeprocessor(Treeprocessor):
                     id = tag.get('id')
                 else:
                     id = stashedHTML2text(''.join(itertext(tag)), self.md)
-                    id = unique(slugify(id, self.config.get('sep')), used_ids)
+                    id = unique(self.config['slugify'](id, self.config['sep']), used_ids)
                     tag.set('id', id)
                 tag.text = self.markdown.htmlStash.store(
                     LINK % {"id": id},
@@ -56,7 +56,8 @@ class HeaderAnchorTreeprocessor(Treeprocessor):
 class HeaderAnchorExtension(Extension):
     def __init__(self, *args, **kwargs):
         self.config = {
-            'sep': ['-', "Separator to use when creating header ids - Default: '-'"]
+            'sep': ['-', "Separator to use when creating header ids - Default: '-'"],
+            'slugify': [slugify, 'Callable to generate anchors']
         }
         self.configured = False
         super(HeaderAnchorExtension, self).__init__(*args, **kwargs)
@@ -64,18 +65,20 @@ class HeaderAnchorExtension(Extension):
     def extendMarkdown(self, md, md_globals):
         """Add HeaderAnchorTreeprocessor to Markdown instance"""
 
-        self.processor = HeaderAnchorTreeprocessor(md)
-        self.processor.config = self.getConfigs()
-        self.processor.md = md
-        md.treeprocessors.add("header-anchor", self.processor, "_end")
+        self.md = md
+        processor = HeaderAnchorTreeprocessor(md)
+        processor.config = self.getConfigs()
+        processor.md = md
+        md.treeprocessors.add("header-anchor", processor, "_end")
         md.registerExtension(self)
 
     def reset(self):
         """ Ensure this is always after toc """
-        if 'toc' in self.processor.md.treeprocessors.keys() and not self.configured:
+        if not self.configured and 'toc' in self.md.treeprocessors.keys():
             self.configured = True
-            del self.processor.md.treeprocessors["header-anchor"]
-            self.processor.md.treeprocessors.add("header-anchor", self.processor, ">toc")
+            processor = self.md.treeprocessors["header-anchor"]
+            del self.md.treeprocessors["header-anchor"]
+            self.md.treeprocessors.add("header-anchor", processor, ">toc")
 
 
 def makeExtension(*args, **kwargs):
