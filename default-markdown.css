@@ -904,18 +904,6 @@ table tr:last-child td:last-child {
 }
 
 /* Multimarkdown Critic Blocks */
-.markdown-body .critic-pre {
-  font-family: Consolas, "Liberation Mono", Menlo, Courier, monospace;
-  font-size: 16px;
-  line-height: 2;
-  word-wrap: break-word;
-  white-space: pre-wrap;
-  background: #fff;
-  border: none;
-  padding: 0;
-  margin: 0;
-}
-
 .markdown-body .critic {
   font-family: inherit;
   -webkit-border-radius: 3px;
@@ -1020,6 +1008,16 @@ table tr:last-child td:last-child {
   -webkit-border-bottom-right-radius: 3px;
   -moz-border-bottom-right-radius: 3px;
   border-bottom-right-radius: 3px;
+}
+
+.markdown-body .block-edit {
+  display: block;
+  padding: .02em;
+}
+
+.markdown-body .block-edit:before,
+.markdown-body .block-edit:after {
+  content: '';
 }
 
 /* Block Format */

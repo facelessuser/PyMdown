@@ -23,31 +23,39 @@ import re
 STX = '\u0002'
 ETX = '\u0003'
 CRITIC_KEY = "czjqqkd:%s"
-CRITIC_PLACEHOLDER = "%s" % CRITIC_KEY % r'[0-9]+'
-CRITIC_PLACEHOLDER_RE = re.compile(
-    r"""(?x)
-    (?:
-        \<p\>%(stx)s(?P<p_key>%(key)s)%(etx)s\</p\> |
-        %(stx)s(?P<key>%(key)s)%(etx)s
-    )
-    """ % {"key": CRITIC_PLACEHOLDER, "stx": STX, "etx": ETX}
+ESCAPES_KEY = "ezkrqkd:%s"
+ESCAPES_PLACEHOLDER = ESCAPES_KEY % r'[0-9]+'
+CRITIC_PLACEHOLDER = CRITIC_KEY % r'[0-9]+'
+SINGLE_CRITIC_PLACEHOLDER = r'%(stx)s(?P<key>%(key)s)%(etx)s' % {
+    "key": CRITIC_PLACEHOLDER, "stx": STX, "etx": ETX
+}
+CRITIC_PLACEHOLDERS = r"""(?x)
+(?:
+    (?P<block>\<p\>(?P<block_keys>(?:%(stx)s%(key)s%(etx)s)+)\</p\>) |
+    %(single)s
 )
+""" % {
+    "key": CRITIC_PLACEHOLDER, "single": SINGLE_CRITIC_PLACEHOLDER,
+    "stx": STX, "etx": ETX
+}
+ALL_CRITICS = r'''(?x)
+    (%s(?P<critic>(?P<open>\{)
+        (?:
+            (?P<ins_open>\+{2})(?P<ins_text>.*?)(?P<ins_close>\+{2})
+          | (?P<del_open>\-{2})(?P<del_text>.*?)(?P<del_close>\-{2})
+          | (?P<mark_open>\={2})(?P<mark_text>.*?)(?P<mark_close>\={2})
+          | (?P<comment>(?P<com_open>\>{2})(?P<com_text>.*?)(?P<com_close>\<{2}))
+          | (?P<sub_open>\~{2})(?P<sub_del_text>.*?)(?P<sub_mid>\~\>)(?P<sub_ins_text>.*?)(?P<sub_close>\~{2})
+        )
+    (?P<close>\})))
+'''
 
-RE_CRITIC = re.compile(
-    r'''
-        ((?P<escapes>\\?)(?P<critic>(?P<open>\{)
-            (?:
-                (?P<ins_open>\+{2})(?P<ins_text>.*?)(?P<ins_close>\+{2})
-              | (?P<del_open>\-{2})(?P<del_text>.*?)(?P<del_close>\-{2})
-              | (?P<mark_open>\={2})(?P<mark_text>.*?)(?P<mark_close>\={2})
-              | (?P<comment>(?P<com_open>\>{2})(?P<com_text>.*?)(?P<com_close>\<{2}))
-              | (?P<sub_open>\~{2})(?P<sub_del_text>.*?)(?P<sub_mid>\~\>)(?P<sub_ins_text>.*?)(?P<sub_close>\~{2})
-            )
-        (?P<close>\}))|.)
-    ''',
-    re.MULTILINE | re.DOTALL | re.VERBOSE
-)
-
+RE_CRITIC_PLACEHOLDER = re.compile(CRITIC_PLACEHOLDERS)
+RE_CRITIC_BLOCK_PLACEHOLDER = re.compile(SINGLE_CRITIC_PLACEHOLDER)
+RE_CRITIC = re.compile(ALL_CRITICS % '', re.DOTALL)
+RE_CRITIC_BLOCK = re.compile(r'((?:ins|del|mark)\s+)(class=([\'"]))(.*?)(\3)')
+RE_CRITIC_ESCAPES = re.compile(ALL_CRITICS % r'(?P<escapes>\\)', re.DOTALL)
+RE_CRITIC_ESCAPE_PLACEHOLDER = re.compile(ESCAPES_PLACEHOLDER)
 RE_BLOCK_SEP = re.compile(r'^\n{2,}$')
 
 
@@ -56,7 +64,8 @@ class CriticStash(object):
     Critic Stash
     """
 
-    def __init__(self):
+    def __init__(self, stash_key):
+        self.stash_key = stash_key
         self.stash = {}
         self.count = 0
 
@@ -64,19 +73,26 @@ class CriticStash(object):
         return len(self.stash)
 
     def get(self, key, default=None):
+        """ Get the specified item from the stash """
         code = self.stash.get(key, default)
         return code
 
     def remove(self, key):
+        """ Remove the specified item from the stash """
         del self.stash[key]
 
     def store(self, code):
-        key = CRITIC_KEY % str(self.count)
+        """
+        Store the code in the stash with the placeholder.
+        Return placeholder.
+        """
+        key = self.stash_key % str(self.count)
         self.stash[key] = code
         self.count += 1
         return STX + key + ETX
 
-    def clear_stash(self):
+    def clear(self):
+        """ Clear the stash """
         self.stash = {}
         self.count = 0
 
@@ -86,23 +102,35 @@ class CriticsPostprocessor(Postprocessor):
         super(CriticsPostprocessor, self).__init__()
         self.critic_stash = critic_stash
 
+    def subrestore(self, m):
+        """
+        Replace all critic tags in the paragraph block
+        <p>(critic del close)(critic ins close)</p> etc.
+        """
+        content = None
+        key = m.group('key')
+        if key is not None:
+            content = self.critic_stash.get(key)
+        return content
+
+    def restore(self, m):
+        """ Replace placeholders with actual critic tags """
+        content = None
+        if m.group('block_keys') is not None:
+            content = RE_CRITIC_BLOCK_PLACEHOLDER.sub(
+                self.subrestore, m.group('block_keys')
+            )
+            if content is not None:
+                content = RE_CRITIC_BLOCK.sub(r'\1\2\4 block-edit\5', content)
+        else:
+            text = self.critic_stash.get(m.group('key'))
+            if text is not None:
+                content = text
+        return content if content is not None else m.group(0)
+
     def run(self, text):
         """ Replace critic placeholders """
-
-        stack = []
-
-        for m in CRITIC_PLACEHOLDER_RE.finditer(text):
-            if m.group('p_key') is not None:
-                key = m.group('p_key')
-            else:
-                key = m.group('key')
-            content = self.critic_stash.get(key)
-            if content is not None:
-                stack.append((m.start(), m.end(), content))
-                self.critic_stash.remove(key)
-
-        for item in reversed(stack):
-            text = text[:item[0]] + item[2] + text[item[1]:]
+        text = RE_CRITIC_PLACEHOLDER.sub(self.restore, text)
 
         return text
 
@@ -111,8 +139,10 @@ class CriticViewPreprocessor(Preprocessor):
     def __init__(self, critic_stash):
         super(CriticViewPreprocessor, self).__init__()
         self.critic_stash = critic_stash
+        self.escape_stash = CriticStash(ESCAPES_KEY)
 
     def _ins(self, text):
+        """ Handle critic inserts """
         if RE_BLOCK_SEP.match(text):
             return self.critic_stash.store('<br><ins class="critic break">&nbsp;</ins><br>')
         return (
@@ -122,6 +152,7 @@ class CriticViewPreprocessor(Preprocessor):
         )
 
     def _del(self, text):
+        """ Hanlde critic deletes """
         if RE_BLOCK_SEP.match(text):
             return self.critic_stash.store('<del class="critic break">&nbsp;</del>')
         return (
@@ -131,6 +162,7 @@ class CriticViewPreprocessor(Preprocessor):
         )
 
     def _mark(self, text):
+        """ Handle critic marks """
         return (
             self.critic_stash.store('<mark class="critic">') +
             text +
@@ -138,17 +170,21 @@ class CriticViewPreprocessor(Preprocessor):
         )
 
     def _comment(self, text):
+        """ Handle critic comments """
         return (
             self.critic_stash.store(
                 '<span class="critic comment">' +
-                self._escape(text, strip_nl=True) +
+                self.html_escape(text, strip_nl=True) +
                 '</span>'
             )
         )
 
     def critic_view(self, m):
-        if m.group('escapes'):
-            return m.group('critic')
+        """
+        Insert appropriate HTML to tags to visualize
+        Critic marks.
+        """
+
         if m.group('ins_open'):
             return self._ins(m.group('ins_text'))
         elif m.group('del_open'):
@@ -166,9 +202,13 @@ class CriticViewPreprocessor(Preprocessor):
             return m.group(0)
 
     def critic_parse(self, m):
+        """
+        Normal critic parser.  Either removes accepted
+        or rejected crtic marks and replaces with the opposite.
+        Comments are removed and marks are replaced with their
+        content.
+        """
         accept = self.config["mode"] == 'accept'
-        if m.group('escapes'):
-            return m.group('critic')
         if m.group('ins_open'):
             return m.group('ins_text') if accept else ''
         elif m.group('del_open'):
@@ -182,7 +222,7 @@ class CriticViewPreprocessor(Preprocessor):
         else:
             return m.group(0)
 
-    def _escape(self, txt, strip_nl=False):
+    def html_escape(self, txt, strip_nl=False):
         """ basic html escaping """
         txt = txt.replace('&', '&amp;')
         txt = txt.replace('<', '&lt;')
@@ -191,17 +231,35 @@ class CriticViewPreprocessor(Preprocessor):
         txt = txt.replace("\n", "<br>" if not strip_nl else ' ')
         return txt
 
+    def critic_escape(self, m):
+        """ Remove escaped critic marks """
+        return self.escape_stash.store(m.group('critic'))
+
+    def restore_escape(self, m):
+        """ Restore escaped critic marks """
+        stash = self.escape_stash.get(m.group(0))
+        if stash is not None:
+            self.escape_stash.remove(m.group(0))
+        return stash if stash is not None else m.group(0)
+
     def run(self, lines):
-        """ Match and store Fenced Code Blocks in the HtmlStash. """
-        text = ''
-        processor = self.critic_parse
-        view_mode = self.config['mode'] == "view"
+        """ Process critic marks """
 
-        if view_mode:
+        # Determine processor type to use
+        if self.config['mode'] == "view":
             processor = self.critic_view
+        else:
+            processor = self.critic_parse
 
-        for m in RE_CRITIC.finditer('\n'.join(lines)):
-            text += processor(m)
+        # Remove escaped critic marks
+        text = RE_CRITIC_ESCAPES.sub(self.critic_escape, '\n'.join(lines))
+
+        # Find and process critic marks
+        text = RE_CRITIC.sub(processor, text)
+
+        # Restore escaped critic marks
+        text = RE_CRITIC_ESCAPE_PLACEHOLDER.sub(self.restore_escape, text)
+        self.escape_stash.clear()
 
         return text.split('\n')
 
@@ -221,17 +279,18 @@ class CriticExtension(Extension):
         self.configured = False
 
     def extendMarkdown(self, md, md_globals):
-        """ Add FencedBlockPreprocessor to the Markdown instance. """
+        """ Register the extension """
         self.md = md
         md.registerExtension(self)
 
     def insert_critic(self):
-        self.critic_stash = CriticStash()
+        """ Insert the critic pre and post processor """
+        self.critic_stash = CriticStash(CRITIC_KEY)
         post = CriticsPostprocessor(self.critic_stash)
         critic = CriticViewPreprocessor(self.critic_stash)
         critic.config = self.getConfigs()
         self.md.preprocessors.add('critic', critic, ">normalize_whitespace")
-        self.md.postprocessors.add("critic-post", post, ">raw_html")
+        self.md.postprocessors.add("critic-post", post, "<raw_html")
 
     def reset(self):
         """
