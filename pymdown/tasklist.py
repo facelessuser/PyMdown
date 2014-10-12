@@ -55,7 +55,7 @@ class TasklistTreeprocessor(Treeprocessor):
         return found
 
     def run(self, root):
-        """ Replace relative paths with absolute """
+        """ Find list items that start with [ ] or [x] or [X] """
 
         parent_map = dict((c, p) for p in root.getiterator() for c in p)
         task_items = []

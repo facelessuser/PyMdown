@@ -39,21 +39,40 @@ CRITIC_PLACEHOLDERS = r"""(?x)
     "stx": STX, "etx": ETX
 }
 ALL_CRITICS = r'''(?x)
-    (%s(?P<critic>(?P<open>\{)
-        (?:
-            (?P<ins_open>\+{2})(?P<ins_text>.*?)(?P<ins_close>\+{2})
-          | (?P<del_open>\-{2})(?P<del_text>.*?)(?P<del_close>\-{2})
-          | (?P<mark_open>\={2})(?P<mark_text>.*?)(?P<mark_close>\={2})
-          | (?P<comment>(?P<com_open>\>{2})(?P<com_text>.*?)(?P<com_close>\<{2}))
-          | (?P<sub_open>\~{2})(?P<sub_del_text>.*?)(?P<sub_mid>\~\>)(?P<sub_ins_text>.*?)(?P<sub_close>\~{2})
+(%s(?P<critic>(?P<open>\{)
+    (?:
+        (?P<ins_open>\+{2})
+        (?P<ins_text>.*?)
+        (?P<ins_close>\+{2})
+
+      | (?P<del_open>\-{2})
+        (?P<del_text>.*?)
+        (?P<del_close>\-{2})
+
+      | (?P<mark_open>\={2})
+        (?P<mark_text>.*?)
+        (?P<mark_close>\={2})
+
+      | (?P<comment>
+            (?P<com_open>\>{2})
+            (?P<com_text>.*?)
+            (?P<com_close>\<{2})
         )
-    (?P<close>\})))
+
+      | (?P<sub_open>\~{2})
+        (?P<sub_del_text>.*?)
+        (?P<sub_mid>\~\>)
+        (?P<sub_ins_text>.*?)
+        (?P<sub_close>\~{2})
+    )
+(?P<close>\})))
 '''
 
-RE_CRITIC_PLACEHOLDER = re.compile(CRITIC_PLACEHOLDERS)
-RE_CRITIC_BLOCK_PLACEHOLDER = re.compile(SINGLE_CRITIC_PLACEHOLDER)
 RE_CRITIC = re.compile(ALL_CRITICS % '', re.DOTALL)
+RE_CRITIC_PLACEHOLDER = re.compile(CRITIC_PLACEHOLDERS)
+RE_CRITIC_SUB_PLACEHOLDER = re.compile(SINGLE_CRITIC_PLACEHOLDER)
 RE_CRITIC_BLOCK = re.compile(r'((?:ins|del|mark)\s+)(class=([\'"]))(.*?)(\3)')
+
 RE_CRITIC_ESCAPES = re.compile(ALL_CRITICS % r'(?P<escapes>\\)', re.DOTALL)
 RE_CRITIC_ESCAPE_PLACEHOLDER = re.compile(ESCAPES_PLACEHOLDER)
 RE_BLOCK_SEP = re.compile(r'^\n{2,}$')
@@ -117,7 +136,7 @@ class CriticsPostprocessor(Postprocessor):
         """ Replace placeholders with actual critic tags """
         content = None
         if m.group('block_keys') is not None:
-            content = RE_CRITIC_BLOCK_PLACEHOLDER.sub(
+            content = RE_CRITIC_SUB_PLACEHOLDER.sub(
                 self.subrestore, m.group('block_keys')
             )
             if content is not None:

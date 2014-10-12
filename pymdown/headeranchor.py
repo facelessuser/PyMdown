@@ -18,7 +18,14 @@ from markdown import Extension
 from markdown.treeprocessors import Treeprocessor
 from markdown.extensions.headerid import slugify, stashedHTML2text, itertext, unique
 
-LINK = '<a name="user-content-%(id)s" href="#%(id)s" class="headeranchor-link"  aria-hidden="true"><span class="headeranchor"></span></a>'
+LINK = (
+    '<a '
+    'name="user-content-%(id)s" '
+    'href="#%(id)s" class="headeranchor-link" '
+    'aria-hidden="true">'
+    '<span class="headeranchor"></span>'
+    '</a>'
+)
 
 
 class HeaderAnchorTreeprocessor(Treeprocessor):

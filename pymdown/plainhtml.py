@@ -22,15 +22,22 @@ import re
 # Strip out id, class, on<word>, and style attributes for a simple html output
 RE_TAG_HTML = re.compile(
     r'''(?x)
-        (?P<open><[\w\:\.\-]+)
-        (?P<attr>(?:\s+[\w\-:]+(?:\s*=\s*(?:"[^"]*"|'[^']*'))?)*)
-        (?P<close>\s*(?:\/?)>)
+    (?P<open><[\w\:\.\-]+)
+    (?P<attr>(?:\s+[\w\-:]+(?:\s*=\s*(?:"[^"]*"|'[^']*'))?)*)
+    (?P<close>\s*(?:\/?)>)
     ''',
     re.DOTALL | re.UNICODE
 )
 
 RE_TAG_BAD_ATTR = re.compile(
-    r'''(?P<attr>(?:\s+(?:id|class|style|on[\w]+)(?:\s*=\s*(?:"[^"]*"|'[^']*'))?)*)''',
+    r'''(?x)
+    (?P<attr>
+        (?:
+            \s+(?:id|class|style|on[\w]+)
+            (?:\s*=\s*(?:"[^"]*"|'[^']*'))?
+        )*
+    )
+    ''',
     re.DOTALL | re.UNICODE
 )
 

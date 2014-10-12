@@ -70,7 +70,10 @@ def repl(path, base_path):
             if ext in file_types:
                 try:
                     with open(file_name, "rb") as f:
-                        link = "data:%s;base64,%s" % (file_types[ext], base64.b64encode(f.read()).decode('ascii'))
+                        link = "data:%s;base64,%s" % (
+                            file_types[ext],
+                            base64.b64encode(f.read()).decode('ascii')
+                        )
                 except:
                     pass
     return link
