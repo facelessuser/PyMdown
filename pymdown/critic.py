@@ -24,7 +24,7 @@ STX = '\u0002'
 ETX = '\u0003'
 CRITIC_KEY = "czjqqkd:%s"
 ESCAPES_KEY = "ezkrqkd:%s"
-ESCAPES_PLACEHOLDER = ESCAPES_KEY % r'[0-9]+'
+ESCAPES_PLACEHOLDER = STX + '(' + (ESCAPES_KEY % r'[0-9]+') + ')' + ETX
 CRITIC_PLACEHOLDER = CRITIC_KEY % r'[0-9]+'
 SINGLE_CRITIC_PLACEHOLDER = r'%(stx)s(?P<key>%(key)s)%(etx)s' % {
     "key": CRITIC_PLACEHOLDER, "stx": STX, "etx": ETX
@@ -262,9 +262,9 @@ class CriticViewPreprocessor(Preprocessor):
 
     def restore_escape(self, m):
         """ Restore escaped critic marks """
-        stash = self.escape_stash.get(m.group(0))
+        stash = self.escape_stash.get(m.group(1))
         if stash is not None:
-            self.escape_stash.remove(m.group(0))
+            self.escape_stash.remove(m.group(1))
         return stash if stash is not None else m.group(0)
 
     def run(self, lines):
