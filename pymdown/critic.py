@@ -136,7 +136,7 @@ class CriticsPostprocessor(Postprocessor):
         if 'break' in m.group(4).split(' '):
             return m.group(0)
         else:
-            return m.group(1) + m.group(2) + m.group(4) + ' block-edit' + m.group(5)
+            return m.group(1) + m.group(2) + m.group(4) + ' block' + m.group(5)
 
     def restore(self, m):
         """ Replace placeholders with actual critic tags """

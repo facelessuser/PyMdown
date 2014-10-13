@@ -903,7 +903,7 @@ table tr:last-child td:last-child {
   }
 }
 
-/* Multimarkdown Critic Blocks */
+/* Critic Markup */
 .markdown-body .critic {
   font-family: inherit;
   -webkit-border-radius: 3px;
@@ -1010,13 +1010,13 @@ table tr:last-child td:last-child {
   border-bottom-right-radius: 3px;
 }
 
-.markdown-body .block-edit {
+.markdown-body .block {
   display: block;
   padding: .02em;
 }
 
-.markdown-body .block-edit:before,
-.markdown-body .block-edit:after {
+.markdown-body .block:before,
+.markdown-body .block:after {
   content: '';
 }
 
