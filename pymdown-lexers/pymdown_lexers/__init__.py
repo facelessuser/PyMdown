@@ -1,3 +1,3 @@
-# from .mylexer import MylexerLexer
+from .criticmarkup import CriticMarkupLexer
 
-# __all__ = ["MylexerLexer"]
+__all__ = ["CriticMarkupLexer"]
