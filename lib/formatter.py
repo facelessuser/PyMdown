@@ -17,7 +17,7 @@ import traceback
 import re
 import tempfile
 from pygments.formatters import get_formatter_by_name
-from os.path import exists, isfile, join
+from os.path import exists, isfile, join, abspath, relpath, dirname
 from .resources import load_text_resource
 from .logger import Logger
 
@@ -207,12 +207,32 @@ class Html(object):
         if isinstance(user_res, list) and len(user_res):
             for pth in user_res:
                 r = unicode_string(pth)
-                app_path = join(self.script_path, r) if self.script_path is not None else None
+                relative_path = r.startswith('&')
                 direct_include = not r.startswith('!')
                 if not direct_include:
                     # Remove inclusion reject marker
                     r = r.replace('!', '', 1)
-                if not direct_include or re.match(RE_URL_START, r) is not None:
+                if relative_path:
+                    r = r.replace('&', '', 1)
+                    direct_include = False
+                app_path = join(self.script_path, r) if self.script_path is not None else None
+                if not direct_include and re.match(RE_URL_START, r) is not None:
+                    # Don't include content, just reference link
+                    res.append(res_get(r, link=True))
+                elif not direct_include and relative_path:
+                    out = self.file.name
+                    if out is not None:
+                        if exists(r) and isfile(r):
+                            out = dirname(abspath(out))
+                            r = abspath(r)
+                            r = relpath(r, out)
+                        elif app_path is not None and exists(app_path) and isfile(app_path):
+                            out = dirname(abspath(out))
+                            app_path = abspath(app_path)
+                            r = relpath(app_path, out)
+                    # Add it as a link
+                    res.append(res_get(r, link=True))
+                elif not direct_include:
                     # Don't include content, just reference link
                     res.append(res_get(r, link=True))
                 elif exists(r) and isfile(r):
