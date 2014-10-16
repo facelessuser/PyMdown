@@ -225,11 +225,11 @@ class Html(object):
                         if exists(r) and isfile(r):
                             out = dirname(abspath(out))
                             r = abspath(r)
-                            r = relpath(r, out)
+                            r = relpath(r, out).replace('\\', '/')
                         elif app_path is not None and exists(app_path) and isfile(app_path):
                             out = dirname(abspath(out))
                             app_path = abspath(app_path)
-                            r = relpath(app_path, out)
+                            r = relpath(app_path, out).replace('\\', '/')
                     # Add it as a link
                     res.append(res_get(r, link=True))
                 elif not direct_include:
