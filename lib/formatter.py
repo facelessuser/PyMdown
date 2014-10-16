@@ -18,7 +18,7 @@ import re
 import tempfile
 from pygments.formatters import get_formatter_by_name
 from os.path import exists, isfile, join, abspath, relpath, dirname
-from .resources import load_text_resource
+from .resources import load_text_resource, load_text
 from .logger import Logger
 
 
@@ -237,18 +237,10 @@ class Html(object):
                     res.append(res_get(r, link=True))
                 elif exists(r) and isfile(r):
                     # Look at specified location to find the file
-                    try:
-                        with codecs.open(r, "r", "utf-8") as f:
-                            res.append(res_get(f.read()))
-                    except:
-                        Logger.log(str(traceback.format_exc()))
+                    res.append(res_get(load_text(r)))
                 elif app_path is not None and exists(app_path) and isfile(app_path):
                     # Look where app binary resides to find the file
-                    try:
-                        with codecs.open(app_path, "r", "utf-8") as f:
-                            res.append(res_get(f.read()))
-                    except:
-                        Logger.log(str(traceback.format_exc()))
+                    res.append(res_get(load_text(r)))
                 else:
                     # Could not find file, just add it as a link
                     res.append(res_get(r, link=True))

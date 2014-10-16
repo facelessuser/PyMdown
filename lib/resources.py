@@ -67,7 +67,25 @@ def load_text_resource(*args):
     if path is not None:
         try:
             with codecs.open(path, "rb") as f:
-                data = f.read().decode("utf-8")
+                data = f.read().replace('\r', '').decode("utf-8")
+        except:
+            # print(traceback.format_exc())
+            pass
+    return data
+
+
+def load_text(*args):
+    """ Load text file """
+    path = join(*args)
+
+    if not exists(path) or not isfile(path):
+        path = None
+
+    data = None
+    if path is not None:
+        try:
+            with codecs.open(path, "rb") as f:
+                data = f.read().replace('\r', '').decode("utf-8")
         except:
             # print(traceback.format_exc())
             pass
