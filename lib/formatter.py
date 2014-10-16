@@ -240,7 +240,7 @@ class Html(object):
                     res.append(res_get(load_text(r)))
                 elif app_path is not None and exists(app_path) and isfile(app_path):
                     # Look where app binary resides to find the file
-                    res.append(res_get(load_text(r)))
+                    res.append(res_get(load_text(app_path)))
                 else:
                     # Could not find file, just add it as a link
                     res.append(res_get(r, link=True))
