@@ -19,6 +19,7 @@ from pygments.styles import get_style_by_name
 from os.path import isfile, isdir, splitext, join, basename
 from . import resources as res
 from .logger import Logger
+import yaml
 from .file_strip.json import sanitize_json
 from .resources import resource_exists
 
@@ -120,7 +121,10 @@ class Settings(object):
         settings = {}
         try:
             with open(settings_path, "r") as f:
-                settings = json.loads(sanitize_json(f.read()))
+                try:
+                    settings = json.loads(sanitize_json(f.read()))
+                except:
+                    settings = yaml.load(f.read())
         except:
             Logger.log(traceback.format_exc())
             raise PyMdownSettingsException("Could not parse settings file!")
