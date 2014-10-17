@@ -21,9 +21,9 @@ SMART_UNDER_CONTENT = r'((?:[^_]|_(?=\w|\s)|(?<=\s)_+?(?=\s))+?_*?)'
 SMART_STAR_CONTENT = r'((?:[^\*]|\*(?=[^\W_]|\*|\s)|(?<=\s)\*+?(?=\s))+?\**?)'
 SMART_UNDER_MIXED_CONTENT = r'((?:[^_]|_(?=\w)|(?<=\s)_+?(?=\s))+?_*)'
 SMART_STAR_MIXED_CONTENT = r'((?:[^\*]|\*(?=[^\W_]|\*)|(?<=\s)\*+?(?=\s))+?\**)'
-UNDER_CONTENT = r'(_|[^_]+?)'
+UNDER_CONTENT = r'(_|(?:(?<=\s)_|[^_])+?)'
 UNDER_CONTENT2 = r'((?:[^_]|(?<!_)_(?=\w))+?)'
-STAR_CONTENT = r'(\*|[^\*]+?)'
+STAR_CONTENT = r'(\*|(?:(?<=\s)\*|[^\*])+?)'
 STAR_CONTENT2 = r'((?:[^\*]|(?<!\*)\*(?=[^\W_]|\*))+?)'
 
 # ***strong,em***

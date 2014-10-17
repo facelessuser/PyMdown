@@ -19,7 +19,7 @@ from __future__ import unicode_literals
 from markdown import Extension
 from markdown.inlinepatterns import SimpleTagPattern, DoubleTagPattern
 
-RE_SMART_CONTENT = r'((?:[^~]|~(?=[^\W_]|~)|(?<=\s)~+?(?=\s))+?~*)'
+RE_SMART_CONTENT = r'((?:[^~]|~(?=[^\W_]|~|\s)|(?<=\s)~+?(?=\s))+?~*?)'
 RE_CONTENT = r'((?:[^~]|(?<!~)~(?=[^\W_]|~))+?)'
 RE_SMART_DEL = r'(?:(?<=_)|(?<![\w~]))(~{2})(?![\s~])%s(?<!\s)\2(?:(?=_)|(?![\w~]))' % RE_SMART_CONTENT
 RE_DEL = r'(~{2})(?!\s)%s(?<!\s)\2' % RE_CONTENT
