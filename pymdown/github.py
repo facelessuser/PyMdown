@@ -2,6 +2,7 @@ from __future__ import unicode_literals
 from markdown import Extension
 
 extensions = [
+    'markdown.extensions.tables',
     'pymdown.magiclink',
     'pymdown.betterem',
     'pymdown.tilde(subscript=False)',

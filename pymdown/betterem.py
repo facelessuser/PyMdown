@@ -17,8 +17,10 @@ from __future__ import unicode_literals
 from markdown import Extension
 from markdown.inlinepatterns import SimpleTagPattern, DoubleTagPattern
 
-SMART_UNDER_CONTENT = r'((?:[^_]|_(?=\w)|(?<=\s)_+?(?=\s))+?_*)'
-SMART_STAR_CONTENT = r'((?:[^\*]|\*(?=[^\W_]|\*)|(?<=\s)\*+?(?=\s))+?\**)'
+SMART_UNDER_CONTENT = r'((?:[^_]|_(?=\w|\s)|(?<=\s)_+?(?=\s))+?_*?)'
+SMART_STAR_CONTENT = r'((?:[^\*]|\*(?=[^\W_]|\*|\s)|(?<=\s)\*+?(?=\s))+?\**?)'
+SMART_UNDER_MIXED_CONTENT = r'((?:[^_]|_(?=\w)|(?<=\s)_+?(?=\s))+?_*)'
+SMART_STAR_MIXED_CONTENT = r'((?:[^\*]|\*(?=[^\W_]|\*)|(?<=\s)\*+?(?=\s))+?\**)'
 UNDER_CONTENT = r'(_|[^_]+?)'
 UNDER_CONTENT2 = r'((?:[^_]|(?<!_)_(?=\w))+?)'
 STAR_CONTENT = r'(\*|[^\*]+?)'
@@ -50,10 +52,10 @@ UNDER_EM = r'(_)(?!\s)%s(?<!\s)\2' % UNDER_CONTENT
 SMART_UNDER_STRONG_EM = r'(?<!\w)(_{3})(?![\s_])%s(?<!\s)\2(?!\w)' % SMART_UNDER_CONTENT
 # ___strong,em_strong__
 SMART_UNDER_STRONG_EM2 = \
-    r'(?<!\w)(_{3})(?![\s_])%s(?<!\s)_(?!\w)%s(?<!\s)_{2}(?!\w)' % (SMART_UNDER_CONTENT, SMART_UNDER_CONTENT)
+    r'(?<!\w)(_{3})(?![\s_])%s(?<!\s)_(?!\w)%s(?<!\s)_{2}(?!\w)' % (SMART_UNDER_MIXED_CONTENT, SMART_UNDER_CONTENT)
 # ___em,strong__em_
 SMART_UNDER_EM_STRONG = \
-    r'(?<!\w)(_{3})(?![\s_])%s(?<!\s)_{2}(?!\w)%s(?<!\s)_(?!\w)' % (SMART_UNDER_CONTENT, SMART_UNDER_CONTENT)
+    r'(?<!\w)(_{3})(?![\s_])%s(?<!\s)_{2}(?!\w)%s(?<!\s)_(?!\w)' % (SMART_UNDER_MIXED_CONTENT, SMART_UNDER_CONTENT)
 # __strong__
 SMART_UNDER_STRONG = r'(?<!\w)(_{2})(?![\s_])%s(?<!\s)\2(?!\w)' % SMART_UNDER_CONTENT
 # SMART _em_
@@ -64,10 +66,10 @@ SMART_UNDER_EM = r'(?<!\w)(_)(?![\s_])%s(?<!\s)\2(?!\w)' % SMART_UNDER_CONTENT
 SMART_STAR_STRONG_EM = r'(?:(?<=_)|(?<![\w\*]))(\*{3})(?![\s\*])%s(?<!\s)\2(?:(?=_)|(?![\w\*]))' % SMART_STAR_CONTENT
 # ***strong,em*strong**
 SMART_STAR_STRONG_EM2 = \
-    r'(?:(?<=_)|(?<![\w\*]))(\*{3})(?![\s\*])%s(?<!\s)\*(?:(?=_)|(?![\w\*]))%s(?<!\s)\*{2}(?:(?=_)|(?![\w\*]))' % (SMART_STAR_CONTENT, SMART_STAR_CONTENT)
+    r'(?:(?<=_)|(?<![\w\*]))(\*{3})(?![\s\*])%s(?<!\s)\*(?:(?=_)|(?![\w\*]))%s(?<!\s)\*{2}(?:(?=_)|(?![\w\*]))' % (SMART_STAR_MIXED_CONTENT, SMART_STAR_CONTENT)
 # ***em,strong**em*
 SMART_STAR_EM_STRONG = \
-    r'(?:(?<=_)|(?<![\w\*]))(\*{3})(?![\s\*])%s(?<!\s)\*{2}(?:(?=_)|(?![\w\*]))%s(?<!\s)\*(?:(?=_)|(?![\w\*]))' % (SMART_STAR_CONTENT, SMART_STAR_CONTENT)
+    r'(?:(?<=_)|(?<![\w\*]))(\*{3})(?![\s\*])%s(?<!\s)\*{2}(?:(?=_)|(?![\w\*]))%s(?<!\s)\*(?:(?=_)|(?![\w\*]))' % (SMART_STAR_MIXED_CONTENT, SMART_STAR_CONTENT)
 # **strong**
 SMART_STAR_STRONG = r'(?:(?<=_)|(?<![\w\*]))(\*{2})(?![\s\*])%s(?<!\s)\2(?:(?=_)|(?![\w\*]))' % SMART_STAR_CONTENT
 # SMART *em*
