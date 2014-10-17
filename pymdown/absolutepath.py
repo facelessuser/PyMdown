@@ -60,7 +60,7 @@ class AbsolutepathTreeprocessor(Treeprocessor):
             return root
 
         for tag in root.getiterator():
-            if tag.tag in ("img", "scripts", "a"):
+            if tag.tag in ("img", "scripts", "a", "link"):
                 src = tag.attrib.get("src")
                 href = tag.attrib.get("href")
                 if src is not None:

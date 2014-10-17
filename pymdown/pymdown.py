@@ -29,8 +29,7 @@ extensions = [
     'pymdown.headeranchor',
     'pymdown.nestedfences',
     'pymdown.htmlcomments',
-    'pymdown.inlinehilite',
-    'markdown.extensions.nl2br'
+    'pymdown.inlinehilite'
 ]
 
 
