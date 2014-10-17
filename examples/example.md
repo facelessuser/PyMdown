@@ -23,6 +23,7 @@
         - markdown.extensions.meta
         - markdown.extensions.wikilinks
         - markdown.extensions.admonition
+        - markdown.extensions.nl2br
         - markdown.extensions.codehilite(guess_lang=False,pygments_style=github2)
         - pymdown.pymdown
         - pymdown.b64(base_path=${BASE_PATH})
