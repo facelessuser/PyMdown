@@ -29,7 +29,6 @@ The following must be installed in your Python
     | tilde        | Add <del>delete</del> tags by using `~~delete~~` and/or Pandoc style <sub>subscript</sub> by using `~subscript~`.. Can be enabled in the settings file. |
     | mark         | Experimental extension to add <mark>mark</mark> by using `==mark==`. |
     | magiclink    | Search for and convert http or ftp links to actual HTML links for lazy link creation. Can be enabled in the settings file. |
-    | htmlcomments | Remove html comments from the final output. |
     | tasklist     | This adds support for github style tasklists.  Can be enabled in the settings. |
     | githubemoji  | This adds emojis.  Assets link to github's emoji icons.  Can be enabled in the settings. |
     | headeranchor | Insert github style header anchor on left side of h1-h6 tags. |
