@@ -22,9 +22,12 @@ import re
 # Strip out id, class, on<word>, and style attributes for a simple html output
 RE_TAG_HTML = re.compile(
     r'''(?x)
-    (?P<open><[\w\:\.\-]+)
-    (?P<attr>(?:\s+[\w\-:]+(?:\s*=\s*(?:"[^"]*"|'[^']*'))?)*)
-    (?P<close>\s*(?:\/?)>)
+    (?:
+        (?P<comments>(\r?\n?\s*)<!--[\s\S]*?-->(\s*)(?=\r?\n)|<!--[\s\S]*?-->)|
+        (?P<open><[\w\:\.\-]+)
+        (?P<attr>(?:\s+[\w\-:]+(?:\s*=\s*(?:"[^"]*"|'[^']*'))?)*)
+        (?P<close>\s*(?:\/?)>)
+    )
     ''',
     re.DOTALL | re.UNICODE
 )
@@ -43,9 +46,12 @@ RE_TAG_BAD_ATTR = re.compile(
 
 
 def repl(m):
-    tag = m.group('open')
-    tag += RE_TAG_BAD_ATTR.sub('', m.group('attr'))
-    tag += m.group('close')
+    if m.group('comments'):
+        tag = ''
+    else:
+        tag = m.group('open')
+        tag += RE_TAG_BAD_ATTR.sub('', m.group('attr'))
+        tag += m.group('close')
     return tag
 
 
