@@ -23,18 +23,18 @@
 
     // Python Markdown extensions
     "extensions": [
-        "markdown.extensions.extra",
-        "markdown.extensions.toc",
-        "markdown.extensions.codehilite(guess_lang=False)",
-        "markdown.extensions.headerid",
-        "markdown.extensions.smarty",
-        "markdown.extensions.wikilinks",
-        "markdown.extensions.admonition",
-        "markdown.extensions.nl2br",
-        "pymdown.pymdown",
-        // "mdownx.absolutepath(base_path=${BASE_PATH})",
-        "pymdown.b64(base_path=${BASE_PATH})",
+        {"name": "markdown.extensions.extra"},
+        {"name": "markdown.extensions.toc"},
+        {"name": "markdown.extensions.codehilite", "config": {"guess_lang": false}},
+        {"name": "markdown.extensions.headerid"},
+        {"name": "markdown.extensions.smarty"},
+        {"name": "markdown.extensions.wikilinks"},
+        {"name": "markdown.extensions.admonition"},
+        {"name": "markdown.extensions.nl2br"},
+        {"name": "pymdown.pymdown"},
+        // {"name": "mdownx.absolutepath", "config": {"base_path": "${BASE_PATH}"}},
+        {"pymdown.b64": {"base_path": "${BASE_PATH}"}},
         // Run critic last to make sure it gets run first
-        "pymdown.critic"
+        {"name":"pymdown.critic"}
     ]
 }

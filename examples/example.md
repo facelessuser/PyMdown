@@ -16,17 +16,22 @@
     settings:
         html_template: example-template.html
         extensions:
-        - markdown.extensions.extra
-        - markdown.extensions.toc
-        - markdown.extensions.headerid
-        - markdown.extensions.smarty
-        - markdown.extensions.meta
-        - markdown.extensions.wikilinks
-        - markdown.extensions.admonition
-        - markdown.extensions.nl2br
-        - markdown.extensions.codehilite(guess_lang=False,pygments_style=github2)
-        - pymdown.pymdown
-        - pymdown.b64(base_path=${BASE_PATH})
+        - name: markdown.extensions.extra
+        - name: markdown.extensions.toc
+        - name: markdown.extensions.headerid
+        - name: markdown.extensions.smarty
+        - name: markdown.extensions.meta
+        - name: markdown.extensions.wikilinks
+        - name: markdown.extensions.admonition
+        - name: markdown.extensions.nl2br
+        - name: markdown.extensions.codehilite
+          config:
+            guess_lang: False
+            pygments_style: github2
+        - name: pymdown.pymdown
+        - name: pymdown.b64
+          config:
+            base_path: ${BASE_PATH}
 ---
 test: This example of normal meta extension
 title: This title will be overridden by YAML

@@ -5,7 +5,7 @@ extensions = [
     'markdown.extensions.tables',
     'pymdown.magiclink',
     'pymdown.betterem',
-    'pymdown.tilde(subscript=False)',
+    'pymdown.tilde',
     'pymdown.githubemoji',
     'pymdown.tasklist',
     'pymdown.headeranchor',
@@ -13,13 +13,19 @@ extensions = [
     'markdown.extensions.nl2br'
 ]
 
+extension_configs = {
+    "pymdown.tilde": {
+        "subscript": False
+    }
+}
+
 
 class GithubExtension(Extension):
     """Add various extensions to Markdown class"""
 
     def extendMarkdown(self, md, md_globals):
         """Register extension instances"""
-        md.registerExtensions(extensions, self.config)
+        md.registerExtensions(extensions, extension_configs)
 
 
 def makeExtension(*args, **kwargs):

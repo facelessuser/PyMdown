@@ -39,17 +39,6 @@ CRITIC_REJECT = 2
 CRITIC_VIEW = 4
 CRITIC_DUMP = 8
 
-RE_PYGMENT = re.compile(r"pygments_style\s*=\s*([a-zA-Z][a-zA-Z_\d]*)\s*(,?)")
-RE_INSERT_PYGMENT = re.compile(
-    r"""(?x)
-    (?P<bracket_start>markdown\.extensions\.codehilite\(
-    [^)]+?)
-    (?P<bracket_end>\s*\)$)|
-    (?P<start>markdown\.extensions\.codehilite)
-    """
-)
-RE_NO_CLASSES = re.compile(r"noclasses\s*=\s*(True|False)")
-
 
 class PyMdownSettingsException(Exception):
     pass
@@ -299,37 +288,31 @@ class Settings(object):
         count = 0
         for e in extensions:
             # Search for codhilite to see what style is being set.
-            if e.startswith("markdown.extensions.codehilite"):
+            if e.get('name', '') == "markdown.extensions.codehilite":
+                config = e.get('config', {})
                 # Track if the "noclasses" settings option is enabled
-                noclasses = RE_NO_CLASSES.search(e)
-                if noclasses is not None and noclasses.group(1) == "True":
+                noclasses = config.get('noclasses', False)
+
+                if noclasses is True:
                     settings["settings"]["use_pygments_css"] = False
 
-                pygments_style = RE_PYGMENT.search(e)
-                if pygments_style is None:
+                style = config.get('pygments_style', None)
+                if style is None:
                     # Explicitly define a pygment style and store the name
                     # This is to ensure the "noclasses" option always works
                     style = "default"
-                    m = RE_INSERT_PYGMENT.match(e)
-                    if m is not None and not settings["settings"].get("use_pygments_css", True):
-                        if m.group('bracket_start'):
-                            start = m.group('bracket_start') + ',pygments_style='
-                            end = ")"
-                        else:
-                            start = m.group('start') + "(pygments_style="
-                            end = ')'
-                        extensions[count] = start + style + end
+                    config['pygments_style'] = style
+                    e['config'] = config
                 else:
                     # Store pygment style name
-                    style = "default" if pygments_style is None else pygments_style.group(1)
                     try:
                         # Check if the desired style exists internally
                         get_style_by_name(style)
                     except:
                         Logger.log("Cannot find style: %s! Falling back to 'default' style." % style)
                         style = "default"
-                    comma = ',' if pygments_style.group(2) is not None and pygments_style.group(2) != '' else ''
-                    extensions[count] = e.replace(pygments_style.group(0), 'pygments_style=%s%s' % (style, comma))
+                config['pygments_style'] = style
+                e['config'] = config
 
             count += 1
         settings["settings"]["style"] = style
@@ -351,6 +334,7 @@ class Settings(object):
         absolute = False
         critic_found = []
         plain_html = []
+        empty = []
 
         # Copy extensions; we will move it to its own key later
         if "extensions" in settings["settings"]:
@@ -373,15 +357,17 @@ class Settings(object):
         #    - Where the plainhtml plugin is enabled
         # Only add to list for removal if we are overriding them.
         for i in range(0, len(extensions)):
-            name = extensions[i]
-            if name.startswith("pymdown.absolutepath"):
+            name = extensions[i].get('name', None)
+            if name is None:
+                empty.append()
+            elif name == "pymdown.absolutepath":
                 absolute = True
-            if name.startswith("pymdown.critic") and critic_mode != 'ignore':
+            elif name == "pymdown.critic" and critic_mode != 'ignore':
                 critic_found.append(i)
-            if name.startswith("pymdown.plainhtml") and self.plain:
+            elif name == "pymdown.plainhtml" and self.plain:
                 plain_html.append(i)
 
-        indexes = list(set(critic_found + plain_html))
+        indexes = list(set(critic_found + plain_html + empty))
         indexes.sort()
         # Remove plainhtml and critic because CLI is overriding them
         for index in reversed(indexes):
@@ -389,11 +375,21 @@ class Settings(object):
 
         # Ensure previews are using absolute paths if not already
         if self.preview and not absolute:
-            extensions.append("pymdown.absolutepath(base_path=${BASE_PATH})")
+            extensions.append(
+                {
+                    "name": "pymdown.absolutepath",
+                    "config":{"base_path": "${BASE_PATH}"}
+                }
+            )
 
         # Most reliable when applied to the end.
         if critic_mode != "ignore":
-            extensions.append("pymdown.critic(mode=%s)" % critic_mode)
+            extensions.append(
+                {
+                    "name": "pymdown.critic",
+                    "config": {"mode": critic_mode}
+                }
+            )
 
         # Append plainhtml.
         # Most reliable when applied to the end. Okay to come after critic.

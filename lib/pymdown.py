@@ -17,6 +17,11 @@ from os.path import exists, isfile, dirname, abspath, join
 PY3 = sys.version_info >= (3, 0)
 RE_TAGS = re.compile(r'''</?[^>]*>''')
 RE_WORD = re.compile(r'''[^\w\- ]''')
+SLUGIFY_EXT = (
+    'markdown.extensions.headerid',
+    'markdown.extensions.toc',
+    'pymdown.headeranchor'
+)
 
 if PY3:
     from urllib.parse import quote
@@ -67,11 +72,8 @@ class MdWrapper(Markdown):
 
         for ext in extensions:
             try:
-                conf = configs.get(ext, {})
-                if ext in ('markdown.extensions.headerid', 'markdown.extensions.toc', 'pymdown.headeranchor'):
-                    conf['slugify'] = slugify
                 if isinstance(ext, util.string_type):
-                    ext = self.build_extension(ext, conf)
+                    ext = self.build_extension(ext, configs.get(ext, {}))
                 if isinstance(ext, Extension):
                     ext.extendMarkdown(self, globals())
                     logger.info('Successfully loaded extension "%s.%s".'
@@ -102,22 +104,35 @@ class PyMdown(object):
 
     def check_extensions(self, extensions):
         """ Check the extensions and see if anything needs to be modified """
-        if isinstance(extensions, string_type) and extensions == "default":
-            extensions = [
-                "markdown.extensions.extra",
-                "markdown.extensions.toc",
-                "markdown.extensions.codehilite(guess_lang=False,pygments_style=default)"
-            ]
         self.extensions = []
+        self.extension_configs = {}
         for e in extensions:
-            self.extensions.append(e.replace("${BASE_PATH}", self.base_path))
+            name = e.get("name", None)
+            config = e.get("config", {})
+            # Account for no config
+            if config is None:
+                config = {}
+            if name is not None:
+                # Use our own slugify
+                if name in SLUGIFY_EXT:
+                    config['slugify'] = slugify
+                # Replace base path keyword
+                for k, v in config.items():
+                    if isinstance(v, string_type):
+                        config[k] = v.replace("${BASE_PATH}", self.base_path)
+                # Add extension
+                self.extensions.append(name)
+                self.extension_configs[name] = config
 
     def convert(self):
         """ Convert the file to HTML """
         self.markdown = ""
         try:
             with codecs.open(self.file_name, "r", encoding=self.encoding) as f:
-                md = MdWrapper(extensions=self.extensions)
+                md = MdWrapper(
+                    extensions=self.extensions,
+                    extension_configs=self.extension_configs
+                )
                 self.markdown = md.convert(f.read())
                 try:
                     self.meta = md.Meta
@@ -143,7 +158,10 @@ class PyMdowns(PyMdown):
         """ Convert the given string to HTML """
         self.markdown = ""
         try:
-            md = MdWrapper(extensions=self.extensions)
+            md = MdWrapper(
+                extensions=self.extensions,
+                extension_configs=self.extension_configs
+            )
             self.markdown = md.convert(self.string)
             try:
                 self.meta = md.Meta
