@@ -92,7 +92,8 @@ class MdWrapper(Markdown):
 
 class MdConvert(object):
     def __init__(
-        self, file_name, encoding, base_path=None, extensions=[]
+        self, file_name, encoding, base_path=None, extensions=[],
+        tab_length=4, lazy_ol=True, smart_emphasis=True
     ):
         """ Initialize """
         self.meta = {}
@@ -100,6 +101,9 @@ class MdConvert(object):
         self.base_path = base_path if base_path is not None else ''
         self.encoding = encoding
         self.check_extensions(extensions)
+        self.tab_length = tab_length
+        self.lazy_ol = lazy_ol
+        self.smart_emphasis = smart_emphasis
         self.convert()
 
     def check_extensions(self, extensions):
@@ -131,7 +135,10 @@ class MdConvert(object):
             with codecs.open(self.file_name, "r", encoding=self.encoding) as f:
                 md = MdWrapper(
                     extensions=self.extensions,
-                    extension_configs=self.extension_configs
+                    extension_configs=self.extension_configs,
+                    smart_emphasis=self.smart_emphasis,
+                    tab_length=self.tab_length,
+                    lazy_ol=self.lazy_ol
                 )
                 self.markdown = md.convert(f.read())
                 try:
@@ -145,13 +152,17 @@ class MdConvert(object):
 class MdConverts(MdConvert):
     def __init__(
         self, string,
-        base_path=None, extensions=[]
+        base_path=None, extensions=[],
+        tab_length=4, lazy_ol=True, smart_emphasis=True
     ):
         """ Initialize """
         self.meta = {}
         self.string = string
         self.base_path = base_path if base_path is not None else ''
         self.check_extensions(extensions)
+        self.smart_emphasis = smart_emphasis
+        self.tab_length = tab_length
+        self.lazy_ol = lazy_ol
         self.convert()
 
     def convert(self):
@@ -160,7 +171,10 @@ class MdConverts(MdConvert):
         try:
             md = MdWrapper(
                 extensions=self.extensions,
-                extension_configs=self.extension_configs
+                extension_configs=self.extension_configs,
+                smart_emphasis=self.smart_emphasis,
+                tab_length=self.tab_length,
+                lazy_ol=self.lazy_ol
             )
             self.markdown = md.convert(self.string)
             try:

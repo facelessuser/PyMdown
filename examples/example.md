@@ -18,6 +18,8 @@
         extensions:
         - name: markdown.extensions.extra
         - name: markdown.extensions.toc
+          config:
+            title: Table of Contents
         - name: markdown.extensions.headerid
         - name: markdown.extensions.smarty
         - name: markdown.extensions.meta
@@ -39,17 +41,24 @@ title: This title will be overridden by YAML
 !!! hint "Extensions Used in this Document"
     This is mainly to visually inspect markdown output offered by PyMdown.  This isn't a real test.  Here are the enabled extensions:
 
-    - markdown.extensions.extra
-    - markdown.extensions.toc
-    - markdown.extensions.headerid
-    - markdown.extensions.smarty
-    - markdown.extensions.meta
-    - markdown.extensions.wikilinks
-    - markdown.extensions.admonition
-    - markdown.extensions.codehilite(guess_lang=False,pygments_style=github)
-    - pymdown.pymdown
-    - pymdown.mark
-    - pymdown.b64(base_path=${BASE_PATH})
+    - name: markdown.extensions.extra
+    - name: markdown.extensions.toc
+      config:
+        title: Table of Contents
+    - name: markdown.extensions.headerid
+    - name: markdown.extensions.smarty
+    - name: markdown.extensions.meta
+    - name: markdown.extensions.wikilinks
+    - name: markdown.extensions.admonition
+    - name: markdown.extensions.nl2br
+    - name: markdown.extensions.codehilite
+      config:
+        guess_lang: False
+        pygments_style: github2
+    - name: pymdown.pymdown
+    - name: pymdown.b64
+      config:
+        base_path: ${BASE_PATH}
 
     !!! Caution "Notes"
         - `sane_lists` will alter the results of [Mixed Lists](#mixed-lists). When turned off, this document will have all list items mixed and aligned proper.  With `sane_lists` on, some will not be recognized, and some items may be aligned in different lists. `sane_lists` is disabled in this example.

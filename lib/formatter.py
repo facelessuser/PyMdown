@@ -29,7 +29,7 @@ if PY3:
 else:
     unicode_string = unicode  # flake8: noqa
 
-RE_URL_START = r"https?://"
+RE_URL_START = re.compile(r"https?://")
 
 
 class PyMdownFormatterException(Exception):
@@ -81,7 +81,7 @@ class Terminal(object):
 
 class Html(object):
     def __init__(
-        self, output, preview=False, title=None,
+        self, output, preview=False, title=None, encoding='utf-8',
         plain=False, script_path=None, settings={}
     ):
         self.settings = settings
@@ -89,11 +89,9 @@ class Html(object):
         self.body_end = None
         self.no_body = False
         self.plain = plain
-        self.template = ''
-        self.out_encoding = 'utf-8'
+        self.template = None
+        self.encoding = encoding
         self.template_file = self.settings.get("html_template", None)
-        if self.template_file is not None:
-            self.template_file, self.out_encoding = splitenc(self.template_file)
         self.title = "Untitled"
         self.script_path = script_path
         self.set_output(output, preview)
@@ -128,15 +126,15 @@ class Html(object):
     def write_html_start(self):
         """ Output the HTML head and body up to the {{ BODY }} specifier """
         if (self.template_file is not None):
+            template_path, encoding = splitenc(self.template_file)
             if (
                 self.script_path is not None and
-                (not exists(self.template_file) or not isfile(self.template_file))
+                (not exists(template_path) or not isfile(template_path))
             ):
-                template = join(self.script_path, self.template_file)
-            else:
-                template = self.template_file
+                template_path = join(self.script_path, template_path)
+
             try:
-                with codecs.open(template, "r", encoding=self.out_encoding) as f:
+                with codecs.open(template_path, "r", encoding=encoding) as f:
                     self.template = f.read()
             except:
                 Logger.error(str(traceback.format_exc()))
@@ -168,7 +166,7 @@ class Html(object):
             self.file = Terminal()
         try:
             if not preview and output is not None:
-                self.file = codecs.open(output, "w", encoding=self.out_encoding, errors="xmlcharrefreplace")
+                self.file = codecs.open(output, "w", encoding=self.encoding, errors="xmlcharrefreplace")
                 self.encode_file = False
             elif preview:
                 self.file = tempfile.NamedTemporaryFile(delete=False, suffix=".html")
@@ -190,7 +188,7 @@ class Html(object):
             self.write_html_start()
         if not self.no_body:
             self.file.write(
-                text.encode(self.out_encoding, errors="xmlcharrefreplace") if self.encode_file else text
+                text.encode(self.encoding, errors="xmlcharrefreplace") if self.encode_file else text
             )
 
     def load_highlight(self, highlight_style):
@@ -207,50 +205,64 @@ class Html(object):
         return css
 
     def load_resources(self, key, res_get):
-        user_res = self.settings.get(key, [])
-        res = []
-        if isinstance(user_res, list) and len(user_res):
-            for pth in user_res:
-                r = unicode_string(pth)
-                relative_path = r.startswith('&')
-                direct_include = not r.startswith('!')
+        template_resources = self.settings.get(key, [])
+        resources = []
+        if isinstance(template_resources, list) and len(template_resources):
+            for pth in template_resources:
+                resource = unicode_string(pth)
+
+                # Check for markers
+                relative_path = resource.startswith('&')
+                direct_include = not resource.startswith('!')
+
+                # Remove inclusion reject marker
                 if not direct_include:
-                    # Remove inclusion reject marker
-                    r = r.replace('!', '', 1)
+                    resource = resource.replace('!', '', 1)
+
+                # Remove relative path marker
                 if relative_path:
-                    r = r.replace('&', '', 1)
+                    resource = resource.replace('&', '', 1)
                     direct_include = False
-                r, encoding = splitenc(r)
-                app_path = join(self.script_path, r) if self.script_path is not None else None
-                if not direct_include and re.match(RE_URL_START, r) is not None:
-                    # Don't include content, just reference link
-                    res.append(res_get(r, link=True, encoding=encoding))
+
+                # Setup paths to check
+                resource, encoding = splitenc(resource)
+                app_res_path = join(self.script_path, resource) if self.script_path is not None else None
+
+                # This is a URL, don't include content
+                if RE_URL_START.match(resource) is not None:
+                    resources.append(res_get(resource, link=True, encoding=encoding))
+
+                # Do not include content, but we need to resolove the relative path
                 elif not direct_include and relative_path:
                     out = self.file.name
                     if out is not None:
-                        if exists(r) and isfile(r):
+                        if exists(resource) and isfile(resource):
                             out = dirname(abspath(out))
-                            r = abspath(r)
-                            r = relpath(r, out).replace('\\', '/')
-                        elif app_path is not None and exists(app_path) and isfile(app_path):
+                            resource = abspath(resource)
+                            resource = relpath(resource, out).replace('\\', '/')
+                        elif app_res_path is not None and exists(app_res_path) and isfile(app_res_path):
                             out = dirname(abspath(out))
-                            app_path = abspath(app_path)
-                            r = relpath(app_path, out).replace('\\', '/')
-                    # Add it as a link
-                    res.append(res_get(r, link=True, encoding=encoding))
+                            app_res_path = abspath(app_res_path)
+                            resource = relpath(app_res_path, out).replace('\\', '/')
+                    resources.append(res_get(resource, link=True, encoding=encoding))
+
+                # Should not try to include content, just add as a link
                 elif not direct_include:
-                    # Don't include content, just reference link
-                    res.append(res_get(r, link=True, encoding=encoding))
-                elif exists(r) and isfile(r):
+                    resources.append(res_get(resource, link=True, encoding=encoding))
+
+                # The file exists, read content and include
+                elif exists(resource) and isfile(resource):
                     # Look at specified location to find the file
-                    res.append(res_get(load_text_resource(r, encoding=encoding)))
-                elif app_path is not None and exists(app_path) and isfile(app_path):
-                    # Look where app binary resides to find the file
-                    res.append(res_get(load_text_resource(app_path, encoding=encoding)))
+                    resources.append(res_get(load_text_resource(resource, encoding=encoding)))
+
+                # The file exists relative to the application, read content and include
+                elif app_res_path is not None and exists(app_res_path) and isfile(app_res_path):
+                    resources.append(res_get(load_text_resource(app_res_path, encoding=encoding)))
+
+                # Nothing else worked, just include as a link
                 else:
-                    # Could not find file, just add it as a link
-                    res.append(res_get(r, link=True, encoding=encoding))
-        return res
+                    resources.append(res_get(resource, link=True, encoding=encoding))
+        return resources
 
     def load_css(self, style):
         """ Load specified CSS sources """
@@ -265,7 +277,7 @@ class Html(object):
 
     def load_header(self, style):
         """ Load up header related info """
-        self.meta = ['<meta charset="%s">' % self.out_encoding]
+        self.meta = ['<meta charset="%s">' % self.encoding]
         self.head = self.load_css(style)
         self.head += self.load_js()
 
@@ -274,14 +286,14 @@ class Text(object):
     def __init__(self, output, encoding):
         """ Initialize Text object """
         self.encode_file = True
-        self.out_encoding = encoding
+        self.encoding = encoding
 
         # Set the correct output target and create the file if necessary
         if output is None:
             self.file = Terminal()
         else:
             try:
-                self.file = codecs.open(output, "w", encoding=self.out_encoding)
+                self.file = codecs.open(output, "w", encoding=self.encoding)
                 self.encode_file = False
             except:
                 Logger.error(str(traceback.format_exc()))
@@ -290,7 +302,7 @@ class Text(object):
     def write(self, text):
         """ Write the content """
         self.file.write(
-            text.encode(self.out_encoding, errors="xmlcharrefreplace") if self.encode_file else text
+            text.encode(self.encoding, errors="xmlcharrefreplace") if self.encode_file else text
         )
 
     def close(self):

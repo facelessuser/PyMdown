@@ -13,7 +13,7 @@ from __future__ import unicode_literals
 from __future__ import absolute_import
 from __future__ import print_function
 # Egg resoures must be loaded before Pygments gets loaded
-from lib.resources import load_text_resource, load_egg_resources
+from lib.resources import load_text_resource, load_egg_resources, splitenc
 load_egg_resources()
 import codecs
 import sys
@@ -82,7 +82,7 @@ def get_file_stream(encoding):
 
 
 def open_with_osx_browser(filename):
-    """ Open file with  """
+    """ Open file with browser id """
     web_handler = None
     launch_services = expanduser('~/Library/Preferences/com.apple.LaunchServices.plist')
     with open(launch_services, "rb") as f:
@@ -102,7 +102,9 @@ def open_with_osx_browser(filename):
 def auto_open(name):
     """ Auto open HTML """
 
-    # Maybe just use desktop
+    # Here is an attempt to load the HTML in the
+    # the default browser.  I guess if this doesn't work
+    # I could always just inlcude the desktop lib.
     if _PLATFORM == "osx":
         try:
             open_with_osx_browser(name)
@@ -134,17 +136,19 @@ def get_critic_mode(args):
     return critic_mode
 
 
-def get_references(file_name, encoding):
+def get_references(references, encoding):
     """ Get footnote and general references from outside source """
     text = ''
-    app_path = join(script_path, file_name)
-    if file_name is not None:
-        if exists(file_name) and isfile(file_name):
-            text = load_text_resource(file_name, encoding=encoding)
-        elif exists(app_path) and isfile(app_path):
-            text = load_text_resource(app_path, encoding=encoding)
-        else:
-            Logger.error("Could not find reference file %s!" % file_name)
+    for file_name in references:
+        file_name, encoding = splitenc(file_name, default=encoding)
+        app_path = join(script_path, file_name)
+        if file_name is not None:
+            if exists(file_name) and isfile(file_name):
+                text += load_text_resource(file_name, encoding=encoding)
+            elif exists(app_path) and isfile(app_path):
+                text += load_text_resource(app_path, encoding=encoding)
+            else:
+                Logger.error("Could not find reference file %s!" % file_name)
     return text
 
 
@@ -255,13 +259,13 @@ class Convert(object):
                 status = FAIL
 
         if status == PASS:
-            if not (self.config.critic & (CRITIC_REJECT | CRITIC_ACCEPT | CRITIC_VIEW)):
+            if not (self.config.critic & (CRITIC_REJECT | CRITIC_ACCEPT)):
                 Logger.error("Acceptance or rejection was not specified for critic dump!")
                 status = FAIL
             else:
                 # Create text object
                 try:
-                    txt = formatter.Text(self.settings["builtin"]["destination"], self.config.encoding)
+                    txt = formatter.Text(self.settings["builtin"]["destination"], self.config.output_encoding)
                 except:
                     Logger.error("Failed to create text file!")
                     status = FAIL
@@ -293,15 +297,14 @@ class Convert(object):
             status = self.get_file_settings(file_name, frontmatter=frontmatter)
 
         if status == PASS:
-            for ref in self.settings["builtin"].get("references", []):
-                text += get_references(ref, self.config.encoding)
+            text += get_references(self.settings["builtin"].get("references", []), self.config.encoding)
 
             # Create html object
             try:
                 html = formatter.Html(
                     self.settings["builtin"]["destination"], preview=self.config.preview,
                     plain=self.config.plain, settings=self.settings["settings"],
-                    script_path=script_path
+                    script_path=script_path, encoding=self.config.output_encoding
                 )
             except:
                 Logger.error(traceback.format_exc())
@@ -312,8 +315,19 @@ class Convert(object):
             try:
                 converter = MdConverts(
                     text,
+                    smart_emphasis=self.settings["settings"].get('smart_emphasis', True),
+                    lazy_ol=self.settings["settings"].get('lazy_ol', True),
+                    tab_length=self.settings["settings"].get('tab_length', 4),
                     base_path=self.settings["builtin"]["basepath"],
                     extensions=self.settings["extensions"]
+                )
+
+                # Retrieve meta data if available and merge with frontmatter
+                # meta data.
+                #     1. Frontmatter will override normal meta data.
+                #     2. Meta data overrides --title option on command line.
+                html.set_meta(
+                    merge_meta(converter.meta, self.settings["meta"], title=html_title)
                 )
             except:
                 Logger.error(str(traceback.format_exc()))
@@ -321,18 +335,11 @@ class Convert(object):
                 status = FAIL
 
         if status == PASS:
-            # Retrieve meta data if available and merge with frontmatter
-            # meta data.
-            #     1. Frontmatter will override normal meta data.
-            #     2. Meta data overrides --title option on command line.
-            html.set_meta(
-                merge_meta(converter.meta, self.settings["meta"], title=html_title)
-            )
-
             # Write the markdown
             html.write(converter.markdown)
-
             html.close()
+
+            # Preview the markdown
             if html.file.name is not None and self.config.preview and status == PASS:
                 auto_open(html.file.name)
         return status
@@ -396,8 +403,9 @@ if __name__ == "__main__":
         parser.add_argument('--batch', '-b', action='store_true', default=False, help="Batch mode output.")
         parser.add_argument('--force-stdout', action='store_true', default=False, help=argparse.SUPPRESS)
         parser.add_argument('--force-no-template', action='store_true', default=False, help=argparse.SUPPRESS)
+        parser.add_argument('--output-encoding', '-E', nargs=1, default=[None], help="Output encoding.")
         # Input configuration
-        parser.add_argument('--settings', '-s', nargs=1, default=[join(script_path, "pymdown.json")], help="Load the settings file from an alternate location.")
+        parser.add_argument('--settings', '-s', nargs=1, default=[join(script_path, "pymdown.cfg")], help="Load the settings file from an alternate location.")
         parser.add_argument('--encoding', '-e', nargs=1, default=["utf-8"], help="Encoding for input.")
         parser.add_argument('--basepath', nargs=1, default=None, help="The basepath location pymdown should use.")
         parser.add_argument('markdown', nargs='*', default=[], help="Markdown file(s) or file pattern(s).")
@@ -419,8 +427,14 @@ if __name__ == "__main__":
             Logger.log("Please use batch mode to process multiple files!")
             return FAIL
 
+        # It is assumed that the input encoding is desired for output
+        # unless otherwise specified.
+        if args.output_encoding[0] is None:
+            args.output_encoding[0] = args.encoding[0]
+
         config = Settings(
             encoding=args.encoding[0],
+            output_encoding=args.output_encoding[0],
             critic=get_critic_mode(args),
             batch=batch,
             stream=stream,
