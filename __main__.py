@@ -319,6 +319,8 @@ class Convert(object):
                     lazy_ol=self.settings["settings"].get('lazy_ol', True),
                     tab_length=self.settings["settings"].get('tab_length', 4),
                     base_path=self.settings["builtin"]["basepath"],
+                    enable_attributes=self.settings["settings"].get('enable_attributes', True),
+                    output_format=self.settings["settings"].get('output_format', 'xhtml1'),
                     extensions=self.settings["extensions"]
                 )
 

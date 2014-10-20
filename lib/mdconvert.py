@@ -93,7 +93,8 @@ class MdWrapper(Markdown):
 class MdConvert(object):
     def __init__(
         self, file_name, encoding, base_path=None, extensions=[],
-        tab_length=4, lazy_ol=True, smart_emphasis=True
+        tab_length=4, lazy_ol=True, smart_emphasis=True,
+        enable_attributes=True, output_format='xhtml1'
     ):
         """ Initialize """
         self.meta = {}
@@ -104,6 +105,8 @@ class MdConvert(object):
         self.tab_length = tab_length
         self.lazy_ol = lazy_ol
         self.smart_emphasis = smart_emphasis
+        self.enable_attributes = enable_attributes
+        self.output_format = output_format
         self.convert()
 
     def check_extensions(self, extensions):
@@ -138,7 +141,9 @@ class MdConvert(object):
                     extension_configs=self.extension_configs,
                     smart_emphasis=self.smart_emphasis,
                     tab_length=self.tab_length,
-                    lazy_ol=self.lazy_ol
+                    lazy_ol=self.lazy_ol,
+                    enable_attributes=self.enable_attributes,
+                    output_format=self.output_format
                 )
                 self.markdown = md.convert(f.read())
                 try:
@@ -153,7 +158,8 @@ class MdConverts(MdConvert):
     def __init__(
         self, string,
         base_path=None, extensions=[],
-        tab_length=4, lazy_ol=True, smart_emphasis=True
+        tab_length=4, lazy_ol=True, smart_emphasis=True,
+        enable_attributes=True, output_format='xhtml1'
     ):
         """ Initialize """
         self.meta = {}
@@ -163,6 +169,8 @@ class MdConverts(MdConvert):
         self.smart_emphasis = smart_emphasis
         self.tab_length = tab_length
         self.lazy_ol = lazy_ol
+        self.enable_attributes = enable_attributes
+        self.output_format = output_format
         self.convert()
 
     def convert(self):
@@ -174,7 +182,9 @@ class MdConverts(MdConvert):
                 extension_configs=self.extension_configs,
                 smart_emphasis=self.smart_emphasis,
                 tab_length=self.tab_length,
-                lazy_ol=self.lazy_ol
+                lazy_ol=self.lazy_ol,
+                enable_attributes=self.enable_attributes,
+                output_format=self.output_format
             )
             self.markdown = md.convert(self.string)
             try:
