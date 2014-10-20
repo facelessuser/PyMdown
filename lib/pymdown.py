@@ -15,8 +15,8 @@ import re
 from os.path import exists, isfile, dirname, abspath, join
 
 PY3 = sys.version_info >= (3, 0)
-RE_TAGS = re.compile(r'''</?[^>]*>''')
-RE_WORD = re.compile(r'''[^\w\- ]''')
+RE_TAGS = re.compile(r'''</?[^>]*>''', re.UNICODE)
+RE_WORD = re.compile(r'''[^\w\- ]''', re.UNICODE)
 SLUGIFY_EXT = (
     'markdown.extensions.headerid',
     'markdown.extensions.toc',
@@ -40,7 +40,7 @@ def slugify(text, sep):
     # Then convert spaces to dashes
     id = RE_WORD.sub('', id).replace(' ', sep)
     # Encode anything that needs to be
-    return quote(id)
+    return quote(id.encode('utf-8'))
 
 
 class PyMdownException(Exception):
@@ -84,7 +84,7 @@ class MdWrapper(Markdown):
                         % (ext.__class__.__module__, ext.__class__.__name__))
             except:
                 # We want to gracefully continue even if an extension fails.
-                # print(str(traceback.format_exc()))
+                # logger.error(str(traceback.format_exc()))
                 continue
 
         return self
