@@ -18,7 +18,7 @@ import re
 import tempfile
 from pygments.formatters import get_formatter_by_name
 from os.path import exists, isfile, join, abspath, relpath, dirname
-from .resources import load_text_resource, load_text
+from .resources import load_text_resource, splitenc
 from .logger import Logger
 
 
@@ -36,15 +36,15 @@ class PyMdownFormatterException(Exception):
     pass
 
 
-def get_js(js, link=False):
+def get_js(js, link=False, encoding='utf-8'):
     """ Get the specified JS code """
     if link:
-        return '<script type="text/javascript" charset="utf-8" src="%s"></script>\n' % js
+        return '<script type="text/javascript" charset="%s" src="%s"></script>\n' % (encoding, js)
     else:
         return '<script type="text/javascript">\n%s\n</script>\n' % js if js is not None else ""
 
 
-def get_style(style, link=False):
+def get_style(style, link=False, encoding=None):
     """ Get the specified CSS code """
     if link:
         return '<link href="%s" rel="stylesheet" type="text/css">\n' % style
@@ -69,7 +69,10 @@ class Terminal(object):
 
     def write(self, text):
         """ Dump texst to screen """
-        print(text)
+        if PY3:
+            sys.stdout.buffer.write(text)
+        else:
+            sys.stdout.write(text)
 
     def close(self):
         """ There is nothing to close """
@@ -87,6 +90,10 @@ class Html(object):
         self.no_body = False
         self.plain = plain
         self.template = ''
+        self.out_encoding = 'utf-8'
+        self.template_file = self.settings.get("html_template", None)
+        if self.template_file is not None:
+            self.template_file, self.out_encoding = splitenc(self.template_file)
         self.title = "Untitled"
         self.script_path = script_path
         self.set_output(output, preview)
@@ -120,21 +127,19 @@ class Html(object):
 
     def write_html_start(self):
         """ Output the HTML head and body up to the {{ BODY }} specifier """
-        template = self.settings.get("html_template", None)
-        app_path = join(self.script_path, template) if self.script_path is not None and template is not None else None
-        if template is not None and exists(template) and isfile(template):
+        if (self.template_file is not None):
+            if (
+                self.script_path is not None and
+                (not exists(self.template_file) or not isfile(self.template_file))
+            ):
+                template = join(self.script_path, self.template_file)
+            else:
+                template = self.template_file
             try:
-                with codecs.open(template, "r", encoding="utf-8") as f:
-                    template = f.read()
+                with codecs.open(template, "r", encoding=self.out_encoding) as f:
+                    self.template = f.read()
             except:
-                Logger.log(str(traceback.format_exc()))
-        elif app_path is not None and exists(app_path) and isfile(app_path):
-            try:
-                with codecs.open(app_path, "r", encoding="utf-8") as f:
-                    template = f.read()
-            except:
-                Logger.log(str(traceback.format_exc()))
-        self.template = template
+                Logger.error(str(traceback.format_exc()))
 
         # If template isn't found, we will still output markdown html
         if self.template is not None:
@@ -143,13 +148,13 @@ class Html(object):
             # so we know where to insert the markdown.
             # If we can't find an insertion point, the html
             # will have no markdown content.
-            m = re.search(r"\{\{ BODY \}\}", template)
+            m = re.search(r"\{\{ BODY \}\}", self.template)
             if m:
                 self.no_body = False
                 meta = '\n'.join(self.meta) + '\n'
                 title = '<title>%s</title>\n' % cgi.escape(self.title)
                 self.write(
-                    template[0:m.start(0)].replace(
+                    self.template[0:m.start(0)].replace(
                         "{{ HEAD }}", meta + self.head + title, 1
                     ).replace(
                         "{{ TITLE }}", cgi.escape(self.title)
@@ -163,12 +168,12 @@ class Html(object):
             self.file = Terminal()
         try:
             if not preview and output is not None:
-                self.file = codecs.open(output, "w", encoding="utf-8", errors="xmlcharrefreplace")
+                self.file = codecs.open(output, "w", encoding=self.out_encoding, errors="xmlcharrefreplace")
                 self.encode_file = False
             elif preview:
                 self.file = tempfile.NamedTemporaryFile(delete=False, suffix=".html")
         except:
-            Logger.log(str(traceback.format_exc()))
+            Logger.error(str(traceback.format_exc()))
             raise PyMdownFormatterException("Could not open output file!")
 
     def close(self):
@@ -185,7 +190,7 @@ class Html(object):
             self.write_html_start()
         if not self.no_body:
             self.file.write(
-                text.encode("utf-8", errors="xmlcharrefreplace") if self.encode_file else text
+                text.encode(self.out_encoding, errors="xmlcharrefreplace") if self.encode_file else text
             )
 
     def load_highlight(self, highlight_style):
@@ -215,10 +220,11 @@ class Html(object):
                 if relative_path:
                     r = r.replace('&', '', 1)
                     direct_include = False
+                r, encoding = splitenc(r)
                 app_path = join(self.script_path, r) if self.script_path is not None else None
                 if not direct_include and re.match(RE_URL_START, r) is not None:
                     # Don't include content, just reference link
-                    res.append(res_get(r, link=True))
+                    res.append(res_get(r, link=True, encoding=encoding))
                 elif not direct_include and relative_path:
                     out = self.file.name
                     if out is not None:
@@ -231,19 +237,19 @@ class Html(object):
                             app_path = abspath(app_path)
                             r = relpath(app_path, out).replace('\\', '/')
                     # Add it as a link
-                    res.append(res_get(r, link=True))
+                    res.append(res_get(r, link=True, encoding=encoding))
                 elif not direct_include:
                     # Don't include content, just reference link
-                    res.append(res_get(r, link=True))
+                    res.append(res_get(r, link=True, encoding=encoding))
                 elif exists(r) and isfile(r):
                     # Look at specified location to find the file
-                    res.append(res_get(load_text(r)))
+                    res.append(res_get(load_text_resource(r, encoding=encoding)))
                 elif app_path is not None and exists(app_path) and isfile(app_path):
                     # Look where app binary resides to find the file
-                    res.append(res_get(load_text(app_path)))
+                    res.append(res_get(load_text_resource(app_path, encoding=encoding)))
                 else:
                     # Could not find file, just add it as a link
-                    res.append(res_get(r, link=True))
+                    res.append(res_get(r, link=True, encoding=encoding))
         return res
 
     def load_css(self, style):
@@ -259,7 +265,7 @@ class Html(object):
 
     def load_header(self, style):
         """ Load up header related info """
-        self.meta = ['<meta charset="utf-8">']
+        self.meta = ['<meta charset="%s">' % self.out_encoding]
         self.head = self.load_css(style)
         self.head += self.load_js()
 
@@ -268,22 +274,23 @@ class Text(object):
     def __init__(self, output, encoding):
         """ Initialize Text object """
         self.encode_file = True
+        self.out_encoding = encoding
 
         # Set the correct output target and create the file if necessary
         if output is None:
             self.file = Terminal()
         else:
             try:
-                self.file = codecs.open(output, "w", encoding=encoding)
+                self.file = codecs.open(output, "w", encoding=self.out_encoding)
                 self.encode_file = False
             except:
-                Logger.Log(str(traceback.format_exc()))
+                Logger.error(str(traceback.format_exc()))
                 raise PyMdownFormatterException("Could not open output file!")
 
     def write(self, text):
         """ Write the content """
         self.file.write(
-            text.encode("utf-8", errors="xmlcharrefreplace") if self.encode_file else text
+            text.encode(self.out_encoding, errors="xmlcharrefreplace") if self.encode_file else text
         )
 
     def close(self):

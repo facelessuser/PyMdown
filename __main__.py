@@ -22,11 +22,11 @@ import webbrowser
 import traceback
 import json
 from os.path import dirname, abspath, normpath, exists, basename, join, isfile, expanduser
-from lib.logger import Logger
+from lib.logger import Logger, INFO, CRITICAL
 from lib.settings import Settings
 from lib.settings import CRITIC_IGNORE, CRITIC_ACCEPT, CRITIC_REJECT, CRITIC_DUMP, CRITIC_VIEW
 import lib.critic_dump as critic_dump
-from lib.pymdown import PyMdowns
+from lib.mdconvert import MdConverts
 from lib import formatter
 from lib.frontmatter import get_frontmatter_string
 
@@ -75,7 +75,7 @@ def get_file_stream(encoding):
             text.append(line if PY3 else line.decode(encoding))
         stream = ''.join(text)
     except:
-        Logger.log(traceback.format_exc())
+        Logger.error(traceback.format_exc())
         stream = None
     text = None
     return stream
@@ -140,19 +140,11 @@ def get_references(file_name, encoding):
     app_path = join(script_path, file_name)
     if file_name is not None:
         if exists(file_name) and isfile(file_name):
-            try:
-                with codecs.open(file_name, "r", encoding=encoding) as f:
-                    text = f.read()
-            except:
-                Logger.log(traceback.format_exc())
+            text = load_text_resource(file_name, encoding=encoding)
         elif exists(app_path) and isfile(app_path):
-            try:
-                with codecs.open(app_path, "r", encoding=encoding) as f:
-                    text = f.read()
-            except:
-                Logger.log(traceback.format_exc())
+            text = load_text_resource(app_path, encoding=encoding)
         else:
-            Logger.log("Could not find reference file %s!" % file_name)
+            Logger.error("Could not find reference file %s!" % file_name)
     return text
 
 
@@ -193,9 +185,12 @@ def merge_meta(meta1, meta2, title=None):
 def display_licenses():
     """ Display licenses """
     status = PASS
-    text = load_text_resource(join('data', 'licenses.txt'))
+    text = load_text_resource(join('data', 'licenses.txt'), internal=True)
     if text is not None:
-        print(text)
+        if PY3:
+            sys.stdout.buffer.write(text.encode('utf-8'))
+        else:
+            sys.stdout.write(text.encode('utf-8'))
     else:
         status = FAIL
     return status
@@ -234,7 +229,7 @@ class Convert(object):
                 file_name, basepath=self.basepath, output=self.output, frontmatter=frontmatter
             )
         except:
-            Logger.log(traceback.format_exc())
+            Logger.error(traceback.format_exc())
             status = FAIL
         return status
 
@@ -244,7 +239,7 @@ class Convert(object):
             with codecs.open(file_name, "r", encoding=self.config.encoding) as f:
                 text = f.read()
         except:
-            Logger.log("Failed to open %s!" % file_name)
+            Logger.error("Failed to open %s!" % file_name)
             text = None
         return text
 
@@ -261,14 +256,14 @@ class Convert(object):
 
         if status == PASS:
             if not (self.config.critic & (CRITIC_REJECT | CRITIC_ACCEPT | CRITIC_VIEW)):
-                Logger.log("Acceptance or rejection was not specified for critic dump!")
+                Logger.error("Acceptance or rejection was not specified for critic dump!")
                 status = FAIL
             else:
                 # Create text object
                 try:
                     txt = formatter.Text(self.settings["builtin"]["destination"], self.config.encoding)
                 except:
-                    Logger.log("Failed to create text file!")
+                    Logger.error("Failed to create text file!")
                     status = FAIL
 
         if status == PASS:
@@ -309,19 +304,19 @@ class Convert(object):
                     script_path=script_path
                 )
             except:
-                Logger.log(traceback.format_exc())
+                Logger.error(traceback.format_exc())
                 status = FAIL
 
         if status == PASS:
             # Convert markdown to HTML
             try:
-                pymdown = PyMdowns(
+                converter = MdConverts(
                     text,
                     base_path=self.settings["builtin"]["basepath"],
                     extensions=self.settings["extensions"]
                 )
             except:
-                Logger.log(str(traceback.format_exc()))
+                Logger.error(str(traceback.format_exc()))
                 html.close()
                 status = FAIL
 
@@ -331,11 +326,11 @@ class Convert(object):
             #     1. Frontmatter will override normal meta data.
             #     2. Meta data overrides --title option on command line.
             html.set_meta(
-                merge_meta(pymdown.meta, self.settings["meta"], title=html_title)
+                merge_meta(converter.meta, self.settings["meta"], title=html_title)
             )
 
             # Write the markdown
-            html.write(pymdown.markdown)
+            html.write(converter.markdown)
 
             html.close()
             if html.file.name is not None and self.config.preview and status == PASS:
@@ -348,7 +343,7 @@ class Convert(object):
 
         # Make sure we have something we can process
         if files is None or len(files) == 0 or files[0] in ('', None):
-            Logger.log("Nothing to parse!")
+            Logger.error("Nothing to parse!")
             status = FAIL
 
         if status == PASS:
@@ -358,9 +353,9 @@ class Convert(object):
                     break
 
                 if self.config.is_stream:
-                    Logger.log("Converting buffer...")
+                    Logger.info("Converting buffer...")
                 else:
-                    Logger.log("Converting %s..." % md_file)
+                    Logger.info("Converting %s..." % md_file)
 
                 if status == PASS:
                     file_name = md_file if not self.config.is_stream else None
@@ -412,7 +407,7 @@ if __name__ == "__main__":
         if args.licenses:
             return display_licenses()
 
-        Logger.quiet = args.quiet
+        Logger.set_level(CRITICAL if args.quiet else INFO)
 
         files, stream = get_sources(args)
         if stream:

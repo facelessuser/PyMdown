@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-PyMdown
+mdconverter
 
 Licensed under MIT
 Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
@@ -43,7 +43,7 @@ def slugify(text, sep):
     return quote(id.encode('utf-8'))
 
 
-class PyMdownException(Exception):
+class MdConvertException(Exception):
     pass
 
 
@@ -90,7 +90,7 @@ class MdWrapper(Markdown):
         return self
 
 
-class PyMdown(object):
+class MdConvert(object):
     def __init__(
         self, file_name, encoding, base_path=None, extensions=[]
     ):
@@ -139,10 +139,10 @@ class PyMdown(object):
                 except:
                     pass
         except:
-            raise PyMdownException(str(traceback.format_exc()))
+            raise MdConvertException(str(traceback.format_exc()))
 
 
-class PyMdowns(PyMdown):
+class MdConverts(MdConvert):
     def __init__(
         self, string,
         base_path=None, extensions=[]
@@ -168,4 +168,4 @@ class PyMdowns(PyMdown):
             except:
                 pass
         except:
-            raise PyMdownException(str(traceback.format_exc()))
+            raise MdConvertException(str(traceback.format_exc()))

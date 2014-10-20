@@ -50,7 +50,7 @@ def get_frontmatter_string(string):
                 try:
                     frontmatter = yaml.load(m.group(2))
                 except:
-                    Logger.log(traceback.format_exc())
+                    Logger.error(traceback.format_exc())
                     pass
             string = string[m.end(1):]
 

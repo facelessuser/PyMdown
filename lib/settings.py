@@ -21,7 +21,7 @@ from . import resources as res
 from .logger import Logger
 import yaml
 from .file_strip.json import sanitize_json
-from .resources import resource_exists
+from .resources import resource_exists, splitenc
 
 PY3 = sys.version_info >= (3, 0)
 
@@ -99,7 +99,7 @@ class Settings(object):
 
         # Unpack default settings file if needed
         if not exists(settings_path):
-            text = res.load_text_resource("pymdown.json")
+            text = res.load_text_resource("pymdown.json", internal=True)
             try:
                 with codecs.open(settings_path, "w", encoding="utf-8") as f:
                     f.write(text)
@@ -178,16 +178,16 @@ class Settings(object):
                     if subkey == "html_template":
                         org_pth = unicode_string(subvalue)
                         new_pth = self.process_settings_path(org_pth, base)
-                        settings[key][subkey] = new_pth if new_pth is not None and isfile(new_pth) else org_pth
+                        settings[key][subkey] = new_pth if new_pth is not None else org_pth
                     elif subkey in ("css_style_sheets", "js_scripts"):
                         items = []
                         for i in subvalue:
                             org_pth = unicode_string(i)
-                            if org_pth.startswith('!'):
+                            if org_pth.startswith(('!', '&')):
                                 new_pth = None
                             else:
                                 new_pth = self.process_settings_path(org_pth, base)
-                            if new_pth is not None and isfile(new_pth):
+                            if new_pth is not None:
                                 items.append(new_pth)
                             else:
                                 items.append(org_pth)
@@ -210,11 +210,11 @@ class Settings(object):
                     refs = []
                     for v in value:
                         org_file = unicode_string(v)
-                        file_name = self.resolve_meta_path(org_file, base)
-                        if file_name is not None and isfile(file_name):
-                            refs.append(normpath(file_name))
-                        else:
+                        file_path = self.resolve_meta_path(org_file, base)
+                        if file_path is None or isdir(file_path):
                             refs.append(org_file)
+                        else:
+                            refs.append(normpath(file_path))
                     settings["builtin"][key] = refs
             else:
                 if isinstance(value, list):
@@ -237,11 +237,11 @@ class Settings(object):
             if out_name is not None:
                 name = abspath(out_name)
                 if isdir(out_name):
-                    Logger.log("'%s' is a directory!" % name)
+                    Logger.error("'%s' is a directory!" % name)
                 elif exists(dirname(name)):
                     output = name
                 else:
-                    Logger.log("'%s' directory does not exist!" % name)
+                    Logger.error("'%s' directory does not exist!" % name)
         else:
             name = abspath(self.file_name)
             if self.critic & CRITIC_DUMP and critic_enabled:
@@ -309,7 +309,7 @@ class Settings(object):
                         # Check if the desired style exists internally
                         get_style_by_name(style)
                     except:
-                        Logger.log("Cannot find style: %s! Falling back to 'default' style." % style)
+                        Logger.error("Cannot find style: %s! Falling back to 'default' style." % style)
                         style = "default"
                 config['pygments_style'] = style
                 e['config'] = config
@@ -318,6 +318,8 @@ class Settings(object):
         settings["settings"]["style"] = style
 
     def process_settings_path(self, pth, base):
+        target, encoding = splitenc(pth)
+
         file_path = self.resolve_meta_path(
             pth,
             base
@@ -326,7 +328,7 @@ class Settings(object):
             file_path = None
         else:
             file_path = normpath(file_path)
-        return file_path
+        return file_path + ';' + encoding if file_path is not None else None
 
     def post_process_settings(self, settings):
         """ Process the settings files making needed adjustements """
@@ -359,7 +361,7 @@ class Settings(object):
         for i in range(0, len(extensions)):
             name = extensions[i].get('name', None)
             if name is None:
-                empty.append()
+                empty.append(i)
             elif name == "pymdown.absolutepath":
                 absolute = True
             elif name == "pymdown.critic" and critic_mode != 'ignore':
