@@ -21,7 +21,7 @@ import subprocess
 import webbrowser
 import traceback
 import json
-from os.path import dirname, abspath, normpath, exists, basename, join, isfile, expanduser
+from os.path import dirname, abspath, normpath, exists, basename, join, isfile, expanduser, splitext
 from lib.logger import Logger, INFO, CRITICAL
 from lib.settings import Settings
 from lib.settings import CRITIC_IGNORE, CRITIC_ACCEPT, CRITIC_REJECT, CRITIC_DUMP, CRITIC_VIEW
@@ -170,7 +170,7 @@ def get_title(file_name, title_val):
     if title_val is not None:
         title = str(title_val)
     elif file_name is not None:
-        title = basename(abspath(file_name))
+        title = splitext(basename(abspath(file_name)))[0]
     else:
         title = None
     return title
