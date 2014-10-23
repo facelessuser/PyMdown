@@ -403,8 +403,8 @@ if __name__ == "__main__":
         # Output
         parser.add_argument('--output', '-o', nargs=1, default=None, help="Output file. Ignored in batch mode.")
         parser.add_argument('--batch', '-b', action='store_true', default=False, help="Batch mode output.")
-        parser.add_argument('--force-stdout', action='store_true', default=False, help=argparse.SUPPRESS)
-        parser.add_argument('--force-no-template', action='store_true', default=False, help=argparse.SUPPRESS)
+        parser.add_argument('--force-stdout', action='store_true', default=False, help="Force output to stdout.")
+        parser.add_argument('--force-no-template', action='store_true', default=False, help="Force using no template.")
         parser.add_argument('--output-encoding', '-E', nargs=1, default=[None], help="Output encoding.")
         # Input configuration
         parser.add_argument('--settings', '-s', nargs=1, default=[join(script_path, "pymdown.cfg")], help="Load the settings file from an alternate location.")
