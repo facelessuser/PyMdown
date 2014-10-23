@@ -22,6 +22,9 @@ from .logger import Logger
 import yaml
 from .file_strip.json import sanitize_json
 from .resources import resource_exists, splitenc
+import markdown.extensions.codehilite as codehilite
+
+PYGMENTS_AVAILABLE = codehilite.pygments
 
 PY3 = sys.version_info >= (3, 0)
 
@@ -310,14 +313,29 @@ class Settings(object):
         """
         style = None
 
+        use_pygments = settings["settings"].get('use_pygments', True)
+        if use_pygments and not PYGMENTS_AVAILABLE:
+            use_pygments = False
+        if use_pygments:
+            codehilite.pygments = True
+        else:
+            codehilite.pygments = False
+            settings["settings"]["use_pygments_css"] = False
+
         count = 0
         for e in extensions:
-            # Search for codhilite to see what style is being set.
+            # Search for codehilite to see what style is being set.
             if e.get('name', '') == "markdown.extensions.codehilite":
                 config = e.get('config', {})
 
                 if bool(config.get('noclasses', False)):
                     settings["settings"]["use_pygments_css"] = False
+
+                css_class = config.get('css_class', None)
+                if css_class is not None:
+                    settings["settings"]["pygments_class"] = css_class
+                else:
+                    settings["settings"]["pygments_class"] = "codehilite"
 
                 style = config.get('pygments_style', None)
                 if style is None:

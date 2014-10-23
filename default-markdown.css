@@ -321,31 +321,31 @@ table tr:last-child td:last-child {
   border-bottom-right-radius:3px;
 }
 
-/* Codehighlight table */
-.markdown-body .codehilitetable {
+/* Codehilite table */
+.markdown-body .highlighttable {
   border: 0;
   border-spacing: 0;
   border: 1px solid #e0e0e0;
   border-left: 6px solid #e0e0e0;
 }
 
-.markdown-body .codehilitetable tr {
+.markdown-body .highlighttable tr {
   border: 0;
 }
 
-.markdown-body .codehilitetable pre,
-.markdown-body div.codehilite {
+.markdown-body .highlighttable pre,
+.markdown-body div.highlight {
   margin: 0;
 }
 
 .markdown-body .linenos,
 .markdown-body .code,
-.markdown-body .codehilitetable td {
+.markdown-body .highlighttable td {
   border: 0;
   padding: 0;
 }
 
-.markdown-body .codehilitetable div.codehilite {
+.markdown-body .highlighttable div.highlight {
   border-radius: 0 !important;
   margin-bottom: 0 !important;
 }
@@ -516,11 +516,11 @@ table tr:last-child td:last-child {
   border: 0;
 }
 
-.markdown-body .codehilite {
+.markdown-body .highlight {
   margin-bottom: 16px;
 }
 
-.markdown-body .codehilite pre,
+.markdown-body .highlight pre,
 .markdown-body pre {
   padding: 13px 13px 13px 13px;
   overflow: auto;
@@ -534,11 +534,11 @@ table tr:last-child td:last-child {
   border-left: 6px solid #e0e0e0;
 }
 
-.markdown-body div.codehilite {
+.markdown-body div.highlight {
    border-radius: 3px;
 }
 
-.markdown-body .codehilite pre {
+.markdown-body .highlight pre {
   margin-bottom: 0;
   word-break: normal;
 }
@@ -564,7 +564,7 @@ table tr:last-child td:last-child {
   content: normal;
 }
 
-.markdown-body .codehilite .hll {
+.markdown-body .highlight .hll {
   display: inherit;
 }
 
@@ -1037,7 +1037,7 @@ table tr:last-child td:last-child {
 .markdown-body dl,
 .markdown-body table,
 .markdown-body pre,
-.markdown-body div.codehilite,
+.markdown-body div.highlight,
 .markdown-body .admonition {
   margin-top: 0;
   margin-bottom: 16px;

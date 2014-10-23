@@ -52,14 +52,14 @@ def get_style(style, link=False, encoding=None):
         return '<style>\n%s\n</style>\n' % style if style is not None else ""
 
 
-def get_pygment_style(style):
+def get_pygment_style(style, css_class='codehilite'):
     """ Get the specified pygments sytle CSS """
     try:
         # Try and request pygments to generate it
-        text = get_formatter_by_name('html', style=style).get_style_defs('.codehilite')
+        text = get_formatter_by_name('html', style=style).get_style_defs('.' + css_class)
     except:
         # Try and request pygments to generate default
-        text = get_formatter_by_name('html', style="default").get_style_defs('.codehilite')
+        text = get_formatter_by_name('html', style="default").get_style_defs('.' + css_class)
     return '<style>\n%s\n</style>\n' % text if text is not None else ""
 
 
@@ -196,7 +196,7 @@ class Html(object):
         style = None
         if highlight_style is not None and bool(self.settings.get("use_pygments_css", True)):
             # Ensure pygments is enabled in the highlighter
-            style = get_pygment_style(highlight_style)
+            style = get_pygment_style(highlight_style, self.settings.get("pygments_class", "codehilite"))
 
         css = []
         if style is not None:
