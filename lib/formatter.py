@@ -18,7 +18,7 @@ import re
 import tempfile
 from pygments.formatters import get_formatter_by_name
 from os.path import exists, isfile, join, abspath, relpath, dirname
-from .resources import load_text_resource, splitenc
+from .resources import load_text_resource, splitenc, get_user_path
 from .logger import Logger
 
 
@@ -82,7 +82,7 @@ class Terminal(object):
 class Html(object):
     def __init__(
         self, output, preview=False, title=None, encoding='utf-8',
-        plain=False, script_path=None, settings={}
+        plain=False, settings={}
     ):
         self.settings = settings
         self.encode_file = True
@@ -93,7 +93,7 @@ class Html(object):
         self.encoding = encoding
         self.template_file = self.settings.get("html_template", None)
         self.title = "Untitled"
-        self.script_path = script_path
+        self.user_path = get_user_path()
         self.set_output(output, preview)
         self.load_header(
             self.settings.get("style", None)
@@ -128,10 +128,10 @@ class Html(object):
         if (self.template_file is not None):
             template_path, encoding = splitenc(self.template_file)
             if (
-                self.script_path is not None and
+                self.user_path is not None and
                 (not exists(template_path) or not isfile(template_path))
             ):
-                template_path = join(self.script_path, template_path)
+                template_path = join(self.user_path, template_path)
 
             try:
                 with codecs.open(template_path, "r", encoding=encoding) as f:
@@ -226,7 +226,7 @@ class Html(object):
 
                 # Setup paths to check
                 resource, encoding = splitenc(resource)
-                app_res_path = join(self.script_path, resource) if self.script_path is not None else None
+                user_res_path = join(self.user_path, resource) if self.user_path is not None else None
 
                 # This is a URL, don't include content
                 if RE_URL_START.match(resource) is not None:
@@ -240,10 +240,10 @@ class Html(object):
                             out = dirname(abspath(out))
                             resource = abspath(resource)
                             resource = relpath(resource, out).replace('\\', '/')
-                        elif app_res_path is not None and exists(app_res_path) and isfile(app_res_path):
+                        elif user_res_path is not None and exists(user_res_path) and isfile(user_res_path):
                             out = dirname(abspath(out))
-                            app_res_path = abspath(app_res_path)
-                            resource = relpath(app_res_path, out).replace('\\', '/')
+                            user_res_path = abspath(user_res_path)
+                            resource = relpath(user_res_path, out).replace('\\', '/')
                     resources.append(res_get(resource, link=True, encoding=encoding))
 
                 # Should not try to include content, just add as a link
@@ -256,8 +256,8 @@ class Html(object):
                     resources.append(res_get(load_text_resource(resource, encoding=encoding)))
 
                 # The file exists relative to the application, read content and include
-                elif app_res_path is not None and exists(app_res_path) and isfile(app_res_path):
-                    resources.append(res_get(load_text_resource(app_res_path, encoding=encoding)))
+                elif user_res_path is not None and exists(user_res_path) and isfile(user_res_path):
+                    resources.append(res_get(load_text_resource(user_res_path, encoding=encoding)))
 
                 # Nothing else worked, just include as a link
                 else:

@@ -13,7 +13,7 @@ from __future__ import unicode_literals
 from __future__ import absolute_import
 from __future__ import print_function
 # Egg resoures must be loaded before Pygments gets loaded
-from lib.resources import load_text_resource, load_egg_resources, splitenc
+from lib.resources import load_text_resource, load_egg_resources, splitenc, get_user_path
 load_egg_resources()
 import codecs
 import sys
@@ -141,12 +141,12 @@ def get_references(references, encoding):
     text = ''
     for file_name in references:
         file_name, encoding = splitenc(file_name, default=encoding)
-        app_path = join(script_path, file_name)
+        user_path = join(get_user_path(), file_name)
         if file_name is not None:
             if exists(file_name) and isfile(file_name):
                 text += load_text_resource(file_name, encoding=encoding)
-            elif exists(app_path) and isfile(app_path):
-                text += load_text_resource(app_path, encoding=encoding)
+            elif exists(user_path) and isfile(user_path):
+                text += load_text_resource(user_path, encoding=encoding)
             else:
                 Logger.error("Could not find reference file %s!" % file_name)
     return text
@@ -304,7 +304,7 @@ class Convert(object):
                 html = formatter.Html(
                     self.settings["builtin"]["destination"], preview=self.config.preview,
                     plain=self.config.plain, settings=self.settings["settings"],
-                    script_path=script_path, encoding=self.config.output_encoding
+                    encoding=self.config.output_encoding
                 )
             except:
                 Logger.error(traceback.format_exc())
@@ -386,7 +386,6 @@ if __name__ == "__main__":
     def main():
         """ Go! """
 
-        global script_path
         parser = argparse.ArgumentParser(prog='pymdown', description='Markdown generator')
         # Flag arguments
         parser.add_argument('--version', action='version', version="%(prog)s " + __version__)
@@ -407,7 +406,7 @@ if __name__ == "__main__":
         parser.add_argument('--force-no-template', action='store_true', default=False, help="Force using no template.")
         parser.add_argument('--output-encoding', '-E', nargs=1, default=[None], help="Output encoding.")
         # Input configuration
-        parser.add_argument('--settings', '-s', nargs=1, default=[join(script_path, "pymdown.cfg")], help="Load the settings file from an alternate location.")
+        parser.add_argument('--settings', '-s', nargs=1, default=[join(get_user_path(), "pymdown.cfg")], help="Load the settings file from an alternate location.")
         parser.add_argument('--encoding', '-e', nargs=1, default=["utf-8"], help="Encoding for input.")
         parser.add_argument('--basepath', nargs=1, default=None, help="The basepath location pymdown should use.")
         parser.add_argument('markdown', nargs='*', default=[], help="Markdown file(s) or file pattern(s).")
@@ -434,6 +433,7 @@ if __name__ == "__main__":
         if args.output_encoding[0] is None:
             args.output_encoding[0] = args.encoding[0]
 
+        # Setup config class
         config = Settings(
             encoding=args.encoding[0],
             output_encoding=args.output_encoding[0],
@@ -447,6 +447,7 @@ if __name__ == "__main__":
             force_no_template=args.force_no_template
         )
 
+        # Convert
         return Convert(
             basepath=first_or_none(args.basepath),
             title=first_or_none(args.title),

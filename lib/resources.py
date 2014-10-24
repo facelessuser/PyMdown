@@ -11,8 +11,8 @@ Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
 from __future__ import unicode_literals
 from __future__ import print_function
 import sys
-from os.path import join, exists, abspath, dirname, isfile
-from os import listdir
+from os.path import join, exists, abspath, dirname, isfile, expanduser
+from os import listdir, mkdir
 from .logger import Logger
 import codecs
 import traceback
@@ -20,6 +20,14 @@ import traceback
 RESOURCE_PATH = abspath(join(dirname(__file__), ".."))
 DEFAULT_CSS = "default-markdown.css"
 DEFAULT_TEMPLATE = "default-template.html"
+DEFAULT_SETTINGS = "pymdown.cfg"
+
+if sys.platform.startswith('win'):
+    _PLATFORM = "windows"
+elif sys.platform == "darwin":
+    _PLATFORM = "osx"
+else:
+    _PLATFORM = "linux"
 
 
 def get_encoding(enc):
@@ -28,6 +36,39 @@ def get_encoding(enc):
     except LookupError:
         enc = 'utf-8'
     return enc
+
+
+def get_user_path():
+    """
+    Get user data path
+    """
+
+    if _PLATFORM == "windows":
+        folder = expanduser("~\\.PyMdown")
+    elif _PLATFORM == "osx":
+        folder = expanduser("~/Library/Application Support/PyMdown")
+    elif _PLATFORM == "linux":
+        folder = expanduser("~/.config/PyMdown")
+
+    if not exists(folder):
+        try:
+            mkdir(folder)
+        except:
+            pass
+
+    return folder
+
+
+def unpack_user_files():
+    user_path = get_user_path()
+    for resource in (DEFAULT_SETTINGS, DEFAULT_TEMPLATE, DEFAULT_CSS):
+        text = load_text_resource(resource, internal=True)
+        if text is not None:
+            try:
+                with codecs.open(join(user_path, resource), "w", encoding='utf-8') as f:
+                    f.write(text)
+            except:
+                pass
 
 
 def splitenc(entry, default='utf-8'):

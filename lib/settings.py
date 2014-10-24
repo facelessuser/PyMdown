@@ -21,7 +21,7 @@ from . import resources as res
 from .logger import Logger
 import yaml
 from .file_strip.json import sanitize_json
-from .resources import resource_exists, splitenc
+from .resources import resource_exists, splitenc, unpack_user_files
 import markdown.extensions.codehilite as codehilite
 
 PYGMENTS_AVAILABLE = codehilite.pygments
@@ -89,6 +89,7 @@ class Settings(object):
             settings_path = join(res.RESOURCE_PATH, "pymdown.cfg")
 
         # Get the settings if available
+        unpack_user_files()
         self.read_settings(settings_path)
 
     def read_settings(self, settings_path):
@@ -108,7 +109,6 @@ class Settings(object):
                 Logger.error(traceback.format_exc())
 
         # Try and read settings file
-        settings = {}
         try:
             with codecs.open(settings_path, "r", encoding='utf-8') as f:
                 contents = f.read()
@@ -118,6 +118,9 @@ class Settings(object):
                     settings = yaml.load(contents)
         except:
             Logger.error(traceback.format_exc())
+
+        if settings is None:
+            settings = {}
 
         self.settings["settings"] = settings
 
@@ -361,6 +364,7 @@ class Settings(object):
         critic_found = []
         plain_html = []
         empty = []
+        extensions = []
 
         # Copy extensions; we will move it to its own key later
         if "extensions" in settings["settings"]:

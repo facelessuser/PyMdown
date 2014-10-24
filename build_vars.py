@@ -20,12 +20,14 @@ paths = []
 hookpaths = ['pyinstaller_hooks']
 
 #####################################
-# This are files or directories to
+# These are files or directories to
 # process
 #####################################
 data_to_crawl = [
     "data/licenses.txt",
-    "pymdown.cfg"
+    "pymdown.cfg",
+    "default-markdown.css",
+    "default-template.html"
 ]
 
 hidden_imports_to_crawl = []
