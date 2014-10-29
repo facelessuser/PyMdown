@@ -33,7 +33,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from markdown import Extension
 from markdown.inlinepatterns import Pattern
-from markdown.extensions.codehilite import CodeHiliteExtension
+from markdown.extensions import codehilite
 # import traceback
 try:
     from pygments import highlight
@@ -76,7 +76,7 @@ class InlineHilitePattern(Pattern):
         # Check for code hilite extension
         if not self.checked_for_codehilite:
             for ext in self.markdown.registeredExtensions:
-                if isinstance(ext, CodeHiliteExtension):
+                if isinstance(ext, codehilite.CodeHiliteExtension):
                     ext.config
                     self.guess_lang = ext.config['guess_lang'][0]
                     self.css_class = ext.config['css_class'][0]
@@ -85,7 +85,7 @@ class InlineHilitePattern(Pattern):
             self.checked_for_codehilite = True
 
     def codehilite(self, lang, src):
-        if pygments:
+        if codehilite.pygments and pygments:
             try:
                 lexer = get_lexer_by_name(lang)
             except ValueError:
@@ -105,7 +105,7 @@ class InlineHilitePattern(Pattern):
             txt = txt.replace('<', '&lt;')
             txt = txt.replace('>', '&gt;')
             txt = txt.replace('"', '&quot;')
-            classes = ['codehilite']
+            classes = [self.css_class]
             if lang:
                 classes.append('language-%s' % lang)
             class_str = ''
@@ -118,6 +118,7 @@ class InlineHilitePattern(Pattern):
     def handleMatch(self, m):
         lang = m.group('lang') if m.group('lang') else 'text'
         src = m.group('code').strip()
+        self.get_codehilite_settings()
         return self.codehilite(lang, src)
 
 
