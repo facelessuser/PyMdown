@@ -62,13 +62,15 @@ def get_user_path():
 def unpack_user_files():
     user_path = get_user_path()
     for resource in (DEFAULT_SETTINGS, DEFAULT_TEMPLATE, DEFAULT_CSS):
-        text = load_text_resource(resource, internal=True)
-        if text is not None:
-            try:
-                with codecs.open(join(user_path, resource), "w", encoding='utf-8') as f:
-                    f.write(text)
-            except:
-                pass
+        dest = join(user_path, resource)
+        if not exists(dest):
+            text = load_text_resource(resource, internal=True)
+            if text is not None:
+                try:
+                    with codecs.open(join(user_path, resource), "w", encoding='utf-8') as f:
+                        f.write(text)
+                except:
+                    pass
 
 
 def splitenc(entry, default='utf-8'):
