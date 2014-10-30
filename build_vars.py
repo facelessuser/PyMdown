@@ -24,10 +24,7 @@ hookpaths = ['pyinstaller_hooks']
 # process
 #####################################
 data_to_crawl = [
-    "data/licenses.txt",
-    "pymdown.cfg",
-    "default-markdown.css",
-    "default-template.html"
+    "data"
 ]
 
 hidden_imports_to_crawl = []
@@ -46,7 +43,8 @@ def crawl_data(src, dest):
             dest.append((target, "./%s" % target, "DATA"))
         else:
             for f in os.listdir(target):
-                if f.endswith(".css"):
+                file_path = os.path.join(target, f)
+                if os.path.isfile(file_path) and not f.startswith((".", "~")):
                     name = '/'.join([target, f])
                     dest.append((name, "./%s" % name, "DATA"))
 

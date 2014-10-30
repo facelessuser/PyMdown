@@ -85,8 +85,8 @@ class Settings(object):
         }
 
         # Use default file if one was not provided
-        if settings_path is None or not exists(settings_path):
-            settings_path = join(res.RESOURCE_PATH, "pymdown.cfg")
+        if settings_path is None:
+            settings_path = "pymdown.cfg"
 
         # Get the settings if available
         unpack_user_files()
@@ -101,7 +101,7 @@ class Settings(object):
 
         # Unpack default settings file if needed
         if not exists(settings_path):
-            text = res.load_text_resource("pymdown.cfg", internal=True)
+            text = res.load_text_resource(res.DEFAULT_SETTINGS, internal=True)
             try:
                 with codecs.open(settings_path, "w", encoding="utf-8") as f:
                     f.write(text)

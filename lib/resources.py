@@ -11,16 +11,17 @@ Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
 from __future__ import unicode_literals
 from __future__ import print_function
 import sys
-from os.path import join, exists, abspath, dirname, isfile, expanduser
+from os.path import join, exists, abspath, dirname, isfile, expanduser, basename
 from os import listdir, mkdir
 from .logger import Logger
 import codecs
 import traceback
 
 RESOURCE_PATH = abspath(join(dirname(__file__), ".."))
-DEFAULT_CSS = "default-markdown.css"
-DEFAULT_TEMPLATE = "default-template.html"
-DEFAULT_SETTINGS = "pymdown.cfg"
+DATA_FOLDER = "data"
+DEFAULT_CSS = "data/default-markdown.css"
+DEFAULT_TEMPLATE = "data/default-template.html"
+DEFAULT_SETTINGS = "data/pymdown.cfg"
 
 if sys.platform.startswith('win'):
     _PLATFORM = "windows"
@@ -60,20 +61,25 @@ def get_user_path():
 
 
 def unpack_user_files():
+    """ Unpack user data files """
     user_path = get_user_path()
-    for resource in (DEFAULT_SETTINGS, DEFAULT_TEMPLATE, DEFAULT_CSS):
-        dest = join(user_path, resource)
-        if not exists(dest):
-            text = load_text_resource(resource, internal=True)
-            if text is not None:
-                try:
-                    with codecs.open(join(user_path, resource), "w", encoding='utf-8') as f:
-                        f.write(text)
-                except:
-                    pass
+    folder = resource_exists(DATA_FOLDER, internal=True, dir=True)
+    if folder is not None:
+        for f in listdir(folder):
+            dest = join(user_path, basename(f))
+            source = join(folder, f)
+            if isfile(source) and not exists(dest):
+                text = load_text_resource(source, internal=True)
+                if text is not None:
+                    try:
+                        with codecs.open(dest, "w", encoding='utf-8') as f:
+                            f.write(text)
+                    except:
+                        pass
 
 
 def splitenc(entry, default='utf-8'):
+    """ Split encoding from file name """
     parts = entry.split(';')
     if len(parts) > 1:
         entry = ';'.join(parts[:-1])
@@ -120,7 +126,9 @@ def resource_exists(*args, **kwargs):
     else:
         path = join(*args)
 
-    if not exists(path) or not isfile(path):
+    directory = kwargs.get('dir', False)
+
+    if not exists(path) or (not isfile(path) if not directory else isfile(path)):
         path = None
 
     return path
