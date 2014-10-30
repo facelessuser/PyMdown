@@ -29,6 +29,7 @@ import lib.critic_dump as critic_dump
 from lib.mdconvert import MdConverts
 from lib import formatter
 from lib.frontmatter import get_frontmatter_string
+from lib import scrub
 
 __version_info__ = (0, 7, 0)
 __version__ = '.'.join(map(str, __version_info__))
@@ -338,7 +339,7 @@ class Convert(object):
 
         if status == PASS:
             # Write the markdown
-            html.write(converter.markdown)
+            html.write(scrub.scrub(converter.markdown) if self.config.clean else converter.markdown)
             html.close()
 
             # Preview the markdown
@@ -405,6 +406,7 @@ if __name__ == "__main__":
         parser.add_argument('--force-stdout', action='store_true', default=False, help="Force output to stdout.")
         parser.add_argument('--force-no-template', action='store_true', default=False, help="Force using no template.")
         parser.add_argument('--output-encoding', '-E', nargs=1, default=[None], help="Output encoding.")
+        parser.add_argument('--clean', '-c', action='store_true', default=False, help="Clean")
         # Input configuration
         parser.add_argument('--settings', '-s', nargs=1, default=[join(get_user_path(), "pymdown.cfg")], help="Load the settings file from an alternate location.")
         parser.add_argument('--encoding', '-e', nargs=1, default=["utf-8"], help="Encoding for input.")
@@ -444,7 +446,8 @@ if __name__ == "__main__":
             settings_path=first_or_none(args.settings),
             plain=args.plain_html,
             force_stdout=args.force_stdout,
-            force_no_template=args.force_no_template
+            force_no_template=args.force_no_template,
+            clean=args.clean
         )
 
         # Convert

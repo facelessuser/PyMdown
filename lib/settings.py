@@ -61,7 +61,8 @@ class Settings(object):
         self, settings_path=None, stream=False,
         batch=False, critic=CRITIC_IGNORE,
         plain=False, preview=False, encoding='utf-8', output_encoding='utf-8',
-        force_stdout=False, force_no_template=False
+        force_stdout=False, force_no_template=False,
+        clean=False
     ):
         """ Initialize """
         self.critic = critic
@@ -73,6 +74,7 @@ class Settings(object):
         self.is_stream = stream
         self.pygments_noclasses = False
         self.force_stdout = force_stdout
+        self.clean = clean
         self.force_no_template = force_no_template
         self.settings = {
             "builtin": {
