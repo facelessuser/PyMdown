@@ -29,7 +29,8 @@ extensions = [
     'pymdown.headeranchor',
     'pymdown.nestedfences',
     'pymdown.inlinehilite',
-    'pymdown.uml'
+    'pymdown.uml',
+    'pymdown.math'
 ]
 
 
