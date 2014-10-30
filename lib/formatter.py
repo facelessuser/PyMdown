@@ -206,6 +206,7 @@ class Html(object):
 
     def load_resources(self, key, res_get):
         template_resources = self.settings.get(key, [])
+        added = set()
         resources = []
         if isinstance(template_resources, list) and len(template_resources):
             for pth in template_resources:
@@ -227,10 +228,16 @@ class Html(object):
                 # Setup paths to check
                 resource, encoding = splitenc(resource)
                 user_res_path = join(self.user_path, resource) if self.user_path is not None else None
+                # Not really the absolute path, but we are tracking absolute paths
+                # to reduce duplicate includes, so use the convention with current value as default.
+                # If we acquire the real absolute path, we will overwrite this.
+                abs_path = resource
 
                 # This is a URL, don't include content
                 if RE_URL_START.match(resource) is not None:
-                    resources.append(res_get(resource, link=True, encoding=encoding))
+                    if abs_path not in added:
+                        resources.append(res_get(resource, link=True, encoding=encoding))
+                        added.add(abs_path)
 
                 # Do not include content, but we need to resolove the relative path
                 elif not direct_include and relative_path:
@@ -238,30 +245,42 @@ class Html(object):
                     if out is not None:
                         if exists(resource) and isfile(resource):
                             out = dirname(abspath(out))
-                            resource = abspath(resource)
-                            resource = relpath(resource, out).replace('\\', '/')
+                            abs_path = abspath(resource)
+                            resource = relpath(abs_path, out).replace('\\', '/')
                         elif user_res_path is not None and exists(user_res_path) and isfile(user_res_path):
                             out = dirname(abspath(out))
-                            user_res_path = abspath(user_res_path)
-                            resource = relpath(user_res_path, out).replace('\\', '/')
-                    resources.append(res_get(resource, link=True, encoding=encoding))
+                            abs_path = abspath(user_res_path)
+                            resource = relpath(abs_path, out).replace('\\', '/')
+                    if abs_path not in added:
+                        resources.append(res_get(resource, link=True, encoding=encoding))
+                        added.add(abs_path)
 
                 # Should not try to include content, just add as a link
                 elif not direct_include:
-                    resources.append(res_get(resource, link=True, encoding=encoding))
+                    if abs_path not in added:
+                        resources.append(res_get(resource, link=True, encoding=encoding))
+                        added.add(abs_path)
 
                 # The file exists, read content and include
                 elif exists(resource) and isfile(resource):
                     # Look at specified location to find the file
-                    resources.append(res_get(load_text_resource(resource, encoding=encoding)))
+                    abs_path = abspath(resource)
+                    if abs_path not in added:
+                        resources.append(res_get(load_text_resource(resource, encoding=encoding)))
+                        added.add(abs_path)
 
                 # The file exists relative to the application, read content and include
                 elif user_res_path is not None and exists(user_res_path) and isfile(user_res_path):
-                    resources.append(res_get(load_text_resource(user_res_path, encoding=encoding)))
+                    abs_path = abspath(user_res_path)
+                    if abs_path not in added:
+                        resources.append(res_get(load_text_resource(user_res_path, encoding=encoding)))
+                        added.add(abs_path)
 
                 # Nothing else worked, just include as a link
                 else:
-                    resources.append(res_get(resource, link=True, encoding=encoding))
+                    if abs_path not in added:
+                        resources.append(res_get(resource, link=True, encoding=encoding))
+                        added.add(abs_path)
         return resources
 
     def load_css(self, style):

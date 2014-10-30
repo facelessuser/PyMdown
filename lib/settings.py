@@ -34,7 +34,7 @@ else:
     unicode_string = unicode  # flake8: noqa
 
 
-BUILTIN_KEYS = ('destination', 'basepath', 'references')
+BUILTIN_KEYS = ('destination', 'basepath', 'references', 'js', 'css')
 
 CRITIC_IGNORE = 0
 CRITIC_ACCEPT = 1
@@ -241,6 +241,8 @@ class Settings(object):
             settings["builtin"]["basepath"] = self.resolve_base_path(value)
             del frontmatter["basepath"]
         base = settings["builtin"]["basepath"]
+        css = []
+        js = []
 
         # Resolve all frontmatter items
         for key, value in frontmatter.items():
@@ -300,6 +302,23 @@ class Settings(object):
                             refs.append(normpath(file_path))
                     settings["builtin"][key] = refs
 
+                elif key in ("css", "js"):
+                    items = []
+                    for i in value:
+                        org_pth = unicode_string(i)
+                        if org_pth.startswith(('!', '&')):
+                            new_pth = None
+                        else:
+                            new_pth = self.process_settings_path(org_pth, base)
+                        if new_pth is not None:
+                            items.append(new_pth)
+                        else:
+                            items.append(org_pth)
+                    if key == 'css':
+                        css += items
+                    else:
+                        js += items
+
             # Everything else is added to meta
             else:
                 if isinstance(value, list):
@@ -307,6 +326,15 @@ class Settings(object):
                 else:
                     value = unicode_string(value)
                 settings["meta"][unicode_string(key)] = value
+
+        # Append CSS and JS from built-in keys if any
+        if len(css):
+            css = settings['settings'].get('css_style_sheets', []) + css
+            settings['settings']['css_style_sheets'] = css
+        if len(js):
+            js = settings['settings'].get('js_scripts', []) + js
+            settings['settings']['js_scripts'] = js
+
 
     def set_style(self, extensions, settings):
         """
