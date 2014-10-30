@@ -13,6 +13,7 @@ import sys
 import traceback
 import re
 from os.path import exists, isfile, dirname, abspath, join
+from .logger import Logger
 
 PY3 = sys.version_info >= (3, 0)
 RE_TAGS = re.compile(r'''</?[^>]*>''', re.UNICODE)
@@ -66,9 +67,6 @@ class MdWrapper(Markdown):
         """
         from markdown import util
         from markdown.extensions import Extension
-        import logging
-
-        logger =  logging.getLogger('MARKDOWN')
 
         for ext in extensions:
             try:
@@ -76,7 +74,7 @@ class MdWrapper(Markdown):
                     ext = self.build_extension(ext, configs.get(ext, {}))
                 if isinstance(ext, Extension):
                     ext.extendMarkdown(self, globals())
-                    logger.info('Successfully loaded extension "%s.%s".'
+                    Logger.debug('Successfully loaded extension "%s.%s".'
                                 % (ext.__class__.__module__, ext.__class__.__name__))
                 elif ext is not None:
                     raise TypeError(
@@ -84,7 +82,7 @@ class MdWrapper(Markdown):
                         % (ext.__class__.__module__, ext.__class__.__name__))
             except:
                 # We want to gracefully continue even if an extension fails.
-                # logger.error(str(traceback.format_exc()))
+                Logger.debug(str(traceback.format_exc()))
                 continue
 
         return self

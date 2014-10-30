@@ -28,7 +28,8 @@ extensions = [
     'pymdown.progressbar',
     'pymdown.headeranchor',
     'pymdown.nestedfences',
-    'pymdown.inlinehilite'
+    'pymdown.inlinehilite',
+    'pymdown.uml'
 ]
 
 

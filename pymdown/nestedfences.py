@@ -33,6 +33,7 @@ from markdown.preprocessors import Preprocessor
 from markdown.blockprocessors import BlockProcessor
 from markdown.extensions.codehilite import CodeHilite, CodeHiliteExtension, parse_hl_lines
 from markdown import util
+from pymdown.uml import UmlCodeExtension, uml_map, UmlFormatter
 import re
 
 FENCED_START = r'''(?x)
@@ -87,9 +88,9 @@ class NestedFencesCodeExtension(Extension):
         md.registerExtension(self)
         self.markdown = md
 
-    def patch_fenced_rule(self):
+    def patch_fenced_rule(self, enable_uml):
         self.code_stash = CodeStash()
-        fenced = NestedFencesBlockPreprocessor(self.markdown)
+        fenced = NestedFencesBlockPreprocessor(self.markdown, enable_uml)
         indented_code = NestedFencesCodeBlockProcessor(self)
         indented_code.config = self.getConfigs()
         indented_code.markdown = self.markdown
@@ -108,7 +109,12 @@ class NestedFencesCodeExtension(Extension):
         # "extra", we will patch fenced_code after fenced_code
         # has been loaded.
         if not self.configured:
-            self.patch_fenced_rule()
+            enable_uml = False
+            for ext in self.markdown.registeredExtensions:
+                if isinstance(ext, UmlCodeExtension):
+                    enable_uml = True
+                    break
+            self.patch_fenced_rule(enable_uml)
             self.configured = True
         else:
             self.code_stash.clear_stash()
@@ -119,11 +125,12 @@ class NestedFencesBlockPreprocessor(Preprocessor):
     CODE_WRAP = '<pre class="%s"><code%s>%s</code></pre>'
     CLASS_ATTR = ' class="%s"'
 
-    def __init__(self, md):
+    def __init__(self, md, enable_uml=False):
         super(NestedFencesBlockPreprocessor, self).__init__(md)
 
         self.checked_for_codehilite = False
         self.codehilite_conf = {}
+        self.enable_uml = enable_uml
 
     def rebuild_block(self, lines):
         """ Deindent the fenced block lines """
@@ -162,7 +169,7 @@ class NestedFencesBlockPreprocessor(Preprocessor):
         elif self.fence_end.match(m.group(0)) is not None:
             # End of fence
             self.last = m.group(0).lstrip()
-            if self.lang in ('flow', 'sequence'):
+            if self.enable_uml and self.lang in ('flow', 'sequence') and not self.hl_lines:
                 self.uml(self.rebuild_block(self.code), start, end)
             else:
                 self.highlight(self.rebuild_block(self.code), start, end)
@@ -192,7 +199,7 @@ class NestedFencesBlockPreprocessor(Preprocessor):
             elif self.fence_end.match(m.group(0)) is not None:
                 # End of fence
                 self.last = m.group(0).lstrip()
-                if self.lang in ('flow', 'sequence'):
+                if self.enable_uml and self.lang in ('flow', 'sequence') and not self.hl_lines:
                     self.uml(self.rebuild_block(self.code), start, end)
                 else:
                     self.highlight(self.rebuild_block(self.code), start, end)
@@ -262,12 +269,10 @@ class NestedFencesBlockPreprocessor(Preprocessor):
         return lines
 
     def uml(self, source, start, end):
-        code = self.CODE_WRAP % (self.lang, '', self._escape(source))
-        # Save the fenced blocks to add once we are done iterating the lines
-        placeholder = self.markdown.htmlStash.store(code, safe=True)
-        self.stack.append(('%s%s' % (self.ws, placeholder), start, end))
-        # If an indented block consumes this placeholder, we can unback the original source
-        self.code_stash.store(placeholder[1:-1], "%s\n%s%s" % (self.first, source, self.last))
+        for k, v in uml_map.items():
+            if v == self.lang:
+                code = UmlFormatter(source, k).format()
+                self._store(source, code, start, end)
 
     def highlight(self, source, start, end):
         """
@@ -294,7 +299,9 @@ class NestedFencesBlockPreprocessor(Preprocessor):
             if len(css_class):
                 class_str = (self.CLASS_ATTR % ' '.join(css_class)) if len(css_class) else ''
             code = self.CODE_WRAP % (self.codehilite_conf['css_class'][0], class_str, self._escape(source))
+        self._store(source, code, start, end)
 
+    def _store(self, source, code, start, end):
         # Save the fenced blocks to add once we are done iterating the lines
         placeholder = self.markdown.htmlStash.store(code, safe=True)
         self.stack.append(('%s%s' % (self.ws, placeholder), start, end))
