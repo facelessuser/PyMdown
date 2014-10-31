@@ -27,9 +27,8 @@ extensions = [
     'pymdown.tasklist',
     'pymdown.progressbar',
     'pymdown.headeranchor',
-    'pymdown.nestedfences',
+    'pymdown.superfences',
     'pymdown.inlinehilite',
-    'pymdown.uml',
     'pymdown.math'
 ]
 

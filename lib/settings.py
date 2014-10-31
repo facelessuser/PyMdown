@@ -230,7 +230,7 @@ class Settings(object):
             pth,
             base
         )
-        if file_path is None or isdir(file_path):
+        if file_path is None or not isfile(file_path):
             file_path = None
         else:
             file_path = normpath(file_path)

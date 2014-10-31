@@ -1,11 +1,12 @@
 """
 ---
-pymdown.nestedfences
+pymdown.superfences
 Neseted Fenced Code Blocks
 
 This is a modification of the original Fenced Code Extension.
 Algorithm has been rewritten to allow for fenced blocks in blockquotes,
-lists, etc.
+lists, etc.  And also , allow for special UML fences like 'flow' for flowcharts
+and `sequence` for sequence diagrams.
 
 Modified: 2014 Isaac Muse <isaacmuse@gmail.com>
 ---
@@ -33,18 +34,38 @@ from markdown.preprocessors import Preprocessor
 from markdown.blockprocessors import BlockProcessor
 from markdown.extensions.codehilite import CodeHilite, CodeHiliteExtension, parse_hl_lines
 from markdown import util
-from pymdown.uml import UmlCodeExtension, uml_map, UmlFormatter
 import re
 
-FENCED_START = r'''(?x)
+NESTED_FENCE_START = r'''(?x)
 (?P<fence>^(?P<ws>[\> ]*)(?:~{3,}|`{3,}))[ ]*           # Fence opening
 (\{?                                                    # Language opening
 \.?(?P<lang>[a-zA-Z0-9_+-]*))?[ ]*                      # Language
 (hl_lines=(?P<quot>"|')(?P<hl_lines>.*?)(?P=quot))?[ ]* # highlight lines
 }?[ ]*$                                                 # Language closing
 '''
-FENCED_END = r'^%s[ ]*$'
+NESTED_FENCE_END = r'^%s[ ]*$'
+
 WS = r'^([\> ]{0,%d})(.*)'
+
+RE_FENCE = re.compile(
+    r'''(?xsm)
+    (?P<fence>^(?:~{3,}|`{3,}))[ ]*                          # Opening
+    (\{?\.?(?P<lang>[a-zA-Z0-9_+-]*))?[ ]*                   # Optional {, and lang
+    (hl_lines=(?P<quot>"|')(?P<hl_lines>.*?)(?P=quot))?[ ]*  # Optional highlight lines option
+    }?[ ]*\n                                                 # Optional closing }
+    (?P<code>.*?)(?<=\n)                                     # Code
+    (?P=fence)[ ]*$                                          # Closing
+    '''
+)
+
+
+def _escape(txt):
+    """ basic html escaping """
+    txt = txt.replace('&', '&amp;')
+    txt = txt.replace('<', '&lt;')
+    txt = txt.replace('>', '&gt;')
+    txt = txt.replace('"', '&quot;')
+    return txt
 
 
 class CodeStash(object):
@@ -74,25 +95,42 @@ class CodeStash(object):
         self.stash = {}
 
 
-class NestedFencesCodeExtension(Extension):
+class UmlFormatter(object):
+    CODE_WRAP = '<pre class="uml-%s"><code>%s</code></pre>'
+    CLASS_ATTR = ' class="%s"'
+
+    def __init__(self, src=None, uml_type=None):
+        self.src = src
+        self.uml_type = uml_type
+
+    def format(self):
+        return self.CODE_WRAP % (self.uml_type, _escape(self.src))
+
+
+class SuperFencesCodeExtension(Extension):
 
     def __init__(self, *args, **kwargs):
         self.config = {
-            'disable_indented_code_blocks': [False, "Disable indented code blocks - Default: False"]
+            'disable_indented_code_blocks': [False, "Disable indented code blocks - Default: False"],
+            'nested': [True, "Use nested fences - Default: True"],
+            'uml_flow': [True, "Enable flowcharts - Default: True"],
+            'uml_sequence': [True, "Enable sequence diagrams - Default: True"]
         }
         self.configured = False
-        super(NestedFencesCodeExtension, self).__init__(*args, **kwargs)
+        super(SuperFencesCodeExtension, self).__init__(*args, **kwargs)
 
     def extendMarkdown(self, md, md_globals):
         """ Add FencedBlockPreprocessor to the Markdown instance. """
         md.registerExtension(self)
         self.markdown = md
 
-    def patch_fenced_rule(self, enable_uml):
+    def patch_fenced_rule(self):
         self.code_stash = CodeStash()
-        fenced = NestedFencesBlockPreprocessor(self.markdown, enable_uml)
-        indented_code = NestedFencesCodeBlockProcessor(self)
-        indented_code.config = self.getConfigs()
+        config = self.getConfigs()
+        fenced = SuperFencesBlockPreprocessor(self.markdown)
+        indented_code = SuperFencesCodeBlockProcessor(self)
+        fenced.config = config
+        indented_code.config = config
         indented_code.markdown = self.markdown
         indented_code.code_stash = self.code_stash
         fenced.code_stash = self.code_stash
@@ -104,33 +142,27 @@ class NestedFencesCodeExtension(Extension):
             self.markdown.preprocessors.add('fenced_code_block', fenced, pos)
 
     def reset(self):
-        # People should use nestedfenced **or** fenced_code,
+        # People should use superfences **or** fenced_code,
         # but to make it easy on people who include all of
         # "extra", we will patch fenced_code after fenced_code
         # has been loaded.
         if not self.configured:
-            enable_uml = False
-            for ext in self.markdown.registeredExtensions:
-                if isinstance(ext, UmlCodeExtension):
-                    enable_uml = True
-                    break
-            self.patch_fenced_rule(enable_uml)
+            self.patch_fenced_rule()
             self.configured = True
         else:
             self.code_stash.clear_stash()
 
 
-class NestedFencesBlockPreprocessor(Preprocessor):
-    fence_start = re.compile(FENCED_START)
-    CODE_WRAP = '<pre class="%s"><code%s>%s</code></pre>'
+class SuperFencesBlockPreprocessor(Preprocessor):
+    fence_start = re.compile(NESTED_FENCE_START)
+    CODE_WRAP = '<pre><code%s>%s</code></pre>'
     CLASS_ATTR = ' class="%s"'
 
-    def __init__(self, md, enable_uml=False):
-        super(NestedFencesBlockPreprocessor, self).__init__(md)
+    def __init__(self, md):
+        super(SuperFencesBlockPreprocessor, self).__init__(md)
 
         self.checked_for_codehilite = False
         self.codehilite_conf = {}
-        self.enable_uml = enable_uml
 
     def rebuild_block(self, lines):
         """ Deindent the fenced block lines """
@@ -169,10 +201,12 @@ class NestedFencesBlockPreprocessor(Preprocessor):
         elif self.fence_end.match(m.group(0)) is not None:
             # End of fence
             self.last = m.group(0).lstrip()
-            if self.enable_uml and self.lang in ('flow', 'sequence') and not self.hl_lines:
-                self.uml(self.rebuild_block(self.code), start, end)
+            source = self.rebuild_block(self.code)
+            if (self.uml_flow and self.lang == "flow") or (self.uml_sequence and self.lang == "sequence"):
+                code = UmlFormatter(source, self.lang).format()
             else:
-                self.highlight(self.rebuild_block(self.code), start, end)
+                code = self.highlight(source)
+            self._store(source, code, start, end)
             self.clear()
         else:
             # Content line
@@ -199,22 +233,39 @@ class NestedFencesBlockPreprocessor(Preprocessor):
             elif self.fence_end.match(m.group(0)) is not None:
                 # End of fence
                 self.last = m.group(0).lstrip()
-                if self.enable_uml and self.lang in ('flow', 'sequence') and not self.hl_lines:
-                    self.uml(self.rebuild_block(self.code), start, end)
+                source = self.rebuild_block(self.code)
+                if (self.uml_flow and self.lang == "flow") or (self.uml_sequence and self.lang == "sequence"):
+                    code = UmlFormatter(source, self.lang).format()
                 else:
-                    self.highlight(self.rebuild_block(self.code), start, end)
+                    code = self.highlight(source)
+                self._store(source, code, start, end)
                 self.clear()
             else:
                 # Content line
                 self.empty_lines = 0
                 self.code.append(m.group(2))
 
-    def run(self, lines):
-        """ Search for fenced blocks """
-        self.check_codehilite()
-        self.clear()
-        self.stack = []
+    def search(self, lines):
+        text = "\n".join(lines)
+        while 1:
+            m = RE_FENCE.search(text)
+            if m:
+                self.lang = m.group('lang')
+                self.hl_lines = m.group('hl_lines')
+                if (
+                    self.lang and
+                    (self.uml_flow and self.lang == "flow") or (self.uml_sequence and self.lang == "sequence")
+                ):
+                    code = UmlFormatter(m.group('code'), self.lang).format()
+                else:
+                    code = self.highlight(m.group('code'))
+                placeholder = self.markdown.htmlStash.store(code, safe=True)
+                text = '%s\n%s\n%s' % (text[:m.start()], placeholder, text[m.end():])
+            else:
+                break
+        return text.split("\n")
 
+    def search_nested(self, lines):
         count = 0
         for line in lines:
             if self.fence is None:
@@ -230,7 +281,7 @@ class NestedFencesBlockPreprocessor(Preprocessor):
                     self.fence = m.group('fence')
                     self.lang = m.group('lang')
                     self.hl_lines = m.group('hl_lines')
-                    self.fence_end = re.compile(FENCED_END % self.fence)
+                    self.fence_end = re.compile(NESTED_FENCE_END % self.fence)
                     self.whitespace = re.compile(WS % self.ws_len)
             else:
                 # Evaluate lines
@@ -268,13 +319,7 @@ class NestedFencesBlockPreprocessor(Preprocessor):
             lines = lines[:start] + [fenced] + lines[end:]
         return lines
 
-    def uml(self, source, start, end):
-        for k, v in uml_map.items():
-            if v == self.lang:
-                code = UmlFormatter(source, k).format()
-                self._store(source, code, start, end)
-
-    def highlight(self, source, start, end):
+    def highlight(self, source):
         """
         If config is not empty, then the codehlite extension
         is enabled, so we call into to highlight the code.
@@ -291,15 +336,9 @@ class NestedFencesBlockPreprocessor(Preprocessor):
                 hl_lines=parse_hl_lines(self.hl_lines)
             ).hilite()
         else:
-            css_class = []
-            if self.lang:
-                css_class.append('language-%s' % self.lang)
-            if self.linenums:
-                css_class.append('linenums')
-            if len(css_class):
-                class_str = (self.CLASS_ATTR % ' '.join(css_class)) if len(css_class) else ''
-            code = self.CODE_WRAP % (self.codehilite_conf['css_class'][0], class_str, self._escape(source))
-        self._store(source, code, start, end)
+            lang = self.CLASS_ATTR % self.lang if self.lang else ''
+            code = self.CODE_WRAP % (lang, _escape(source))
+        return code
 
     def _store(self, source, code, start, end):
         # Save the fenced blocks to add once we are done iterating the lines
@@ -308,16 +347,23 @@ class NestedFencesBlockPreprocessor(Preprocessor):
         # If an indented block consumes this placeholder, we can unback the original source
         self.code_stash.store(placeholder[1:-1], "%s\n%s%s" % (self.first, source, self.last))
 
-    def _escape(self, txt):
-        """ basic html escaping """
-        txt = txt.replace('&', '&amp;')
-        txt = txt.replace('<', '&lt;')
-        txt = txt.replace('>', '&gt;')
-        txt = txt.replace('"', '&quot;')
-        return txt
+    def run(self, lines):
+        """ Search for fenced blocks """
+        self.check_codehilite()
+        self.clear()
+        self.stack = []
+        self.uml_flow = self.config.get("uml_flow", True)
+        self.uml_sequence = self.config.get("uml_sequence", True)
+
+        if self.config.get("nested", True):
+            lines = self.search_nested(lines)
+        else:
+            lines = self.search(lines)
+
+        return lines
 
 
-class NestedFencesCodeBlockProcessor(BlockProcessor):
+class SuperFencesCodeBlockProcessor(BlockProcessor):
     """ Process code blocks. """
     FENCED_BLOCK_RE = re.compile(
         r'^[\> ]*%s(%s)%s$' % (
@@ -389,4 +435,4 @@ class NestedFencesCodeBlockProcessor(BlockProcessor):
 
 
 def makeExtension(*args, **kwargs):
-    return NestedFencesCodeExtension(*args, **kwargs)
+    return SuperFencesCodeExtension(*args, **kwargs)
