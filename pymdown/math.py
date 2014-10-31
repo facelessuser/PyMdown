@@ -24,44 +24,87 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 from __future__ import unicode_literals
 from markdown import Extension
 from markdown.inlinepatterns import Pattern
+from markdown.blockprocessors import BlockProcessor
+import re
 
-RE_MATHJAX = r'(?<!\\)([$]{1,2})(?![$])((?:\\.|[^$])+?)(\2)'
+RE_MATH = r'((?<!\\)(?:\\{2})*)([$])(?!\s)((?:\\.|[^$])+?)(?<!\s)(\3)'
+RE_DOLLAR_ESCAPE = re.compile(r'\\.')
 
 
-class MathJaxPattern(Pattern):
+def escape(txt):
+    txt = txt.replace('&', '&amp;')
+    txt = txt.replace('<', '&lt;')
+    txt = txt.replace('>', '&gt;')
+    txt = txt.replace('"', '&quot;')
+    return txt
+
+
+class InlineMathJaxPattern(Pattern):
     def __init__(self, pattern, md):
         Pattern.__init__(self, pattern)
         self.markdown = md
 
     def handleMatch(self, m):
-        if m.group(2) == '$':
-            # Use the more reliable inline pattern
-            start = '\\('
-            end = '\\)'
-        else:
-            start = m.group(2)
-            end = m.group(4)
-
-        return self.markdown.htmlStash.store(
-            self.escape(start + m.group(3) + end),
+        # Use the more reliable patterns to avoid '$'
+        # false positives.
+        math = "\\(%s\\)" % RE_DOLLAR_ESCAPE.sub(
+            lambda m: '$' if m.group(0) == "\\$" else m.group(0),
+            m.group(4)
+        )
+        return m.group(2) + self.markdown.htmlStash.store(
+            escape(math),
             safe=True
         )
 
-    def escape(self, txt):
-        txt = txt.replace('&', '&amp;')
-        txt = txt.replace('<', '&lt;')
-        txt = txt.replace('>', '&gt;')
-        txt = txt.replace('"', '&quot;')
-        return txt
+
+class BlockMathJaxProcessor(BlockProcessor):
+    RE_MATH_BLOCK = re.compile(
+        r'(?s)^(?P<dollar>[$]{2})(?P<math>.*?)(?P=dollar)[ ]*$'
+    )
+
+    def __init__(self, md):
+        BlockProcessor.__init__(self, md.parser)
+        self.markdown = md
+
+    def test(self, parent, block):
+        return True
+
+    def run(self, parent, blocks):
+        handled = False
+
+        m = self.RE_MATH_BLOCK.match(blocks[0])
+
+        if m:
+            handled = True
+            block = blocks.pop(0)
+            # Use the more reliable patterns to avoid '$'
+            # false positives.
+            math = "\\[%s\\]" % RE_DOLLAR_ESCAPE.sub(
+                lambda m: '$' if m.group(0) == "\\$" else m.group(0),
+                m.group('math')
+            )
+            block = self.markdown.htmlStash.store(
+                escape(math),
+                safe=True
+            )
+            blocks.insert(0, block)
+        return handled
 
 
 class MathExtension(Extension):
     """Adds delete extension to Markdown class."""
 
     def extendMarkdown(self, md, md_globals):
+        md.registerExtension(self)
         if "$" not in md.ESCAPED_CHARS:
             md.ESCAPED_CHARS.append('$')
-        md.inlinePatterns.add("mathjax-dollar", MathJaxPattern(RE_MATHJAX, md), ">backtick")
+        md.inlinePatterns.add("mathjax-inline", InlineMathJaxPattern(RE_MATH, md), ">backtick")
+
+        md.parser.blockprocessors.add(
+            'mathjax-block',
+            BlockMathJaxProcessor(md),
+            "<code"
+        )
 
 
 def makeExtension(*args, **kwargs):
