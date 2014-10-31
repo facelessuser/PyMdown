@@ -15,7 +15,6 @@ import traceback
 import sys
 from copy import deepcopy
 from os.path import dirname, abspath, exists, normpath, expanduser
-from pygments.styles import get_style_by_name
 from os.path import isfile, isdir, splitext, join, basename
 from . import resources as res
 from .logger import Logger
@@ -23,8 +22,11 @@ import yaml
 from .file_strip.json import sanitize_json
 from .resources import resource_exists, splitenc, unpack_user_files
 import markdown.extensions.codehilite as codehilite
-
-PYGMENTS_AVAILABLE = codehilite.pygments
+try:
+    from pygments.styles import get_style_by_name
+    PYGMENTS_AVAILABLE = codehilite.pygments
+except:
+    PYGMENTS_AVAILABLE = False
 
 PY3 = sys.version_info >= (3, 0)
 

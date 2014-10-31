@@ -16,10 +16,15 @@ import codecs
 import traceback
 import re
 import tempfile
-from pygments.formatters import get_formatter_by_name
 from os.path import exists, isfile, join, abspath, relpath, dirname
 from .resources import load_text_resource, splitenc, get_user_path
 from .logger import Logger
+try:
+    from pygments.formatters import get_formatter_by_name
+    pygments = True
+except:
+    pygments = False
+    pass
 
 
 PY3 = sys.version_info >= (3, 0)
@@ -194,7 +199,7 @@ class Html(object):
     def load_highlight(self, highlight_style):
         """ Load Syntax highlighter CSS """
         style = None
-        if highlight_style is not None and bool(self.settings.get("use_pygments_css", True)):
+        if pygments and highlight_style is not None and bool(self.settings.get("use_pygments_css", True)):
             # Ensure pygments is enabled in the highlighter
             style = get_pygment_style(highlight_style, self.settings.get("pygments_class", "codehilite"))
 

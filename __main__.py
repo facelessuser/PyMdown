@@ -29,7 +29,11 @@ import lib.critic_dump as critic_dump
 from lib.mdconvert import MdConverts
 from lib import formatter
 from lib.frontmatter import get_frontmatter_string
-from lib import scrub
+try:
+    from lib import scrub
+    scrublib = True
+except:
+    scrublib = False
 
 __version_info__ = (0, 7, 0)
 __version__ = '.'.join(map(str, __version_info__))
@@ -447,7 +451,7 @@ if __name__ == "__main__":
             plain=args.plain_html,
             force_stdout=args.force_stdout,
             force_no_template=args.force_no_template,
-            clean=args.clean
+            clean=(args.clean if scrublib else False)
         )
 
         # Convert
