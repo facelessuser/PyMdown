@@ -9,6 +9,8 @@ can highlite backtick regions content if it is preceeded with
 a language specifier like so:
 
     :::javascript`var test = 0;`
+            - or -
+    #!javascript`var test = 0;`
 
 Modified: 2014 Isaac Muse <isaacmuse@gmail.com>
 ---
@@ -45,7 +47,7 @@ except ImportError:
     pygments = False
 
 BACKTICK_CODE_RE = r'''(?x)
-(\:{3}(?P<lang>[a-zA-Z0-9_+-]*))?            # language
+((?:\:{3,}|\#!)(?P<lang>[a-zA-Z0-9_+-]*))?    # language
 (?P<tic>`+)(?P<code>.+?)(?<!`)(?P=tic)(?!`)  # code
 '''
 
