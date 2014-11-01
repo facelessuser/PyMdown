@@ -564,6 +564,10 @@ table tr:last-child td:last-child {
   content: normal;
 }
 
+.markdown-body code.highlight {
+  display: inline !important;
+}
+
 .markdown-body .highlight .hll {
   display: inherit;
 }
