@@ -100,7 +100,7 @@ from markdown import util
 from markdown.extensions.attr_list import AttrListTreeprocessor
 
 RE_PROGRESS = r'''(?x)
-\[=\s*                                                             # Opening
+\[={1,}\s*                                                         # Opening
 (?:
   (?P<percent>100(?:.0+)?|[1-9]?[0-9](?:.\d+)?)% |                 # Percent
   (?:(?P<frac_num>\d+(?:.\d+)?)\s*/\s*(?P<frac_den>\d+(?:.\d+)?))  # Fraction
