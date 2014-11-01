@@ -7,9 +7,15 @@ $$
 
 and $Inline MathJax Equations$
 
-Inline equations are converted to the following form:
+Inline equations are converted to the following form for HTML output:
 
 \(Inline MathJax Equations\)
+
+While block/display equations are converted to the following form for HTML output:
+
+\[
+  Display Equations
+\]
 
 MIT license.
 
