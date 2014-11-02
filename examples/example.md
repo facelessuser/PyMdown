@@ -29,6 +29,7 @@
         - name: markdown.extensions.codehilite
           config:
             guess_lang: False
+            css_class: highlight
             pygments_style: github2
         - name: pymdown.pymdown
         - name: pymdown.b64

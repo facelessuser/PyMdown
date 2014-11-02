@@ -138,7 +138,10 @@ class Settings(object):
         settings["builtin"]["basepath"] = self.resolve_base_path(basepath)
         if frontmatter is not None:
             self.apply_frontmatter(frontmatter, settings)
-        self.destination = abspath(settings['builtin']['destination'])
+        if settings['builtin']['destination'] is not None:
+            self.destination = abspath(settings['builtin']['destination'])
+        else:
+            self.destination = None
         if self.force_stdout:
             settings["builtin"]["destination"] = None
         if self.force_no_template:
@@ -213,12 +216,14 @@ class Settings(object):
         if target is not None:
             target = expanduser(target)
             if not is_abs(target):
+                new_target = None
                 for base in (current_dir, basepath):
                     if base is not None:
                         temp = join(base, target)
                         if exists(temp):
-                            target = temp
+                            new_target = temp
                             break
+                target = new_target
             elif not exists(target):
                 target = None
         return target
@@ -245,6 +250,22 @@ class Settings(object):
             settings["builtin"]["basepath"] = self.resolve_base_path(value)
             del frontmatter["basepath"]
         base = settings["builtin"]["basepath"]
+
+        # The destination/output location and name
+        if "destination" in frontmatter:
+            value = frontmatter['destination']
+            file_name = self.resolve_meta_path(dirname(unicode_string(value)), base)
+            if file_name is not None and isdir(file_name):
+                value = normpath(join(file_name, basename(value)))
+                if exists(value) and isdir(value):
+                    value = None
+            else:
+                value = None
+            if value is not None:
+                settings["builtin"]["destination"] = value
+            del frontmatter['destination']
+        destination = settings["builtin"]["destination"]
+
         css = []
         js = []
 
@@ -281,19 +302,8 @@ class Settings(object):
 
             # Built in frontmatter keys
             elif key in BUILTIN_KEYS:
-                # The destination/output location and name
-                if key == "destination":
-                    file_name = self.resolve_meta_path(dirname(unicode_string(value)), base)
-                    if file_name is not None and isdir(file_name):
-                        value = normpath(join(file_name, basename(value)))
-                        if exists(value) and isdir(value):
-                            value = None
-                    else:
-                        value = None
-                    settings["builtin"][key] = value
-
                 # Included references markdown (footnotes, abbreviations, etc.)
-                elif key == "references":
+                if key == "references":
                     if not isinstance(value, list):
                         value = [value]
                     refs = []
