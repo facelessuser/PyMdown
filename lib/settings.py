@@ -32,8 +32,10 @@ PY3 = sys.version_info >= (3, 0)
 
 if PY3:
     unicode_string = str
+    string_type = str
 else:
     unicode_string = unicode  # flake8: noqa
+    string_type = basestring
 
 
 BUILTIN_KEYS = ('destination', 'basepath', 'references', 'js', 'css')
@@ -136,6 +138,7 @@ class Settings(object):
         settings["builtin"]["basepath"] = self.resolve_base_path(basepath)
         if frontmatter is not None:
             self.apply_frontmatter(frontmatter, settings)
+        self.destination = abspath(settings['builtin']['destination'])
         if self.force_stdout:
             settings["builtin"]["destination"] = None
         if self.force_no_template:
@@ -145,9 +148,6 @@ class Settings(object):
 
     def resolve_output(self, out_name):
         """ Get the path to output the file. """
-
-        if self.force_stdout:
-            return None
 
         critic_enabled = self.critic & (CRITIC_ACCEPT | CRITIC_REJECT | CRITIC_VIEW)
         output = None
@@ -393,6 +393,7 @@ class Settings(object):
         """ Process the settings files making needed adjustements """
 
         absolute = False
+        relative = False
         critic_found = []
         plain_html = []
         empty = []
@@ -425,6 +426,8 @@ class Settings(object):
                 empty.append(i)
             elif name == "pymdown.absolutepath":
                 absolute = True
+            elif name == "PyMdown.relativepath":
+                relative = True
             elif name == "pymdown.critic" and critic_mode != 'ignore':
                 critic_found.append(i)
             elif name == "pymdown.plainhtml" and self.plain:
@@ -439,12 +442,24 @@ class Settings(object):
 
         # Ensure previews are using absolute paths if not already
         if self.preview and not absolute:
-            extensions.append(
-                {
-                    "name": "pymdown.absolutepath",
-                    "config":{"base_path": "${BASE_PATH}"}
-                }
-            )
+            if settings["settings"].get("preview_path_conversion", "absolute") == 'absolute':
+                extensions.append(
+                    {
+                        "name": "pymdown.absolutepath",
+                        "config":{"base_path": "${BASE_PATH}"}
+                    }
+                )
+        if self.preview and not relative:
+            if settings["settings"].get("preview_path_conversion", "absolute") == 'relative':
+                extensions.append(
+                    {
+                        "name": "pymdown.relativepath",
+                        "config":{
+                            "base_path": "${BASE_PATH}",
+                            "relative_path": "${OUTPUT}"
+                        }
+                    }
+                )
 
         # Add critic to the end since it is most reliable when applied to the end.
         if critic_mode != "ignore":

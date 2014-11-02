@@ -90,7 +90,7 @@ class MdWrapper(Markdown):
 
 class MdConvert(object):
     def __init__(
-        self, file_name, encoding, base_path=None, extensions=[],
+        self, file_name, encoding, base_path=None, destination=None, extensions=[],
         tab_length=4, lazy_ol=True, smart_emphasis=True,
         enable_attributes=True, output_format='xhtml1'
     ):
@@ -98,6 +98,7 @@ class MdConvert(object):
         self.meta = {}
         self.file_name = abspath(file_name)
         self.base_path = base_path if base_path is not None else ''
+        self.destination = destination if destination is not None else ''
         self.encoding = encoding
         self.check_extensions(extensions)
         self.tab_length = tab_length
@@ -124,7 +125,11 @@ class MdConvert(object):
                 # Replace base path keyword
                 for k, v in config.items():
                     if isinstance(v, string_type):
-                        config[k] = v.replace("${BASE_PATH}", self.base_path)
+                        config[k] = v.replace(
+                            '${BASE_PATH}', self.base_path
+                        ).replace(
+                            '${OUTPUT}', self.destination
+                        )
                 # Add extension
                 self.extensions.append(name)
                 self.extension_configs[name] = config
@@ -155,7 +160,7 @@ class MdConvert(object):
 class MdConverts(MdConvert):
     def __init__(
         self, string,
-        base_path=None, extensions=[],
+        base_path=None, destination=None, extensions=[],
         tab_length=4, lazy_ol=True, smart_emphasis=True,
         enable_attributes=True, output_format='xhtml1'
     ):
@@ -163,6 +168,7 @@ class MdConverts(MdConvert):
         self.meta = {}
         self.string = string
         self.base_path = base_path if base_path is not None else ''
+        self.destination = destination if destination is not None else ''
         self.check_extensions(extensions)
         self.smart_emphasis = smart_emphasis
         self.tab_length = tab_length

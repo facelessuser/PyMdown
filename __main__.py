@@ -309,6 +309,7 @@ class Convert(object):
                 html = formatter.Html(
                     self.settings["builtin"]["destination"], preview=self.config.preview,
                     plain=self.config.plain, settings=self.settings["settings"],
+                    basepath=self.settings["builtin"]["basepath"],
                     encoding=self.config.output_encoding
                 )
             except:
@@ -324,6 +325,7 @@ class Convert(object):
                     lazy_ol=self.settings["settings"].get('lazy_ol', True),
                     tab_length=self.settings["settings"].get('tab_length', 4),
                     base_path=self.settings["builtin"]["basepath"],
+                    destination=dirname(html.file.name) if html.file.name else dirname(self.config.destination),
                     enable_attributes=self.settings["settings"].get('enable_attributes', True),
                     output_format=self.settings["settings"].get('output_format', 'xhtml1'),
                     extensions=self.settings["extensions"]

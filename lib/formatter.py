@@ -87,7 +87,7 @@ class Terminal(object):
 class Html(object):
     def __init__(
         self, output, preview=False, title=None, encoding='utf-8',
-        plain=False, settings={}
+        basepath=None, plain=False, settings={}
     ):
         self.settings = settings
         self.encode_file = True
@@ -96,6 +96,8 @@ class Html(object):
         self.plain = plain
         self.template = None
         self.encoding = encoding
+        self.basepath = basepath
+        self.preview = preview
         self.template_file = self.settings.get("html_template", None)
         self.title = "Untitled"
         self.user_path = get_user_path()
@@ -218,17 +220,19 @@ class Html(object):
                 resource = unicode_string(pth)
 
                 # Check for markers
+                direct_include = True
                 relative_path = resource.startswith('&')
-                direct_include = not resource.startswith('!')
-
-                # Remove inclusion reject marker
-                if not direct_include:
-                    resource = resource.replace('!', '', 1)
+                if not relative_path:
+                    direct_include = not resource.startswith('!')
 
                 # Remove relative path marker
                 if relative_path:
                     resource = resource.replace('&', '', 1)
                     direct_include = False
+
+                # Remove inclusion reject marker
+                if not direct_include and not relative_path:
+                    resource = resource.replace('!', '', 1)
 
                 # Setup paths to check
                 resource, encoding = splitenc(resource)
@@ -246,16 +250,16 @@ class Html(object):
 
                 # Do not include content, but we need to resolove the relative path
                 elif not direct_include and relative_path:
-                    out = self.file.name
-                    if out is not None:
+                    base = self.file.name
+                    if base is not None:
                         if exists(resource) and isfile(resource):
-                            out = dirname(abspath(out))
+                            base = dirname(abspath(base))
                             abs_path = abspath(resource)
-                            resource = relpath(abs_path, out).replace('\\', '/')
+                            resource = relpath(abs_path, base).replace('\\', '/')
                         elif user_res_path is not None and exists(user_res_path) and isfile(user_res_path):
-                            out = dirname(abspath(out))
+                            base = dirname(abspath(base))
                             abs_path = abspath(user_res_path)
-                            resource = relpath(abs_path, out).replace('\\', '/')
+                            resource = relpath(abs_path, base).replace('\\', '/')
                     if abs_path not in added:
                         resources.append(res_get(resource, link=True, encoding=encoding))
                         added.add(abs_path)
