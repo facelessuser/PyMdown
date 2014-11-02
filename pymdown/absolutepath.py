@@ -32,7 +32,7 @@ exclusion_list = tuple(
     [
         'file://', 'https://', 'http://', '/', '#',
         "data:image/jpeg;base64,", "data:image/png;base64,", "data:image/gif;base64,"
-    ] + ['\\'] if _PLATFORM == "windows" else []
+    ] + (['\\'] if _PLATFORM == "windows" else [])
 )
 
 
@@ -56,24 +56,24 @@ class AbsolutepathTreeprocessor(Treeprocessor):
     def run(self, root):
         """ Replace relative paths with absolute """
 
-        if self.config['base_path'] is "":
-            return root
-
-        for tag in root.getiterator():
-            if tag.tag in ("img", "scripts", "a", "link"):
-                src = tag.attrib.get("src")
-                href = tag.attrib.get("href")
-                if src is not None:
-                    tag.attrib["src"] = repl(src, self.config['base_path'])
-                if href is not None:
-                    tag.attrib["href"] = repl(href, self.config['base_path'])
+        basepath = self.config['base_path']
+        if basepath:
+            for tag in root.getiterator():
+                if tag.tag in self.config['tags'].split():
+                    src = tag.attrib.get("src")
+                    href = tag.attrib.get("href")
+                    if src is not None:
+                        tag.attrib["src"] = repl(src, basepath)
+                    if href is not None:
+                        tag.attrib["href"] = repl(href, basepath)
         return root
 
 
 class AbsolutepathExtension(Extension):
     def __init__(self, *args, **kwargs):
         self.config = {
-            'base_path': ["", "Base path for absolute path to use to resolve paths - Default: \"\""]
+            'base_path': ["", "Base path for absolutepath to use to resolve paths - Default: \"\""],
+            'tags': ["img script a link", "tags to convert src and/or href in - Default: 'img scripts a link'"]
         }
 
         if "base_path" in kwargs and not exists(kwargs["base_path"]):
