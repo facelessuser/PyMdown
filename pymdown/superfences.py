@@ -37,13 +37,13 @@ from markdown import util
 import re
 
 NESTED_FENCE_START = r'''(?x)
-(?P<fence>^(?P<ws>[\> ]*)(?:~{3,}|`{3,}))[ ]*           # Fence opening
+(?:^(?P<ws>[\> ]*)(?P<fence>~{3,}|`{3,}))[ ]*           # Fence opening
 (\{?                                                    # Language opening
 \.?(?P<lang>[a-zA-Z0-9_+-]*))?[ ]*                      # Language
 (hl_lines=(?P<quot>"|')(?P<hl_lines>.*?)(?P=quot))?[ ]* # highlight lines
 }?[ ]*$                                                 # Language closing
 '''
-NESTED_FENCE_END = r'^%s[ ]*$'
+NESTED_FENCE_END = r'^[\> ]*%s[ ]*$'
 
 WS = r'^([\> ]{0,%d})(.*)'
 
