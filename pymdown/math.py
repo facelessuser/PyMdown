@@ -57,6 +57,7 @@ class InlineMathJaxPattern(Pattern):
             lambda m: '$' if m.group(0) == "\\$" else m.group(0),
             m.group(4)
         )
+        self.markdown.mathjax += 1
         return m.group(2) + self.markdown.htmlStash.store(
             escape(math),
             safe=True
@@ -94,6 +95,7 @@ class BlockMathJaxProcessor(BlockProcessor):
                 safe=True
             )
             blocks.insert(0, block)
+            self.markdown.mathjax += 1
         return handled
 
 
@@ -102,9 +104,15 @@ class MathExtension(Extension):
 
     def extendMarkdown(self, md, md_globals):
         md.registerExtension(self)
+        md.mathjax = 0
         if "$" not in md.ESCAPED_CHARS:
             md.ESCAPED_CHARS.append('$')
-        md.inlinePatterns.add("mathjax-inline", InlineMathJaxPattern(RE_MATH, md), ">backtick")
+
+        md.inlinePatterns.add(
+            "mathjax-inline",
+            InlineMathJaxPattern(RE_MATH, md),
+            ">backtick"
+        )
 
         md.parser.blockprocessors.add(
             'mathjax-block',
