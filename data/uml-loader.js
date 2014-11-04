@@ -52,9 +52,9 @@
   }
 
   if (!isUndef(flowchart)) {
-    onReady(function(){convertUML('uml-flow', flowchart);});
+    onReady(function(){convertUML('uml-flowchart', flowchart);});
   }
   if (!isUndef(Diagram)) {
-    onReady(function(){convertUML('uml-sequence', Diagram, {theme: 'simple'});});
+    onReady(function(){convertUML('uml-sequence-diagram', Diagram, {theme: 'simple'});});
   }
 })(document)

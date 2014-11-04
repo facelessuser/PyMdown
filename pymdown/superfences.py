@@ -101,19 +101,15 @@ class CodeStash(object):
     def remove(self, key):
         del self.stash[key]
 
-    def store(self, key, code):
-        self.stash[key] = code
+    def store(self, key, code, indent_level):
+        self.stash[key] = (code, indent_level)
 
     def clear_stash(self):
         self.stash = {}
 
 
-class UmlFormatter(object):
-    CODE_WRAP = '<pre class="uml-%s"><code>%s</code></pre>'
-
-    @classmethod
-    def format(cls, source, language):
-        return cls.CODE_WRAP % (language, _escape(source))
+def uml_format(source, language, css_class):
+    return '<pre class="%s"><code>%s</code></pre>' % (css_class, _escape(source))
 
 
 class SuperFencesCodeExtension(Extension):
@@ -142,9 +138,9 @@ class SuperFencesCodeExtension(Extension):
             md.superfences = []
         md.superfences.insert(0, sf_entry)
         if config.get("uml_flow", True):
-            extendSuperFences(md, "flow", "flow", UmlFormatter.format)
+            extendSuperFences(md, "flow", "flow", lambda s, l, c="uml-flowchart": uml_format(s, l, c))
         if config.get("uml_sequence", True):
-            extendSuperFences(md, "sequence", "sequence", UmlFormatter.format)
+            extendSuperFences(md, "sequence", "sequence", lambda s, l, c="uml-sequence-diagram": uml_format(s, l, c))
         self.markdown = md
 
     def patch_fenced_rule(self):
@@ -191,7 +187,7 @@ class SuperFencesBlockPreprocessor(Preprocessor):
 
     def rebuild_block(self, lines):
         """ Deindent the fenced block lines """
-        return '\n'.join(lines) + '\n'
+        return '\n'.join([line[self.ws_len:] for line in lines]) + '\n'
 
     def check_codehilite(self):
         """ Check for code hilite extension """
@@ -205,6 +201,7 @@ class SuperFencesBlockPreprocessor(Preprocessor):
     def clear(self):
         """ Reset the class variables. """
         self.ws = None
+        self.ws_len = 0
         self.fence = None
         self.lang = None
         self.hl_lines = None
@@ -219,7 +216,7 @@ class SuperFencesBlockPreprocessor(Preprocessor):
         if m.group(0).strip() == '':
             # Empty line is okay
             self.empty_lines += 1
-            self.code.append('')
+            self.code.append(m.group(0))
         elif len(m.group(1)) != self.ws_len and m.group(2) != '':
             # Not indented enough
             self.clear()
@@ -229,7 +226,7 @@ class SuperFencesBlockPreprocessor(Preprocessor):
         else:
             # Content line
             self.empty_lines = 0
-            self.code.append(m.group(0)[len(self.ws):])
+            self.code.append(m.group(0))
 
     def eval_quoted(self, m, quote_level, start, end):
         """ Evaluate fence inside a blockquote """
@@ -239,7 +236,7 @@ class SuperFencesBlockPreprocessor(Preprocessor):
         elif quote_level <= self.quote_level:
             if m.group(2) == '':
                 # Empty line is okay
-                self.code.append('')
+                self.code.append(m.group(0))
                 self.empty_lines += 1
             elif len(m.group(1)) < self.ws_len:
                 # Not indented enough
@@ -254,20 +251,19 @@ class SuperFencesBlockPreprocessor(Preprocessor):
             else:
                 # Content line
                 self.empty_lines = 0
-                self.code.append(m.group(2))
+                self.code.append(m.group(0))
 
     def process_nested_block(self, m, start, end):
         """ Process the contents of the nested block """
-        self.last = m.group(0).lstrip()
-        source = self.rebuild_block(self.code)
+        self.last = m.group(0)
         code = None
         for entry in reversed(self.markdown.superfences):
             if entry["test"](self.lang):
-                code = entry["formatter"](source, self.lang)
+                code = entry["formatter"](self.rebuild_block(self.code), self.lang)
                 break
 
         if code is not None:
-            self._store(source, code, start, end, entry)
+            self._store('\n'.join(self.code) + '\n', code, start, end, entry)
         self.clear()
 
     def search(self, lines):
@@ -282,6 +278,7 @@ class SuperFencesBlockPreprocessor(Preprocessor):
                     if entry["test"](self.lang):
                         code = entry["formatter"](m.group('code'), self.lang)
                         entry["count"] += 1
+                        break
                 placeholder = self.markdown.htmlStash.store(code, safe=True)
                 text = '%s\n%s\n%s' % (text[:m.start()], placeholder, text[m.end():])
             else:
@@ -297,7 +294,7 @@ class SuperFencesBlockPreprocessor(Preprocessor):
                 m = self.fence_start.match(line)
                 if m is not None:
                     start = count
-                    self.first = m.group(0).lstrip()
+                    self.first = m.group(0)
                     self.ws = m.group('ws') if m.group('ws') else ''
                     self.ws_len = len(self.ws)
                     self.quote_level = self.ws.count(">")
@@ -373,7 +370,7 @@ class SuperFencesBlockPreprocessor(Preprocessor):
         placeholder = self.markdown.htmlStash.store(code, safe=True)
         self.stack.append(('%s%s' % (self.ws, placeholder), start, end))
         # If an indented block consumes this placeholder, we can unback the original source
-        obj["stash"].store(placeholder[1:-1], "%s\n%s%s" % (self.first, source, self.last))
+        obj["stash"].store(placeholder[1:-1], "%s\n%s%s" % (self.first, source, self.last), self.ws_len)
         obj["count"] += 1
 
     def run(self, lines):
@@ -395,7 +392,7 @@ class SuperFencesBlockPreprocessor(Preprocessor):
 class SuperFencesCodeBlockProcessor(CodeBlockProcessor):
     """ Process code blocks. """
     FENCED_BLOCK_RE = re.compile(
-        r'^[\> ]*%s(%s)%s$' % (
+        r'^([\> ]*)%s(%s)%s$' % (
             util.HTML_PLACEHOLDER[0],
             util.HTML_PLACEHOLDER[1:-1] % r'([0-9]+)',
             util.HTML_PLACEHOLDER[-1]
@@ -406,13 +403,14 @@ class SuperFencesCodeBlockProcessor(CodeBlockProcessor):
         """ Test method that is one day to be deprecated """
         return True
 
-    def reindent(self, text, level):
+    def reindent(self, text, pos, level):
         """ Reindent the code to where it is supposed to be """
         if text is None:
             return None
         indented = []
         for line in text.split('\n'):
-            indented.append((' ' * level) + line)
+            index = pos - level
+            indented.append(line[index:])
         return '\n'.join(indented)
 
     def revert_greedy_fences(self, block):
@@ -421,15 +419,14 @@ class SuperFencesCodeBlockProcessor(CodeBlockProcessor):
         for line in block.split('\n'):
             m = self.FENCED_BLOCK_RE.match(line)
             if m:
-                ws = re.match(r'^([ ]*).*$', line).group(1)
-                key = m.group(1)
-                code = None
+                key = m.group(2)
+                indent_level = len(m.group(1))
                 original = None
                 for entry in self.markdown.superfences:
                     stash = entry["stash"]
-                    original = stash.get(key)
+                    original, pos = stash.get(key)
                     if original is not None:
-                        code = self.reindent(original, len(ws))
+                        code = self.reindent(original, pos, indent_level)
                         new_block.append(code)
                         stash.remove(key)
                         entry["count"] -= 1
