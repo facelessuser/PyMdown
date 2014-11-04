@@ -310,6 +310,7 @@ class Convert(object):
                     self.settings["builtin"]["destination"], preview=self.config.preview,
                     plain=self.config.plain, settings=self.settings["settings"],
                     basepath=self.settings["builtin"]["basepath"],
+                    aliases=self.settings["builtin"]["include"],
                     encoding=self.config.output_encoding
                 )
             except:

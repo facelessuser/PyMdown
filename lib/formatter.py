@@ -87,7 +87,7 @@ class Terminal(object):
 class Html(object):
     def __init__(
         self, output, preview=False, title=None, encoding='utf-8',
-        basepath=None, plain=False, settings={}
+        basepath=None, plain=False, aliases=[], settings={}
     ):
         self.settings = settings
         self.encode_file = True
@@ -98,10 +98,12 @@ class Html(object):
         self.encoding = encoding
         self.basepath = basepath
         self.preview = preview
+        self.aliases = aliases
         self.template_file = self.settings.get("html_template", None)
         self.title = "Untitled"
         self.user_path = get_user_path()
         self.set_output(output, preview)
+        self.added_res = set()
         self.load_header(
             self.settings.get("style", None)
         )
@@ -160,7 +162,7 @@ class Html(object):
                 title = '<title>%s</title>\n' % cgi.escape(self.title)
                 self.write(
                     self.template[0:m.start(0)].replace(
-                        "{{ HEAD }}", meta + self.head + title, 1
+                        "{{ HEAD }}", meta + ''.join(self.css) + ''.join(self.scripts) + title, 1
                     ).replace(
                         "{{ TITLE }}", cgi.escape(self.title)
                     )
@@ -211,10 +213,7 @@ class Html(object):
 
         return css
 
-    def load_resources(self, key, res_get):
-        template_resources = self.settings.get(key, [])
-        added = set()
-        resources = []
+    def load_resources(self, template_resources, res_get, resources):
         if isinstance(template_resources, list) and len(template_resources):
             for pth in template_resources:
                 resource = unicode_string(pth)
@@ -244,9 +243,9 @@ class Html(object):
 
                 # This is a URL, don't include content
                 if RE_URL_START.match(resource) is not None:
-                    if abs_path not in added:
+                    if abs_path not in self.added_res:
                         resources.append(res_get(resource, link=True, encoding=encoding))
-                        added.add(abs_path)
+                        self.added_res.add(abs_path)
 
                 # Do not include content, but we need to resolove the relative path
                 elif not direct_include and relative_path:
@@ -260,54 +259,59 @@ class Html(object):
                             base = dirname(abspath(base))
                             abs_path = abspath(user_res_path)
                             resource = relpath(abs_path, base).replace('\\', '/')
-                    if abs_path not in added:
+                    if abs_path not in self.added_res:
                         resources.append(res_get(resource, link=True, encoding=encoding))
-                        added.add(abs_path)
+                        self.added_res.add(abs_path)
 
                 # Should not try to include content, just add as a link
                 elif not direct_include:
-                    if abs_path not in added:
+                    if abs_path not in self.added_res:
                         resources.append(res_get(resource, link=True, encoding=encoding))
-                        added.add(abs_path)
+                        self.added_res.add(abs_path)
 
                 # The file exists, read content and include
                 elif exists(resource) and isfile(resource):
                     # Look at specified location to find the file
                     abs_path = abspath(resource)
-                    if abs_path not in added:
+                    if abs_path not in self.added_res:
                         resources.append(res_get(load_text_resource(resource, encoding=encoding)))
-                        added.add(abs_path)
+                        self.added_res.add(abs_path)
 
                 # The file exists relative to the application, read content and include
                 elif user_res_path is not None and exists(user_res_path) and isfile(user_res_path):
                     abs_path = abspath(user_res_path)
-                    if abs_path not in added:
+                    if abs_path not in self.added_res:
                         resources.append(res_get(load_text_resource(user_res_path, encoding=encoding)))
-                        added.add(abs_path)
+                        self.added_res.add(abs_path)
 
                 # Nothing else worked, just include as a link
                 else:
-                    if abs_path not in added:
+                    if abs_path not in self.added_res:
                         resources.append(res_get(resource, link=True, encoding=encoding))
-                        added.add(abs_path)
-        return resources
+                        self.added_res.add(abs_path)
 
     def load_css(self, style):
         """ Load specified CSS sources """
-        css = self.load_resources("css_style_sheets", get_style)
-        css += self.load_highlight(style)
-        return ''.join(css)
+        self.load_resources(self.settings.get("css_style_sheets", []), get_style, self.css)
+        for alias in self.aliases:
+            if alias in self.settings:
+                self.load_resources(self.settings.get(alias).get("css"), get_style, self.css)
+        self.css += self.load_highlight(style)
 
     def load_js(self):
         """ Load specified JS sources """
-        scripts = self.load_resources("js_scripts", get_js)
-        return ''.join(scripts)
+        self.load_resources(self.settings.get("js_scripts", []), get_js, self.scripts)
+        for alias in self.aliases:
+            if alias in self.settings:
+                self.load_resources(self.settings.get(alias).get("js"), get_js, self.scripts)
 
     def load_header(self, style):
         """ Load up header related info """
+        self.css = []
+        self.scripts = []
         self.meta = ['<meta charset="%s">' % self.encoding]
-        self.head = self.load_css(style)
-        self.head += self.load_js()
+        self.load_css(style)
+        self.load_js()
 
 
 class Text(object):

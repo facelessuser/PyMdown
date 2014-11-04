@@ -1,26 +1,11 @@
-(function (doc) {
-  function onReady(fn) {
-    if (doc.addEventListener) {
-      doc.addEventListener('DOMContentLoaded', fn);
-    } else {
-      doc.attachEvent('onreadystatechange', function() {
-        if (doc.readyState === 'interactive')
-          fn();
-      });
-    }
-  }
-
-  function isUndef(obj) {
-    return obj === void 0;
-  }
-
-  function convertUML(className, converter, settings) {
+(function (win, doc) {
+  win.convertUML = function(className, converter, settings) {
     var charts = doc.querySelectorAll("pre." + className),
         arr = [],
         i, maxItem, diagaram, text, curNode;
 
     // Is there a settings object?
-    if (isUndef(settings)) {
+    if (settings === void 0) {
         settings = {};
     }
 
@@ -50,11 +35,4 @@
         diagram.drawSVG(el, settings);
     }
   }
-
-  if (!isUndef(flowchart)) {
-    onReady(function(){convertUML('uml-flowchart', flowchart);});
-  }
-  if (!isUndef(Diagram)) {
-    onReady(function(){convertUML('uml-sequence-diagram', Diagram, {theme: 'simple'});});
-  }
-})(document)
+})(window, document)

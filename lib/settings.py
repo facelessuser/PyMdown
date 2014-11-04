@@ -38,7 +38,7 @@ else:
     string_type = basestring
 
 
-BUILTIN_KEYS = ('destination', 'basepath', 'references', 'js', 'css')
+BUILTIN_KEYS = ('destination', 'basepath', 'references', 'js', 'css', 'include')
 
 CRITIC_IGNORE = 0
 CRITIC_ACCEPT = 1
@@ -84,7 +84,8 @@ class Settings(object):
             "builtin": {
                 "destination": None,
                 "basepath": None,
-                "references": []
+                "references": [],
+                "include": []
             },
             "settings": {},
             "meta": {}
@@ -281,6 +282,25 @@ class Settings(object):
                         new_pth = self.process_settings_path(org_pth, base)
                         settings[key][subkey] = new_pth if new_pth is not None else org_pth
 
+                    # Handle optional extention assets
+                    elif subkey.startswith('@'):
+                        for assetkey, assetvalue in subvalue.items():
+                            if assetkey in ('cs', 'js'):
+                                items = []
+                                for i in assetvalue:
+                                    org_pth = unicode_string(i)
+                                    if org_pth.startswith(('!', '&')):
+                                        new_pth = None
+                                    else:
+                                        new_pth = self.process_settings_path(org_pth, base)
+                                    if new_pth is not None:
+                                        items.append(new_pth)
+                                    else:
+                                        items.append(org_pth)
+                                settings[key][subkey][assetkey] = items
+                            else:
+                                settings[key][subkey][assetkey] = assetvalue
+
                     # Javascript and CSS files
                     elif subkey in ("css_style_sheets", "js_scripts"):
                         items = []
@@ -315,6 +335,12 @@ class Settings(object):
                         else:
                             refs.append(normpath(file_path))
                     settings["builtin"][key] = refs
+
+                elif key == "include":
+                    if not isinstance(value, list):
+                        value = []
+                    settings["builtin"][key] = [unicode_string(v) for v in value if isinstance(v, string_type) and v.startswith('@')]
+
 
                 elif key in ("css", "js"):
                     items = []
