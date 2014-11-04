@@ -22,7 +22,7 @@ import webbrowser
 import traceback
 import json
 from os.path import dirname, abspath, normpath, exists, basename, join, isfile, expanduser, splitext
-from lib.logger import Logger, INFO, CRITICAL
+from lib.logger import Logger, INFO, CRITICAL, DEBUG
 from lib.settings import Settings
 from lib.settings import CRITIC_IGNORE, CRITIC_ACCEPT, CRITIC_REJECT, CRITIC_DUMP, CRITIC_VIEW
 import lib.critic_dump as critic_dump
@@ -402,6 +402,7 @@ if __name__ == "__main__":
         parser = argparse.ArgumentParser(prog='pymdown', description='Markdown generator')
         # Flag arguments
         parser.add_argument('--version', action='version', version="%(prog)s " + __version__)
+        parser.add_argument('--debug', '-d', action='store_true', default=False, help=argparse.SUPPRESS)
         parser.add_argument('--licenses', action='store_true', default=False, help="Display licenses.")
         parser.add_argument('--quiet', '-q', action='store_true', default=False, help="No messages on stdout.")
         # Format and Viewing
@@ -418,7 +419,7 @@ if __name__ == "__main__":
         parser.add_argument('--force-stdout', action='store_true', default=False, help="Force output to stdout.")
         parser.add_argument('--force-no-template', action='store_true', default=False, help="Force using no template.")
         parser.add_argument('--output-encoding', '-E', nargs=1, default=[None], help="Output encoding.")
-        parser.add_argument('--clean', '-c', action='store_true', default=False, help="Clean")
+        parser.add_argument('--clean', '-c', action='store_true', default=False, help=argparse.SUPPRESS)
         # Input configuration
         parser.add_argument('--settings', '-s', nargs=1, default=[join(get_user_path(), "pymdown.cfg")], help="Load the settings file from an alternate location.")
         parser.add_argument('--encoding', '-e', nargs=1, default=["utf-8"], help="Encoding for input.")
@@ -430,7 +431,10 @@ if __name__ == "__main__":
         if args.licenses:
             return display_licenses()
 
-        Logger.set_level(CRITICAL if args.quiet else INFO)
+        if args.debug:
+            Logger.set_level(CRITICAL if args.quiet else DEBUG)
+        else:
+            Logger.set_level(CRITICAL if args.quiet else INFO)
 
         files, stream = get_sources(args)
         if stream:
