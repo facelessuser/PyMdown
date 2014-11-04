@@ -31,7 +31,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from markdown.extensions import Extension
 from markdown.preprocessors import Preprocessor
-from markdown.blockprocessors import BlockProcessor
+from markdown.blockprocessors import CodeBlockProcessor
 from markdown.extensions.codehilite import CodeHilite, CodeHiliteExtension, parse_hl_lines
 from markdown import util
 import re
@@ -68,6 +68,19 @@ def _escape(txt):
     return txt
 
 
+def extendSuperFences(md, name, language, formatter):
+    if not hasattr(md, "superfences"):
+        md.superfences = []
+    md.superfences.append(
+        {
+            "name": name,
+            "count": 0,
+            "test": lambda l, language=language: language == l,
+            "formatter": formatter
+        }
+    )
+
+
 class CodeStash(object):
     """
     Store original fenced code here in case we were
@@ -97,14 +110,10 @@ class CodeStash(object):
 
 class UmlFormatter(object):
     CODE_WRAP = '<pre class="uml-%s"><code>%s</code></pre>'
-    CLASS_ATTR = ' class="%s"'
 
-    def __init__(self, src=None, uml_type=None):
-        self.src = src
-        self.uml_type = uml_type
-
-    def format(self):
-        return self.CODE_WRAP % (self.uml_type, _escape(self.src))
+    @classmethod
+    def format(cls, source, language):
+        return cls.CODE_WRAP % (language, _escape(source))
 
 
 class SuperFencesCodeExtension(Extension):
@@ -122,18 +131,30 @@ class SuperFencesCodeExtension(Extension):
     def extendMarkdown(self, md, md_globals):
         """ Add FencedBlockPreprocessor to the Markdown instance. """
         md.registerExtension(self)
+        config = self.getConfigs()
+        sf_entry = {
+            "name": "superfences",
+            "count": 0,
+            "test": lambda language: True,
+            "formatter": None
+        }
+        if not hasattr(md, "superfences"):
+            md.superfences = []
+        md.superfences.insert(0, sf_entry)
+        if config.get("uml_flow", True):
+            extendSuperFences(md, "flow", "flow", UmlFormatter.format)
+        if config.get("uml_sequence", True):
+            extendSuperFences(md, "sequence", "sequence", UmlFormatter.format)
         self.markdown = md
 
     def patch_fenced_rule(self):
-        self.code_stash = CodeStash()
         config = self.getConfigs()
         fenced = SuperFencesBlockPreprocessor(self.markdown)
         indented_code = SuperFencesCodeBlockProcessor(self)
         fenced.config = config
         indented_code.config = config
         indented_code.markdown = self.markdown
-        indented_code.code_stash = self.code_stash
-        fenced.code_stash = self.code_stash
+        self.markdown.superfences[0]["formatter"] = fenced.highlight
         self.markdown.parser.blockprocessors['code'] = indented_code
         if 'fenced_code_block' in self.markdown.preprocessors.keys():
             self.markdown.preprocessors['fenced_code_block'] = fenced
@@ -149,8 +170,12 @@ class SuperFencesCodeExtension(Extension):
         if not self.configured:
             self.patch_fenced_rule()
             self.configured = True
+            for entry in self.markdown.superfences:
+                entry["stash"] = CodeStash()
         else:
-            self.code_stash.clear_stash()
+            for entry in self.markdown.superfences:
+                entry["stash"].clear_stash()
+                entry["count"] = 0
 
 
 class SuperFencesBlockPreprocessor(Preprocessor):
@@ -160,7 +185,7 @@ class SuperFencesBlockPreprocessor(Preprocessor):
 
     def __init__(self, md):
         super(SuperFencesBlockPreprocessor, self).__init__(md)
-
+        self.markdown = md
         self.checked_for_codehilite = False
         self.codehilite_conf = {}
 
@@ -200,14 +225,7 @@ class SuperFencesBlockPreprocessor(Preprocessor):
             self.clear()
         elif self.fence_end.match(m.group(0)) is not None:
             # End of fence
-            self.last = m.group(0).lstrip()
-            source = self.rebuild_block(self.code)
-            if (self.uml_flow and self.lang == "flow") or (self.uml_sequence and self.lang == "sequence"):
-                code = UmlFormatter(source, self.lang).format()
-            else:
-                code = self.highlight(source)
-            self._store(source, code, start, end)
-            self.clear()
+            self.process_nested_block(m, start, end)
         else:
             # Content line
             self.empty_lines = 0
@@ -232,33 +250,38 @@ class SuperFencesBlockPreprocessor(Preprocessor):
                 self.clear()
             elif self.fence_end.match(m.group(0)) is not None:
                 # End of fence
-                self.last = m.group(0).lstrip()
-                source = self.rebuild_block(self.code)
-                if (self.uml_flow and self.lang == "flow") or (self.uml_sequence and self.lang == "sequence"):
-                    code = UmlFormatter(source, self.lang).format()
-                else:
-                    code = self.highlight(source)
-                self._store(source, code, start, end)
-                self.clear()
+                self.process_nested_block(m, start, end)
             else:
                 # Content line
                 self.empty_lines = 0
                 self.code.append(m.group(2))
 
+    def process_nested_block(self, m, start, end):
+        """ Process the contents of the nested block """
+        self.last = m.group(0).lstrip()
+        source = self.rebuild_block(self.code)
+        code = None
+        for entry in reversed(self.markdown.superfences):
+            if entry["test"](self.lang):
+                code = entry["formatter"](source, self.lang)
+                break
+
+        if code is not None:
+            self._store(source, code, start, end, entry)
+        self.clear()
+
     def search(self, lines):
+        """ Search for non-nested fenced blocks """
         text = "\n".join(lines)
         while 1:
             m = RE_FENCE.search(text)
             if m:
                 self.lang = m.group('lang')
                 self.hl_lines = m.group('hl_lines')
-                if (
-                    self.lang and
-                    (self.uml_flow and self.lang == "flow") or (self.uml_sequence and self.lang == "sequence")
-                ):
-                    code = UmlFormatter(m.group('code'), self.lang).format()
-                else:
-                    code = self.highlight(m.group('code'))
+                for entry in reversed(self.markdown.superfences):
+                    if entry["test"](self.lang):
+                        code = entry["formatter"](m.group('code'), self.lang)
+                        entry["count"] += 1
                 placeholder = self.markdown.htmlStash.store(code, safe=True)
                 text = '%s\n%s\n%s' % (text[:m.start()], placeholder, text[m.end():])
             else:
@@ -266,6 +289,7 @@ class SuperFencesBlockPreprocessor(Preprocessor):
         return text.split("\n")
 
     def search_nested(self, lines):
+        """ Search for nested fenced blocks """
         count = 0
         for line in lines:
             if self.fence is None:
@@ -319,7 +343,7 @@ class SuperFencesBlockPreprocessor(Preprocessor):
             lines = lines[:start] + [fenced] + lines[end:]
         return lines
 
-    def highlight(self, source):
+    def highlight(self, source, language):
         """
         If config is not empty, then the codehlite extension
         is enabled, so we call into to highlight the code.
@@ -331,21 +355,26 @@ class SuperFencesBlockPreprocessor(Preprocessor):
                 guess_lang=self.codehilite_conf['guess_lang'][0],
                 css_class=self.codehilite_conf['css_class'][0],
                 style=self.codehilite_conf['pygments_style'][0],
-                lang=self.lang,
+                lang=language,
                 noclasses=self.codehilite_conf['noclasses'][0],
                 hl_lines=parse_hl_lines(self.hl_lines)
             ).hilite()
         else:
-            lang = self.CLASS_ATTR % self.lang if self.lang else ''
+            lang = self.CLASS_ATTR % language if language else ''
             code = self.CODE_WRAP % (lang, _escape(source))
         return code
 
-    def _store(self, source, code, start, end):
+    def _store(self, source, code, start, end, obj):
+        """
+        Store the fenced blocks in teh stack to be replaced when done iterating.
+        Store the original text in case we need to restore if we are too greedy.
+        """
         # Save the fenced blocks to add once we are done iterating the lines
         placeholder = self.markdown.htmlStash.store(code, safe=True)
         self.stack.append(('%s%s' % (self.ws, placeholder), start, end))
         # If an indented block consumes this placeholder, we can unback the original source
-        self.code_stash.store(placeholder[1:-1], "%s\n%s%s" % (self.first, source, self.last))
+        obj["stash"].store(placeholder[1:-1], "%s\n%s%s" % (self.first, source, self.last))
+        obj["count"] += 1
 
     def run(self, lines):
         """ Search for fenced blocks """
@@ -363,7 +392,7 @@ class SuperFencesBlockPreprocessor(Preprocessor):
         return lines
 
 
-class SuperFencesCodeBlockProcessor(BlockProcessor):
+class SuperFencesCodeBlockProcessor(CodeBlockProcessor):
     """ Process code blocks. """
     FENCED_BLOCK_RE = re.compile(
         r'^[\> ]*%s(%s)%s$' % (
@@ -374,9 +403,11 @@ class SuperFencesCodeBlockProcessor(BlockProcessor):
     )
 
     def test(self, parent, block):
+        """ Test method that is one day to be deprecated """
         return True
 
     def reindent(self, text, level):
+        """ Reindent the code to where it is supposed to be """
         if text is None:
             return None
         indented = []
@@ -385,14 +416,26 @@ class SuperFencesCodeBlockProcessor(BlockProcessor):
         return '\n'.join(indented)
 
     def revert_greedy_fences(self, block):
+        """ Revert a prematurely converted fenced block """
         new_block = []
         for line in block.split('\n'):
             m = self.FENCED_BLOCK_RE.match(line)
             if m:
                 ws = re.match(r'^([ ]*).*$', line).group(1)
-                code = self.reindent(self.code_stash.get(m.group(1)), len(ws))
-                new_block.append(code if code is not None else line)
-                self.code_stash.remove(m.group(1))
+                key = m.group(1)
+                code = None
+                original = None
+                for entry in self.markdown.superfences:
+                    stash = entry["stash"]
+                    original = stash.get(key)
+                    if original is not None:
+                        code = self.reindent(original, len(ws))
+                        new_block.append(code)
+                        stash.remove(key)
+                        entry["count"] -= 1
+                        break
+                if original is None:
+                    new_block.append(line)
             else:
                 new_block.append(line)
         return '\n'.join(new_block)
@@ -401,36 +444,12 @@ class SuperFencesCodeBlockProcessor(BlockProcessor):
         """ Look for and parse code block """
         handled = False
 
-        if (
-            blocks[0].startswith(' ' * self.tab_length) and
-            not self.config.get("disable_indented_code_blocks", False)
-        ):
-            block = blocks.pop(0)
-            theRest = ''
-            block = self.revert_greedy_fences(block)
-            sibling = self.lastChild(parent)
-            handled = True
-
-            if sibling is not None and sibling.tag == "pre" and len(sibling) \
-                    and sibling[0].tag == "code":
-                # The previous block was a code block. As blank lines do not start
-                # new code blocks, append this block to the previous, adding back
-                # linebreaks removed from the split into a list.
-                code = sibling[0]
-                block, theRest = self.detab(block)
-                code.text = util.AtomicString('%s\n%s\n' % (code.text, block.rstrip()))
-            else:
-                # This is a new codeblock. Create the elements and insert text.
-                pre = util.etree.SubElement(parent, 'pre')
-                code = util.etree.SubElement(pre, 'code')
-                block, theRest = self.detab(block)
-                code.text = util.AtomicString('%s\n' % block.rstrip())
-            if theRest:
-                # This block contained unindented line(s) after the first indented
-                # line. Insert these lines as the first block of the master blocks
-                # list for future processing.
-                blocks.insert(0, theRest)
-
+        if not self.config.get("disable_indented_code_blocks", False):
+            handled = CodeBlockProcessor.test(self, parent, blocks[0])
+            if handled:
+                if self.config.get("nested", True):
+                    blocks[0] = self.revert_greedy_fences(blocks[0])
+                handled = CodeBlockProcessor.run(self, parent, blocks) is not False
         return handled
 
 
