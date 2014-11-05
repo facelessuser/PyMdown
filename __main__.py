@@ -270,7 +270,7 @@ class Convert(object):
             else:
                 # Create text object
                 try:
-                    txt = formatter.Text(self.settings["builtin"]["destination"], self.config.output_encoding)
+                    txt = formatter.Text(self.settings["page"]["destination"], self.config.output_encoding)
                 except:
                     Logger.error("Failed to create text file!")
                     status = FAIL
@@ -302,15 +302,15 @@ class Convert(object):
             status = self.get_file_settings(file_name, frontmatter=frontmatter)
 
         if status == PASS:
-            text += get_references(self.settings["builtin"].get("references", []), self.config.encoding)
+            text += get_references(self.settings["page"].get("references", []), self.config.encoding)
 
             # Create html object
             try:
                 html = formatter.Html(
-                    self.settings["builtin"]["destination"], preview=self.config.preview,
+                    self.settings["page"]["destination"], preview=self.config.preview,
                     plain=self.config.plain, settings=self.settings["settings"],
-                    basepath=self.settings["builtin"]["basepath"],
-                    aliases=self.settings["builtin"]["include"],
+                    basepath=self.settings["page"]["basepath"],
+                    aliases=self.settings["page"]["include"],
                     encoding=self.config.output_encoding
                 )
             except:
@@ -331,11 +331,11 @@ class Convert(object):
                     smart_emphasis=self.settings["settings"].get('smart_emphasis', True),
                     lazy_ol=self.settings["settings"].get('lazy_ol', True),
                     tab_length=self.settings["settings"].get('tab_length', 4),
-                    base_path=self.settings["builtin"]["basepath"],
+                    base_path=self.settings["page"]["basepath"],
                     destination=destination,
                     enable_attributes=self.settings["settings"].get('enable_attributes', True),
                     output_format=self.settings["settings"].get('output_format', 'xhtml1'),
-                    extensions=self.settings["extensions"]
+                    extensions=self.settings["settings"]["extensions"]
                 )
 
                 # Retrieve meta data if available and merge with frontmatter

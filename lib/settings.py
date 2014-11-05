@@ -38,7 +38,7 @@ else:
     string_type = basestring
 
 
-BUILTIN_KEYS = ('destination', 'basepath', 'references', 'js', 'css', 'include')
+PAGE_KEYS = ('destination', 'basepath', 'references', 'include.js', 'include.css', 'include')
 
 CRITIC_IGNORE = 0
 CRITIC_ACCEPT = 1
@@ -81,7 +81,7 @@ class Settings(object):
         self.clean = clean
         self.force_no_template = force_no_template
         self.settings = {
-            "builtin": {
+            "page": {
                 "destination": None,
                 "basepath": None,
                 "references": [],
@@ -135,18 +135,18 @@ class Settings(object):
         """ Get the complete settings object for the given file """
         self.file_name = file_name
         settings = deepcopy(self.settings)
-        settings["builtin"]["destination"] = self.resolve_output(output)
-        settings["builtin"]["basepath"] = self.resolve_base_path(basepath)
+        settings["page"]["destination"] = self.resolve_output(output)
+        settings["page"]["basepath"] = self.resolve_base_path(basepath)
         if frontmatter is not None:
             self.apply_frontmatter(frontmatter, settings)
-        if settings['builtin']['destination'] is not None:
-            self.destination = abspath(settings['builtin']['destination'])
+        if settings['page']['destination'] is not None:
+            self.destination = abspath(settings['page']['destination'])
         else:
             self.destination = None
         if self.force_stdout:
-            settings["builtin"]["destination"] = None
+            settings["page"]["destination"] = None
         if self.force_no_template:
-            settings['settings']['html_template'] = None
+            settings['settings']['template'] = None
         self.post_process_settings(settings)
         return settings
 
@@ -248,9 +248,9 @@ class Settings(object):
         # Handle basepath first
         if "basepath" in frontmatter:
             value = frontmatter["basepath"]
-            settings["builtin"]["basepath"] = self.resolve_base_path(value)
+            settings["page"]["basepath"] = self.resolve_base_path(value)
             del frontmatter["basepath"]
-        base = settings["builtin"]["basepath"]
+        base = settings["page"]["basepath"]
 
         # The destination/output location and name
         if "destination" in frontmatter:
@@ -263,9 +263,9 @@ class Settings(object):
             else:
                 value = None
             if value is not None:
-                settings["builtin"]["destination"] = value
+                settings["page"]["destination"] = value
             del frontmatter['destination']
-        destination = settings["builtin"]["destination"]
+        destination = settings["page"]["destination"]
 
         css = []
         js = []
@@ -277,7 +277,7 @@ class Settings(object):
             if key == "settings" and isinstance(value, dict):
                 for subkey, subvalue in value.items():
                     # Html template
-                    if subkey == "html_template":
+                    if subkey == "template":
                         org_pth = unicode_string(subvalue)
                         new_pth = self.process_settings_path(org_pth, base)
                         settings[key][subkey] = new_pth if new_pth is not None else org_pth
@@ -302,7 +302,7 @@ class Settings(object):
                                 settings[key][subkey][assetkey] = assetvalue
 
                     # Javascript and CSS files
-                    elif subkey in ("css_style_sheets", "js_scripts"):
+                    elif subkey in ("css", "js"):
                         items = []
                         for i in subvalue:
                             org_pth = unicode_string(i)
@@ -321,7 +321,7 @@ class Settings(object):
                         settings[key][subkey] = subvalue
 
             # Built in frontmatter keys
-            elif key in BUILTIN_KEYS:
+            elif key in PAGE_KEYS:
                 # Included references markdown (footnotes, abbreviations, etc.)
                 if key == "references":
                     if not isinstance(value, list):
@@ -334,15 +334,14 @@ class Settings(object):
                             refs.append(org_file)
                         else:
                             refs.append(normpath(file_path))
-                    settings["builtin"][key] = refs
+                    settings["page"][key] = refs
 
                 elif key == "include":
                     if not isinstance(value, list):
                         value = []
-                    settings["builtin"][key] = [unicode_string(v) for v in value if isinstance(v, string_type) and v.startswith('@')]
+                    settings["page"][key] = [unicode_string(v) for v in value if isinstance(v, string_type)]
 
-
-                elif key in ("css", "js"):
+                elif key in ("include.css", "include.js"):
                     items = []
                     for i in value:
                         org_pth = unicode_string(i)
@@ -354,7 +353,7 @@ class Settings(object):
                             items.append(new_pth)
                         else:
                             items.append(org_pth)
-                    if key == 'css':
+                    if key == 'include.css':
                         css += items
                     else:
                         js += items
@@ -369,11 +368,11 @@ class Settings(object):
 
         # Append CSS and JS from built-in keys if any
         if len(css):
-            css = settings['settings'].get('css_style_sheets', []) + css
-            settings['settings']['css_style_sheets'] = css
+            css = settings['settings'].get('css', []) + css
+            settings['settings']['css'] = css
         if len(js):
-            js = settings['settings'].get('js_scripts', []) + js
-            settings['settings']['js_scripts'] = js
+            js = settings['settings'].get('js', []) + js
+            settings['settings']['js'] = js
 
 
     def set_style(self, extensions, settings):
@@ -433,12 +432,7 @@ class Settings(object):
         critic_found = []
         plain_html = []
         empty = []
-        extensions = []
-
-        # Copy extensions; we will move it to its own key later
-        if "extensions" in settings["settings"]:
-            extensions = deepcopy(settings["settings"].get("extensions", []))
-            del settings["settings"]["extensions"]
+        extensions = settings["settings"].get("extensions", [])
 
         # See if we need to handle the appropriate critic from CLI
         # Critic will be appended to end of extension list if CLI requested it.
@@ -512,7 +506,7 @@ class Settings(object):
             extensions.append({"name": "pymdown.plainhtml"})
 
         # Set extensions to its own key
-        settings["extensions"] = extensions
+        settings["settings"]["extensions"] = extensions
 
         # Set style
         self.set_style(extensions, settings)

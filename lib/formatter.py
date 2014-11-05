@@ -99,7 +99,7 @@ class Html(object):
         self.basepath = basepath
         self.preview = preview
         self.aliases = aliases
-        self.template_file = self.settings.get("html_template", None)
+        self.template_file = self.settings.get("template", None)
         self.title = "Untitled"
         self.user_path = get_user_path()
         self.set_output(output, preview)
@@ -155,16 +155,19 @@ class Html(object):
             # so we know where to insert the markdown.
             # If we can't find an insertion point, the html
             # will have no markdown content.
-            m = re.search(r"\{\{ BODY \}\}", self.template)
+            m = re.search(r"\{\{ content \}\}", self.template)
             if m:
                 self.no_body = False
                 meta = '\n'.join(self.meta) + '\n'
-                title = '<title>%s</title>\n' % cgi.escape(self.title)
                 self.write(
                     self.template[0:m.start(0)].replace(
-                        "{{ HEAD }}", meta + ''.join(self.css) + ''.join(self.scripts) + title, 1
+                        "{{ meta }}", meta, 1
                     ).replace(
-                        "{{ TITLE }}", cgi.escape(self.title)
+                        "{{ css }}", ''.join(self.css), 1
+                    ).replace(
+                        "{{ js }}", ''.join(self.scripts), 1
+                    ).replace(
+                        "{{ title }}", cgi.escape(self.title)
                     )
                 )
                 self.body_end = m.end(0)
@@ -292,18 +295,20 @@ class Html(object):
 
     def load_css(self, style):
         """ Load specified CSS sources """
-        self.load_resources(self.settings.get("css_style_sheets", []), get_style, self.css)
+        self.load_resources(self.settings.get("css", []), get_style, self.css)
         for alias in self.aliases:
-            if alias in self.settings:
-                self.load_resources(self.settings.get(alias).get("css"), get_style, self.css)
+            key = '@' + alias
+            if key in self.settings:
+                self.load_resources(self.settings.get(key).get("css"), get_style, self.css)
         self.css += self.load_highlight(style)
 
     def load_js(self):
         """ Load specified JS sources """
-        self.load_resources(self.settings.get("js_scripts", []), get_js, self.scripts)
+        self.load_resources(self.settings.get("js", []), get_js, self.scripts)
         for alias in self.aliases:
-            if alias in self.settings:
-                self.load_resources(self.settings.get(alias).get("js"), get_js, self.scripts)
+            key = '@' + alias
+            if key in self.settings:
+                self.load_resources(self.settings.get(key).get("js"), get_js, self.scripts)
 
     def load_header(self, style):
         """ Load up header related info """

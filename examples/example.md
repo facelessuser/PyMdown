@@ -14,7 +14,7 @@
 
     # Settings overrides
     settings:
-        html_template: example-template.html
+        template: example-template.html
         extensions:
         - name: markdown.extensions.extra
         - name: markdown.extensions.toc
