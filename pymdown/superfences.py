@@ -74,7 +74,6 @@ def extendSuperFences(md, name, language, formatter):
     md.superfences.append(
         {
             "name": name,
-            "count": 0,
             "test": lambda l, language=language: language == l,
             "formatter": formatter
         }
@@ -130,7 +129,6 @@ class SuperFencesCodeExtension(Extension):
         config = self.getConfigs()
         sf_entry = {
             "name": "superfences",
-            "count": 0,
             "test": lambda language: True,
             "formatter": None
         }
@@ -171,7 +169,6 @@ class SuperFencesCodeExtension(Extension):
         else:
             for entry in self.markdown.superfences:
                 entry["stash"].clear_stash()
-                entry["count"] = 0
 
 
 class SuperFencesBlockPreprocessor(Preprocessor):
@@ -277,7 +274,6 @@ class SuperFencesBlockPreprocessor(Preprocessor):
                 for entry in reversed(self.markdown.superfences):
                     if entry["test"](self.lang):
                         code = entry["formatter"](m.group('code'), self.lang)
-                        entry["count"] += 1
                         break
                 placeholder = self.markdown.htmlStash.store(code, safe=True)
                 text = '%s\n%s\n%s' % (text[:m.start()], placeholder, text[m.end():])
@@ -371,7 +367,6 @@ class SuperFencesBlockPreprocessor(Preprocessor):
         self.stack.append(('%s%s' % (self.ws, placeholder), start, end))
         # If an indented block consumes this placeholder, we can unback the original source
         obj["stash"].store(placeholder[1:-1], "%s\n%s%s" % (self.first, source, self.last), self.ws_len)
-        obj["count"] += 1
 
     def run(self, lines):
         """ Search for fenced blocks """
@@ -429,7 +424,6 @@ class SuperFencesCodeBlockProcessor(CodeBlockProcessor):
                         code = self.reindent(original, pos, indent_level)
                         new_block.append(code)
                         stash.remove(key)
-                        entry["count"] -= 1
                         break
                 if original is None:
                     new_block.append(line)
