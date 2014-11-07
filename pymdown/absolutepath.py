@@ -16,7 +16,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 """
 from __future__ import unicode_literals
 from markdown import Extension
-from markdown.treeprocessors import Treeprocessor
+from markdown.postprocessors import Postprocessor
 from os.path import exists, normpath, join
 import re
 import sys
@@ -35,11 +35,49 @@ exclusion_list = tuple(
     ] + (['\\'] if _PLATFORM == "windows" else [])
 )
 
+RE_TAG_HTML = r'''(?xus)
+    (?:
+        (?P<comments>(\r?\n?\s*)<!--[\s\S]*?-->(\s*)(?=\r?\n)|<!--[\s\S]*?-->)|
+        (?P<open><(?P<tag>(?:%s)))
+        (?P<attr>(?:\s+[\w\-:]+(?:\s*=\s*(?:"[^"]*"|'[^']*'))?)*)
+        (?P<close>\s*(?:\/?)>)
+    )
+    '''
 
-def repl(path, base_path):
+RE_TAG_LINK_ATTR = re.compile(
+    r'''(?xus)
+    (?P<attr>
+        (?:
+            (?P<name>\s+(?:href|src)\s*=\s*)
+            (?P<path>"[^"]*"|'[^']*')
+        )
+    )
+    '''
+)
+
+
+def escape(txt):
+    txt = txt.replace('&', '&amp;')
+    txt = txt.replace('<', '&lt;')
+    txt = txt.replace('>', '&gt;')
+    txt = txt.replace('"', '&quot;')
+    return txt
+
+
+def unescape(txt):
+    txt = txt.replace('&amp;', '&')
+    txt = txt.replace('&lt;', '<')
+    txt = txt.replace('&gt;', '>')
+    txt = txt.replace('&#39;', "'")
+    txt = txt.replace('&quot;', '"')
+    return txt
+
+
+def repl_path(m, base_path):
     """ Replace path with absolute path """
 
-    link = path
+    path = unescape(m.group('path')[1:-1])
+    link = m.group(0)
     re_win_drive = re.compile(r"(^[A-Za-z]{1}:(?:\\|/))")
 
     if (
@@ -48,25 +86,30 @@ def repl(path, base_path):
     ):
         absolute = normpath(join(base_path, path))
         if exists(absolute):
-            link = absolute.replace("\\", "/")
+            link = m.group('name') + "\"" + escape(absolute.replace("\\", "/")) + "\""
     return link
 
 
-class AbsolutepathTreeprocessor(Treeprocessor):
-    def run(self, root):
-        """ Replace relative paths with absolute """
+def repl(m, base_path):
+    if m.group('comments'):
+        tag = m.group('comments')
+    else:
+        tag = m.group('open')
+        tag += RE_TAG_LINK_ATTR.sub(lambda m2: repl_path(m2, base_path), m.group('attr'))
+        tag += m.group('close')
+    return tag
+
+
+class AbsolutepathPostprocessor(Postprocessor):
+    def run(self, text):
+        """ Find and replace paths with absolute paths. """
 
         basepath = self.config['base_path']
         if basepath:
-            for tag in root.getiterator():
-                if tag.tag in self.config['tags'].split():
-                    src = tag.attrib.get("src")
-                    href = tag.attrib.get("href")
-                    if src is not None:
-                        tag.attrib["src"] = repl(src, basepath)
-                    if href is not None:
-                        tag.attrib["href"] = repl(href, basepath)
-        return root
+            tags = re.compile(RE_TAG_HTML % '|'.join(self.config['tags'].split()))
+
+            text = tags.sub(lambda m: repl(m, basepath), text)
+        return text
 
 
 class AbsolutepathExtension(Extension):
@@ -84,9 +127,9 @@ class AbsolutepathExtension(Extension):
     def extendMarkdown(self, md, md_globals):
         """Add AbsolutepathTreeprocessor to Markdown instance"""
 
-        abs_path = AbsolutepathTreeprocessor(md)
+        abs_path = AbsolutepathPostprocessor(md)
         abs_path.config = self.getConfigs()
-        md.treeprocessors.add("absolute-path", abs_path, "_end")
+        md.postprocessors.add("absolute-path", abs_path, "_end")
         md.registerExtension(self)
 
 

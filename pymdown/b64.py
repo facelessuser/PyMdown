@@ -16,7 +16,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 """
 from __future__ import unicode_literals
 from markdown import Extension
-from markdown.treeprocessors import Treeprocessor
+from markdown.postprocessors import Postprocessor
 from os.path import exists, normpath, splitext, join
 import sys
 import base64
@@ -42,11 +42,43 @@ exclusion_list = tuple(
     ["data:%s;base64," % ft for ft in file_types.values()]
 )
 
+RE_TAG_HTML = re.compile(
+    r'''(?xus)
+    (?:
+        (?P<comments>(\r?\n?\s*)<!--[\s\S]*?-->(\s*)(?=\r?\n)|<!--[\s\S]*?-->)|
+        (?P<open><(?P<tag>img))
+        (?P<attr>(?:\s+[\w\-:]+(?:\s*=\s*(?:"[^"]*"|'[^']*'))?)*)
+        (?P<close>\s*(?:\/?)>)
+    )
+    '''
+)
 
-def repl(path, base_path):
+RE_TAG_LINK_ATTR = re.compile(
+    r'''(?xus)
+    (?P<attr>
+        (?:
+            (?P<name>\s+src\s*=\s*)
+            (?P<path>"[^"]*"|'[^']*')
+        )
+    )
+    '''
+)
+
+
+def unescape(txt):
+    txt = txt.replace('&amp;', '&')
+    txt = txt.replace('&lt;', '<')
+    txt = txt.replace('&gt;', '>')
+    txt = txt.replace('&#39;', "'")
+    txt = txt.replace('&quot;', '"')
+    return txt
+
+
+def repl_path(m, base_path):
     """ Replace path with b64 encoded data """
 
-    link = path
+    path = unescape(m.group('path')[1:-1])
+    link = m.group(0)
     absolute = False
     re_win_drive = re.compile(r"(^[A-Za-z]{1}:(?:\\|/))")
 
@@ -70,7 +102,7 @@ def repl(path, base_path):
             if ext in file_types:
                 try:
                     with open(file_name, "rb") as f:
-                        link = "data:%s;base64,%s" % (
+                        link = " src=\"data:%s;base64,%s\"" % (
                             file_types[ext],
                             base64.b64encode(f.read()).decode('ascii')
                         )
@@ -79,18 +111,24 @@ def repl(path, base_path):
     return link
 
 
-class B64Treeprocessor(Treeprocessor):
-    def run(self, root):
-        """Replace resource with b64 encoded data"""
-        if self.config['base_path'] == "":
-            return root
+def repl(m, base_path):
+    if m.group('comments'):
+        tag = m.group('comments')
+    else:
+        tag = m.group('open')
+        tag += RE_TAG_LINK_ATTR.sub(lambda m2: repl_path(m2, base_path), m.group('attr'))
+        tag += m.group('close')
+    return tag
 
-        links = root.getiterator('img')
-        for link in links:
-            src = link.attrib.get("src")
-            if src is not None:
-                link.attrib["src"] = repl(src, self.config['base_path'])
-        return root
+
+class B64Postprocessor(Postprocessor):
+    def run(self, text):
+        """ Find and replace paths with base64 encoded file. """
+
+        basepath = self.config['base_path']
+        if basepath:
+            text = RE_TAG_HTML.sub(lambda m: repl(m, basepath), text)
+        return text
 
 
 class B64Extension(Extension):
@@ -107,9 +145,9 @@ class B64Extension(Extension):
     def extendMarkdown(self, md, md_globals):
         """Add B64Treeprocessor to Markdown instance"""
 
-        b64 = B64Treeprocessor(md)
+        b64 = B64Postprocessor(md)
         b64.config = self.getConfigs()
-        md.treeprocessors.add("b64", b64, "_end")
+        md.postprocessors.add("b64", b64, "_end")
         md.registerExtension(self)
 
 

@@ -17,7 +17,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 """
 from __future__ import unicode_literals
 from markdown import Extension
-from markdown.treeprocessors import Treeprocessor
+from markdown.postprocessors import Postprocessor
 from os.path import exists, normpath, join, relpath
 import re
 import sys
@@ -44,11 +44,49 @@ absolute_list = tuple(
 
 RE_WIN_DRIVE = re.compile(r"(^(?P<drive>[A-Za-z]{1}):(?:\\|/))")
 
+RE_TAG_HTML = r'''(?xus)
+    (?:
+        (?P<comments>(\r?\n?\s*)<!--[\s\S]*?-->(\s*)(?=\r?\n)|<!--[\s\S]*?-->)|
+        (?P<open><(?P<tag>(?:%s)))
+        (?P<attr>(?:\s+[\w\-:]+(?:\s*=\s*(?:"[^"]*"|'[^']*'))?)*)
+        (?P<close>\s*(?:\/?)>)
+    )
+    '''
 
-def repl(path, base_path, relative_path):
+RE_TAG_LINK_ATTR = re.compile(
+    r'''(?xus)
+    (?P<attr>
+        (?:
+            (?P<name>\s+(?:href|src)\s*=\s*)
+            (?P<path>"[^"]*"|'[^']*')
+        )
+    )
+    '''
+)
+
+
+def escape(txt):
+    txt = txt.replace('&', '&amp;')
+    txt = txt.replace('<', '&lt;')
+    txt = txt.replace('>', '&gt;')
+    txt = txt.replace('"', '&quot;')
+    return txt
+
+
+def unescape(txt):
+    txt = txt.replace('&amp;', '&')
+    txt = txt.replace('&lt;', '<')
+    txt = txt.replace('&gt;', '>')
+    txt = txt.replace('&#39;', "'")
+    txt = txt.replace('&quot;', '"')
+    return txt
+
+
+def repl_path(m, base_path, relative_path):
     """ Replace path with absolute path """
 
-    link = path
+    path = unescape(m.group('path')[1:-1])
+    link = m.group(0)
     convert = False
     abs_path = None
 
@@ -89,31 +127,35 @@ def repl(path, base_path, relative_path):
 
         if convert:
             # Convert path relative to the base path
-            link = relpath(abs_path, relative_path).replace('\\', '/')
+            link = m.group('name') + "\"" + escape(relpath(abs_path, relative_path).replace('\\', '/')) + "\""
         else:
             # We have an absolute path, but we can't make it relative
             # to base path, so we will just use the absolute.
-            link = abs_path
+            link = m.group('name') + "\"" + escape(abs_path) + "\""
 
     return link
 
 
-class RelativePathTreeprocessor(Treeprocessor):
-    def run(self, root):
-        """ Replace paths with relative to base path """
+def repl(m, base_path, rel_path):
+    if m.group('comments'):
+        tag = m.group('comments')
+    else:
+        tag = m.group('open')
+        tag += RE_TAG_LINK_ATTR.sub(lambda m2: repl_path(m2, base_path, rel_path), m.group('attr'))
+        tag += m.group('close')
+    return tag
+
+
+class RelativepathPostprocessor(Postprocessor):
+    def run(self, text):
+        """ Finds and replaces paths with relative path """
 
         basepath = self.config['base_path']
         relativepath = self.config['relative_path']
         if basepath and relativepath:
-            for tag in root.getiterator():
-                if tag.tag in self.config['tags'].split():
-                    src = tag.attrib.get("src")
-                    href = tag.attrib.get("href")
-                    if src is not None:
-                        tag.attrib["src"] = repl(src, basepath, relativepath)
-                    if href is not None:
-                        tag.attrib["href"] = repl(href, basepath, relativepath)
-        return root
+            tags = re.compile(RE_TAG_HTML % '|'.join(self.config['tags'].split()))
+            text = tags.sub(lambda m: repl(m, basepath, relativepath), text)
+        return text
 
 
 class RelativePathExtension(Extension):
@@ -134,9 +176,9 @@ class RelativePathExtension(Extension):
     def extendMarkdown(self, md, md_globals):
         """Add RelativePathTreeprocessor to Markdown instance"""
 
-        abs_path = RelativePathTreeprocessor(md)
-        abs_path.config = self.getConfigs()
-        md.treeprocessors.add("relative-path", abs_path, "_end")
+        rel_path = RelativepathPostprocessor(md)
+        rel_path.config = self.getConfigs()
+        md.postprocessors.add("relative-path", rel_path, "_end")
         md.registerExtension(self)
 
 
