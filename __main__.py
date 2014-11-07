@@ -162,6 +162,9 @@ def get_references(references, basepath, encoding):
                 ref_path = base_temp
             elif exists(user_temp) and isfile(user_temp):
                 ref_path = user_temp
+            else:
+                # Is an unknown path
+                ref_path = None
         elif is_abs and exists(file_name) and isfile(file_name):
             # Is absolute path
             ref_path = file_name

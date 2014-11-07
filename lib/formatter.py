@@ -35,8 +35,16 @@ else:
     unicode_string = unicode  # flake8: noqa
 
 RE_URL_START = re.compile(r"https?://")
-RE_TEMPLATE_FILE = re.compile(r"(?<!\{)\{\{\s*filepath\s*\((.*?)\)\s*\}\}(?!\})")
+RE_TEMPLATE_FILE = re.compile(r"(?<!\{)\{\{\s*(quotedpath|filepath)\s*\((.*?)\)\s*\}\}(?!\})")
 RE_TEMPLATE_VARS = re.compile(r"(?<!\{)\{\{\s*(title|css|js|meta)\s*\}\}(?!\})")
+
+
+def escape(txt):
+    txt = txt.replace('&', '&amp;')
+    txt = txt.replace('<', '&lt;')
+    txt = txt.replace('>', '&gt;')
+    txt = txt.replace('"', '&quot;')
+    return txt
 
 
 class PyMdownFormatterException(Exception):
@@ -46,7 +54,7 @@ class PyMdownFormatterException(Exception):
 def get_js(js, link=False, encoding='utf-8'):
     """ Get the specified JS code """
     if link:
-        return '<script type="text/javascript" charset="%s" src="%s"></script>\n' % (encoding, js)
+        return '<script type="text/javascript" charset="%s" src="%s"></script>\n' % (encoding, escape(js))
     else:
         return '<script type="text/javascript">\n%s\n</script>\n' % js if js is not None else ""
 
@@ -54,7 +62,7 @@ def get_js(js, link=False, encoding='utf-8'):
 def get_style(style, link=False, encoding=None):
     """ Get the specified CSS code """
     if link:
-        return '<link href="%s" rel="stylesheet" type="text/css">\n' % style
+        return '<link href="%s" rel="stylesheet" type="text/css">\n' % escape(style)
     else:
         return '<style>\n%s\n</style>\n' % style if style is not None else ""
 
@@ -148,7 +156,8 @@ class Html(object):
         return var
 
     def repl_file(self, m):
-        file_name = m.group(1).strip()
+        quoted = m.group(1) == "quotedpath"
+        file_name = m.group(2).strip()
         relative_path = file_name.startswith('&')
         absolute_path = file_name.startswith('*')
 
@@ -210,7 +219,7 @@ class Html(object):
 
             file_name = file_path.replace('\\', '/')
 
-        return file_name
+        return file_name if not quoted else '"%s"' % escape(file_name)
 
     def write_html_start(self):
         """ Output the HTML head and body up to the {{ content }} specifier """
