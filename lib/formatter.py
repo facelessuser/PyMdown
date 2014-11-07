@@ -314,7 +314,6 @@ class Html(object):
                 elif not direct_include:
                     resource = resource.replace('!', '', 1)
 
-
                 # Find path relative to basepath or global user path
                 # If basepath is defined set paths relative to the basepath if possible
                 # or just keep the absolute
@@ -328,6 +327,8 @@ class Html(object):
                         res_path = resource
                     elif exists(user_temp) and isfile(user_temp):
                         res_path = relpath(user_temp, self.basepath) if self.basepath else user_temp
+                    else:
+                        res_path = None
                 elif is_abs and exists(resource) and isfile(resource):
                     # Is absolute path
                     res_path = relpath(resource, self.basepath) if self.basepath else resource

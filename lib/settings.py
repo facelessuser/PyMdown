@@ -271,15 +271,8 @@ class Settings(object):
                             if assetkey in ('cs', 'js'):
                                 items = []
                                 for i in assetvalue:
-                                    org_pth = unicode_string(i)
-                                    if org_pth.startswith(('!', '&')):
-                                        new_pth = None
-                                    else:
-                                        new_pth = self.process_settings_path(org_pth, base)
-                                    if new_pth is not None:
-                                        items.append(new_pth)
-                                    else:
-                                        items.append(org_pth)
+                                    pth = unicode_string(i)
+                                    items.append(pth)
                                 settings[key][subkey][assetkey] = items
                             else:
                                 settings[key][subkey][assetkey] = assetvalue
@@ -288,15 +281,8 @@ class Settings(object):
                     elif subkey in ("css", "js"):
                         items = []
                         for i in subvalue:
-                            org_pth = unicode_string(i)
-                            if org_pth.startswith(('!', '&')):
-                                new_pth = None
-                            else:
-                                new_pth = self.process_settings_path(org_pth, base)
-                            if new_pth is not None:
-                                items.append(new_pth)
-                            else:
-                                items.append(org_pth)
+                            pth = unicode_string(i)
+                            items.append(pth)
                         settings[key][subkey] = items
 
                     # All other settings that require no other special handling
@@ -311,12 +297,8 @@ class Settings(object):
                         value = [value]
                     refs = []
                     for v in value:
-                        org_file = unicode_string(v)
-                        file_path = self.process_settings_path(org_file, base)
-                        if file_path is None:
-                            refs.append(org_file)
-                        else:
-                            refs.append(normpath(file_path))
+                        pth = unicode_string(v)
+                        refs.append(pth)
                     settings["page"][key] = refs
 
                 elif key == "include":
@@ -327,15 +309,8 @@ class Settings(object):
                 elif key in ("include.css", "include.js"):
                     items = []
                     for i in value:
-                        org_pth = unicode_string(i)
-                        if org_pth.startswith(('!', '&')):
-                            new_pth = None
-                        else:
-                            new_pth = self.process_settings_path(org_pth, base)
-                        if new_pth is not None:
-                            items.append(new_pth)
-                        else:
-                            items.append(org_pth)
+                        pth = unicode_string(i)
+                        items.append(pth)
                     if key == 'include.css':
                         css += items
                     else:
