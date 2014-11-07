@@ -16,8 +16,10 @@ from os import listdir, mkdir
 from .logger import Logger
 import codecs
 import traceback
+import re
 
 RESOURCE_PATH = abspath(join(dirname(__file__), ".."))
+WIN_DRIVE = re.compile(r"(^[A-Za-z]{1}:(?:\\|/))")
 DATA_FOLDER = "data"
 DEFAULT_CSS = "data/default-markdown.css"
 DEFAULT_TEMPLATE = "data/default-template.html"
@@ -37,6 +39,18 @@ def get_encoding(enc):
     except LookupError:
         enc = 'utf-8'
     return enc
+
+
+def is_absolute(pth):
+    """ Check if path is an absolute path. """
+    absolute = False
+    if pth is not None:
+        if sys.platform.startswith('win'):
+            if WIN_DRIVE.match(pth) is not None or pth.startswith("//"):
+                absolute = True
+        elif pth.startswith('/'):
+            absolute = True
+    return absolute
 
 
 def get_user_path():

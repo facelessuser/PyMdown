@@ -20,7 +20,7 @@ from . import resources as res
 from .logger import Logger
 import yaml
 from .file_strip.json import sanitize_json
-from .resources import resource_exists, splitenc, unpack_user_files
+from .resources import resource_exists, splitenc, unpack_user_files, is_absolute
 import markdown.extensions.codehilite as codehilite
 try:
     from pygments.styles import get_style_by_name
@@ -45,19 +45,6 @@ CRITIC_ACCEPT = 1
 CRITIC_REJECT = 2
 CRITIC_VIEW = 4
 CRITIC_DUMP = 8
-
-
-def is_abs(pth):
-    """ Check if path is an absolute path. """
-    absolute = False
-    if pth is not None:
-        if sys.platform.startswith('win'):
-            re_win_drive = re.compile(r"(^[A-Za-z]{1}:(?:\\|/))")
-            if re_win_drive.match(pth) is not None or pth.startswith("//"):
-                absolute = True
-        elif pth.startswith('/'):
-            absolute = True
-    return absolute
 
 
 class Settings(object):
@@ -85,10 +72,10 @@ class Settings(object):
                 "destination": None,
                 "basepath": None,
                 "references": [],
-                "include": []
+                "include": [],
+                "meta": {}
             },
-            "settings": {},
-            "meta": {}
+            "settings": {}
         }
 
         # Use default file if one was not provided
@@ -105,6 +92,8 @@ class Settings(object):
         extention if a preview is planned.
         Unpack the settings file if needed.
         """
+
+        settings = None
 
         # Unpack default settings file if needed
         if not exists(settings_path):
@@ -206,24 +195,18 @@ class Settings(object):
         Resolve the path returned in the meta data.
         1. See if path is defined as absolute and if so see
            if it exists
-        2. If relative, use the file's current directory
-           (if available) as the base and see if the file
+        2. If relative, use the file's basepath (default its physical directory
+           if available) if the file
            can be found
-        3. If relative, and the file's current directory
-           as the base proved fruitless, use the defined
-           basepath (if available)
         """
-        current_dir = None if self.file_name is None else dirname(self.file_name)
         if target is not None:
             target = expanduser(target)
-            if not is_abs(target):
+            if not is_absolute(target):
                 new_target = None
-                for base in (current_dir, basepath):
-                    if base is not None:
-                        temp = join(base, target)
-                        if exists(temp):
-                            new_target = temp
-                            break
+                if basepath is not None:
+                    temp = join(basepath, target)
+                    if exists(temp):
+                        new_target = temp
                 target = new_target
             elif not exists(target):
                 target = None
@@ -364,7 +347,7 @@ class Settings(object):
                     value = [unicode_string(v) for v in value]
                 else:
                     value = unicode_string(value)
-                settings["meta"][unicode_string(key)] = value
+                settings["page"]["meta"][unicode_string(key)] = value
 
         # Append CSS and JS from built-in keys if any
         if len(css):

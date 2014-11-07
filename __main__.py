@@ -13,7 +13,7 @@ from __future__ import unicode_literals
 from __future__ import absolute_import
 from __future__ import print_function
 # Egg resoures must be loaded before Pygments gets loaded
-from lib.resources import load_text_resource, load_egg_resources, splitenc, get_user_path
+from lib.resources import load_text_resource, load_egg_resources, splitenc, get_user_path, is_absolute
 load_egg_resources()
 import codecs
 import sys
@@ -141,19 +141,38 @@ def get_critic_mode(args):
     return critic_mode
 
 
-def get_references(references, encoding):
+def get_references(references, basepath, encoding):
     """ Get footnote and general references from outside source """
+
     text = ''
     for file_name in references:
         file_name, encoding = splitenc(file_name, default=encoding)
         user_path = join(get_user_path(), file_name)
-        if file_name is not None:
-            if exists(file_name) and isfile(file_name):
-                text += load_text_resource(file_name, encoding=encoding)
-            elif exists(user_path) and isfile(user_path):
-                text += load_text_resource(user_path, encoding=encoding)
-            else:
-                Logger.error("Could not find reference file %s!" % file_name)
+
+        is_abs = is_absolute(file_name)
+
+        # Find path relative to basepath or global user path
+        # If basepath is defined set paths relative to the basepath if possible
+        # or just keep the absolute
+        if not is_abs:
+            # Is relative path
+            base_temp = normpath(join(basepath, file_name)) if basepath is not None else None
+            user_temp = normpath(join(user_path, file_name)) if user_path is not None else None
+            if exists(base_temp) and isfile(base_temp):
+                ref_path = base_temp
+            elif exists(user_temp) and isfile(user_temp):
+                ref_path = user_temp
+        elif is_abs and exists(file_name) and isfile(file_name):
+            # Is absolute path
+            ref_path = file_name
+        else:
+            # Is an unknown path
+            ref_path = None
+
+        if ref_path is not None:
+            text += load_text_resource(ref_path, encoding=encoding)
+        else:
+            Logger.error("Could not find reference file %s!" % file_name)
     return text
 
 
@@ -302,7 +321,11 @@ class Convert(object):
             status = self.get_file_settings(file_name, frontmatter=frontmatter)
 
         if status == PASS:
-            text += get_references(self.settings["page"].get("references", []), self.config.encoding)
+            text += get_references(
+                self.settings["page"].get("references", []),
+                self.settings["page"]["basepath"],
+                self.config.encoding
+            )
 
             # Create html object
             try:
@@ -343,7 +366,7 @@ class Convert(object):
                 #     1. Frontmatter will override normal meta data.
                 #     2. Meta data overrides --title option on command line.
                 html.set_meta(
-                    merge_meta(converter.meta, self.settings["meta"], title=html_title)
+                    merge_meta(converter.meta, self.settings["page"]["meta"], title=html_title)
                 )
             except:
                 Logger.error(str(traceback.format_exc()))
