@@ -35,8 +35,8 @@ else:
     unicode_string = unicode  # flake8: noqa
 
 RE_URL_START = re.compile(r"https?://")
-RE_TEMPLATE_FILE = re.compile(r"\{%\s*filepath\s*\((.*?)\)\s*%\}")
-RE_TEMPLATE_VARS = re.compile(r"\{\{\s*(title|css|js|meta)\s*\}\}")
+RE_TEMPLATE_FILE = re.compile(r"(?<!\{)\{\{\s*filepath\s*\((.*?)\)\s*\}\}(?!\})")
+RE_TEMPLATE_VARS = re.compile(r"(?<!\{)\{\{\s*(title|css|js|meta)\s*\}\}(?!\})")
 
 
 class PyMdownFormatterException(Exception):
