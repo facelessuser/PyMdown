@@ -428,24 +428,22 @@ class Settings(object):
         for index in reversed(indexes):
             del extensions[index]
 
-        # Ensure previews are using absolute paths if not already and preference is set to 'absolute'
-        if self.preview and settings["settings"].get("preview_path_conversion", "absolute") != 'relative':
+        preview_path_conversion = settings["settings"].get("preview_path_conversion", "absolute")
+
+        # Ensure previews are using absolute paths if not already and
+        # preference is set to 'absolute'.
+        if self.preview and preview_path_conversion == 'absolute':
             abs_ext = {
                 "name": "pymdown.absolutepath",
                 "config":{"base_path": "${BASE_PATH}"}
             }
-            if absolute:
-                # Overwrite existing one to ensure all tags are set
-                for i in range(0, len(extensions)):
-                    name = extensions[i].get('name', None)
-                    if name == 'pymdown.absolutepath':
-                        extensions[i] = abs_ext
-                        break
-            else:
+            # Add absolute extension if not already set.
+            if not absolute:
                 extensions.append(abs_ext)
 
-        # Ensure previews are using relative paths if not already and preference is set to 'relative'
-        elif self.preview:
+        # Ensure previews are using relative paths if not already
+        # and preference is set to 'relative'.
+        elif self.preview and preview_path_conversion == 'relative':
             rel_ext =  {
                 "name": "pymdown.relativepath",
                 "config":{
@@ -453,15 +451,19 @@ class Settings(object):
                     "relative_path": "${OUTPUT}"
                 }
             }
-            if relative:
-                # Overwrite existing one to ensure all tags are set
+            if not relative:
+                # Add relative extension
+                extensions.append(rel_ext)
+            else:
+                # Make sure output relative location is the file's output
+                # for preview since relative is already defined
                 for i in range(0, len(extensions)):
                     name = extensions[i].get('name', None)
                     if name == 'pymdown.relativepath':
-                        extensions[i] = abs_ext
+                        if "config" not in extensions[i]:
+                            extensions[i]['config'] = {}
+                        extensions[i]['config']["relative_path"] = "${OUTPUT}"
                         break
-            else:
-                extensions.append(rel_ext)
 
         # Add critic to the end since it is most reliable when applied to the end.
         if critic_mode != "ignore":
