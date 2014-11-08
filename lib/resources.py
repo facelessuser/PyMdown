@@ -17,6 +17,7 @@ from .logger import Logger
 import codecs
 import traceback
 import re
+import yaml
 
 RESOURCE_PATH = abspath(join(dirname(__file__), ".."))
 WIN_DRIVE = re.compile(r"(^[A-Za-z]{1}:(?:\\|/))")
@@ -24,6 +25,10 @@ DATA_FOLDER = "data"
 DEFAULT_CSS = "data/default-markdown.css"
 DEFAULT_TEMPLATE = "data/default-template.html"
 DEFAULT_SETTINGS = "data/pymdown.cfg"
+USER_VERSION = "data/version.txt"
+NO_COPY = ('licenses.txt',)
+NO_UPDATE = (basename(DEFAULT_SETTINGS),)
+NOT_DEFAULT = (basename(DEFAULT_SETTINGS), 'version.txt')
 
 if sys.platform.startswith('win'):
     _PLATFORM = "windows"
@@ -71,25 +76,55 @@ def get_user_path():
         except:
             pass
 
+    defaults = join(folder, 'default')
+    if not exists(defaults):
+        try:
+            mkdir(defaults)
+        except:
+            pass
+
     return folder
+
+
+def update_user_files():
+    """ See if user data files should be updated """
+    user_ver_file = join(get_user_path(), 'version.txt')
+    ver = load_text_resource(USER_VERSION, internal=True)
+    if ver is not None:
+        try:
+            current_ver = yaml.load(ver).get('version', 0)
+        except:
+            current_ver = 0
+    try:
+        with codecs.open(user_ver_file, 'r', encoding='utf-8') as f:
+            user_ver = yaml.load(f.read()).get('version', 0)
+    except:
+        user_ver = 0
+
+    return current_ver != user_ver
 
 
 def unpack_user_files():
     """ Unpack user data files """
     user_path = get_user_path()
     folder = resource_exists(DATA_FOLDER, internal=True, dir=True)
+    should_update = update_user_files()
     if folder is not None:
         for f in listdir(folder):
-            dest = join(user_path, basename(f))
+            if f in NOT_DEFAULT:
+                dest = join(user_path, basename(f))
+            else:
+                dest = join(user_path, 'default', basename(f))
             source = join(folder, f)
-            if isfile(source) and not exists(dest):
-                text = load_text_resource(source, internal=True)
-                if text is not None:
-                    try:
-                        with codecs.open(dest, "w", encoding='utf-8') as f:
-                            f.write(text)
-                    except:
-                        pass
+            if isfile(source) and f not in NO_COPY:
+                if not exists(dest) or (should_update and f not in NO_UPDATE):
+                    text = load_text_resource(source, internal=True)
+                    if text is not None:
+                        try:
+                            with codecs.open(dest, "w", encoding='utf-8') as f:
+                                f.write(text)
+                        except:
+                            pass
 
 
 def splitenc(entry, default='utf-8'):
