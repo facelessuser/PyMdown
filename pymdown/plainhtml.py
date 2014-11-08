@@ -37,7 +37,7 @@ RE_TAG_BAD_ATTR = re.compile(
     (?P<attr>
         (?:
             \s+(?:id|class|style|on[\w]+)
-            (?:\s*=\s*(?:"[^"]*"|'[^']*'))?
+            (?:\s*=\s*(?:"[^"]*"|'[^']*'))
         )*
     )
     ''',
