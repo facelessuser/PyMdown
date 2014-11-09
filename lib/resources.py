@@ -66,7 +66,7 @@ def get_user_path():
     if _PLATFORM == "windows":
         folder = expanduser("~\\.PyMdown")
     elif _PLATFORM == "osx":
-        folder = expanduser("~/Library/Application Support/PyMdown")
+        folder = expanduser("~/.PyMdown")
     elif _PLATFORM == "linux":
         folder = expanduser("~/.config/PyMdown")
 
