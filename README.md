@@ -7,33 +7,10 @@ This is in a **Beta** state.  Because of the **Beta** state, things are in flux 
 # Documentation
 Though the documentation is currently still in flux and still being completed, it is found here: [PyMdown Documentation](http://facelessuser.github.io/PyMdown/)
 
-# Requirements
-The following must be installed in your Python
-
-- [Python-Markdown 2.5.1+](https://pypi.python.org/pypi/Markdown)
-    - Until the next version drops: https://github.com/waylan/Python-Markdown/archive/57633f1743cc16e16c140cc92f860c62d872b6cc.zip must specifically be used if the compiled version is desired.  A workaround hook was removed as this revision fixes the issue.  As soon as 2.5.2 or greater releases, the official channel can be used.
-- [PyYaml](http://pyyaml.org)
-- Optionally [Pygments 2.0 Dev branch](https://bitbucket.org/birkenfeld/pygments-main/overview) if you want Pygments syntax highlighting.  You can use something like HighlightJs otherwise.
-
-# Features
-- Should work on Python 2.7 and 3.0+ compatible (but executables are currently built with Python 2.7 using Pyinstaller). Usually tested on Python 2.7 and Python 3.4.  Can only be compiled with Pyinstaller for Python 2.7.
-- Should run on OSX, Windows, and Linux.  Usually tested on Windows and OSX though.
-- Receive multiple files or file patterns to process.
-- Receive input file stream for conversion.
-- Configurable options file to tweak Python's Markdown package behavior.
-- Uses Pygments for syntax highighlighting.
-- Preview option to preview output in a browser.
-- Parses yaml or json frontmatter.
-- Optionally all the default Markdown extensions, plus a number of custom pymdown extensions:
-
-# Sublime Plugin
-A sublime plugin that utilizes this app is found here: [sublime-pymdown](https://github.com/facelessuser/sublime-pymdown)
-
 # Credits
 - Built on top of https://pypi.python.org/pypi/Markdown
 - Uses the development branch of Pygments for Python 3 support http://pygments.org/.
 - Includes optional Tomorrow Themes for Pygment from https://github.com/MozMorris/tomorrow-pygments
-- Currently includes the original github theme and the newest 2014 variant.
 - Inspiration for the project came from https://github.com/revolunet/sublimetext-markdown-preview.
 
 # License
