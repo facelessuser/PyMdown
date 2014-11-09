@@ -187,7 +187,7 @@ def get_sources(args):
     try:
         files = get_files(args.markdown)
     except:
-        files = [get_file_stream(args.encoding[0])]
+        files = [get_file_stream(args.encoding)]
         stream = True
     return files, stream
 
@@ -420,9 +420,6 @@ class Convert(object):
 if __name__ == "__main__":
     import argparse
 
-    def first_or_none(item):
-        return item[0] if item is not None else None
-
     def main():
         """ Go! """
 
@@ -435,22 +432,22 @@ if __name__ == "__main__":
         # Format and Viewing
         parser.add_argument('--preview', '-p', action='store_true', default=False, help="Output to preview (temp file). --output will be ignored.")
         parser.add_argument('--plain-html', '-P', action='store_true', default=False, help="Strip out CSS, style, ids, etc.  Just show tags.")
-        parser.add_argument('--title', nargs=1, default=None, help="Title for HTML.")
+        parser.add_argument('--title', default=None, help="Title for HTML.")
         # Critic features
         parser.add_argument('--accept', '-a', action='store_true', default=False, help="Accept propossed critic marks when using in normal processing and --critic-dump processing")
         parser.add_argument('--reject', '-r', action='store_true', default=False, help="Reject propossed critic marks when using in normal processing and --critic-dump processing")
         parser.add_argument('--critic-dump', action='store_true', default=False, help="Process critic marks, dumps file(s), and exits.")
         # Output
-        parser.add_argument('--output', '-o', nargs=1, default=None, help="Output file. Ignored in batch mode.")
+        parser.add_argument('--output', '-o', default=None, help="Output file. Ignored in batch mode.")
         parser.add_argument('--batch', '-b', action='store_true', default=False, help="Batch mode output.")
         parser.add_argument('--force-stdout', action='store_true', default=False, help="Force output to stdout.")
         parser.add_argument('--force-no-template', action='store_true', default=False, help="Force using no template.")
-        parser.add_argument('--output-encoding', '-E', nargs=1, default=[None], help="Output encoding.")
+        parser.add_argument('--output-encoding', '-E', default=None, help="Output encoding.")
         parser.add_argument('--clean', '-c', action='store_true', default=False, help=argparse.SUPPRESS)
         # Input configuration
-        parser.add_argument('--settings', '-s', nargs=1, default=[join(get_user_path(), "pymdown.cfg")], help="Load the settings file from an alternate location.")
-        parser.add_argument('--encoding', '-e', nargs=1, default=["utf-8"], help="Encoding for input.")
-        parser.add_argument('--basepath', nargs=1, default=None, help="The basepath location pymdown should use.")
+        parser.add_argument('--settings', '-s', default=join(get_user_path(), "pymdown.cfg"), help="Load the settings file from an alternate location.")
+        parser.add_argument('--encoding', '-e', default="utf-8", help="Encoding for input.")
+        parser.add_argument('--basepath', default=None, help="The basepath location pymdown should use.")
         parser.add_argument('markdown', nargs='*', default=[], help="Markdown file(s) or file pattern(s).")
 
         args = parser.parse_args()
@@ -475,18 +472,18 @@ if __name__ == "__main__":
 
         # It is assumed that the input encoding is desired for output
         # unless otherwise specified.
-        if args.output_encoding[0] is None:
-            args.output_encoding[0] = args.encoding[0]
+        if args.output_encoding is None:
+            args.output_encoding = args.encoding
 
         # Setup config class
         config = Settings(
-            encoding=args.encoding[0],
-            output_encoding=args.output_encoding[0],
+            encoding=args.encoding,
+            output_encoding=args.output_encoding,
             critic=get_critic_mode(args),
             batch=batch,
             stream=stream,
             preview=args.preview,
-            settings_path=first_or_none(args.settings),
+            settings_path=args.settings,
             plain=args.plain_html,
             force_stdout=args.force_stdout,
             force_no_template=args.force_no_template,
@@ -495,9 +492,9 @@ if __name__ == "__main__":
 
         # Convert
         return Convert(
-            basepath=first_or_none(args.basepath),
-            title=first_or_none(args.title),
-            output=first_or_none(args.output),
+            basepath=args.basepath,
+            title=args.title,
+            output=args.output,
             config=config
         ).convert(files)
 
