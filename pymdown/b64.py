@@ -31,10 +31,9 @@ else:
     _PLATFORM = "linux"
 
 file_types = {
-    ".png": "image/png",
-    ".jpg": "image/jpeg",
-    ".jpeg": "image/jpeg",
-    ".gif": "image/gif"
+    (".png",): "image/png",
+    (".jpg", ".jpeg"): "image/jpeg",
+    (".gif",): "image/gif"
 }
 
 exclusion_list = tuple(
@@ -99,15 +98,16 @@ def repl_path(m, base_path):
 
         if exists(file_name):
             ext = splitext(file_name)[1].lower()
-            if ext in file_types:
-                try:
-                    with open(file_name, "rb") as f:
-                        link = " src=\"data:%s;base64,%s\"" % (
-                            file_types[ext],
-                            base64.b64encode(f.read()).decode('ascii')
-                        )
-                except:
-                    pass
+            for b64_ext in file_types:
+                if ext in b64_ext:
+                    try:
+                        with open(file_name, "rb") as f:
+                            link = " src=\"data:%s;base64,%s\"" % (
+                                file_types[b64_ext],
+                                base64.b64encode(f.read()).decode('ascii')
+                            )
+                    except:
+                        pass
     return link
 
 
