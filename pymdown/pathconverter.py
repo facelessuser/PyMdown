@@ -1,9 +1,17 @@
 """
-pymdown.relativepath
+pymdown.pathconverter
 An extension for Python Markdown.
-Given an absolute base path, this extension searches for file
+
+An extension to covert tag paths to relative or absolute:
+
+Given an absolute base and a target relative path, this extension searches for file
 references that are relative and converts them to a path relative
 to the base path.
+
+-or-
+
+Given an absolute base path, this extension searches for file
+references that are relative and converts them to absolute paths.
 
 MIT license.
 
@@ -82,8 +90,8 @@ def unescape(txt):
     return txt
 
 
-def repl_path(m, base_path, relative_path):
-    """ Replace path with absolute path """
+def repl_relative(m, base_path, relative_path):
+    """ Replace path with relative path """
 
     path = unescape(m.group('path')[1:-1])
     link = m.group(0)
@@ -136,33 +144,57 @@ def repl_path(m, base_path, relative_path):
     return link
 
 
-def repl(m, base_path, rel_path):
+def repl_absolute(m, base_path):
+    """ Replace path with absolute path """
+
+    path = unescape(m.group('path')[1:-1])
+    link = m.group(0)
+    re_win_drive = re.compile(r"(^[A-Za-z]{1}:(?:\\|/))")
+
+    if (
+        not path.startswith(exclusion_list) and
+        not (_PLATFORM == "windows" and re_win_drive.match(path) is not None)
+    ):
+        absolute = normpath(join(base_path, path))
+        if exists(absolute):
+            link = m.group('name') + "\"" + escape(absolute.replace("\\", "/")) + "\""
+    return link
+
+
+def repl(m, base_path, rel_path=None):
     if m.group('comments'):
         tag = m.group('comments')
     else:
         tag = m.group('open')
-        tag += RE_TAG_LINK_ATTR.sub(lambda m2: repl_path(m2, base_path, rel_path), m.group('attr'))
+        if rel_path is None:
+            tag += RE_TAG_LINK_ATTR.sub(lambda m2: repl_absolute(m2, base_path), m.group('attr'))
+        else:
+            tag += RE_TAG_LINK_ATTR.sub(lambda m2: repl_relative(m2, base_path, rel_path), m.group('attr'))
         tag += m.group('close')
     return tag
 
 
-class RelativepathPostprocessor(Postprocessor):
+class PathConverterPostprocessor(Postprocessor):
     def run(self, text):
-        """ Finds and replaces paths with relative path """
+        """ Finds and converts paths. """
 
         basepath = self.config['base_path']
         relativepath = self.config['relative_path']
-        if basepath and relativepath:
-            tags = re.compile(RE_TAG_HTML % '|'.join(self.config['tags'].split()))
+        absolute = bool(self.config['absolute'])
+        tags = re.compile(RE_TAG_HTML % '|'.join(self.config['tags'].split()))
+        if not absolute and basepath and relativepath:
             text = tags.sub(lambda m: repl(m, basepath, relativepath), text)
+        elif absolute and basepath:
+            text = tags.sub(lambda m: repl(m, basepath), text)
         return text
 
 
-class RelativePathExtension(Extension):
+class PathConverterExtension(Extension):
     def __init__(self, *args, **kwargs):
         self.config = {
             'base_path': ["", "Base path used to find files - Default: \"\""],
-            'relative_path': ["", "Path that files will be relative to - Default: \"\""],
+            'relative_path': ["", "Path that files will be relative to (not needed if using absolute) - Default: \"\""],
+            'absolute': [True, "Paths are absolute by default; disable for relative - Default: True"],
             'tags': ["img script a link", "tags to convert src and/or href in - Default: 'img scripts a link'"]
         }
 
@@ -171,16 +203,16 @@ class RelativePathExtension(Extension):
         if "relative_path" in kwargs and not exists(kwargs['relative_path']):
             del kwargs["relative_path"]
 
-        super(RelativePathExtension, self).__init__(*args, **kwargs)
+        super(PathConverterExtension, self).__init__(*args, **kwargs)
 
     def extendMarkdown(self, md, md_globals):
-        """Add RelativePathTreeprocessor to Markdown instance"""
+        """Add PathConverterPostprocessor to Markdown instance"""
 
-        rel_path = RelativepathPostprocessor(md)
+        rel_path = PathConverterPostprocessor(md)
         rel_path.config = self.getConfigs()
-        md.postprocessors.add("relative-path", rel_path, "_end")
+        md.postprocessors.add("path-converter", rel_path, "_end")
         md.registerExtension(self)
 
 
 def makeExtension(*args, **kwargs):
-    return RelativePathExtension(*args, **kwargs)
+    return PathConverterExtension(*args, **kwargs)

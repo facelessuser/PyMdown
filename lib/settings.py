@@ -385,8 +385,7 @@ class Settings(object):
     def post_process_settings(self, settings):
         """ Process the settings files making needed adjustements """
 
-        absolute = False
-        relative = False
+        path_converter = False
         critic_found = []
         plain_html = []
         empty = []
@@ -412,10 +411,8 @@ class Settings(object):
             name = extensions[i].get('name', None)
             if name is None:
                 empty.append(i)
-            elif name == "pymdown.absolutepath":
-                absolute = True
-            elif name == "PyMdown.relativepath":
-                relative = True
+            elif name == "pymdown.pathconverter":
+                path_converter = True
             elif name == "pymdown.critic" and critic_mode != 'ignore':
                 critic_found.append(i)
             elif name == "pymdown.plainhtml" and self.plain:
@@ -430,36 +427,25 @@ class Settings(object):
 
         preview_path_conversion = settings["settings"].get("preview_path_conversion", "absolute")
 
-        # Ensure previews are using absolute paths if not already and
-        # preference is set to 'absolute'.
-        if self.preview and preview_path_conversion == 'absolute':
-            abs_ext = {
-                "name": "pymdown.absolutepath",
-                "config":{"base_path": "${BASE_PATH}"}
-            }
-            # Add absolute extension if not already set.
-            if not absolute:
-                extensions.append(abs_ext)
-
-        # Ensure previews are using relative paths if not already
-        # and preference is set to 'relative'.
-        elif self.preview and preview_path_conversion == 'relative':
-            rel_ext =  {
-                "name": "pymdown.relativepath",
-                "config":{
-                    "base_path": "${BASE_PATH}",
-                    "relative_path": "${OUTPUT}"
-                }
-            }
-            if not relative:
-                # Add relative extension
-                extensions.append(rel_ext)
+        # Ensure previews are using absolute paths or relative paths
+        if self.preview:
+            # Add pathconverter extension if not already set.
+            if not path_converter:
+                extensions.append(
+                    {
+                        "name": "pymdown.pathconverter",
+                        "config":{
+                            "base_path": "${BASE_PATH}",
+                            "relative_path": "${OUTPUT}",
+                            "absolute": preview_path_conversion != 'relative'
+                        }
+                    }
+                )
             else:
-                # Make sure output relative location is the file's output
-                # for preview since relative is already defined
+                # Make sure file output location is the relative ouput location for previews
                 for i in range(0, len(extensions)):
                     name = extensions[i].get('name', None)
-                    if name == 'pymdown.relativepath':
+                    if name == 'pymdown.pathconverter':
                         if "config" not in extensions[i]:
                             extensions[i]['config'] = {}
                         extensions[i]['config']["relative_path"] = "${OUTPUT}"
