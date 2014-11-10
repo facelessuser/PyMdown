@@ -158,9 +158,9 @@ def get_references(references, basepath, encoding):
             # Is relative path
             base_temp = normpath(join(basepath, file_name)) if basepath is not None else None
             user_temp = normpath(join(user_path, file_name)) if user_path is not None else None
-            if exists(base_temp) and isfile(base_temp):
+            if base_temp is not None and exists(base_temp) and isfile(base_temp):
                 ref_path = base_temp
-            elif exists(user_temp) and isfile(user_temp):
+            elif user_temp is not None and exists(user_temp) and isfile(user_temp):
                 ref_path = user_temp
             else:
                 # Is an unknown path

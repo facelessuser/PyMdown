@@ -332,9 +332,9 @@ class Html(object):
                     # Is relative path
                     base_temp = normpath(join(self.basepath, resource)) if self.basepath is not None else None
                     user_temp = normpath(join(self.user_path, resource)) if self.user_path is not None else None
-                    if exists(base_temp) and isfile(base_temp):
+                    if base_temp is not None and exists(base_temp) and isfile(base_temp):
                         res_path = resource
-                    elif exists(user_temp) and isfile(user_temp):
+                    elif user_temp is not None and exists(user_temp) and isfile(user_temp):
                         res_path = relpath(user_temp, self.basepath) if self.basepath else user_temp
                     else:
                         res_path = None
