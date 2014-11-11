@@ -245,12 +245,14 @@ class Html(object):
         if (self.template_file is not None):
             template_path, encoding = splitenc(self.template_file)
             if not is_absolute(template_path) and self.basepath:
-                template_path = join(self.basepath, template_path)
+                template_base = join(self.basepath, template_path)
             if (
                 self.user_path is not None and
-                (not exists(template_path) or not isfile(template_path))
+                (not exists(template_base) or not isfile(template_base))
             ):
                 template_path = join(self.user_path, template_path)
+            else:
+                template_path = template_base
 
             try:
                 with codecs.open(template_path, "r", encoding=encoding) as f:
