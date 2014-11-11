@@ -128,10 +128,18 @@ class Settings(object):
         settings["page"]["basepath"] = self.resolve_base_path(basepath)
         if frontmatter is not None:
             self.apply_frontmatter(frontmatter, settings)
+        # Store destination as our output reference directory.
+        # This is used for things like converting relative paths.
+        # If there is no output location, try to come up with a rational
+        # output reference directory by falling back to the source file.
         if settings['page']['destination'] is not None:
-            self.destination = abspath(settings['page']['destination'])
+            self.relative_out = dirname(abspath(settings['page']['destination']))
+        elif file_name:
+            self.relative_out = dirname(abspath(self.file_name))
+        # elif settings["page"]["basepath"] is not None:
+        #     self.relative_out = settings["page"]["basepath"]
         else:
-            self.destination = None
+            self.relative_out = None
         if self.force_stdout:
             settings["page"]["destination"] = None
         if self.force_no_template:
@@ -425,10 +433,11 @@ class Settings(object):
         for index in reversed(indexes):
             del extensions[index]
 
-        preview_path_conversion = settings["settings"].get("preview_path_conversion", "absolute")
+        disable_path_conversion = settings["settings"].get("disable_path_conversion", False)
+        path_conversion_absolute = settings["settings"].get("path_conversion_absolute", False)
 
         # Ensure previews are using absolute paths or relative paths
-        if self.preview:
+        if self.preview or not disable_path_conversion:
             # Add pathconverter extension if not already set.
             if not path_converter:
                 extensions.append(
@@ -437,11 +446,11 @@ class Settings(object):
                         "config":{
                             "base_path": "${BASE_PATH}",
                             "relative_path": "${OUTPUT}",
-                            "absolute": preview_path_conversion != 'relative'
+                            "absolute": path_conversion_absolute
                         }
                     }
                 )
-            else:
+            elif self.preview:
                 # Make sure file output location is the relative ouput location for previews
                 for i in range(0, len(extensions)):
                     name = extensions[i].get('name', None)

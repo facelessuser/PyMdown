@@ -158,18 +158,27 @@ class Html(object):
     def repl_file(self, m):
         quoted = m.group(1) == "quotedpath"
         file_name = m.group(2).strip()
-        relative_path = file_name.startswith('&')
-        absolute_path = file_name.startswith('*')
 
-        # Remove relative path marker
-        if relative_path:
-            file_name = file_name.replace('&', '', 1)
+        # Check for markers
+        direct_include = True
+        omit_conversion = file_name.startswith('!')
+        direct_include = file_name.startswith('^')
 
-        # Remove absolute path markder
-        elif absolute_path:
-            file_name = file_name.replace('*', '', 1)
+        if omit_conversion:
+            file_name = file_name.replace('!', '', 1)
+        elif direct_include:
+            file_name = file_name.replace('^', '', 1)
 
-        user_path = join(get_user_path(), file_name)
+        if not omit_conversion:
+            omit_conversion = self.settings.get("disable_path_conversion", False)
+
+        absolute_conversion = self.settings.get("path_conversion_absolute", True)
+
+        user_path = get_user_path()
+
+        # This doesn't actually import files currently, so we ignore '!'
+        resource, encoding = splitenc(resource)
+        direct_include = False
 
         is_abs = is_absolute(file_name)
 
@@ -184,6 +193,8 @@ class Html(object):
                 file_path = base_temp
             elif exists(user_temp) and isfile(user_temp):
                 file_path = user_temp
+            else:
+                file_path = None
         elif is_abs and exists(file_name) and isfile(file_name):
             # Is absolute path
             file_path = file_name
@@ -191,17 +202,8 @@ class Html(object):
             # Is an unknown path
             file_path = None
 
-        # If using preview mode, adjust paths to be relative or absolute if not including content
-        if self.preview and not relative_path and not absolute_path:
-            mode = self.settings.get('preview_path_conversion', 'absolute')
-            if mode == 'relative':
-                relative_path = True
-            else:
-                absolute_path = True
-
         # Determine the output directory if possible
         output = dirname(abspath(self.file.name)) if self.file.name else None
-
 
         if file_path is not None:
             # Calculate the absolute path
@@ -210,21 +212,32 @@ class Html(object):
             else:
                 abs_path = abspath(join(self.basepath, file_path))
 
-            # Adjust path depending on whehter we are desiring
+            # Adjust path depending on whether we are desiring
             # absolute output or relative output
-            if relative_path and output:
-                file_path = relpath(file_path, output)
-            elif absolute_path:
-                file_path = abs_path
+            if (self.preview or not omit_conversion):
+                if not absolute_conversion and output:
+                    file_path = relpath(abs_path, output)
+                elif absolute_conversion:
+                    file_path = abs_path
 
-            file_name = file_path.replace('\\', '/')
+            if not direct_include:
+                file_name = file_path.replace('\\', '/')
+                if quoted:
+                    file_name = '"%s"' % escape(file_name)
+            else:
+                # Return the content of the file instead of the file name
+                file_name = load_text_resource(abs_path, encoding=encoding)
+                if file_name is None:
+                    file_name = ''
 
-        return file_name if not quoted else '"%s"' % escape(file_name)
+        return file_name
 
     def write_html_start(self):
         """ Output the HTML head and body up to the {{ content }} specifier """
         if (self.template_file is not None):
             template_path, encoding = splitenc(self.template_file)
+            if not is_absolute(template_path) and self.basepath:
+                template_path = join(self.basepath, template_path)
             if (
                 self.user_path is not None and
                 (not exists(template_path) or not isfile(template_path))
@@ -305,23 +318,18 @@ class Html(object):
 
                 # Check for markers
                 direct_include = True
-                relative_path = resource.startswith('&')
-                direct_include = not resource.startswith('!')
-                absolute_path = resource.startswith('*')
+                omit_conversion = resource.startswith('!')
+                direct_include = resource.startswith('^')
 
-                # Remove relative path marker
-                if relative_path:
-                    resource = resource.replace('&', '', 1)
-                    direct_include = False
-
-                # Remove absolute path markder
-                elif absolute_path:
-                    resource = resource.replace('*', '', 1)
-                    direct_include = False
-
-                # Remove inclusion reject marker
-                elif not direct_include:
+                if omit_conversion:
                     resource = resource.replace('!', '', 1)
+                elif direct_include:
+                    resource = resource.replace('^', '', 1)
+
+                if not omit_conversion:
+                    omit_conversion = self.settings.get("disable_path_conversion", False)
+
+                absolute_conversion = self.settings.get("path_conversion_absolute", False)
 
                 # Find path relative to basepath or global user path
                 # If basepath is defined set paths relative to the basepath if possible
@@ -345,14 +353,6 @@ class Html(object):
                     # Is a url or an unknown path
                     res_path = None
 
-                # If using preview mode, adjust paths to be relative or absolute if not including content
-                if not direct_include and self.preview and not relative_path and not absolute_path:
-                    mode = self.settings.get('preview_path_conversion', 'absolute')
-                    if mode == 'relative':
-                        relative_path = True
-                    else:
-                        absolute_path = True
-
                 # Determine the output directory if possible
                 output = dirname(abspath(self.file.name)) if self.file.name else None
 
@@ -373,10 +373,11 @@ class Html(object):
 
                     # Adjust path depending on whehter we are desiring
                     # absolute output or relative output
-                    if relative_path and output:
-                        res_path = relpath(res_path, output)
-                    elif absolute_path:
-                        res_path = abs_path
+                    if (self.preview or not omit_conversion):
+                        if not absolute_conversion and output:
+                            res_path = relpath(abs_path, output)
+                        elif absolute_conversion:
+                            res_path = abs_path
 
                     # We check the absolute path against the current list and add the respath if not present
                     if abs_path not in self.added_res:

@@ -346,19 +346,13 @@ class Convert(object):
         if status == PASS:
             # Convert markdown to HTML
             try:
-                if html.file.name:
-                    destination = dirname(html.file.name)
-                elif self.config.destination:
-                    destination = dirname(self.config.destination)
-                else:
-                    destination = None
                 converter = MdConverts(
                     text,
                     smart_emphasis=self.settings["settings"].get('smart_emphasis', True),
                     lazy_ol=self.settings["settings"].get('lazy_ol', True),
                     tab_length=self.settings["settings"].get('tab_length', 4),
                     base_path=self.settings["page"]["basepath"],
-                    destination=destination,
+                    relative_output=dirname(html.file.name) if html.file.name else self.config.relative_out,
                     enable_attributes=self.settings["settings"].get('enable_attributes', True),
                     output_format=self.settings["settings"].get('output_format', 'xhtml1'),
                     extensions=self.settings["settings"]["extensions"]
