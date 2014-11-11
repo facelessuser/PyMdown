@@ -35,8 +35,8 @@ else:
     unicode_string = unicode  # flake8: noqa
 
 RE_URL_START = re.compile(r"https?://")
-RE_TEMPLATE_FILE = re.compile(r"(?<!\{)\{\{\s*(getQuotedPath|getPath)\s*\((.*?)\)\s*\}\}(?!\})")
-RE_TEMPLATE_VARS = re.compile(r"(?<!\{)\{\{\s*(title|css|js|meta)\s*\}\}(?!\})")
+RE_TEMPLATE_FILE = re.compile(r"(\{*?)\{{2}\s*(getQuotedPath|getPath)\s*\((.*?)\)\s*\}{2}(\}*)")
+RE_TEMPLATE_VARS = re.compile(r"(\{*?)\{{2}\s*(title|css|js|meta)\s*\}{2}(\}*)")
 
 
 def escape(txt):
@@ -143,8 +143,12 @@ class Html(object):
                 )
 
     def repl_vars(self, m):
+        if m.group(0).startswith('{{{') and m.group(0).endswith('}}}'):
+            return m.group(0)[1:-1]
+        open = m.group(1) if m.group(1) else ''
+        close = m.group(3) if m.group(3) else ''
         meta = '\n'.join(self.meta) + '\n'
-        var = m.group(1)
+        var = m.group(2)
         if var == "meta":
             var = '\n'.join(self.meta) + '\n'
         elif var == "css":
@@ -153,11 +157,15 @@ class Html(object):
             var = ''.join(self.scripts)
         elif var == "title":
             var = cgi.escape(self.title)
-        return var
+        return open + var + close
 
     def repl_file(self, m):
-        quoted = m.group(1) == "getQuotedPath"
-        file_name = m.group(2).strip()
+        if m.group(0).startswith('{{{') and m.group(0).endswith('}}}'):
+            return m.group(0)[1:-1]
+        open = m.group(1) if m.group(1) else ''
+        close = m.group(4) if m.group(4) else ''
+        quoted = m.group(2) == "getQuotedPath"
+        file_name = m.group(3).strip()
 
         # Check for markers
         direct_include = True
@@ -230,7 +238,7 @@ class Html(object):
                 if file_name is None:
                     file_name = ''
 
-        return file_name
+        return open + file_name + close
 
     def write_html_start(self):
         """ Output the HTML head and body up to the {{ content }} specifier """
