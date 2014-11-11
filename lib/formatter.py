@@ -35,7 +35,7 @@ else:
     unicode_string = unicode  # flake8: noqa
 
 RE_URL_START = re.compile(r"https?://")
-RE_TEMPLATE_FILE = re.compile(r"(?<!\{)\{\{\s*(quotedpath|filepath)\s*\((.*?)\)\s*\}\}(?!\})")
+RE_TEMPLATE_FILE = re.compile(r"(?<!\{)\{\{\s*(getQuotedPath|getPath)\s*\((.*?)\)\s*\}\}(?!\})")
 RE_TEMPLATE_VARS = re.compile(r"(?<!\{)\{\{\s*(title|css|js|meta)\s*\}\}(?!\})")
 
 
@@ -156,7 +156,7 @@ class Html(object):
         return var
 
     def repl_file(self, m):
-        quoted = m.group(1) == "quotedpath"
+        quoted = m.group(1) == "getQuotedPath"
         file_name = m.group(2).strip()
 
         # Check for markers
@@ -177,7 +177,7 @@ class Html(object):
         user_path = get_user_path()
 
         # This doesn't actually import files currently, so we ignore '!'
-        resource, encoding = splitenc(resource)
+        file_name, encoding = splitenc(file_name)
         direct_include = False
 
         is_abs = is_absolute(file_name)
