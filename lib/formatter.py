@@ -26,25 +26,18 @@ except:
     pygments = False
     pass
 
-
 PY3 = sys.version_info >= (3, 0)
 
 if PY3:
+    from urllib.parse import quote, unquote
     unicode_string = str
 else:
+    from urllib import quote, unquote
     unicode_string = unicode  # flake8: noqa
 
 RE_URL_START = re.compile(r"https?://")
 RE_TEMPLATE_FILE = re.compile(r"(\{*?)\{{2}\s*(getQuotedPath|getPath)\s*\((.*?)\)\s*\}{2}(\}*)")
 RE_TEMPLATE_VARS = re.compile(r"(\{*?)\{{2}\s*(title|css|js|meta)\s*\}{2}(\}*)")
-
-
-def escape(txt):
-    txt = txt.replace('&', '&amp;')
-    txt = txt.replace('<', '&lt;')
-    txt = txt.replace('>', '&gt;')
-    txt = txt.replace('"', '&quot;')
-    return txt
 
 
 class PyMdownFormatterException(Exception):
@@ -54,7 +47,7 @@ class PyMdownFormatterException(Exception):
 def get_js(js, link=False, encoding='utf-8'):
     """ Get the specified JS code """
     if link:
-        return '<script type="text/javascript" charset="%s" src="%s"></script>\n' % (encoding, escape(js))
+        return '<script type="text/javascript" charset="%s" src="%s"></script>\n' % (encoding, quote(js))
     else:
         return '<script type="text/javascript">\n%s\n</script>\n' % js if js is not None else ""
 
@@ -62,7 +55,7 @@ def get_js(js, link=False, encoding='utf-8'):
 def get_style(style, link=False, encoding=None):
     """ Get the specified CSS code """
     if link:
-        return '<link href="%s" rel="stylesheet" type="text/css">\n' % escape(style)
+        return '<link href="%s" rel="stylesheet" type="text/css">\n' % quote(style)
     else:
         return '<style>\n%s\n</style>\n' % style if style is not None else ""
 
@@ -231,7 +224,7 @@ class Html(object):
             if not direct_include:
                 file_name = file_path.replace('\\', '/')
                 if quoted:
-                    file_name = '"%s"' % escape(file_name)
+                    file_name = '"%s"' % quote(file_name)
             else:
                 # Return the content of the file instead of the file name
                 file_name = load_text_resource(abs_path, encoding=encoding)

@@ -30,6 +30,12 @@ from os.path import exists, normpath, join, relpath
 import re
 import sys
 
+PY3 = sys.version_info >= (3, 0)
+if PY3:
+    from urllib.parse import quote, unquote
+else:
+    from urllib import quote, unquote
+
 if sys.platform.startswith('win'):
     _PLATFORM = "windows"
 elif sys.platform == "darwin":
@@ -73,27 +79,10 @@ RE_TAG_LINK_ATTR = re.compile(
 )
 
 
-def escape(txt):
-    txt = txt.replace('&', '&amp;')
-    txt = txt.replace('<', '&lt;')
-    txt = txt.replace('>', '&gt;')
-    txt = txt.replace('"', '&quot;')
-    return txt
-
-
-def unescape(txt):
-    txt = txt.replace('&amp;', '&')
-    txt = txt.replace('&lt;', '<')
-    txt = txt.replace('&gt;', '>')
-    txt = txt.replace('&#39;', "'")
-    txt = txt.replace('&quot;', '"')
-    return txt
-
-
 def repl_relative(m, base_path, relative_path):
     """ Replace path with relative path """
 
-    path = unescape(m.group('path')[1:-1])
+    path = unquote(m.group('path')[1:-1])
     link = m.group(0)
     convert = False
     abs_path = None
@@ -135,11 +124,11 @@ def repl_relative(m, base_path, relative_path):
 
         if convert:
             # Convert path relative to the base path
-            link = m.group('name') + "\"" + escape(relpath(abs_path, relative_path).replace('\\', '/')) + "\""
+            link = m.group('name') + "\"" + quote(relpath(abs_path, relative_path).replace('\\', '/')) + "\""
         else:
             # We have an absolute path, but we can't make it relative
             # to base path, so we will just use the absolute.
-            link = m.group('name') + "\"" + escape(abs_path) + "\""
+            link = m.group('name') + "\"" + quote(abs_path) + "\""
 
     return link
 
@@ -147,7 +136,7 @@ def repl_relative(m, base_path, relative_path):
 def repl_absolute(m, base_path):
     """ Replace path with absolute path """
 
-    path = unescape(m.group('path')[1:-1])
+    path = unquote(m.group('path')[1:-1])
     link = m.group(0)
     re_win_drive = re.compile(r"(^[A-Za-z]{1}:(?:\\|/))")
 
@@ -157,7 +146,7 @@ def repl_absolute(m, base_path):
     ):
         absolute = normpath(join(base_path, path))
         if exists(absolute):
-            link = m.group('name') + "\"" + escape(absolute.replace("\\", "/")) + "\""
+            link = m.group('name') + "\"" + quote(absolute.replace("\\", "/")) + "\""
     return link
 
 

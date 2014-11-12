@@ -23,6 +23,12 @@ import base64
 import re
 # import traceback
 
+PY3 = sys.version_info >= (3, 0)
+if PY3:
+    from urllib.parse import unquote
+else:
+    from urllib import unquote
+
 if sys.platform.startswith('win'):
     _PLATFORM = "windows"
 elif sys.platform == "darwin":
@@ -64,19 +70,10 @@ RE_TAG_LINK_ATTR = re.compile(
 )
 
 
-def unescape(txt):
-    txt = txt.replace('&amp;', '&')
-    txt = txt.replace('&lt;', '<')
-    txt = txt.replace('&gt;', '>')
-    txt = txt.replace('&#39;', "'")
-    txt = txt.replace('&quot;', '"')
-    return txt
-
-
 def repl_path(m, base_path):
     """ Replace path with b64 encoded data """
 
-    path = unescape(m.group('path')[1:-1])
+    path = unquote(m.group('path')[1:-1])
     link = m.group(0)
     absolute = False
     re_win_drive = re.compile(r"(^[A-Za-z]{1}:(?:\\|/))")
