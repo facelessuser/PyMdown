@@ -244,8 +244,12 @@ class Html(object):
         """ Output the HTML head and body up to the {{ content }} specifier """
         if (self.template_file is not None):
             template_path, encoding = splitenc(self.template_file)
+
             if not is_absolute(template_path) and self.basepath:
                 template_base = join(self.basepath, template_path)
+            else:
+                template_base = ''
+
             if (
                 self.user_path is not None and
                 (not exists(template_base) or not isfile(template_base))
