@@ -276,22 +276,31 @@
 
 .markdown-body table th {
   border-top: 1px solid #e0e0e0;
-  border-bottom:1px solid #e0e0e0;
   background: #ededed;
 }
 
+.markdown-body table thead tr:last-child th {
+  border-bottom:1px solid #e0e0e0;
+}
+
 .markdown-body table tr:first-child>th:first-child {
-  border-left: 1px solid #e0e0e0;
   -moz-border-radius-topleft:3px;
   -webkit-border-top-left-radius:3px;
   border-top-left-radius:3px;
 }
 
 .markdown-body table tr:first-child>th:last-child {
-  border-right: 1px solid #e0e0e0;
   -moz-border-radius-topright:3px;
   -webkit-border-top-right-radius:3px;
   border-top-right-radius:3px;
+}
+
+.markdown-body table tr>th:first-child {
+  border-left: 1px solid #e0e0e0;
+}
+
+.markdown-body table tr>th:last-child {
+  border-right: 1px solid #e0e0e0;
 }
 
 .markdown-body table td:last-child {
@@ -1116,6 +1125,12 @@
     page-break-inside: avoid;
   }
 
+  .markdown-body kbd {
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+  }
+
   .markdown-body .progress,
   .markdown-body .progress-bar {
     -moz-box-shadow: none;
@@ -1143,14 +1158,17 @@
 
   .markdown-body table th {
     border-top: 1px solid #ddd;
-    border-bottom: 1px solid #ddd;
   }
 
-  .markdown-body table tr:first-child>th:first-child {
+  .markdown-body table thead tr:last-child th {
+    border-bottom:1px solid #ddd;
+  }
+
+  .markdown-body table tr>th:first-child {
     border-left: 1px solid #ddd;
   }
 
-  .markdown-body table tr:first-child>th:last-child {
+  .markdown-body table tr>th:last-child {
     border-right: 1px solid #ddd;
   }
 
