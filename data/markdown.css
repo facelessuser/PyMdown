@@ -256,7 +256,7 @@
   margin-bottom: 16px;
 }
 
-table {
+.markdown-body table {
   display: block;
   width: 100%;
   overflow: auto;
@@ -269,53 +269,53 @@ table {
   border-radius:3px;
 }
 
-table th,
-table td {
+.markdown-body table th,
+.markdown-body table td {
   padding: 6px 13px;
 }
 
-table th {
+.markdown-body table th {
   border-top: 1px solid #e0e0e0;
   border-bottom:1px solid #e0e0e0;
   background: #ededed;
 }
 
-table tr:first-child th:first-child {
+.markdown-body table tr:first-child>th:first-child {
   border-left: 1px solid #e0e0e0;
   -moz-border-radius-topleft:3px;
   -webkit-border-top-left-radius:3px;
   border-top-left-radius:3px;
 }
 
-table tr:first-child th:last-child {
+.markdown-body table tr:first-child>th:last-child {
   border-right: 1px solid #e0e0e0;
   -moz-border-radius-topright:3px;
   -webkit-border-top-right-radius:3px;
   border-top-right-radius:3px;
 }
 
-table td:last-child {
+.markdown-body table td:last-child {
   border-right: 1px solid #e0e0e0;
 }
 
-table td {
+.markdown-body table td {
   border-top: 1px solid #ffffff;
   border-bottom:1px solid #e0e0e0;
   border-left: 1px solid #e0e0e0;
   background: #fafafa;
 }
 
-table tr:nth-child(2n) td {
+.markdown-body table tr:nth-child(2n)>td {
   background: #ffffff;
 }
 
-table tr:last-child td:first-child {
+.markdown-body table tr:last-child>td:first-child {
   -moz-border-radius-bottomleft:3px;
   -webkit-border-bottom-left-radius:3px;
   border-bottom-left-radius:3px;
 }
 
-table tr:last-child td:last-child {
+.markdown-body table tr:last-child>td:last-child {
   -moz-border-radius-bottomright:3px;
   -webkit-border-bottom-right-radius:3px;
   border-bottom-right-radius:3px;
@@ -1071,7 +1071,6 @@ table tr:last-child td:last-child {
 @media print {
   .markdown-body * {
     background: transparent !important;
-    color: black !important;
     filter:none !important;
     -ms-filter: none !important;
   }
@@ -1113,19 +1112,53 @@ table tr:last-child td:last-child {
   }
 
   .markdown-body pre {
-    border: 1px solid #999;
     padding-right: 1em;
     page-break-inside: avoid;
   }
 
   .markdown-body .progress,
   .markdown-body .progress-bar {
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
     box-shadow: none;
+  }
+
+  .markdown-body .progress {
+    border: 1px solid #ddd;
+  }
+
+  .markdown-body .progress-bar {
+    height: 22px;
+    border-right: 1px solid #ddd;
   }
 
   .markdown-body tr,
   .markdown-body img {
     page-break-inside: avoid;
+  }
+
+  .markdown-body table th {
+    border-top: 1px solid #ddd;
+    border-bottom: 1px solid #ddd;
+    border-radius: 0;
+  }
+
+  .markdown-body table tr:first-child>th:first-child {
+    border-left: 1px solid #ddd;
+  }
+
+  .markdown-body table tr:first-child>th:last-child {
+    border-right: 1px solid #ddd;
+  }
+
+  .markdown-body table td:last-child {
+    border-right: 1px solid #ddd;
+  }
+
+  .markdown-body table td {
+    border-top: 0;
+    border-bottom: 1px solid #ddd;
+    border-left: 1px solid #ddd;
   }
 
   .markdown-body img {
