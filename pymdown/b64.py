@@ -105,6 +105,7 @@ def repl_path(m, base_path):
                             )
                     except:
                         pass
+                    break
     return link
 
 

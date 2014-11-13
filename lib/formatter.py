@@ -16,7 +16,8 @@ import codecs
 import traceback
 import re
 import tempfile
-from os.path import exists, isfile, join, abspath, relpath, dirname, normpath
+import base64
+from os.path import exists, isfile, join, abspath, relpath, dirname, normpath, splitext
 from .resources import load_text_resource, splitenc, get_user_path, is_absolute
 from .logger import Logger
 try:
@@ -29,15 +30,21 @@ except:
 PY3 = sys.version_info >= (3, 0)
 
 if PY3:
-    from urllib.parse import quote, unquote
+    from urllib.parse import quote
     unicode_string = str
 else:
-    from urllib import quote, unquote
+    from urllib import quote
     unicode_string = unicode  # flake8: noqa
 
 RE_URL_START = re.compile(r"https?://")
-RE_TEMPLATE_FILE = re.compile(r"(\{*?)\{{2}\s*(getQuotedPath|getPath)\s*\((.*?)\)\s*\}{2}(\}*)")
+RE_TEMPLATE_FILE = re.compile(r"(\{*?)\{{2}\s*(getQuotedPath|getPath|embedImage|embedFile)\s*\((.*?)\)\s*\}{2}(\}*)")
 RE_TEMPLATE_VARS = re.compile(r"(\{*?)\{{2}\s*(title|css|js|meta)\s*\}{2}(\}*)")
+
+image_types = {
+    (".png",): "image/png",
+    (".jpg", ".jpeg"): "image/jpeg",
+    (".gif",): "image/gif"
+}
 
 
 class PyMdownFormatterException(Exception):
@@ -47,7 +54,7 @@ class PyMdownFormatterException(Exception):
 def get_js(js, link=False, encoding='utf-8'):
     """ Get the specified JS code """
     if link:
-        return '<script type="text/javascript" charset="%s" src="%s"></script>\n' % (encoding, quote(js))
+        return '<script type="text/javascript" charset="%s" src="%s"></script>\n' % (encoding, js)
     else:
         return '<script type="text/javascript">\n%s\n</script>\n' % js if js is not None else ""
 
@@ -55,7 +62,7 @@ def get_js(js, link=False, encoding='utf-8'):
 def get_style(style, link=False, encoding=None):
     """ Get the specified CSS code """
     if link:
-        return '<link href="%s" rel="stylesheet" type="text/css">\n' % quote(style)
+        return '<link href="%s" rel="stylesheet" type="text/css">\n' % style
     else:
         return '<style>\n%s\n</style>\n' % style if style is not None else ""
 
@@ -155,31 +162,14 @@ class Html(object):
     def repl_file(self, m):
         if m.group(0).startswith('{{{') and m.group(0).endswith('}}}'):
             return m.group(0)[1:-1]
-        open = m.group(1) if m.group(1) else ''
-        close = m.group(4) if m.group(4) else ''
+        m_open = m.group(1) if m.group(1) else ''
+        m_close = m.group(4) if m.group(4) else ''
         quoted = m.group(2) == "getQuotedPath"
         file_name = m.group(3).strip()
-
-        # Check for markers
-        direct_include = True
-        omit_conversion = file_name.startswith('!')
-        direct_include = file_name.startswith('^')
-
-        if omit_conversion:
-            file_name = file_name.replace('!', '', 1)
-        elif direct_include:
-            file_name = file_name.replace('^', '', 1)
-
-        if not omit_conversion:
-            omit_conversion = self.settings.get("disable_path_conversion", False)
-
+        embed_image = None
         absolute_conversion = self.settings.get("path_conversion_absolute", True)
-
         user_path = get_user_path()
-
-        # This doesn't actually import files currently, so we ignore '!'
         file_name, encoding = splitenc(file_name)
-        direct_include = False
 
         is_abs = is_absolute(file_name)
 
@@ -215,23 +205,40 @@ class Html(object):
 
             # Adjust path depending on whether we are desiring
             # absolute output or relative output
-            if (self.preview or not omit_conversion):
-                if not absolute_conversion and output:
-                    file_path = relpath(abs_path, output)
-                elif absolute_conversion:
-                    file_path = abs_path
+            if not absolute_conversion and output:
+                file_path = relpath(abs_path, output)
+            elif absolute_conversion:
+                file_path = abs_path
 
-            if not direct_include:
-                file_name = file_path.replace('\\', '/')
-                if quoted:
-                    file_name = '"%s"' % quote(file_name)
-            else:
+            if m.group(2) == "embedImage":
+                # If embedding an image, get base64 image type or return path
+                ext = splitext(file_name)[1]
+                embedded = False
+                for b64_ext in image_types:
+                    if ext in b64_ext:
+                        try:
+                            with open(abs_path, "rb") as f:
+                                file_name = "data:%s;base64,%s" % (
+                                    image_types[b64_ext],
+                                    base64.b64encode(f.read()).decode('ascii')
+                                )
+                                embedded = True
+                        except:
+                            pass
+                        break
+                if not embedded:
+                    file_name = ''
+            elif m.group(2) == "embedFile":
                 # Return the content of the file instead of the file name
                 file_name = load_text_resource(abs_path, encoding=encoding)
                 if file_name is None:
                     file_name = ''
+            else:
+                file_name = file_path.replace('\\', '/')
+                if quoted:
+                    file_name = quote(file_name)
 
-        return open + file_name + close
+        return m_open + file_name + m_close
 
     def write_html_start(self):
         """ Output the HTML head and body up to the {{ content }} specifier """
@@ -389,7 +396,7 @@ class Html(object):
                     # We check the absolute path against the current list and add the respath if not present
                     if abs_path not in self.added_res:
                         if not direct_include:
-                            res_path = res_path.replace('\\', '/')
+                            res_path = quote(res_path.replace('\\', '/'))
                             link = True
                         else:
                             res_path = load_text_resource(abs_path, encoding=encoding)
@@ -399,7 +406,7 @@ class Html(object):
 
                 # Not a known path and not a url, just add as is
                 elif resource not in self.added_res:
-                    resources.append(res_get(resource.replace('\\', '/'), link=True, encoding=encoding))
+                    resources.append(res_get(quote(resource.replace('\\', '/')), link=True, encoding=encoding))
                     self.added_res.add(resource)
 
     def load_css(self, style):
