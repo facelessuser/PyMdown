@@ -32,9 +32,11 @@ import sys
 
 PY3 = sys.version_info >= (3, 0)
 if PY3:
-    from urllib.parse import quote, unquote
+    from urllib.request import pathname2url, url2pathname
+    from urllib.parse import urlparse, urlunparse
 else:
-    from urllib import quote, unquote
+    from urllib import pathname2url, url2pathname
+    from urlparse import urlparse, urlunparse
 
 if sys.platform.startswith('win'):
     _PLATFORM = "windows"
@@ -43,20 +45,10 @@ elif sys.platform == "darwin":
 else:
     _PLATFORM = "linux"
 
-exclusion_list = tuple(
-    [
-        'https://', 'http://', '#',
-        "data:image/jpeg;base64,", "data:image/png;base64,", "data:image/gif;base64,"
-    ] + (['\\'] if _PLATFORM == "windows" else [])
-)
-
-absolute_list = tuple(
-    [
-        'file://', '/'
-    ] + (['\\'] if _PLATFORM == "windows" else [])
-)
-
-RE_WIN_DRIVE = re.compile(r"(^(?P<drive>[A-Za-z]{1}):(?:\\|/))")
+RE_PATH = re.compile(r'file|[A-Za-z]')
+RE_WIN_DRIVE = re.compile(r"[A-Za-z]:?")
+RE_WIN_DRIVE_PATH = re.compile(r"(^(?P<drive>[A-Za-z]{1}):(?:\\|/))")
+RE_URL = re.compile('(http|ftp)s?|data|mailto|tel|news')
 
 RE_TAG_HTML = r'''(?xus)
     (?:
@@ -79,74 +71,119 @@ RE_TAG_LINK_ATTR = re.compile(
 )
 
 
+def parse_url(url):
+    """
+    Parse the url and
+    try to determine if the following is a file path or
+    (as we will call anything else) a url
+    """
+
+    is_url = False
+    is_absolute = False
+    scheme, netloc, path, params, query, fragment = urlparse(url)
+
+    if RE_URL.match(scheme):
+        # Clearly a url
+        is_url = True
+    elif scheme == '' and netloc == '' and path == '':
+        # Maybe just a url fragment
+        is_url = True
+    elif scheme == '' or RE_PATH.match(scheme):
+        if _PLATFORM == "windows":
+            if scheme == 'file' and RE_WIN_DRIVE.match(netloc):
+                # file://c:/path
+                path = netloc + path
+                netloc = ''
+                scheme = ''
+                is_absolute = True
+            elif RE_WIN_DRIVE.match(scheme):
+                # c:/path
+                path = '%s:%s' % (scheme, path)
+                scheme = ''
+                is_absolute = True
+            elif scheme != '' or netloc != '':
+                # Unknown url scheme
+                is_url = True
+            elif path.startswith('//'):
+                # //Some/Network/location
+                is_absolute = True
+        else:
+            if scheme not in ('', 'file') and netloc != '':
+                # A non-nix filepath or strange url
+                is_url = True
+            else:
+                # Check if nix path is absolute or not
+                if path.startswith('/'):
+                    is_absolute = True
+                scheme = ''
+    return (scheme, netloc, path, params, query, fragment, is_url, is_absolute)
+
+
 def repl_relative(m, base_path, relative_path):
     """ Replace path with relative path """
 
-    path = unquote(m.group('path')[1:-1])
     link = m.group(0)
-    convert = False
-    abs_path = None
+    try:
+        scheme, netloc, path, params, query, fragment, is_url, is_absolute = parse_url(m.group('path')[1:-1])
+    except:
+        # Parsing crashed an burned; no need to continue.
+        return link
 
-    if (not path.startswith(exclusion_list)):
-        abs_path = path
-        if (
-            not path.startswith(absolute_list) and
-            not (_PLATFORM == "windows" and RE_WIN_DRIVE.match(path) is not None)
-        ):
+    if not is_url:
+        # Get the absolute path of the file or return
+        # if we can't resolve the path
+        path = url2pathname(path)
+        abs_path = None
+        if (not is_absolute):
             # Convert current relative path to absolute
-            absolute = normpath(join(base_path, path))
-            if exists(absolute):
-                abs_path = absolute.replace("\\", "/")
-            else:
-                return link
+            temp = normpath(join(base_path, path))
+            if exists(temp):
+                abs_path = temp.replace("\\", "/")
         else:
-            # Strip 'file://'
-            if path.startswith('file://'):
-                abs_path = path.replace('file://', '', 1)
-            else:
-                abs_path = path
-        if (_PLATFORM == "windows"):
-            # Make sure basepath starts with same drive location as target
-            # If they don't match, we will stay with absolute path.
-            if (base_path.startswith('//') and base_path.startswith('//')):
-                convert = True
-            else:
-                base_drive = RE_WIN_DRIVE.match(base_path)
-                path_drive = RE_WIN_DRIVE.match(abs_path)
-                if (
-                    (base_drive and path_drive) and
-                    base_drive.group('drive').lower() == path_drive.group('drive').lower()
-                ):
-                    convert = True
-        else:
-            # OSX and Linux
-            convert = True
+            abs_path = path
 
-        if convert:
-            # Convert path relative to the base path
-            link = m.group('name') + "\"" + quote(relpath(abs_path, relative_path).replace('\\', '/')) + "\""
-        else:
-            # We have an absolute path, but we can't make it relative
-            # to base path, so we will just use the absolute.
-            link = m.group('name') + "\"" + quote(abs_path) + "\""
+        if abs_path is not None:
+            convert = False
+            # Determine if we should convert the relative path
+            # (or see if we can realistically convert the path)
+            if (_PLATFORM == "windows"):
+                # Make sure basepath starts with same drive location as target
+                # If they don't match, we will stay with absolute path.
+                if (base_path.startswith('//') and base_path.startswith('//')):
+                    convert = True
+                else:
+                    base_drive = RE_WIN_DRIVE_PATH.match(base_path)
+                    path_drive = RE_WIN_DRIVE_PATH.match(abs_path)
+                    if (
+                        (base_drive and path_drive) and
+                        base_drive.group('drive').lower() == path_drive.group('drive').lower()
+                    ):
+                        convert = True
+            else:
+                # OSX and Linux
+                convert = True
+
+            # Convert the path, url encode it, and format it as a link
+            if convert:
+                path = pathname2url(relpath(abs_path, relative_path).replace('\\', '/'))
+            else:
+                path = pathname2url(abs_path)
+            link = '%s"%s"' % (m.group('name'), urlunparse((scheme, netloc, path, params, query, fragment)))
 
     return link
 
 
 def repl_absolute(m, base_path):
     """ Replace path with absolute path """
-
-    path = unquote(m.group('path')[1:-1])
     link = m.group(0)
-    re_win_drive = re.compile(r"(^[A-Za-z]{1}:(?:\\|/))")
+    scheme, netloc, path, params, query, fragment, is_url, is_absolute = parse_url(m.group('path')[1:-1])
 
-    if (
-        not path.startswith(exclusion_list) and
-        not (_PLATFORM == "windows" and re_win_drive.match(path) is not None)
-    ):
-        absolute = normpath(join(base_path, path))
-        if exists(absolute):
-            link = m.group('name') + "\"" + quote(absolute.replace("\\", "/")) + "\""
+    path = url2pathname(path)
+
+    if (not is_absolute and not is_url):
+        temp = normpath(join(base_path, path))
+        if exists(temp):
+            link = m.group('name') + "\"" + pathname2url(temp.replace("\\", "/")) + "\""
     return link
 
 

@@ -25,9 +25,9 @@ import re
 
 PY3 = sys.version_info >= (3, 0)
 if PY3:
-    from urllib.parse import unquote
+    from urllib.request import url2pathname
 else:
-    from urllib import unquote
+    from urllib import url2pathname
 
 if sys.platform.startswith('win'):
     _PLATFORM = "windows"
@@ -42,9 +42,8 @@ file_types = {
     (".gif",): "image/gif"
 }
 
-exclusion_list = tuple(
-    ['https://', 'http://', '#'] +
-    ["data:%s;base64," % ft for ft in file_types.values()]
+exclusion_list = (
+    'https://', 'http://', 'ftp://', 'ftps://', '#', 'mailto:', 'tel:', 'news:', 'data:'
 )
 
 RE_TAG_HTML = re.compile(
@@ -73,7 +72,7 @@ RE_TAG_LINK_ATTR = re.compile(
 def repl_path(m, base_path):
     """ Replace path with b64 encoded data """
 
-    path = unquote(m.group('path')[1:-1])
+    path = url2pathname(m.group('path')[1:-1])
     link = m.group(0)
     absolute = False
     re_win_drive = re.compile(r"(^[A-Za-z]{1}:(?:\\|/))")

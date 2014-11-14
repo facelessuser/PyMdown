@@ -30,13 +30,13 @@ except:
 PY3 = sys.version_info >= (3, 0)
 
 if PY3:
-    from urllib.parse import quote
+    from urllib.request import pathname2url
     unicode_string = str
 else:
-    from urllib import quote
+    from urllib import pathname2url
     unicode_string = unicode  # flake8: noqa
 
-RE_URL_START = re.compile(r"https?://")
+RE_URL_START = re.compile(r"^(http|ftp)s?://|tel:|mailto:|data:|news:|#")
 RE_TEMPLATE_FILE = re.compile(r"(\{*?)\{{2}\s*(getQuotedPath|getPath|embedImage|embedFile)\s*\((.*?)\)\s*\}{2}(\}*)")
 RE_TEMPLATE_VARS = re.compile(r"(\{*?)\{{2}\s*(title|css|js|meta)\s*\}{2}(\}*)")
 
@@ -236,7 +236,7 @@ class Html(object):
             else:
                 file_name = file_path.replace('\\', '/')
                 if quoted:
-                    file_name = quote(file_name)
+                    file_name = pathname2url(file_name)
 
         return m_open + file_name + m_close
 
@@ -396,7 +396,7 @@ class Html(object):
                     # We check the absolute path against the current list and add the respath if not present
                     if abs_path not in self.added_res:
                         if not direct_include:
-                            res_path = quote(res_path.replace('\\', '/'))
+                            res_path = pathname2url(res_path.replace('\\', '/'))
                             link = True
                         else:
                             res_path = load_text_resource(abs_path, encoding=encoding)
@@ -406,7 +406,7 @@ class Html(object):
 
                 # Not a known path and not a url, just add as is
                 elif resource not in self.added_res:
-                    resources.append(res_get(quote(resource.replace('\\', '/')), link=True, encoding=encoding))
+                    resources.append(res_get(pathname2url(resource.replace('\\', '/')), link=True, encoding=encoding))
                     self.added_res.add(resource)
 
     def load_css(self, style):
