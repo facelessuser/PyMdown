@@ -85,7 +85,7 @@ class BetterEmExtension(Extension):
 
     def __init__(self, *args, **kwargs):
         self.config = {
-            'smart_enable': ["all", "Treat connected words intelligently - Default: all"]
+            'smart_enable': ["underscore", "Treat connected words intelligently - Default: all"]
         }
 
         if "smart_enable" in kwargs and kwargs["smart_enable"] not in smart_enable_keys:
