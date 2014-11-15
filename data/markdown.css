@@ -925,6 +925,12 @@
   }
 }
 
+.markdown-body .gloss .progress-bar {
+  box-shadow:
+    inset 0 4px 12px rgba(255, 255, 255, .7),
+    inset 0 -12px 0 rgba(0, 0, 0, .05);
+}
+
 /* Critic Markup */
 .markdown-body .critic {
   font-family: inherit;
