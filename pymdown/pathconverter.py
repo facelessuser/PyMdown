@@ -139,7 +139,7 @@ def repl_relative(m, base_path, relative_path):
             temp = normpath(join(base_path, path))
             if exists(temp):
                 abs_path = temp.replace("\\", "/")
-        else:
+        elif exists(path):
             abs_path = path
 
         if abs_path is not None:
