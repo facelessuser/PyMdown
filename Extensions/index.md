@@ -1,3 +1,6 @@
+---
+title: Extensions
+---
 [TOC]
 # PyMdown Extensions
 PyMdown comes with a number extensions written specifically for it:
