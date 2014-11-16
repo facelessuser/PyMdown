@@ -307,7 +307,7 @@ disable_path_conversion: false
 ```
 
 !!! caution "Note"
-    PyMdown utilizes the [pathconverter](extensions/pathconverter.html) extension to convert links and references in the actual markdown content.  If `pathconverter` is manually configured instead of letting PyMdown handle it, these settings will have no effect.
+    PyMdown utilizes the [pathconverter](Extensions/PathConverter.html) extension to convert links and references in the actual markdown content.  If `pathconverter` is manually configured instead of letting PyMdown handle it, these settings will have no effect.
 
     The other exception is with previews.  In order for links and references to work in previews, they must be paths that are relative to the preview's temp directory or they must be absolute paths.  For this reason, PyMdown will always enable path conversions for previews.  If you have manually set up the `pathconverter` extension, preview's will overwrite the `relative_path` argument to ensure it is set to `${OUTPUT}` which will allow the preview to display content properly.
 

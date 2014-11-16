@@ -1,6 +1,6 @@
 [TOC]
 # Overview
-Caret optionally adds two different features which are syntatically built around the `^` character: **insert** which inserts :::html`<ins></ins>` tags and **superscript** which inserts :::html`<sup></sup>` tags.  Syntax behavior for smart and non-smart variants of **insert** models that of [betterem](extensions/BetterEm.html#differences).
+Caret optionally adds two different features which are syntatically built around the `^` character: **insert** which inserts :::html`<ins></ins>` tags and **superscript** which inserts :::html`<sup></sup>` tags.  Syntax behavior for smart and non-smart variants of **insert** models that of [betterem](Extensions/BetterEm.html#differences).
 
 # Options
 
