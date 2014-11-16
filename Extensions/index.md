@@ -5,7 +5,7 @@ title: Extensions
 # PyMdown Extensions
 PyMdown comes with a number extensions written specifically for it:
 
-| Extension                                               | "Name" |
+| Extension                                               | Name   |
 |---------------------------------------------------------|--------|
 | [pymdown](Extensions/PyMdown.html)                      | pymdown.pymdown |
 | &nbsp;&nbsp;[betterem](Extensions/BetterEm.html)        | pymdown.betterem |

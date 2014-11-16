@@ -21,6 +21,7 @@ SmartSymbols adds syntax for creating special characters such as trademarks, arr
 | `(tm)`        | (tm)       |
 | `(c)`         | (c)        |
 | `(r)`         | (r)        |
+| `c/o`         | c/o        |
 | `+/-`         | +/-        |
 | `-->`         | -->        |
 | `<--`         | <--        |
