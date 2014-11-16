@@ -2,8 +2,8 @@
 # PyMdown Extensions
 PyMdown comes with a number extensions written specifically for it:
 
-| Extension                                      | "Name" |
-|------------------------------------------------|--------|
+| Extension                                               | "Name" |
+|---------------------------------------------------------|--------|
 | [pymdown](Extensions/PyMdown.html)                      | pymdown.pymdown |
 | &nbsp;&nbsp;[betterem](Extensions/BetterEm.html)        | pymdown.betterem |
 | &nbsp;&nbsp;[caret](Extensions/Caret.html)              | pymdown.caret |
@@ -14,9 +14,9 @@ PyMdown comes with a number extensions written specifically for it:
 | &nbsp;&nbsp;[mark](Extensions/Mark.html)                | pymdown.mark |
 | &nbsp;&nbsp;[math](Extensions/Math.html)                | pymdown.math |
 | &nbsp;&nbsp;[progressbar](Extensions/ProgressBar.html)  | pymdown.progressbar |
-| &nbsp;&nbsp;[smartsymbols](Extensions/SmartSymbol.html) | pymdown.smartsymbols |
+| &nbsp;&nbsp;[smartsymbols](Extensions/SmartSymbols.html)| pymdown.smartsymbols |
 | &nbsp;&nbsp;[superfences](Extensions/SuperFences.html)  | pymdown.superfences |
-| &nbsp;&nbsp;[tasklist](Extensions/TaskList.html)        | pymdown.tasklist |
+| &nbsp;&nbsp;[tasklist](Extensions/Tasklist.html)        | pymdown.tasklist |
 | &nbsp;&nbsp;[tilde](Extensions/Tilde.html)              | pymdown.tilde |
 | [pathconverter](Extensions/PathConverter.html)          | pymdown.pathconverter |
 | [b64](Extensions/B64.html)                              | pymdown.b64 |
