@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8">
+
+<link href="css/site-template.css" rel="stylesheet" type="text/css">
+<link href="css/markdown.css" rel="stylesheet" type="text/css">
+<link href="css/pygments-github2.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" charset="utf-8" src="js/jshelper.js"></script>
+<script type="text/javascript" charset="utf-8" src="js/touch.js"></script>
+<script type="text/javascript" charset="utf-8" src="js/nav.js"></script>
+
+<title>Installation</title>
+</head>
+<body>
+
+<div class="content">
+  <div class="header">
+  <h1><a href="http://facelessuser.github.io/PyMdown/">PyMdown</a></h1>
+  <div class="bread-crumb-div"><ul class="bread-crumbs"><li class="crumb"><a href="./index.html">PyMdown</a></li>
+<li class="crumb"><a href="./Installation.html">Installation</a></li></ul></div>
+  </div>
+
+  <div class="menu"></div>
+
+  <div class="markdown-body">
+  <h1>Installation</h1>
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#requirements">Requirements</a></li>
+<li><a href="#build">Build</a></li>
+<li><a href="#installation">Installation</a></li>
+</ul>
+</div>
+<h2 id="overview"><a name="user-content-overview" href="#overview" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Overview</h2>
+<p>PyMdown can be downloaded and run directly.  If desired, you can write a batch file front end on windows, or something else on other system.  I personally use <a href="http://www.pyinstaller.org/">Pyinstaller</a> to build a binary that I drop in my systems path so I can run it from anywhere; the procedure for this is outlined <a href="#below">below</a>.</p>
+<h2 id="requirements"><a name="user-content-requirements" href="#requirements" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Requirements</h2>
+<p>In order for PyMdown to work, there are a couple of prerequisites.</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Details</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://pythonhosted.org/Markdown/">Python Markdown 2.5 (experimental)</a></td>
+<td>There are a number of fixes that occurred after version 2.5.1 that, at the time of writing this, have not been released.  So currently, you can either download the main branch on Github and drop the <code class="highlight">markdown</code> folder in the root of this project, or you can download the main branch and install via <code class="highlight">python setup.py build</code> and <code class="highlight">python setup.py install</code>.  As soon as the next version is released, you will simply be able to use <code class="highlight">pip install markdown</code>. The current revision that I am using is <a href="https://github.com/waylan/Python-Markdown/archive/57633f1743cc16e16c140cc92f860c62d872b6cc.zip">https://github.com/waylan/Python-Markdown/archive/57633f1743cc16e16c140cc92f860c62d872b6cc.zip</a></td>
+</tr>
+<tr>
+<td><a href="http://pygments.org/">Pygments 2.0rc1+ (optional)</a></td>
+<td>If Pygments Syntax highlighting is desired, Pygments must be installed.  This can be omitted, and code blocks (if using the CodeHilite extension) will be formatter for use with Javascript code highlighters.</td>
+</tr>
+<tr>
+<td><a href="http://pyyaml.org/">PyYaml</a></td>
+<td>PyYaml is required.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="build"><a name="user-content-build" href="#build" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Build</h2>
+<p>If building, you will need to download the latest PyInstaller from <a href="https://github.com/pyinstaller/pyinstaller">Github</a>.  Just unzip and ensure the main folder is named <code class="highlight">pyinstaller</code>.  Then from PyMdown&rsquo;s root directory, run <code class="highlight">python build -c</code>.  The binary should be created in the <code class="highlight">dist</code> folder.  This is regularly tested on Windows 7 and OSX 10.10.  Linux may require some playing around if it doesn&rsquo;t work out of the box.</p>
+<p>In the future, I do plan on allowing this run from an installed Pyinstaller opposed to a version copied into the project, but currently I don&rsquo;t support it mainly because on Windows I build with a portable Python (WinPython), and I haven&rsquo;t spent any time yet to get it running proper without having it copied in the project.</p>
+<h2 id="installation"><a name="user-content-installation" href="#installation" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Installation</h2>
+<p>You can download PyMdown and run it as a script bundle, or build and copy the binary in your path.  PyMdown on the first run will unpack user files to <code class="highlight">~\.PyMdown</code> on Windows, <code class="highlight">~/.PyMdown</code> on OSX and <code class="highlight">~/.config/PyMdown</code> on Linux.</p>
+  </div>
+
+  <div class="footer">
+  <p>
+    <a href="https://github.com/facelessuser/PyMdown" class="branding">
+      <img src="assets/GitHub-Mark-64px.png"/><br>
+    </a>
+    <strong>Repository on Github</strong>
+  </p>
+  </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<head>
+{{ meta }}
+{{ css }}
+{{ js }}
+<title>{{ title }}</title>
+</head>
+<body>
+
+<div class="content">
+  <div class="header">
+  <h1><a href="http://facelessuser.github.io/PyMdown/">PyMdown</a></h1>
+  <div class="bread-crumb-div">{{ nav }}</div>
+  </div>
+
+  <div class="menu"></div>
+
+  <div class="markdown-body">
+  <h1>{{ title }}</h1>
+  {{ content }}
+  </div>
+
+  <div class="footer">
+  <p>
+    <a href="https://github.com/facelessuser/PyMdown" class="branding">
+      <img src="{{ getQuotedPath(assets/GitHub-Mark-64px.png) }}"/><br>
+    </a>
+    <strong>Repository on Github</strong>
+  </p>
+  </div>
+</div>
+</body>
+</html>

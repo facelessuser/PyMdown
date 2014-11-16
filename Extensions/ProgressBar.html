@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8">
+
+<link href="../css/site-template.css" rel="stylesheet" type="text/css">
+<link href="../css/markdown.css" rel="stylesheet" type="text/css">
+<link href="../css/pygments-github2.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" charset="utf-8" src="../js/jshelper.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/touch.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/nav.js"></script>
+
+<title>ProgressBar</title>
+</head>
+<body>
+
+<div class="content">
+  <div class="header">
+  <h1><a href="http://facelessuser.github.io/PyMdown/">PyMdown</a></h1>
+  <div class="bread-crumb-div"><ul class="bread-crumbs"><li class="crumb"><a href="../index.html">PyMdown</a></li>
+<li class="crumb"><a href="./index.html">Extensions</a></li>
+<li class="crumb"><a href="./ProgressBar.html">ProgressBar</a></li></ul></div>
+  </div>
+
+  <div class="menu"></div>
+
+  <div class="markdown-body">
+  <h1>ProgressBar</h1>
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#css">CSS</a></li>
+<li><a href="#options">Options</a></li>
+<li><a href="#examples">Examples</a></li>
+</ul>
+</div>
+<h2 id="overview"><a name="user-content-overview" href="#overview" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Overview</h2>
+<p>ProgressBar is an extension that adds support for progress/status bars.  It can take percentages or fractions, and it can optionally generate classes for percentages at 20% levels.  It also works with Python Markdown&rsquo;s built in <code class="highlight">attr_list</code> extension.  Though progress bars are rendered as block items, it accepts attr_list&rsquo;s inline format.</p>
+<p>The basic syntax for progress bars is: <code class="highlight">[= &lt;percentage or fraction&gt; &quot;optional single or double quoted title&quot;]</code>.  The opening <code class="highlight">[</code> can be followed by one or more <code class="highlight">=</code> characters. After the <code class="highlight">=</code> char(s) the percentage is specified as either a fraction or percentage and can optionally be followed by a title surrounded in either double quotes or single quotes.</p>
+<h2 id="css"><a name="user-content-css" href="#css" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>CSS</h2>
+<p>This is the CSS used to render the progress bars in this document:</p>
+<div class="highlight"><pre><span class="c">/* progress bar*/</span>
+<span class="nc">.markdown-body</span> <span class="nc">.progress</span> <span class="p">{</span>
+  <span class="k">display</span><span class="o">:</span> <span class="k">block</span><span class="p">;</span>
+  <span class="k">width</span><span class="o">:</span> <span class="m">300px</span><span class="p">;</span>
+  <span class="k">margin</span><span class="o">:</span> <span class="m">10px</span> <span class="m">0</span><span class="p">;</span>
+  <span class="k">height</span><span class="o">:</span> <span class="m">24px</span><span class="p">;</span>
+  <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">3px</span><span class="p">;</span>
+  <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">3px</span><span class="p">;</span>
+  <span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">3px</span><span class="p">;</span>
+  <span class="k">background-color</span><span class="o">:</span> <span class="m">#ededed</span><span class="p">;</span>
+  <span class="k">position</span><span class="o">:</span> <span class="k">relative</span><span class="p">;</span>
+  <span class="n">box</span><span class="o">-</span><span class="n">shadow</span><span class="o">:</span> <span class="k">inset</span> <span class="m">-1px</span> <span class="m">1px</span> <span class="m">3px</span> <span class="n">rgba</span><span class="p">(</span><span class="m">0</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="o">.</span><span class="m">1</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nc">.markdown-body</span> <span class="nc">.progress-label</span> <span class="p">{</span>
+  <span class="k">position</span><span class="o">:</span> <span class="k">absolute</span><span class="p">;</span>
+  <span class="k">text-align</span><span class="o">:</span> <span class="k">center</span><span class="p">;</span>
+  <span class="k">font-weight</span><span class="o">:</span> <span class="k">bold</span><span class="p">;</span>
+  <span class="k">width</span><span class="o">:</span> <span class="m">100%</span><span class="p">;</span> <span class="k">margin</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+  <span class="k">line-height</span><span class="o">:</span> <span class="m">24px</span><span class="p">;</span>
+  <span class="k">color</span><span class="o">:</span> <span class="m">#333</span><span class="p">;</span>
+  <span class="k">text-shadow</span><span class="o">:</span> <span class="m">1px</span> <span class="m">1px</span> <span class="m">0</span> <span class="m">#fefefe</span><span class="o">,</span> <span class="m">-1px</span> <span class="m">-1px</span> <span class="m">0</span> <span class="m">#fefefe</span><span class="o">,</span> <span class="m">-1px</span> <span class="m">1px</span> <span class="m">0</span> <span class="m">#fefefe</span><span class="o">,</span> <span class="m">1px</span> <span class="m">-1px</span> <span class="m">0</span> <span class="m">#fefefe</span><span class="o">,</span> <span class="m">0</span> <span class="m">1px</span> <span class="m">0</span> <span class="m">#fefefe</span><span class="o">,</span> <span class="m">0</span> <span class="m">-1px</span> <span class="m">0</span> <span class="m">#fefefe</span><span class="o">,</span> <span class="m">1px</span> <span class="m">0</span> <span class="m">0</span> <span class="m">#fefefe</span><span class="o">,</span> <span class="m">-1px</span> <span class="m">0</span> <span class="m">0</span> <span class="m">#fefefe</span><span class="o">,</span> <span class="m">1px</span> <span class="m">1px</span> <span class="m">2px</span> <span class="m">#000</span><span class="p">;</span>
+  <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="k">font</span><span class="o">-</span><span class="n">smoothing</span><span class="o">:</span> <span class="n">antialiased</span> <span class="cp">!important</span><span class="p">;</span>
+  <span class="k">white-space</span><span class="o">:</span> <span class="k">nowrap</span><span class="p">;</span>
+  <span class="k">overflow</span><span class="o">:</span> <span class="k">hidden</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.markdown-body</span> <span class="nc">.progress-bar</span> <span class="p">{</span>
+  <span class="k">height</span><span class="o">:</span> <span class="m">24px</span><span class="p">;</span>
+  <span class="k">float</span><span class="o">:</span> <span class="k">left</span><span class="p">;</span>
+  <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">3px</span><span class="p">;</span>
+  <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">3px</span><span class="p">;</span>
+  <span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">3px</span><span class="p">;</span>
+  <span class="k">background-color</span><span class="o">:</span> <span class="m">#96c6d7</span><span class="p">;</span>
+  <span class="n">box</span><span class="o">-</span><span class="n">shadow</span><span class="o">:</span> <span class="k">inset</span> <span class="m">0</span> <span class="m">1px</span> <span class="m">0</span> <span class="n">rgba</span><span class="p">(</span><span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="o">.</span><span class="m">5</span><span class="p">)</span><span class="o">,</span> <span class="k">inset</span> <span class="m">0</span> <span class="m">-1px</span> <span class="m">0</span> <span class="n">rgba</span><span class="p">(</span><span class="m">0</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="o">.</span><span class="m">1</span><span class="p">);</span>
+  <span class="k">background</span><span class="o">-</span><span class="k">size</span><span class="o">:</span> <span class="m">30px</span> <span class="m">30px</span><span class="p">;</span>
+  <span class="k">background-image</span><span class="o">:</span> <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">linear</span><span class="o">-</span><span class="n">gradient</span><span class="p">(</span>
+    <span class="m">135</span><span class="n">deg</span><span class="o">,</span> <span class="n">rgba</span><span class="p">(</span><span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="o">.</span><span class="m">4</span><span class="p">)</span> <span class="m">27%</span><span class="o">,</span>
+    <span class="k">transparent</span> <span class="m">27%</span><span class="o">,</span>
+    <span class="k">transparent</span> <span class="m">52%</span><span class="o">,</span> <span class="n">rgba</span><span class="p">(</span><span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="o">.</span><span class="m">4</span><span class="p">)</span> <span class="m">52%</span><span class="o">,</span>
+    <span class="n">rgba</span><span class="p">(</span><span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="o">.</span><span class="m">4</span><span class="p">)</span> <span class="m">77%</span><span class="o">,</span>
+    <span class="k">transparent</span> <span class="m">77%</span><span class="o">,</span> <span class="k">transparent</span>
+  <span class="p">);</span>
+  <span class="k">background-image</span><span class="o">:</span> <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">linear</span><span class="o">-</span><span class="n">gradient</span><span class="p">(</span>
+    <span class="m">135</span><span class="n">deg</span><span class="o">,</span>
+    <span class="n">rgba</span><span class="p">(</span><span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="o">.</span><span class="m">4</span><span class="p">)</span> <span class="m">27%</span><span class="o">,</span> <span class="k">transparent</span> <span class="m">27%</span><span class="o">,</span>
+    <span class="k">transparent</span> <span class="m">52%</span><span class="o">,</span> <span class="n">rgba</span><span class="p">(</span><span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="o">.</span><span class="m">4</span><span class="p">)</span> <span class="m">52%</span><span class="o">,</span>
+    <span class="n">rgba</span><span class="p">(</span><span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="o">.</span><span class="m">4</span><span class="p">)</span> <span class="m">77%</span><span class="o">,</span> <span class="k">transparent</span> <span class="m">77%</span><span class="o">,</span>
+    <span class="k">transparent</span>
+  <span class="p">);</span>
+  <span class="k">background-image</span><span class="o">:</span> <span class="o">-</span><span class="n">ms</span><span class="o">-</span><span class="n">linear</span><span class="o">-</span><span class="n">gradient</span><span class="p">(</span>
+    <span class="m">135</span><span class="n">deg</span><span class="o">,</span>
+    <span class="n">rgba</span><span class="p">(</span><span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="o">.</span><span class="m">4</span><span class="p">)</span> <span class="m">27%</span><span class="o">,</span> <span class="k">transparent</span> <span class="m">27%</span><span class="o">,</span>
+    <span class="k">transparent</span> <span class="m">52%</span><span class="o">,</span> <span class="n">rgba</span><span class="p">(</span><span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="o">.</span><span class="m">4</span><span class="p">)</span> <span class="m">52%</span><span class="o">,</span>
+    <span class="n">rgba</span><span class="p">(</span><span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="o">.</span><span class="m">4</span><span class="p">)</span> <span class="m">77%</span><span class="o">,</span> <span class="k">transparent</span> <span class="m">77%</span><span class="o">,</span>
+    <span class="k">transparent</span>
+  <span class="p">);</span>
+  <span class="k">background-image</span><span class="o">:</span> <span class="o">-</span><span class="n">o</span><span class="o">-</span><span class="n">linear</span><span class="o">-</span><span class="n">gradient</span><span class="p">(</span>
+    <span class="m">135</span><span class="n">deg</span><span class="o">,</span>
+    <span class="n">rgba</span><span class="p">(</span><span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="o">.</span><span class="m">4</span><span class="p">)</span> <span class="m">27%</span><span class="o">,</span> <span class="k">transparent</span> <span class="m">27%</span><span class="o">,</span>
+    <span class="k">transparent</span> <span class="m">52%</span><span class="o">,</span> <span class="n">rgba</span><span class="p">(</span><span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="o">.</span><span class="m">4</span><span class="p">)</span> <span class="m">52%</span><span class="o">,</span>
+    <span class="n">rgba</span><span class="p">(</span><span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="o">.</span><span class="m">4</span><span class="p">)</span> <span class="m">77%</span><span class="o">,</span> <span class="k">transparent</span> <span class="m">77%</span><span class="o">,</span>
+    <span class="k">transparent</span>
+  <span class="p">);</span>
+  <span class="k">background-image</span><span class="o">:</span> <span class="n">linear</span><span class="o">-</span><span class="n">gradient</span><span class="p">(</span>
+    <span class="m">135</span><span class="n">deg</span><span class="o">,</span>
+    <span class="n">rgba</span><span class="p">(</span><span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="o">.</span><span class="m">4</span><span class="p">)</span> <span class="m">27%</span><span class="o">,</span> <span class="k">transparent</span> <span class="m">27%</span><span class="o">,</span>
+    <span class="k">transparent</span> <span class="m">52%</span><span class="o">,</span> <span class="n">rgba</span><span class="p">(</span><span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="o">.</span><span class="m">4</span><span class="p">)</span> <span class="m">52%</span><span class="o">,</span>
+    <span class="n">rgba</span><span class="p">(</span><span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="o">.</span><span class="m">4</span><span class="p">)</span> <span class="m">77%</span><span class="o">,</span> <span class="k">transparent</span> <span class="m">77%</span><span class="o">,</span>
+    <span class="k">transparent</span>
+  <span class="p">);</span>
+<span class="p">}</span>
+
+<span class="nc">.markdown-body</span> <span class="nc">.progress-100plus</span> <span class="nc">.progress-bar</span> <span class="p">{</span>
+  <span class="k">background-color</span><span class="o">:</span> <span class="m">#a6d796</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.markdown-body</span> <span class="nc">.progress-80plus</span> <span class="nc">.progress-bar</span> <span class="p">{</span>
+  <span class="k">background-color</span><span class="o">:</span> <span class="m">#c6d796</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.markdown-body</span> <span class="nc">.progress-60plus</span> <span class="nc">.progress-bar</span> <span class="p">{</span>
+  <span class="k">background-color</span><span class="o">:</span> <span class="m">#d7c896</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.markdown-body</span> <span class="nc">.progress-40plus</span> <span class="nc">.progress-bar</span> <span class="p">{</span>
+  <span class="k">background-color</span><span class="o">:</span> <span class="m">#d7a796</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.markdown-body</span> <span class="nc">.progress-20plus</span> <span class="nc">.progress-bar</span> <span class="p">{</span>
+  <span class="k">background-color</span><span class="o">:</span> <span class="m">#d796a6</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.markdown-body</span> <span class="nc">.progress-0plus</span> <span class="nc">.progress-bar</span> <span class="p">{</span>
+  <span class="k">background-color</span><span class="o">:</span> <span class="m">#c25f77</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.markdown-body</span> <span class="nc">.candystripe-animate</span> <span class="nc">.progress-bar</span><span class="p">{</span>
+  <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">animation</span><span class="o">:</span> <span class="n">animate</span><span class="o">-</span><span class="n">stripes</span> <span class="m">3s</span> <span class="n">linear</span> <span class="n">infinite</span><span class="p">;</span>
+  <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">animation</span><span class="o">:</span> <span class="n">animate</span><span class="o">-</span><span class="n">stripes</span> <span class="m">3s</span> <span class="n">linear</span> <span class="n">infinite</span><span class="p">;</span>
+  <span class="n">animation</span><span class="o">:</span> <span class="n">animate</span><span class="o">-</span><span class="n">stripes</span> <span class="m">3s</span> <span class="n">linear</span> <span class="n">infinite</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="k">@-webkit-keyframes</span> <span class="nt">animate-stripes</span> <span class="p">{</span>
+  <span class="nt">0</span><span class="o">%</span> <span class="p">{</span>
+    <span class="k">background-position</span><span class="o">:</span> <span class="m">0</span> <span class="m">0</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="nt">100</span><span class="o">%</span> <span class="p">{</span>
+    <span class="k">background-position</span><span class="o">:</span> <span class="m">60px</span> <span class="m">0</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">@-moz-keyframes</span> <span class="nt">animate-stripes</span> <span class="p">{</span>
+  <span class="nt">0</span><span class="o">%</span> <span class="p">{</span>
+    <span class="k">background-position</span><span class="o">:</span> <span class="m">0</span> <span class="m">0</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="nt">100</span><span class="o">%</span> <span class="p">{</span>
+    <span class="k">background-position</span><span class="o">:</span> <span class="m">60px</span> <span class="m">0</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">@keyframes</span> <span class="nt">animate-stripes</span> <span class="p">{</span>
+  <span class="nt">0</span><span class="o">%</span> <span class="p">{</span>
+    <span class="k">background-position</span><span class="o">:</span> <span class="m">0</span> <span class="m">0</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="nt">100</span><span class="o">%</span> <span class="p">{</span>
+    <span class="k">background-position</span><span class="o">:</span> <span class="m">60px</span> <span class="m">0</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="nc">.markdown-body</span> <span class="nc">.gloss</span> <span class="nc">.progress-bar</span> <span class="p">{</span>
+  <span class="n">box</span><span class="o">-</span><span class="n">shadow</span><span class="o">:</span>
+    <span class="k">inset</span> <span class="m">0</span> <span class="m">4px</span> <span class="m">12px</span> <span class="n">rgba</span><span class="p">(</span><span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="o">.</span><span class="m">7</span><span class="p">)</span><span class="o">,</span>
+    <span class="k">inset</span> <span class="m">0</span> <span class="m">-12px</span> <span class="m">0</span> <span class="n">rgba</span><span class="p">(</span><span class="m">0</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="o">.</span><span class="m">05</span><span class="p">);</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h2 id="options"><a name="user-content-options" href="#options" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Options</h2>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>level_class</td>
+<td>bool</td>
+<td>True</td>
+<td>Enables or disables the level class feature.  The level class feature adds level classes in increments of 20.</td>
+</tr>
+<tr>
+<td>add_classes</td>
+<td>string</td>
+<td>This option accepts a string of classes separated by spaces.</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="examples"><a name="user-content-examples" href="#examples" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Examples</h2>
+<div class="highlight"><pre>| Test               | Result                                         |
+|--------------------|------------------------------------------------|
+|Animated: 0%        |[=0% &quot;0%&quot;]{: .candystripe-animate}              |
+|Animated: 5%        |[=5% &quot;5%&quot;]{: .candystripe-animate}              |
+|Animated: 25%       |[=25% &quot;25%&quot;]{: .candystripe-animate}            |
+|Animated: 45%       |[=45% &quot;45%&quot;]{: .candystripe-animate}            |
+|Animated: 65%       |[=65% &quot;65%&quot;]{: .candystripe-animate}            |
+|Animated: 85%       |[=85% &quot;85%&quot;]{: .candystripe-animate}            |
+|Animated: 100%      |[=100% &quot;100%&quot;]{: .candystripe-animate}          |
+|Division Percentage |[= 212.2/537 &quot;212.2/537 Testing division&quot;]      |
+|No Label            |[=== 50%]                                       |
+|Inline              |Before[= 50% &quot;I&#39;m a block!&quot;]After               |
+|Animated with Gloss |[= 50% &quot;Glossy&quot;]{: .candystripe-animate .gloss} |
+</pre></div>
+
+
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Animated: 0%</td>
+<td>
+<div class="progress-0plus progress candystripe-animate">
+<div class="progress-bar" style="width:0.00%">
+<p class="progress-label">0%</p>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>Animated: 5%</td>
+<td>
+<div class="progress-0plus progress candystripe-animate">
+<div class="progress-bar" style="width:5.00%">
+<p class="progress-label">5%</p>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>Animated: 25%</td>
+<td>
+<div class="progress progress-20plus candystripe-animate">
+<div class="progress-bar" style="width:25.00%">
+<p class="progress-label">25%</p>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>Animated: 45%</td>
+<td>
+<div class="progress progress-40plus candystripe-animate">
+<div class="progress-bar" style="width:45.00%">
+<p class="progress-label">45%</p>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>Animated: 65%</td>
+<td>
+<div class="progress progress-60plus candystripe-animate">
+<div class="progress-bar" style="width:65.00%">
+<p class="progress-label">65%</p>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>Animated: 85%</td>
+<td>
+<div class="progress progress-80plus candystripe-animate">
+<div class="progress-bar" style="width:85.00%">
+<p class="progress-label">85%</p>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>Animated: 100%</td>
+<td>
+<div class="progress progress-100plus candystripe-animate">
+<div class="progress-bar" style="width:100.00%">
+<p class="progress-label">100%</p>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>Division Percentage</td>
+<td>
+<div class="progress progress-20plus">
+<div class="progress-bar" style="width:39.52%">
+<p class="progress-label">212.2/537 Testing division</p>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>No Label</td>
+<td>
+<div class="progress progress-40plus">
+<div class="progress-bar" style="width:50.00%">
+<p class="progress-label"></p>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>Inline</td>
+<td>Before<div class="progress progress-40plus">
+<div class="progress-bar" style="width:50.00%">
+<p class="progress-label">I&rsquo;m a block!</p>
+</div>
+</div>After</td>
+</tr>
+<tr>
+<td>Animated with Gloss</td>
+<td>
+<div class="progress progress-40plus candystripe-animate gloss">
+<div class="progress-bar" style="width:50.00%">
+<p class="progress-label">Glossy</p>
+</div>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+  </div>
+
+  <div class="footer">
+  <p>
+    <a href="https://github.com/facelessuser/PyMdown" class="branding">
+      <img src="../assets/GitHub-Mark-64px.png"/><br>
+    </a>
+    <strong>Repository on Github</strong>
+  </p>
+  </div>
+</div>
+</body>
+</html>

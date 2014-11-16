@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8">
+
+<link href="../css/site-template.css" rel="stylesheet" type="text/css">
+<link href="../css/markdown.css" rel="stylesheet" type="text/css">
+<link href="../css/pygments-github2.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" charset="utf-8" src="../js/jshelper.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/touch.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/nav.js"></script>
+
+<title>PlainHtml</title>
+</head>
+<body>
+
+<div class="content">
+  <div class="header">
+  <h1><a href="http://facelessuser.github.io/PyMdown/">PyMdown</a></h1>
+  <div class="bread-crumb-div"><ul class="bread-crumbs"><li class="crumb"><a href="../index.html">PyMdown</a></li>
+<li class="crumb"><a href="./index.html">Extensions</a></li>
+<li class="crumb"><a href="./PlainHtml.html">PlainHtml</a></li></ul></div>
+  </div>
+
+  <div class="menu"></div>
+
+  <div class="markdown-body">
+  <h1>PlainHtml</h1>
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#overview">Overview</a></li>
+</ul>
+</div>
+<h2 id="overview"><a name="user-content-overview" href="#overview" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Overview</h2>
+<p>PlainHtml is a simple extension that is run at the end of post-processing.  It searches the final output stripping things like <code class="highlight">style</code>, <code class="highlight">id</code>, <code class="highlight">class</code>, and <code class="highlight">on&lt;name&gt;</code> attributes from HTML tags.  It also removes HTML comments.  If you have no desire to see these, this can strip them out.  Though it does its best to be loaded at the very end of the process, it helps to include this one last when loading up your extensions.</p>
+<div class="admonition caution">
+<p class="admonition-title">Warning</p>
+<p>This is not meant to be a sanitizer for HTML.  This is mearly meant try and strip out style, script, classes, etc. to provide a plain HTML output if this is desired.  This is not meant as a security extension.  If you want something to secure the output, you should consider running a sanitizer like <a href="https://pypi.python.org/pypi/bleach">bleach</a>.</p>
+</div>
+  </div>
+
+  <div class="footer">
+  <p>
+    <a href="https://github.com/facelessuser/PyMdown" class="branding">
+      <img src="../assets/GitHub-Mark-64px.png"/><br>
+    </a>
+    <strong>Repository on Github</strong>
+  </p>
+  </div>
+</div>
+</body>
+</html>

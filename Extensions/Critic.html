@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8">
+
+<link href="../css/site-template.css" rel="stylesheet" type="text/css">
+<link href="../css/markdown.css" rel="stylesheet" type="text/css">
+<link href="../css/pygments-github2.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" charset="utf-8" src="../js/jshelper.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/touch.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/nav.js"></script>
+
+<title>Critic</title>
+</head>
+<body>
+
+<div class="content">
+  <div class="header">
+  <h1><a href="http://facelessuser.github.io/PyMdown/">PyMdown</a></h1>
+  <div class="bread-crumb-div"><ul class="bread-crumbs"><li class="crumb"><a href="../index.html">PyMdown</a></li>
+<li class="crumb"><a href="./index.html">Extensions</a></li>
+<li class="crumb"><a href="./Critic.html">Critic</a></li></ul></div>
+  </div>
+
+  <div class="menu"></div>
+
+  <div class="markdown-body">
+  <h1>Critic</h1>
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#options">Options</a></li>
+<li><a href="#css">CSS</a></li>
+<li><a href="#limitations-with-previewing-critic-markup">Limitations with Previewing Critic Markup</a></li>
+<li><a href="#examples">Examples</a></li>
+</ul>
+</div>
+<h2 id="overview"><a name="user-content-overview" href="#overview" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Overview</h2>
+<p>Critic is an extension to add handling and support of <a href="http://criticmarkup.com/">Critic Markup</a>.  This extension runs before all other extensions to parse the critic edits.  It allows for the stripping or accepting of critic modifications and modifys the source to reflect the rejection or accepting of the edits (mark wrappers and comments are stripped in both cases).  It also allows for visually displaying the changes in HTML output (<a href="#limitations-with-previewing-critic-markup">milage may very</a>).</p>
+<h2 id="options"><a name="user-content-options" href="#options" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Options</h2>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>mode</td>
+<td>string</td>
+<td>view</td>
+<td><code class="highlight">view</code> just parses the markup and displays it in its HTML equivalent rendering.  <code class="highlight">accept</code> strips out the critic markup and replacing them with the suggested changes.  <code class="highlight">reject</code> rejects all the suggestions and strips the critic markup out replacing it with the original.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="css"><a name="user-content-css" href="#css" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>CSS</h2>
+<p>Critic renders the CriticMarkup with the following classes.</p>
+<table>
+<thead>
+<tr>
+<th>Classes</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>critic</td>
+<td>This is applied to all critic edits.</td>
+</tr>
+<tr>
+<td>break</td>
+<td>This is applied to critic inserts or deletes that encompass <strong>only</strong> 2+ newlines.</td>
+</tr>
+<tr>
+<td>block</td>
+<td>Applied to critc HTML tags that are detected as surrounding a block region.</td>
+</tr>
+<tr>
+<td>comment</td>
+<td>A CriticMarkup comment.</td>
+</tr>
+</tbody>
+</table>
+<p>This is the CSS used for this page.</p>
+<div class="highlight"><pre><span class="c">/* Critic Markup */</span>
+<span class="nc">.markdown-body</span> <span class="nc">.critic</span> <span class="p">{</span>
+  <span class="k">font-family</span><span class="o">:</span> <span class="k">inherit</span><span class="p">;</span>
+  <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">3px</span><span class="p">;</span>
+  <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">3px</span><span class="p">;</span>
+  <span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">3px</span><span class="p">;</span>
+  <span class="k">border-style</span><span class="o">:</span> <span class="k">solid</span><span class="p">;</span>
+  <span class="k">border-width</span><span class="o">:</span> <span class="m">1px</span><span class="p">;</span>
+  <span class="k">padding-top</span><span class="o">:</span> <span class="m">0.2em</span><span class="p">;</span>
+  <span class="k">padding-bottom</span><span class="o">:</span> <span class="m">0.2em</span><span class="p">;</span>
+  <span class="k">text-decoration</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.markdown-body</span> <span class="nc">.critic</span><span class="nd">:before</span><span class="o">,</span>
+<span class="nc">.markdown-body</span> <span class="nc">.critic</span><span class="nd">:after</span> <span class="p">{</span>
+  <span class="k">content</span><span class="o">:</span> <span class="s1">&#39;\00a0&#39;</span><span class="p">;</span>
+  <span class="k">padding-top</span><span class="o">:</span> <span class="m">0.2em</span><span class="p">;</span>
+  <span class="k">padding-bottom</span><span class="o">:</span> <span class="m">0.2em</span><span class="p">;</span>
+  <span class="k">font-size</span><span class="o">:</span> <span class="n">initial</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.markdown-body</span> <span class="nt">mark</span><span class="nc">.critic</span> <span class="p">{</span>
+  <span class="k">border-color</span><span class="o">:</span> <span class="m">#ff8600</span><span class="p">;</span>
+  <span class="k">background</span><span class="o">:</span> <span class="m">#ffddaa</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.markdown-body</span> <span class="nt">ins</span><span class="nc">.critic</span> <span class="p">{</span>
+  <span class="k">border-color</span><span class="o">:</span> <span class="m">#00bb00</span><span class="p">;</span>
+  <span class="k">background</span><span class="o">:</span> <span class="m">#ddffdd</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.markdown-body</span> <span class="nt">del</span><span class="nc">.critic</span> <span class="p">{</span>
+  <span class="k">border-color</span><span class="o">:</span> <span class="m">#dd0000</span><span class="p">;</span>
+  <span class="k">background</span><span class="o">:</span> <span class="m">#ffdddd</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.markdown-body</span> <span class="nt">ins</span><span class="nc">.break</span><span class="o">,</span>
+<span class="nc">.markdown-body</span> <span class="nt">del</span><span class="nc">.break</span> <span class="p">{</span>
+  <span class="k">font-size</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+  <span class="k">border</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.markdown-body</span> <span class="nt">ins</span><span class="nc">.break</span><span class="nd">:before</span><span class="o">,</span>
+<span class="nc">.markdown-body</span> <span class="nt">del</span><span class="nc">.break</span><span class="nd">:before</span> <span class="p">{</span>
+  <span class="k">content</span><span class="o">:</span> <span class="s1">&#39;\00a0\b6\00a0&#39;</span><span class="p">;</span>
+  <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">3px</span><span class="p">;</span>
+  <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">3px</span><span class="p">;</span>
+  <span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">3px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.markdown-body</span> <span class="nt">ins</span><span class="nc">.after</span><span class="o">,</span>
+<span class="nc">.markdown-body</span> <span class="nt">del</span><span class="nc">.after</span> <span class="p">{</span>
+  <span class="k">content</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.markdown-body</span> <span class="nt">ins</span><span class="nc">.break</span><span class="nd">:before</span> <span class="p">{</span>
+  <span class="k">color</span><span class="o">:</span> <span class="m">#00bb00</span><span class="p">;</span>
+  <span class="k">border</span><span class="o">:</span> <span class="m">1px</span> <span class="k">solid</span> <span class="m">#00bb00</span><span class="p">;</span>
+  <span class="k">background</span><span class="o">:</span> <span class="m">#ddffdd</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.markdown-body</span> <span class="nt">del</span><span class="nc">.break</span><span class="nd">:before</span> <span class="p">{</span>
+  <span class="k">color</span><span class="o">:</span> <span class="m">#bb0000</span><span class="p">;</span>
+  <span class="k">border</span><span class="o">:</span> <span class="m">1px</span> <span class="k">solid</span> <span class="m">#bb0000</span><span class="p">;</span>
+  <span class="k">background</span><span class="o">:</span> <span class="m">#ffdddd</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.markdown-body</span> <span class="nt">span</span><span class="nc">.critic</span> <span class="p">{</span>
+  <span class="k">background</span><span class="o">:</span> <span class="m">#ddddff</span><span class="p">;</span>
+  <span class="k">font-size</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+  <span class="k">border</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.markdown-body</span> <span class="nt">span</span><span class="nc">.critic</span><span class="nd">:hover</span> <span class="p">{</span>
+  <span class="k">font-size</span><span class="o">:</span> <span class="n">initial</span><span class="p">;</span>
+  <span class="k">border-top</span><span class="o">:</span> <span class="m">1px</span> <span class="k">solid</span> <span class="m">#0000bb</span><span class="p">;</span>
+  <span class="k">border-bottom</span><span class="o">:</span> <span class="m">1px</span> <span class="k">solid</span> <span class="m">#0000bb</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.markdown-body</span> <span class="nt">span</span><span class="nc">.critic</span><span class="nd">:before</span><span class="o">,</span>
+<span class="nc">.markdown-body</span> <span class="nt">span</span><span class="nc">.critic</span><span class="nd">:after</span> <span class="p">{</span>
+  <span class="k">background</span><span class="o">:</span> <span class="m">#ddddff</span><span class="p">;</span>
+  <span class="k">border</span><span class="o">:</span> <span class="m">1px</span> <span class="k">solid</span> <span class="m">#0000bb</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.markdown-body</span> <span class="nt">span</span><span class="nc">.critic</span><span class="nd">:before</span> <span class="p">{</span>
+  <span class="k">content</span><span class="o">:</span> <span class="s1">&#39;\00a0\bb&#39;</span><span class="p">;</span>
+  <span class="k">border-right</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+  <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="k">border-top</span><span class="o">-</span><span class="k">left</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">3px</span><span class="p">;</span>
+  <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="k">border-top</span><span class="o">-</span><span class="k">left</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">3px</span><span class="p">;</span>
+  <span class="k">border-top</span><span class="o">-</span><span class="k">left</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">3px</span><span class="p">;</span>
+  <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="k">border-bottom</span><span class="o">-</span><span class="k">left</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">3px</span><span class="p">;</span>
+  <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="k">border-bottom</span><span class="o">-</span><span class="k">left</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">3px</span><span class="p">;</span>
+  <span class="k">border-bottom</span><span class="o">-</span><span class="k">left</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">3px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.markdown-body</span> <span class="nt">span</span><span class="nc">.critic</span><span class="nd">:after</span> <span class="p">{</span>
+  <span class="k">content</span><span class="o">:</span> <span class="s1">&#39;\ab\00a0&#39;</span><span class="p">;</span>
+  <span class="k">border-left</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+  <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="k">border-top</span><span class="o">-</span><span class="k">right</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">3px</span><span class="p">;</span>
+  <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="k">border-top</span><span class="o">-</span><span class="k">right</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">3px</span><span class="p">;</span>
+  <span class="k">border-top</span><span class="o">-</span><span class="k">right</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">3px</span><span class="p">;</span>
+  <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="k">border-bottom</span><span class="o">-</span><span class="k">right</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">3px</span><span class="p">;</span>
+  <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="k">border-bottom</span><span class="o">-</span><span class="k">right</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">3px</span><span class="p">;</span>
+  <span class="k">border-bottom</span><span class="o">-</span><span class="k">right</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">3px</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.markdown-body</span> <span class="nc">.block</span> <span class="p">{</span>
+  <span class="k">display</span><span class="o">:</span> <span class="k">block</span><span class="p">;</span>
+  <span class="k">padding</span><span class="o">:</span> <span class="m">.02em</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.markdown-body</span> <span class="nc">.block</span><span class="nd">:before</span><span class="o">,</span>
+<span class="nc">.markdown-body</span> <span class="nc">.block</span><span class="nd">:after</span> <span class="p">{</span>
+  <span class="k">content</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div>
+
+
+<h2 id="limitations-with-previewing-critic-markup"><a name="user-content-limitations-with-previewing-critic-markup" href="#limitations-with-previewing-critic-markup" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Limitations with Previewing Critic Markup</h2>
+<p>CriticMarkup, in general works very well.  Parsing the critic marks is very straight forward.  If you need to reject critic marks or accept them, the critic extension will work quite well.  But when trying to render the edits visually <strong>and</strong> trying to convert the document to HTML, things can get ugly.  I think this is really a design flaw with CriticMarkup.  The existence of the critic edits can alter the actual source.  Its a fantastic idea, but it should be understood that when using CriticMarkup beyond inline or block paragraphs, there is a possibility that invalid HTML will be created when viewing (especailly in relation to lists or if breaking up Markdown syntax).  I think Fletcher said it best here: <a href="http://fletcher.github.io/MultiMarkdown-4/criticmarkup">http://fletcher.github.io/MultiMarkdown-4/criticmarkup</a>.</p>
+<p>The critic extension does its best by employing a preprocessor to inject the critic tags before all other parsing and a postprocessor to clean up some the weird side effects of the injection (only selected odd cases as some are more difficult to fix).  It injects some classes into the edit region&rsquo;s HTML output to allow for CSS styling to render them as well as possible.  There is probably a lot more post processing that could be done to fix more issues, but I am not yet sure how much further down that road I am willing to go.</p>
+<h2 id="examples"><a name="user-content-examples" href="#examples" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Examples</h2>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code class="highlight"><span class="s">{--delete--}</span></code></td>
+<td><del class="critic">delete</del></td>
+</tr>
+<tr>
+<td><code class="highlight"><span class="s">{++delete++}</span></code></td>
+<td><ins class="critic">insert</ins></td>
+</tr>
+<tr>
+<td><code class="highlight"><span class="s">{~~delete and replace~&gt;substitutions~~}</span></code></td>
+<td><del class="critic">delete and replace</del><ins class="critic">substitutions</ins></td>
+</tr>
+<tr>
+<td><code class="highlight"><span class="s">{==highlight==}</span></code></td>
+<td><mark class="critic">highlight</mark></td>
+</tr>
+<tr>
+<td><code class="highlight"><span class="s">{&gt;&gt;comments&lt;&lt;}</span></code></td>
+<td><span class="critic comment">comments</span></td>
+</tr>
+</tbody>
+</table>
+<p>Here they are in action:</p>
+<div class="highlight"><pre>Here<span class="w"> </span>is<span class="w"> </span>some<span class="w"> </span><span class="s">{--*incorrect*--}</span><span class="w"> </span>Markdown.<span class="w">  </span>I<span class="w"> </span>am<span class="w"> </span>adding<span class="w"> </span>this<span class="s">{++ here.++}</span>.<span class="w">  </span>Here<span class="w"> </span>is<span class="w"> </span>some<span class="w"> </span>more<span class="w"> </span><span class="s">{--text</span>
+<span class="s">that I am removing--}</span>text.<span class="w">  </span>And<span class="w"> </span>here<span class="w"> </span>is<span class="w"> </span>even<span class="w"> </span>more<span class="w"> </span><span class="s">{++text that I</span>
+<span class="s">am ++}</span>adding.<span class="s">{~~</span>
+
+<span class="s">~&gt;  ~~}</span>Paragraph<span class="w"> </span>was<span class="w"> </span>deleted<span class="w"> </span>and<span class="w"> </span>replaced<span class="w"> </span>with<span class="w"> </span>some<span class="w"> </span>spaces.<span class="s">{~~  ~&gt;</span>
+
+<span class="s">~~}</span>Spaces<span class="w"> </span>were<span class="w"> </span>removed<span class="w"> </span>and<span class="w"> </span>a<span class="w"> </span>paragraph<span class="w"> </span>was<span class="w"> </span>added.
+
+And<span class="w"> </span>here<span class="w"> </span>is<span class="w"> </span>a<span class="w"> </span>comment<span class="w"> </span>on<span class="w"> </span><span class="s">{==some</span>
+<span class="s">==text== ==}{&gt;&gt;This works quite well. I just wanted to comment on it.&lt;&lt;}</span>.<span class="w"> </span>Substitutions<span class="w"> </span><span class="s">{~~is~&gt;are~~}</span><span class="w"> </span>great!
+
+Escape<span class="w"> </span>\{&gt;&gt;This text is preserved&lt;&lt;}.
+
+General<span class="w"> </span>block<span class="w"> </span>handling.
+
+<span class="s">{--</span>
+
+<span class="s">* test</span>
+<span class="s">* test</span>
+<span class="s">* test</span>
+<span class="s">    * test</span>
+<span class="s">* test</span>
+
+<span class="s">--}</span>
+
+<span class="s">{++</span>
+
+<span class="s">* test</span>
+<span class="s">* test</span>
+<span class="s">* test</span>
+<span class="s">    * test</span>
+<span class="s">* test</span>
+
+<span class="s">++}</span>
+</pre></div>
+
+
+<p>Here is some <del class="critic"><em>incorrect</em></del> Markdown.  I am adding this<ins class="critic"> here.</ins>.  Here is some more <del class="critic">text<br />
+that I am removing</del>text.  And here is even more <ins class="critic">text that I<br />
+am </ins>adding.<del class="critic break">&nbsp;</del><ins class="critic">  </ins>Paragraph was deleted and replaced with some spaces.<del class="critic">  </del></p>
+<ins class="critic break">&nbsp;</ins>
+<p>Spaces were removed and a paragraph was added.</p>
+<p>And here is a comment on <mark class="critic">some<br />
+<mark>text</mark> </mark><span class="critic comment">This works quite well. I just wanted to comment on it.</span>. Substitutions <del class="critic">is</del><ins class="critic">are</ins> great!</p>
+<p>Escape {&gt;&gt;This text is preserved&lt;&lt;}.</p>
+<p>General block handling.</p>
+<del class="critic block">
+<ul>
+<li>test</li>
+<li>test</li>
+<li>test<ul>
+<li>test</li>
+</ul>
+</li>
+<li>test</li>
+</ul>
+</del>
+<ins class="critic block">
+<ul>
+<li>test</li>
+<li>test</li>
+<li>test<ul>
+<li>test</li>
+</ul>
+</li>
+<li>test</li>
+</ul>
+</ins>
+  </div>
+
+  <div class="footer">
+  <p>
+    <a href="https://github.com/facelessuser/PyMdown" class="branding">
+      <img src="../assets/GitHub-Mark-64px.png"/><br>
+    </a>
+    <strong>Repository on Github</strong>
+  </p>
+  </div>
+</div>
+</body>
+</html>

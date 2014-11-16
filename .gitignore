@@ -1,0 +1,11 @@
+*.pyc
+*.pyo
+*.egg
+build/*
+*/build/*
+dist/*
+pyinstaller
+pymdown.spec
+*/*egg-info/*
+markdown/*
+pygments/*

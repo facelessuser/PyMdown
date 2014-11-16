@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8">
+
+<link href="css/site-template.css" rel="stylesheet" type="text/css">
+<link href="css/markdown.css" rel="stylesheet" type="text/css">
+<link href="css/pygments-github2.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" charset="utf-8" src="js/jshelper.js"></script>
+<script type="text/javascript" charset="utf-8" src="js/touch.js"></script>
+<script type="text/javascript" charset="utf-8" src="js/nav.js"></script>
+
+<title>Pygments Customization</title>
+</head>
+<body>
+
+<div class="content">
+  <div class="header">
+  <h1><a href="http://facelessuser.github.io/PyMdown/">PyMdown</a></h1>
+  <div class="bread-crumb-div"><ul class="bread-crumbs"><li class="crumb"><a href="./index.html">PyMdown</a></li>
+<li class="crumb"><a href="./Pygments%20Customization.html">Pygments Customization</a></li></ul></div>
+  </div>
+
+  <div class="menu"></div>
+
+  <div class="markdown-body">
+  <h1>Pygments Customization</h1>
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#overview">Overview</a></li>
+<li><a href="#adding-to-provided-custom-eggs-or-create-your-own">Adding to Provided Custom Eggs or Create Your Own</a></li>
+<li><a href="#generate-and-include-eggs">Generate and Include Eggs</a></li>
+</ul>
+</div>
+<h2 id="overview"><a name="user-content-overview" href="#overview" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Overview</h2>
+<p>Pygments allows for people to write their own lexers and styles, but they need to have an entry point of <code class="highlight">pymdown.lexers</code> or <code class="highlight">pymdown.styles</code> for the respective plugin type.  This can only be done by either directly adding your plugin to the Pygments package, or creating and installing your own package that defines the entry points as mentioned.  If you know how to create your own package and install it, PyMdown should able to use it, but you have to play with the pyinstaller hooks if compiling a binary.  Another way is to create an egg that defines the proper entry point, and add the egg to the system path.</p>
+<h2 id="adding-to-provided-custom-eggs-or-create-your-own"><a name="user-content-adding-to-provided-custom-eggs-or-create-your-own" href="#adding-to-provided-custom-eggs-or-create-your-own" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Adding to Provided Custom Eggs or Create Your Own</h2>
+<p>PyMdown comes with a couple of optional eggs that can be included.  One is for <a href="https://github.com/facelessuser/PyMdown/tree/master/pymdown-lexers">lexers</a>, the other is for <a href="https://github.com/facelessuser/PyMdown/tree/master/pymdown-styles">styles</a>.  You can create your own lexer and/or style and drop it in with the others.  Then just edit the <code class="highlight">__init__.py</code> file and expose your module (style example shown below):</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">.tomorrow</span> <span class="kn">import</span> <span class="n">TomorrowStyle</span>
+<span class="kn">from</span> <span class="nn">.tomorrownight</span> <span class="kn">import</span> <span class="n">TomorrownightStyle</span>
+<span class="kn">from</span> <span class="nn">.tomorrownightblue</span> <span class="kn">import</span> <span class="n">TomorrownightblueStyle</span>
+<span class="kn">from</span> <span class="nn">.tomorrownightbright</span> <span class="kn">import</span> <span class="n">TomorrownightbrightStyle</span>
+<span class="kn">from</span> <span class="nn">.tomorrownighteighties</span> <span class="kn">import</span> <span class="n">TomorrownighteightiesStyle</span>
+<span class="kn">from</span> <span class="nn">.github</span> <span class="kn">import</span> <span class="n">GithubStyle</span>
+<span class="kn">from</span> <span class="nn">.github2</span> <span class="kn">import</span> <span class="n">Github2Style</span>
+</pre></div>
+
+
+<p>Then edit the <code class="highlight">setup.py</code> file and define the entry point (style example shown below):</p>
+<div class="highlight"><pre><span class="kn">from</span> <span class="nn">setuptools</span> <span class="kn">import</span> <span class="n">setup</span><span class="p">,</span> <span class="n">find_packages</span>
+
+<span class="n">entry_points</span> <span class="o">=</span> <span class="s">&#39;&#39;&#39;</span>
+<span class="s">[pygments.styles]</span>
+<span class="s">github=pymdown_styles:GithubStyle</span>
+<span class="s">github2=pymdown_styles:Github2Style</span>
+<span class="s">tomorrow=pymdown_styles:TomorrowStyle</span>
+<span class="s">tomorrownight=pymdown_styles:TomorrownightStyle</span>
+<span class="s">tomorrownightblue=pymdown_styles:TomorrownightblueStyle</span>
+<span class="s">tomorrownightbright=pymdown_styles:TomorrownightbrightStyle</span>
+<span class="s">tomorrownighteighties=pymdown_styles:TomorrownighteightiesStyle</span>
+<span class="s">&#39;&#39;&#39;</span>
+
+<span class="n">setup</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s">&#39;pymdown-styles&#39;</span><span class="p">,</span>
+    <span class="n">version</span><span class="o">=</span><span class="s">&#39;1.0&#39;</span><span class="p">,</span>
+    <span class="n">packages</span><span class="o">=</span><span class="n">find_packages</span><span class="p">(),</span>
+    <span class="n">entry_points</span><span class="o">=</span><span class="n">entry_points</span><span class="p">,</span>
+    <span class="n">zip_safe</span><span class="o">=</span><span class="bp">True</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<p>Optionally, you can follow the pattern of the provided custom lexers and styles, and have your own egg built along side or in place of the the provided ones.  If you add your own custom egg, its name must start with <code class="highlight">pymdown_</code> as the egg will not be loaded if its name does not start with <code class="highlight">pymdown_</code> and end with the appropriate python version.</p>
+<h2 id="generate-and-include-eggs"><a name="user-content-generate-and-include-eggs" href="#generate-and-include-eggs" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Generate and Include Eggs</h2>
+<p>A script is provided for generating custom eggs.  It is called <a href="https://github.com/facelessuser/PyMdown/blob/master/tools/gen_egg.py">gen_egg.py</a>.  It can be run from PyMdown&rsquo;s root directory.  To build the provided custom eggs, do the following from the project&rsquo;s root directory:</p>
+<div class="highlight"><pre>python tools/gen_egg.py pymdown-styles
+python tools/gen_egg.py pymdown-lexers
+</pre></div>
+
+
+<p>The eggs will be generated and copied to the an <code class="highlight">eggs</code> folder.  Now when compiling PyMdown, the eggs will be bundled in the application and be usable, and if not compiling, the eggs will be included in the system path and be usable.  In both cases the eggs modules will be accessible as if they were native to Pygments.  As mentioned before, PyMdown will not load the egg if it doesn&rsquo;t start with <code class="highlight">pymdown_</code>.  The generation script will append the Python version to the end of the egg name, so only when PyMdown is run with or built with the same version of Python that created the egg will it get loaded.</p>
+  </div>
+
+  <div class="footer">
+  <p>
+    <a href="https://github.com/facelessuser/PyMdown" class="branding">
+      <img src="assets/GitHub-Mark-64px.png"/><br>
+    </a>
+    <strong>Repository on Github</strong>
+  </p>
+  </div>
+</div>
+</body>
+</html>

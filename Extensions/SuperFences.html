@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8">
+
+<link href="../css/site-template.css" rel="stylesheet" type="text/css">
+<link href="../css/markdown.css" rel="stylesheet" type="text/css">
+<link href="../css/pygments-github2.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" charset="utf-8" src="../js/jshelper.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/touch.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/nav.js"></script>
+<script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/flowchart-min.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/uml-converter.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/flow-loader.js"></script>
+<script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
+<script type="text/javascript" charset="utf-8" src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.4/sequence-diagram-min.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/sequence-loader.js"></script>
+
+<title>SuperFences</title>
+</head>
+<body>
+
+<div class="content">
+  <div class="header">
+  <h1><a href="http://facelessuser.github.io/PyMdown/">PyMdown</a></h1>
+  <div class="bread-crumb-div"><ul class="bread-crumbs"><li class="crumb"><a href="../index.html">PyMdown</a></li>
+<li class="crumb"><a href="./index.html">Extensions</a></li>
+<li class="crumb"><a href="./SuperFences.html">SuperFences</a></li></ul></div>
+  </div>
+
+  <div class="menu"></div>
+
+  <div class="markdown-body">
+  <h1>SuperFences</h1>
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#overview">Overview</a><ul>
+<li><a href="#nested-fenced-blocks">Nested Fenced Blocks</a></li>
+<li><a href="#uml-diagrams">UML Diagrams</a></li>
+</ul>
+</li>
+<li><a href="#limitations">Limitations</a></li>
+<li><a href="#options">Options</a></li>
+<li><a href="#examples">Examples</a><ul>
+<li><a href="#neseted-fences">Neseted Fences:</a></li>
+<li><a href="#uml-flow-charts">UML Flow Charts</a></li>
+<li><a href="#uml-sequence-diagrams">UML Sequence Diagrams</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<h2 id="overview"><a name="user-content-overview" href="#overview" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Overview</h2>
+<p>SuperFences provides 4 features:</p>
+<ul>
+<li>The ability to nest fences under blockquotes, lists, or other block elements (this feature is provided as a workaround until a more official and better implementation is provided by the Python Markdown team; see <a href="#limitations">Limitations</a> for more info).</li>
+<li>Special UML flowchart fence via the <code class="highlight">flow</code> language specifier.</li>
+<li>Special UML sequence diagram via the <code class="highlight">sequence</code> language specifier.</li>
+<li>The ability to disable indented code blocks in favor of only using the fenced variant (off by default).</li>
+</ul>
+<p>All features can be turned on or off.</p>
+<h3 id="nested-fenced-blocks"><a name="user-content-nested-fenced-blocks" href="#nested-fenced-blocks" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Nested Fenced Blocks</h3>
+<p>Fenced blocks requires all nested fence content to be at least at the indentation levels of the fences (blank lines excluded).  The opening and closing fence markers must be indented at the same level.  If you are using a fenced block inside a blockquote, at least the first line of the fenced block needs to have the appropriate number of <code class="highlight">&gt;</code> characters signifying the quote depth.</p>
+<div class="highlight"><pre>&gt; ```
+  a fenced block
+  ```
+</pre></div>
+
+
+<p>Keep in mind that too many blank lines will cause a blockquote to terminate, so remember to use <code class="highlight">&gt;</code> markers accordingly if not marking every line.</p>
+<div class="highlight"><pre>&gt; ```
+  a fenced block
+
+&gt; with blank lines
+  ```
+</pre></div>
+
+
+<p>If using a fenced block as the first line of a list, you will have to leave the first line blank, but remember that the list marker must be followed by a space.</p>
+<div class="highlight"><pre>-&lt;space&gt;
+    ```
+    a fenced block
+    ```
+
+Definition
+:&lt;space&gt;
+    ```
+    a fenced block
+    ```
+</pre></div>
+
+
+<h3 id="uml-diagrams"><a name="user-content-uml-diagrams" href="#uml-diagrams" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>UML Diagrams</h3>
+<p>When using the UML diagram features, you must provide the necessary Javascript files for the HTML output.  The requirements are listed below:</p>
+<p><strong>flowcharts:</strong></p>
+<ul>
+<li><a href="http://raphaeljs.com/">raphael.js</a></li>
+<li><a href="http://adrai.github.io/flowchart.js/">flowchart.js</a></li>
+</ul>
+<p><strong>sequence diagrams:</strong></p>
+<ul>
+<li><a href="http://raphaeljs.com/">raphael.js</a></li>
+<li><a href="http://underscorejs.org/">underscore.js</a></li>
+<li><a href="http://bramp.github.io/js-sequence-diagrams/">sequece-diagram.js</a></li>
+</ul>
+<p>Simply including the libraries above is not enough as these libraries need to be pointed at the elements they need to convert.  If using the PyMdown application, and not just the extension, PyMdown provides a script <code class="highlight">uml-loader.py</code> that can be used to target the HTML elements and execute the appropriate library on their content to create the desired diagrams.  <code class="highlight">uml-loader.py</code> does not have to be used, and you can modify it or write your own to suite your needs; it is provided for convenience.</p>
+<p>UML flowcharts and sequence diagrams will be rendered as HTML <code class="highlight">&lt;pre&gt;&lt;code&gt;</code> tags before the Javascript libraries are run on them.  They will be assigned CSS classes <code class="highlight">uml-flowchart</code> and <code class="highlight">uml-sequence-diagram</code> respectively for flowcharts and sequence diagrams.</p>
+<h2 id="limitations"><a name="user-content-limitations" href="#limitations" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Limitations</h2>
+<p>This extension suffers from the same issues that the original fenced block extension suffers from.  Normally Python Markdown does not parse content inside HTML tags unless they are marked with the attribute <code class="highlight">markdown=&#39;1&#39;</code> etc.  But since this is run as a preprocessor, it is not aware of the HTML blocks.  So be aware of this.</p>
+<p>SuperFences is made to work with the default extensions out of the box.  It will probably not work with other extensions such as Grid Tables since that extension allows for characters to obscure the blocks like blockquote syntax does (though this has been designed to work with blockquotes).  Ideally fenced blocks needs to be handled as a block parser, but there is much work to be done on Python Markdown&rsquo;s internal block handlers before this is possible.</p>
+<p>SuperFences works best when following the guidelines.  If the guidelines are not followed, odd results may be encountered.</p>
+<p>For the reasons above, the nested fences feature really is just a workaround.  But for a lot of people (including myself), this functionality is more than sufficient.</p>
+<h2 id="options"><a name="user-content-options" href="#options" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Options</h2>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>disable_indented_code_blocks</td>
+<td>bool</td>
+<td>False</td>
+<td>Disables Python Markdown&rsquo;s indented code block parsing.  This is nice if you only ever use fenced blocks.</td>
+</tr>
+<tr>
+<td>nested</td>
+<td>bool</td>
+<td>True</td>
+<td>Use nested fences.</td>
+</tr>
+<tr>
+<td>uml_flow</td>
+<td>bool</td>
+<td>True</td>
+<td>Enable flowcharts.</td>
+</tr>
+<tr>
+<td>uml_sequence</td>
+<td>bool</td>
+<td>True</td>
+<td>Enable sequence diagrams.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="examples"><a name="user-content-examples" href="#examples" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Examples</h2>
+<p>This highlights the special features of this extension except for <code class="highlight">disable_indented_code_blocks</code>.</p>
+<h3 id="neseted-fences"><a name="user-content-neseted-fences" href="#neseted-fences" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Neseted Fences:</h3>
+<div class="highlight"><pre>    ```
+    This will still be parsed
+    as a normal indented code block.
+    ```
+
+```
+This will still be parsed
+as a fenced code block.
+```
+
+- This is a list that contains multiple code blocks.
+
+    - Here is an indented block
+
+            ```
+            This will still be parsed
+            as a normal indented code block.
+            ```
+
+    - Here is a fenced code block:
+
+        ```
+        This will still be parsed
+        as a fenced code block.
+        ```
+
+        &gt; ```
+        &gt; Blockquotes?
+        &gt; Not a problem!
+        &gt; ```
+</pre></div>
+
+
+<div class="highlight"><pre>```
+This will still be parsed
+as a normal indented code block.
+```
+</pre></div>
+
+
+<div class="highlight"><pre>This will still be parsed
+as a fenced code block.
+</pre></div>
+
+
+<ul>
+<li>
+<p>This is a list that contains multiple code blocks.</p>
+<ul>
+<li>
+<p>Here is an indented block</p>
+<div class="highlight"><pre>```
+This will still be parsed
+as a normal indented code block.
+```
+</pre></div>
+
+
+</li>
+<li>
+<p>Here is a fenced code block:</p>
+<div class="highlight"><pre>This will still be parsed
+as a fenced code block.
+</pre></div>
+
+
+<blockquote>
+<div class="highlight"><pre>Blockquotes?
+Not a problem!
+</pre></div>
+
+
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="uml-flow-charts"><a name="user-content-uml-flow-charts" href="#uml-flow-charts" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>UML Flow Charts</h3>
+<div class="highlight"><pre>```flow
+st=&gt;start: Start:&gt;http://www.google.com[blank]
+e=&gt;end:&gt;http://www.google.com
+op1=&gt;operation: My Operation
+sub1=&gt;subroutine: My Subroutine
+cond=&gt;condition: Yes
+or No?:&gt;http://www.google.com
+io=&gt;inputoutput: catch something...
+
+st-&gt;op1-&gt;cond
+cond(yes)-&gt;io-&gt;e
+cond(no)-&gt;sub1(right)-&gt;op1
+```
+</pre></div>
+
+
+<pre class="uml-flowchart"><code>st=&gt;start: Start:&gt;http://www.google.com[blank]
+e=&gt;end:&gt;http://www.google.com
+op1=&gt;operation: My Operation
+sub1=&gt;subroutine: My Subroutine
+cond=&gt;condition: Yes
+or No?:&gt;http://www.google.com
+io=&gt;inputoutput: catch something...
+
+st-&gt;op1-&gt;cond
+cond(yes)-&gt;io-&gt;e
+cond(no)-&gt;sub1(right)-&gt;op1
+</code></pre>
+
+<h3 id="uml-sequence-diagrams"><a name="user-content-uml-sequence-diagrams" href="#uml-sequence-diagrams" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>UML Sequence Diagrams</h3>
+<div class="highlight"><pre>```sequence
+Title: Here is a title
+A-&gt;B: Normal line
+B--&gt;C: Dashed line
+C-&gt;&gt;D: Open arrow
+D--&gt;&gt;A: Dashed open arrow
+```
+</pre></div>
+
+
+<pre class="uml-sequence-diagram"><code>Title: Here is a title
+A-&gt;B: Normal line
+B--&gt;C: Dashed line
+C-&gt;&gt;D: Open arrow
+D--&gt;&gt;A: Dashed open arrow
+</code></pre>
+  </div>
+
+  <div class="footer">
+  <p>
+    <a href="https://github.com/facelessuser/PyMdown" class="branding">
+      <img src="../assets/GitHub-Mark-64px.png"/><br>
+    </a>
+    <strong>Repository on Github</strong>
+  </p>
+  </div>
+</div>
+</body>
+</html>

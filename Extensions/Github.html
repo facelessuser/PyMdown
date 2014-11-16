@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<head>
+<meta charset="utf-8">
+
+<link href="../css/site-template.css" rel="stylesheet" type="text/css">
+<link href="../css/markdown.css" rel="stylesheet" type="text/css">
+<link href="../css/pygments-github2.css" rel="stylesheet" type="text/css">
+
+<script type="text/javascript" charset="utf-8" src="../js/jshelper.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/touch.js"></script>
+<script type="text/javascript" charset="utf-8" src="../js/nav.js"></script>
+
+<title>Github</title>
+</head>
+<body>
+
+<div class="content">
+  <div class="header">
+  <h1><a href="http://facelessuser.github.io/PyMdown/">PyMdown</a></h1>
+  <div class="bread-crumb-div"><ul class="bread-crumbs"><li class="crumb"><a href="../index.html">PyMdown</a></li>
+<li class="crumb"><a href="./index.html">Extensions</a></li>
+<li class="crumb"><a href="./Github.html">Github</a></li></ul></div>
+  </div>
+
+  <div class="menu"></div>
+
+  <div class="markdown-body">
+  <h1>Github</h1>
+  <div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#overview">Overview</a></li>
+</ul>
+</div>
+<h2 id="overview"><a name="user-content-overview" href="#overview" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Overview</h2>
+<p>The Github extension is a convenience extension to load up and configure the minimum extensions needed to get a <abbr title="Github Flavored Markdown">GFM</abbr> feel.  It is not a 1:1 emulation, but some aspects are pretty close.  I don&rsquo;t really have a desire to to make it exact, but the feel is nice if you like <abbr title="Github Flavored Markdown">GFM</abbr> feel; some things may differ slightly.</p>
+<div class="admonition caution">
+<p class="admonition-title">Reminder</p>
+<p>Be mindful of which extensions are being loaded here.  If you load <code class="highlight">pymdown.github</code> and <code class="highlight">markdown.extensions.extra</code>, you will be loading some extensions multiple times.</p>
+<p>You will also need to load the <code class="highlight">markdown.extensions.codehilite</code> extension yourself as well with <code class="highlight">guess_lang=False</code> and your preferred Pygments style (if available or use some other Javascript highlighter).  Though there is no github style included with the extension, the PyModwn tool comes with the original github style (github) and the newest github 2014 style (github2).</p>
+</div>
+<p>Extensions that get loaded:</p>
+<ul>
+<li>markdown.extensions.tables</li>
+<li>markdown.extensions.nl2b</li>
+<li>pymdown.magiclink</li>
+<li>pymdown.betterem</li>
+<li>pymdown.tilde(subscript=False)</li>
+<li>pymdown.githubemoji</li>
+<li>pymdown.tasklist</li>
+<li>pymdown.headeranchor</li>
+<li>pymdown.superfences</li>
+</ul>
+  </div>
+
+  <div class="footer">
+  <p>
+    <a href="https://github.com/facelessuser/PyMdown" class="branding">
+      <img src="../assets/GitHub-Mark-64px.png"/><br>
+    </a>
+    <strong>Repository on Github</strong>
+  </p>
+  </div>
+</div>
+</body>
+</html>
