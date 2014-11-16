@@ -8,6 +8,7 @@ Really simple plugin to add support for:
     trademart  = (tm)
     registered = (r)
     plus/minus = +/-
+    care/of    = c/o
     fractions  = 1/2 etc.
         (only certain available unicode fractions)
     arrows:
@@ -39,6 +40,7 @@ RE_COPY = ("smart-copyright", r'\(c\)', r'&copy;')
 RE_REG = ("smart-registered", r'\(r\)', r'&reg;')
 RE_PLUSMINUS = ("smart-plus-minus", r'\+/-', r'&plusmn;')
 RE_NOT_EQUAL = ("smart-not-equal", r'!=', r'&ne;')
+RE_CARE_OF = ("smart-care-of", r'\bc/o\b', r'&#8453;')
 RE_ORDINAL_NUMBERS = (
     "smart-ordinal-numbers",
     r'''\b(?P<leading>(?:[1-9][0-9]*)?)(?P<tail>1st|2nd|3rd|[04-9]th)\b''',
@@ -66,7 +68,8 @@ REPL = {
     'arrows': RE_ARROWS,
     'notequal': RE_NOT_EQUAL,
     'fractions': RE_FRACTIONS,
-    'ordinal_numbers': RE_ORDINAL_NUMBERS
+    'ordinal_numbers': RE_ORDINAL_NUMBERS,
+    'care_of': RE_CARE_OF
 }
 
 FRAC = {
@@ -120,7 +123,8 @@ class SmartSymbolsExtension(Extension):
             'arrows': [True, 'Arrows'],
             'notequal': [True, 'Not Equal'],
             'fractions': [True, 'Fractions'],
-            'ordinal_numbers': [True, 'Ordinal Numbers']
+            'ordinal_numbers': [True, 'Ordinal Numbers'],
+            'care_of': [True, 'Care/of']
         }
         super(SmartSymbolsExtension, self).__init__(*args, **kwargs)
 
