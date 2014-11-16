@@ -8,6 +8,7 @@ SmartSymbols adds syntax for creating special characters such as trademarks, arr
 | trademark       | Add syntax for tradmark symbol.   |
 | copyright       | Add syntax for copyright symbol.  |
 | registered      | Add syntax for registered symbol. |
+| care_of         | Add syntax for care / of.         |
 | plusminus       | Add syntax for plus / minus.      |
 | arrows          | Add syntax for creating arrows.   |
 | notequal        | Add syntax for not equal symbol.  |
