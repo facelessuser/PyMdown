@@ -18,13 +18,11 @@ Math requires you to point the HTML at the MathJax library and provide the neces
 # Examples
 
 ````
-Some Equations
+Some Equations:
 
 $$
 E(\mathbf{v}, \mathbf{h}) = -\sum_{i,j}w_{ij}v_i h_j - \sum_i b_i v_i - \sum_j c_j h_j
 $$
-
-Multiline equations?
 
 - Here are some more equations:
 
@@ -38,15 +36,13 @@ Multiline equations?
 - Inline equations: $p(x|y) = \frac{p(y|x)p(x)}{p(y)}$.
 ````
 
-Some Equations
+Some Equations:
 
 $$
 E(\mathbf{v}, \mathbf{h}) = -\sum_{i,j}w_{ij}v_i h_j - \sum_i b_i v_i - \sum_j c_j h_j
 $$
 
-Multiline equations?
-
-- Here is some more equations:
+- Here are some more equations:
 
     $$
         \begin{align}
