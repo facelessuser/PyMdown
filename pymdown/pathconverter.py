@@ -183,7 +183,8 @@ def repl_absolute(m, base_path):
     if (not is_absolute and not is_url):
         temp = normpath(join(base_path, path))
         if exists(temp):
-            link = m.group('name') + "\"" + pathname2url(temp.replace("\\", "/")) + "\""
+            path = pathname2url(temp.replace("\\", "/"))
+            link = '%s"%s"' % (m.group('name'), urlunparse((scheme, netloc, path, params, query, fragment)))
     return link
 
 
