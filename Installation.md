@@ -12,9 +12,9 @@ In order for PyMdown to work, there are a couple of prerequisites.
 
 | Name | Details |
 |------|---------|
-| [Python Markdown 2.5 (experimental)][py_md] | There are a number of fixes that occurred after version 2.5.1 that, at the time of writing this, have not been released.  So currently, you can either download the main branch on Github and drop the `markdown` folder in the root of this project, or you can download the main branch and install via `python setup.py build` and `python setup.py install`.  As soon as the next version is released, you will simply be able to use `pip install markdown`. The current revision that I am using is https://github.com/waylan/Python-Markdown/archive/57633f1743cc16e16c140cc92f860c62d872b6cc.zip |
+| [Python Markdown 2.5.2+][py_md] | Python Mardkown must be installed as it is the Markdown parser that is being used.  It must be 2.5.2 or greater as certain fixes are needed that were added in 2.5.2. |
 | [Pygments 2.0rc1+ (optional)][pygments] | If Pygments Syntax highlighting is desired, Pygments must be installed.  This can be omitted, and code blocks (if using the CodeHilite extension) will be formatter for use with Javascript code highlighters. |
-| [PyYaml][pyyaml] | PyYaml is required. |
+| [PyYaml 3.10+][pyyaml] | PyYaml is required. Older versions may work, but I am arbitrarily specifying 3.10 as the earliest I am aware of that works. |
 
 
 # Build
