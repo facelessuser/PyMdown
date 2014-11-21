@@ -14,10 +14,10 @@ settings:
         - name: markdown.extensions.smarty
         - name: markdown.extensions.attr_list
         - name: markdown.extensions.admonition
-        - name: pymdown.betterem
+        - name: pymdownx.betterem
           config:
             smart_enable: none
-        - name: pymdown.headeranchor
+        - name: pymdownx.headeranchor
 ---
 [TOC]
 
