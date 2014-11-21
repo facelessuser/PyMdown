@@ -1,5 +1,5 @@
 # PyMdown
-PyMdown is CLI tool to convert or even batch convert markdown files to HTML.  It can also generate HTML previews of markdown and auto-open them in a webbrowser. It can also accept a file stream.
+PyMdown is CLI tool to convert or even batch convert markdown files to HTML.  PyMdown has a number of extensions written specifically for it found at this separate repository: [pymdown-extensions](https://github.com/facelessuser/pymdown-extensions).  PyMdown can also generate HTML previews of markdown and auto-open them in a webbrowser.
 
 # Status
 This is in a **Beta** state.  Because of the **Beta** state, things are in flux and are subject to change without warning.
@@ -9,8 +9,9 @@ Though the documentation is currently still in flux and still being completed, i
 
 # Credits
 - Built on top of https://pypi.python.org/pypi/Markdown
-- Uses the development branch of Pygments for Python 3 support http://pygments.org/.
-- Includes optional Tomorrow Themes for Pygment from https://github.com/MozMorris/tomorrow-pygments
+- Contains a custom extensions from pymdown-extensions: https://github.com/facelessuser/pymdown-extensions
+- Uses Pygments for syntax highlighting of code: http://pygments.org/.
+- Includes optional Tomorrow Themes for Pygments: https://github.com/MozMorris/tomorrow-pygments
 - Inspiration for the project came from https://github.com/revolunet/sublimetext-markdown-preview.
 
 # License
