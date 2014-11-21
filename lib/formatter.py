@@ -137,6 +137,7 @@ class Html(object):
         self.plain = plain
         self.template = None
         self.file = None
+        self.meta = []
         self.encoding = encoding
         self.basepath = basepath
         self.preview = preview
@@ -148,6 +149,7 @@ class Html(object):
 
     def set_meta(self, meta):
         """ Create meta data tags """
+        self.meta = ['<meta charset="%s">' % self.encoding]
         if "title" in meta:
             value = meta["title"]
             if isinstance(value, list):
@@ -476,6 +478,5 @@ class Html(object):
         """ Load up header related info """
         self.css = []
         self.scripts = []
-        self.meta = ['<meta charset="%s">' % self.encoding]
         self.load_css(style)
         self.load_js()
