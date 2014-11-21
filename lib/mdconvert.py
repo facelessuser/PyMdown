@@ -12,8 +12,7 @@ import codecs
 import sys
 import traceback
 import re
-from os.path import exists, isfile, dirname, abspath, join
-from .logger import Logger
+from . import logger
 
 PY3 = sys.version_info >= (3, 0)
 RE_TAGS = re.compile(r'''</?[^>]*>''', re.UNICODE)
@@ -29,10 +28,11 @@ if PY3:
     string_type = str
 else:
     from urllib import quote
-    string_type = basestring  # flake8: noqa
+    string_type = basestring  # noqa
 
 
 def slugify(text, sep):
+    """ Custom slugify """
     if text is None:
         return ''
     # Strip html tags and lower
@@ -74,39 +74,41 @@ class MdWrapper(Markdown):
                     ext = self.build_extension(ext, configs.get(ext, {}))
                 if isinstance(ext, Extension):
                     ext.extendMarkdown(self, globals())
-                    Logger.debug('Successfully loaded extension "%s.%s".'
-                                % (ext.__class__.__module__, ext.__class__.__name__))
+                    logger.Log.debug(
+                        'Successfully loaded extension "%s.%s".'
+                        % (ext.__class__.__module__, ext.__class__.__name__)
+                    )
                 elif ext is not None:
                     raise TypeError(
                         'Extension "%s.%s" must be of type: "markdown.Extension"'
-                        % (ext.__class__.__module__, ext.__class__.__name__))
+                        % (ext.__class__.__module__, ext.__class__.__name__)
+                    )
             except:
                 # We want to gracefully continue even if an extension fails.
-                Logger.debug(str(traceback.format_exc()))
+                logger.Log.debug(str(traceback.format_exc()))
                 continue
 
         return self
 
 
 class MdConvert(object):
-    def __init__(
-        self, file_name, encoding, base_path=None, relative_output=None, extensions=[],
-        tab_length=4, lazy_ol=True, smart_emphasis=True,
-        enable_attributes=True, output_format='xhtml1'
-    ):
+    def __init__(self, source, **kwargs):
         """ Initialize """
+
+        base_path = kwargs.get('base_path')
+        relative_output = kwargs.get('relative_output')
+
         self.meta = {}
-        self.file_name = abspath(file_name)
+        self.source = source
         self.base_path = base_path if base_path is not None else ''
         self.relative_output = relative_output if relative_output is not None else ''
-        self.encoding = encoding
-        self.check_extensions(extensions)
-        self.tab_length = tab_length
-        self.lazy_ol = lazy_ol
-        self.smart_emphasis = smart_emphasis
-        self.enable_attributes = enable_attributes
-        self.output_format = output_format
-        self.convert()
+        self.encoding = kwargs.get('encoding', 'utf-8')
+        self.check_extensions(kwargs.get('extensions', []))
+        self.tab_length = kwargs.get('tab_length', 4)
+        self.smart_emphasis = kwargs.get('smart_emphasis', True)
+        self.lazy_ol = kwargs.get('lazy_ol', True)
+        self.enable_attributes = kwargs.get('enable_attributes', True)
+        self.output_format = kwargs.get('output_format', 'xhtml1')
 
     def check_extensions(self, extensions):
         """ Check the extensions and see if anything needs to be modified """
@@ -138,7 +140,7 @@ class MdConvert(object):
         """ Convert the file to HTML """
         self.markdown = ""
         try:
-            with codecs.open(self.file_name, "r", encoding=self.encoding) as f:
+            with codecs.open(self.source, "r", encoding=self.encoding) as f:
                 md = MdWrapper(
                     extensions=self.extensions,
                     extension_configs=self.extension_configs,
@@ -158,25 +160,6 @@ class MdConvert(object):
 
 
 class MdConverts(MdConvert):
-    def __init__(
-        self, string,
-        base_path=None, relative_output=None, extensions=[],
-        tab_length=4, lazy_ol=True, smart_emphasis=True,
-        enable_attributes=True, output_format='xhtml1'
-    ):
-        """ Initialize """
-        self.meta = {}
-        self.string = string
-        self.base_path = base_path if base_path is not None else ''
-        self.relative_output = relative_output if relative_output is not None else ''
-        self.check_extensions(extensions)
-        self.smart_emphasis = smart_emphasis
-        self.tab_length = tab_length
-        self.lazy_ol = lazy_ol
-        self.enable_attributes = enable_attributes
-        self.output_format = output_format
-        self.convert()
-
     def convert(self):
         """ Convert the given string to HTML """
         self.markdown = ""
@@ -190,7 +173,7 @@ class MdConverts(MdConvert):
                 enable_attributes=self.enable_attributes,
                 output_format=self.output_format
             )
-            self.markdown = md.convert(self.string)
+            self.markdown = md.convert(self.source)
             try:
                 self.meta = md.Meta
             except:

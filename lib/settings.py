@@ -9,18 +9,15 @@ Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
 """
 from __future__ import unicode_literals
 import json
-import re
 import codecs
 import traceback
 import sys
 from copy import deepcopy
-from os.path import dirname, abspath, exists, normpath, expanduser
-from os.path import isfile, isdir, splitext, join, basename
+import os.path as path
 from . import resources as res
-from .logger import Logger
+from . import logger
 import yaml
-from .file_strip.json import sanitize_json
-from .resources import resource_exists, splitenc, unpack_user_files, is_absolute
+from . import file_strip as fstrip
 import markdown.extensions.codehilite as codehilite
 try:
     from pygments.styles import get_style_by_name
@@ -34,11 +31,8 @@ if PY3:
     unicode_string = str
     string_type = str
 else:
-    unicode_string = unicode  # flake8: noqa
-    string_type = basestring
-
-
-PAGE_KEYS = ('destination', 'basepath', 'references', 'include.js', 'include.css', 'include')
+    unicode_string = unicode  # noqa
+    string_type = basestring  # noqa
 
 CRITIC_IGNORE = 0
 CRITIC_ACCEPT = 1
@@ -79,14 +73,9 @@ class Settings(object):
         }
 
         # Use default file if one was not provided
-        if settings_path is None:
-            settings_path = "pymdown.cfg"
+        self.settings_path = settings_path if settings_path is not None else 'pymdown.cfg'
 
-        # Get the settings if available
-        unpack_user_files()
-        self.read_settings(settings_path)
-
-    def read_settings(self, settings_path):
+    def read_settings(self):
         """
         Get the settings and add absolutepath
         extention if a preview is planned.
@@ -96,24 +85,24 @@ class Settings(object):
         settings = None
 
         # Unpack default settings file if needed
-        if not exists(settings_path):
+        if not path.exists(self.settings_path):
             text = res.load_text_resource(res.DEFAULT_SETTINGS, internal=True)
             try:
-                with codecs.open(settings_path, "w", encoding="utf-8") as f:
+                with codecs.open(self.settings_path, "w", encoding="utf-8") as f:
                     f.write(text)
             except:
-                Logger.error(traceback.format_exc())
+                logger.Log.error(traceback.format_exc())
 
         # Try and read settings file
         try:
-            with codecs.open(settings_path, "r", encoding='utf-8') as f:
+            with codecs.open(self.settings_path, "r", encoding='utf-8') as f:
                 contents = f.read()
                 try:
-                    settings = json.loads(sanitize_json(contents))
+                    settings = json.loads(fstrip.json.sanitize_json(contents))
                 except:
                     settings = yaml.load(contents)
         except:
-            Logger.error(traceback.format_exc())
+            logger.Log.error(traceback.format_exc())
 
         if settings is None:
             settings = {}
@@ -133,9 +122,9 @@ class Settings(object):
         # If there is no output location, try to come up with a rational
         # output reference directory by falling back to the source file.
         if settings['page']['destination'] is not None:
-            self.relative_out = dirname(abspath(settings['page']['destination']))
+            self.relative_out = path.dirname(path.abspath(settings['page']['destination']))
         elif file_name:
-            self.relative_out = dirname(abspath(self.file_name))
+            self.relative_out = path.dirname(path.abspath(self.file_name))
         # elif settings["page"]["basepath"] is not None:
         #     self.relative_out = settings["page"]["basepath"]
         else:
@@ -153,18 +142,18 @@ class Settings(object):
         critic_enabled = self.critic & (CRITIC_ACCEPT | CRITIC_REJECT | CRITIC_VIEW)
         output = None
         if out_name is not None:
-            out_name = expanduser(out_name)
+            out_name = path.expanduser(out_name)
         if not self.batch:
             if out_name is not None:
-                name = abspath(out_name)
-                if isdir(out_name):
-                    Logger.error("'%s' is a directory!" % name)
-                elif exists(dirname(name)):
+                name = path.abspath(out_name)
+                if path.isdir(out_name):
+                    logger.Log.error("'%s' is a directory!" % name)
+                elif path.exists(path.dirname(name)):
                     output = name
                 else:
-                    Logger.error("'%s' directory does not exist!" % name)
+                    logger.Log.error("'%s' directory does not exist!" % name)
         else:
-            name = abspath(self.file_name)
+            name = path.abspath(self.file_name)
             if self.critic & CRITIC_DUMP and critic_enabled:
                 if self.critic & CRITIC_REJECT:
                     label = ".rejected"
@@ -172,24 +161,24 @@ class Settings(object):
                     label = ".accepted"
                 else:
                     label = '.view'
-                base, ext = splitext(abspath(self.file_name))
-                output = join(name, "%s%s%s" % (base, label, ext))
+                base, ext = path.splitext(path.abspath(self.file_name))
+                output = path.join(name, "%s%s%s" % (base, label, ext))
             else:
-                output = join(name, "%s.html" % splitext(abspath(self.file_name))[0])
+                output = path.join(name, "%s.html" % path.splitext(path.abspath(self.file_name))[0])
 
         return output
 
     def resolve_base_path(self, basepath):
         """ Get the base path to use when resolving basepath paths if possible """
         if basepath is not None:
-            basepath = expanduser(basepath)
-        if basepath is not None and exists(basepath):
+            basepath = path.expanduser(basepath)
+        if basepath is not None and path.exists(basepath):
             # A valid path was fed in
-            path = basepath
-            basepath = dirname(abspath(path)) if isfile(path) else abspath(path)
+            pth = basepath
+            basepath = path.dirname(path.abspath(pth)) if path.isfile(pth) else path.abspath(pth)
         elif not self.is_stream:
             # Use the current file path
-            basepath = dirname(abspath(self.file_name))
+            basepath = path.dirname(path.abspath(self.file_name))
         else:
             # Okay, there is no way to tell the orign.
             # We are probably a stream that has no specified
@@ -208,33 +197,42 @@ class Settings(object):
            can be found
         """
         if target is not None:
-            target = expanduser(target)
-            if not is_absolute(target):
+            target = path.expanduser(target)
+            if not res.is_absolute(target):
                 new_target = None
                 if basepath is not None:
-                    temp = join(basepath, target)
-                    if exists(temp):
+                    temp = path.join(basepath, target)
+                    if path.exists(temp):
                         new_target = temp
                 target = new_target
-            elif not exists(target):
+            elif not path.exists(target):
                 target = None
         return target
 
     def process_settings_path(self, pth, base):
-        target, encoding = splitenc(pth)
+        """ General method to process paths in settings file """
+        target, encoding = res.splitenc(pth)
 
         file_path = self.resolve_meta_path(
             pth,
             base
         )
-        if file_path is None or not isfile(file_path):
+        if file_path is None or not path.isfile(file_path):
             file_path = None
         else:
-            file_path = normpath(file_path)
+            file_path = path.normpath(file_path)
         return file_path + ';' + encoding if file_path is not None else None
 
     def apply_frontmatter(self, frontmatter, settings):
-        """ Apply front matter to settings object etc. """
+        """
+        Apply front matter to settings object etc.
+        PAGE_KEYS: destination, basepath, references,
+                   include.js', include.css', include
+        SETTIGS_KEY: settings
+        META_KEYS: all other keys that aren't handled above
+        """
+        css = []
+        js = []
 
         # Handle basepath first
         if "basepath" in frontmatter:
@@ -246,91 +244,93 @@ class Settings(object):
         # The destination/output location and name
         if "destination" in frontmatter:
             value = frontmatter['destination']
-            file_name = self.resolve_meta_path(dirname(unicode_string(value)), base)
-            if file_name is not None and isdir(file_name):
-                value = normpath(join(file_name, basename(value)))
-                if exists(value) and isdir(value):
+            file_name = self.resolve_meta_path(path.dirname(unicode_string(value)), base)
+            if file_name is not None and path.isdir(file_name):
+                value = path.normpath(path.join(file_name, path.basename(value)))
+                if path.exists(value) and path.isdir(value):
                     value = None
             else:
                 value = None
             if value is not None:
                 settings["page"]["destination"] = value
             del frontmatter['destination']
-        destination = settings["page"]["destination"]
 
-        css = []
-        js = []
+        # Javascript and CSS includes quick load aliases
+        if "include" in frontmatter:
+            value = frontmatter['include']
+            if not isinstance(value, list):
+                value = []
+            settings["page"]['include'] = [unicode_string(v) for v in value if isinstance(v, string_type)]
+            del frontmatter['include']
 
-        # Resolve all frontmatter items
-        for key, value in frontmatter.items():
+        # Javascript and CSS include
+        for i in ("css", "js"):
+            key = 'include.%s' % i
+            if key in frontmatter:
+                value = frontmatter[key]
+                items = []
+                for j in value:
+                    pth = unicode_string(j)
+                    items.append(pth)
+                if i == 'css':
+                    css += items
+                else:
+                    js += items
+                del frontmatter[key]
 
-            # Handle PyMdown settings
-            if key == "settings" and isinstance(value, dict):
-                for subkey, subvalue in value.items():
-                    # Html template
-                    if subkey == "template":
-                        org_pth = unicode_string(subvalue)
-                        new_pth = self.process_settings_path(org_pth, base)
-                        settings[key][subkey] = new_pth if new_pth is not None else org_pth
+        if 'references' in frontmatter:
+            value = frontmatter['references']
+            if not isinstance(value, list):
+                value = [value]
+            refs = []
+            for v in value:
+                pth = unicode_string(v)
+                refs.append(pth)
+            settings["page"]['references'] = refs
+            del frontmatter['references']
 
-                    # Handle optional extention assets
-                    elif subkey.startswith('@'):
-                        for assetkey, assetvalue in subvalue.items():
-                            if assetkey in ('cs', 'js'):
-                                items = []
-                                for i in assetvalue:
-                                    pth = unicode_string(i)
-                                    items.append(pth)
-                                settings[key][subkey][assetkey] = items
-                            else:
-                                settings[key][subkey][assetkey] = assetvalue
+        # Handle PyMdown settings
+        if 'settings' in frontmatter and isinstance(frontmatter['settings'], dict):
+            value = frontmatter['settings']
+            for subkey, subvalue in value.items():
+                # Html template
+                if subkey == "template":
+                    org_pth = unicode_string(subvalue)
+                    new_pth = self.process_settings_path(org_pth, base)
+                    settings['settings'][subkey] = new_pth if new_pth is not None else org_pth
 
-                    # Javascript and CSS files
-                    elif subkey in ("css", "js"):
-                        items = []
-                        for i in subvalue:
-                            pth = unicode_string(i)
-                            items.append(pth)
-                        settings[key][subkey] = items
+                # Handle optional extention assets
+                elif subkey.startswith('@'):
+                    for assetkey, assetvalue in subvalue.items():
+                        if assetkey in ('cs', 'js'):
+                            items = []
+                            for i in assetvalue:
+                                pth = unicode_string(i)
+                                items.append(pth)
+                            settings['settings'][subkey][assetkey] = items
+                        else:
+                            settings['settings'][subkey][assetkey] = assetvalue
 
-                    # All other settings that require no other special handling
-                    else:
-                        settings[key][subkey] = subvalue
-
-            # Built in frontmatter keys
-            elif key in PAGE_KEYS:
-                # Included references markdown (footnotes, abbreviations, etc.)
-                if key == "references":
-                    if not isinstance(value, list):
-                        value = [value]
-                    refs = []
-                    for v in value:
-                        pth = unicode_string(v)
-                        refs.append(pth)
-                    settings["page"][key] = refs
-
-                elif key == "include":
-                    if not isinstance(value, list):
-                        value = []
-                    settings["page"][key] = [unicode_string(v) for v in value if isinstance(v, string_type)]
-
-                elif key in ("include.css", "include.js"):
+                # Javascript and CSS files
+                elif subkey in ("css", "js"):
                     items = []
-                    for i in value:
+                    for i in subvalue:
                         pth = unicode_string(i)
                         items.append(pth)
-                    if key == 'include.css':
-                        css += items
-                    else:
-                        js += items
+                    settings['settings'][subkey] = items
 
-            # Everything else is added to meta
-            else:
-                if isinstance(value, list):
-                    value = [unicode_string(v) for v in value]
+                # All other settings that require no other special handling
                 else:
-                    value = unicode_string(value)
-                settings["page"]["meta"][unicode_string(key)] = value
+                    settings['settings'][subkey] = subvalue
+            del frontmatter['settings']
+
+        # Resolve all other frontmatter items
+        for key, value in frontmatter.items():
+            if isinstance(value, list):
+                value = [unicode_string(v) for v in value]
+            else:
+                value = unicode_string(value)
+            settings["page"]["meta"][unicode_string(key)] = value
 
         # Append CSS and JS from built-in keys if any
         if len(css):
@@ -339,7 +339,6 @@ class Settings(object):
         if len(js):
             js = settings['settings'].get('js', []) + js
             settings['settings']['js'] = js
-
 
     def set_style(self, extensions, settings):
         """
@@ -383,7 +382,7 @@ class Settings(object):
                         # Check if the desired style exists internally
                         get_style_by_name(style)
                     except:
-                        Logger.error("Cannot find style: %s! Falling back to 'default' style." % style)
+                        logger.Log.error("Cannot find style: %s! Falling back to 'default' style." % style)
                         style = "default"
                 config['pygments_style'] = style
 
@@ -443,7 +442,7 @@ class Settings(object):
                 extensions.append(
                     {
                         "name": "pymdown.pathconverter",
-                        "config":{
+                        "config": {
                             "base_path": "${BASE_PATH}",
                             "relative_path": "${OUTPUT}",
                             "absolute": path_conversion_absolute

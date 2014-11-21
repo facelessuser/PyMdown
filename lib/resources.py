@@ -11,15 +11,15 @@ Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
 from __future__ import unicode_literals
 from __future__ import print_function
 import sys
-from os.path import join, exists, abspath, dirname, isfile, expanduser, basename
-from os import listdir, mkdir
-from .logger import Logger
+import os.path as path
+import os
+from . import logger
 import codecs
 import traceback
 import re
 import yaml
 
-RESOURCE_PATH = abspath(join(dirname(__file__), ".."))
+RESOURCE_PATH = path.abspath(path.join(path.dirname(__file__), ".."))
 WIN_DRIVE = re.compile(r"(^[A-Za-z]{1}:(?:\\|/))")
 DATA_FOLDER = "data"
 DEFAULT_CSS = "data/default-markdown.css"
@@ -27,8 +27,8 @@ DEFAULT_TEMPLATE = "data/default-template.html"
 DEFAULT_SETTINGS = "data/pymdown.cfg"
 USER_VERSION = "data/version.txt"
 NO_COPY = ('licenses.txt',)
-NO_UPDATE = (basename(DEFAULT_SETTINGS),)
-NOT_DEFAULT = (basename(DEFAULT_SETTINGS), 'version.txt')
+NO_UPDATE = (path.basename(DEFAULT_SETTINGS),)
+NOT_DEFAULT = (path.basename(DEFAULT_SETTINGS), 'version.txt')
 
 if sys.platform.startswith('win'):
     _PLATFORM = "windows"
@@ -38,12 +38,24 @@ else:
     _PLATFORM = "linux"
 
 
-def get_encoding(enc):
+def _get_encoding(enc):
+    """ Check if encoding exists else return utf-8 """
     try:
         codecs.lookup(enc)
     except LookupError:
         enc = 'utf-8'
     return enc
+
+
+def splitenc(entry, default='utf-8'):
+    """ Split encoding from file name """
+    parts = entry.split(';')
+    if len(parts) > 1:
+        entry = ';'.join(parts[:-1])
+        encoding = _get_encoding(parts[-1])
+    else:
+        encoding = _get_encoding(default)
+    return entry, encoding
 
 
 def is_absolute(pth):
@@ -64,22 +76,22 @@ def get_user_path():
     """
 
     if _PLATFORM == "windows":
-        folder = expanduser("~\\.PyMdown")
+        folder = path.expanduser("~\\.PyMdown")
     elif _PLATFORM == "osx":
-        folder = expanduser("~/.PyMdown")
+        folder = path.expanduser("~/.PyMdown")
     elif _PLATFORM == "linux":
-        folder = expanduser("~/.config/PyMdown")
+        folder = path.expanduser("~/.config/PyMdown")
 
-    if not exists(folder):
+    if not path.exists(folder):
         try:
-            mkdir(folder)
+            os.mkdir(folder)
         except:
             pass
 
-    defaults = join(folder, 'default')
-    if not exists(defaults):
+    defaults = path.join(folder, 'default')
+    if not path.exists(defaults):
         try:
-            mkdir(defaults)
+            os.mkdir(defaults)
         except:
             pass
 
@@ -88,7 +100,7 @@ def get_user_path():
 
 def update_user_files():
     """ See if user data files should be updated """
-    user_ver_file = join(get_user_path(), 'version.txt')
+    user_ver_file = path.join(get_user_path(), 'version.txt')
     ver = load_text_resource(USER_VERSION, internal=True)
     if ver is not None:
         try:
@@ -110,14 +122,14 @@ def unpack_user_files():
     folder = resource_exists(DATA_FOLDER, internal=True, dir=True)
     should_update = update_user_files()
     if folder is not None:
-        for f in listdir(folder):
+        for f in os.listdir(folder):
             if f in NOT_DEFAULT:
-                dest = join(user_path, basename(f))
+                dest = path.join(user_path, path.basename(f))
             else:
-                dest = join(user_path, 'default', basename(f))
-            source = join(folder, f)
-            if isfile(source) and f not in NO_COPY:
-                if not exists(dest) or (should_update and f not in NO_UPDATE):
+                dest = path.join(user_path, 'default', path.basename(f))
+            source = path.join(folder, f)
+            if path.isfile(source) and f not in NO_COPY:
+                if not path.exists(dest) or (should_update and f not in NO_UPDATE):
                     text = load_text_resource(source, internal=True)
                     if text is not None:
                         try:
@@ -125,17 +137,6 @@ def unpack_user_files():
                                 f.write(text)
                         except:
                             pass
-
-
-def splitenc(entry, default='utf-8'):
-    """ Split encoding from file name """
-    parts = entry.split(';')
-    if len(parts) > 1:
-        entry = ';'.join(parts[:-1])
-        encoding = get_encoding(parts[-1])
-    else:
-        encoding = get_encoding(default)
-    return entry, encoding
 
 
 def load_egg_resources():
@@ -146,16 +147,16 @@ def load_egg_resources():
     """
     if (
         not bool(getattr(sys, "frozen", 0)) and
-        exists('eggs') and not isfile('eggs')
+        path.exists('eggs') and not path.isfile('eggs')
     ):
         egg_extension = "py%d.%d.egg" % (
             sys.version_info.major, sys.version_info.minor
         )
         egg_start = "pymdown"
-        for f in listdir("eggs"):
-            target = abspath(join('eggs', f))
+        for f in os.listdir("eggs"):
+            target = path.abspath(path.join('eggs', f))
             if (
-                isfile(target) and f.endswith(egg_extension) and
+                path.isfile(target) and f.endswith(egg_extension) and
                 f.startswith(egg_start)
             ):
                 sys.path.append(target)
@@ -171,30 +172,30 @@ def resource_exists(*args, **kwargs):
         else:
             base = RESOURCE_PATH
 
-        path = join(base, *args)
+        pth = path.join(base, *args)
     else:
-        path = join(*args)
+        pth = path.join(*args)
 
     directory = kwargs.get('dir', False)
 
-    if not exists(path) or (not isfile(path) if not directory else isfile(path)):
-        path = None
+    if not path.exists(pth) or (not path.isfile(pth) if not directory else path.isfile(pth)):
+        pth = None
 
-    return path
+    return pth
 
 
 def load_text_resource(*args, **kwargs):
     """ Load text resource from either the package source location """
-    path = resource_exists(*args, **kwargs)
+    pth = resource_exists(*args, **kwargs)
 
-    encoding = get_encoding(kwargs.get('encoding', 'utf-8'))
+    encoding = _get_encoding(kwargs.get('encoding', 'utf-8'))
 
     data = None
-    if path is not None:
+    if pth is not None:
         try:
-            with codecs.open(path, "rb") as f:
+            with codecs.open(pth, "rb") as f:
                 data = f.read().decode(encoding).replace('\r', '')
         except:
-            Logger.debug(traceback.format_exc())
+            logger.Log.debug(traceback.format_exc())
             pass
     return data

@@ -13,10 +13,10 @@ logger = logging.getLogger('PYMDOWN')
 logger.setLevel(INFO)
 logger.addHandler(logging.StreamHandler())
 
-__all__ = ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "Logger"]
+__all__ = ["CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "Log"]
 
 
-class Logger(object):
+class Log(object):
     """ Log messages """
 
     @classmethod

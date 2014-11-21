@@ -17,9 +17,9 @@ import traceback
 import re
 import tempfile
 import base64
-from os.path import exists, isfile, join, abspath, relpath, dirname, normpath, splitext
-from .resources import load_text_resource, splitenc, get_user_path, is_absolute
-from .logger import Logger
+from os import path
+from . import resources as res
+from . import logger
 try:
     from pygments.formatters import get_formatter_by_name
     pygments = True
@@ -34,7 +34,7 @@ if PY3:
     unicode_string = str
 else:
     from urllib import pathname2url
-    unicode_string = unicode  # flake8: noqa
+    unicode_string = unicode  # noqa
 
 RE_URL_START = re.compile(r"^(http|ftp)s?://|tel:|mailto:|data:|news:|#")
 RE_TEMPLATE_FILE = re.compile(r"(\{*?)\{{2}\s*(getQuotedPath|getPath|embedImage|embedFile)\s*\((.*?)\)\s*\}{2}(\}*)")
@@ -94,6 +94,34 @@ class Terminal(object):
         pass
 
 
+class Text(object):
+    def __init__(self, output, encoding):
+        """ Initialize Text object """
+        self.encode_file = True
+        self.encoding = encoding
+
+        # Set the correct output target and create the file if necessary
+        if output is None:
+            self.file = Terminal()
+        else:
+            try:
+                self.file = codecs.open(output, "w", encoding=self.encoding)
+                self.encode_file = False
+            except:
+                logger.Log.error(str(traceback.format_exc()))
+                raise PyMdownFormatterException("Could not open output file!")
+
+    def write(self, text):
+        """ Write the content """
+        self.file.write(
+            text.encode(self.encoding, errors="xmlcharrefreplace") if self.encode_file else text
+        )
+
+    def close(self):
+        """ Close the file """
+        self.file.close()
+
+
 class Html(object):
     def __init__(
         self, output, preview=False, title=None, encoding='utf-8',
@@ -111,7 +139,7 @@ class Html(object):
         self.aliases = aliases
         self.template_file = self.settings.get("template", None)
         self.title = "Untitled"
-        self.user_path = get_user_path()
+        self.user_path = res.get_user_path()
         self.set_output(output, preview)
         self.added_res = set()
         self.load_header(
@@ -143,11 +171,12 @@ class Html(object):
                 )
 
     def repl_vars(self, m):
+        """ Replace template variables """
         if m.group(0).startswith('{{{') and m.group(0).endswith('}}}'):
             return m.group(0)[1:-1]
         open = m.group(1) if m.group(1) else ''
         close = m.group(3) if m.group(3) else ''
-        meta = '\n'.join(self.meta) + '\n'
+
         var = m.group(2)
         if var == "meta":
             var = '\n'.join(self.meta) + '\n'
@@ -160,33 +189,33 @@ class Html(object):
         return open + var + close
 
     def repl_file(self, m):
+        """ Replace file paths in template """
         if m.group(0).startswith('{{{') and m.group(0).endswith('}}}'):
             return m.group(0)[1:-1]
         m_open = m.group(1) if m.group(1) else ''
         m_close = m.group(4) if m.group(4) else ''
         quoted = m.group(2) == "getQuotedPath"
         file_name = m.group(3).strip()
-        embed_image = None
         absolute_conversion = self.settings.get("path_conversion_absolute", True)
-        user_path = get_user_path()
-        file_name, encoding = splitenc(file_name)
+        user_path = res.get_user_path()
+        file_name, encoding = res.splitenc(file_name)
 
-        is_abs = is_absolute(file_name)
+        is_abs = res.is_absolute(file_name)
 
         # Find path relative to basepath or global user path
         # If basepath is defined set paths relative to the basepath if possible
         # or just keep the absolute
         if not is_abs:
             # Is relative path
-            base_temp = normpath(join(self.basepath, file_name)) if self.basepath is not None else None
-            user_temp = normpath(join(user_path, file_name)) if user_path is not None else None
-            if exists(base_temp) and isfile(base_temp):
+            base_temp = path.normpath(path.join(self.basepath, file_name)) if self.basepath is not None else None
+            user_temp = path.normpath(path.join(user_path, file_name)) if user_path is not None else None
+            if path.exists(base_temp) and path.isfile(base_temp):
                 file_path = base_temp
-            elif exists(user_temp) and isfile(user_temp):
+            elif path.exists(user_temp) and path.isfile(user_temp):
                 file_path = user_temp
             else:
                 file_path = None
-        elif is_abs and exists(file_name) and isfile(file_name):
+        elif is_abs and path.exists(file_name) and path.isfile(file_name):
             # Is absolute path
             file_path = file_name
         else:
@@ -194,25 +223,25 @@ class Html(object):
             file_path = None
 
         # Determine the output directory if possible
-        output = dirname(abspath(self.file.name)) if self.file.name else None
+        output = path.dirname(path.abspath(self.file.name)) if self.file.name else None
 
         if file_path is not None:
             # Calculate the absolute path
             if is_abs or not self.basepath:
                 abs_path = file_path
             else:
-                abs_path = abspath(join(self.basepath, file_path))
+                abs_path = path.abspath(path.join(self.basepath, file_path))
 
             # Adjust path depending on whether we are desiring
             # absolute output or relative output
             if not absolute_conversion and output:
-                file_path = relpath(abs_path, output)
+                file_path = path.relpath(abs_path, output)
             elif absolute_conversion:
                 file_path = abs_path
 
             if m.group(2) == "embedImage":
                 # If embedding an image, get base64 image type or return path
-                ext = splitext(file_name)[1]
+                ext = path.splitext(file_name)[1]
                 embedded = False
                 for b64_ext in image_types:
                     if ext in b64_ext:
@@ -230,7 +259,7 @@ class Html(object):
                     file_name = ''
             elif m.group(2) == "embedFile":
                 # Return the content of the file instead of the file name
-                file_name = load_text_resource(abs_path, encoding=encoding)
+                file_name = res.load_text_resource(abs_path, encoding=encoding)
                 if file_name is None:
                     file_name = ''
             else:
@@ -243,18 +272,18 @@ class Html(object):
     def write_html_start(self):
         """ Output the HTML head and body up to the {{ content }} specifier """
         if (self.template_file is not None):
-            template_path, encoding = splitenc(self.template_file)
+            template_path, encoding = res.splitenc(self.template_file)
 
-            if not is_absolute(template_path) and self.basepath:
-                template_base = join(self.basepath, template_path)
+            if not res.is_absolute(template_path) and self.basepath:
+                template_base = path.join(self.basepath, template_path)
             else:
                 template_base = ''
 
             if (
                 self.user_path is not None and
-                (not exists(template_base) or not isfile(template_base))
+                (not path.exists(template_base) or not path.isfile(template_base))
             ):
-                template_path = join(self.user_path, template_path)
+                template_path = path.join(self.user_path, template_path)
             else:
                 template_path = template_base
 
@@ -262,7 +291,7 @@ class Html(object):
                 with codecs.open(template_path, "r", encoding=encoding) as f:
                     self.template = f.read()
             except:
-                Logger.error(str(traceback.format_exc()))
+                logger.Log.error(str(traceback.format_exc()))
 
         # If template isn't found, we will still output markdown html
         if self.template is not None:
@@ -291,7 +320,7 @@ class Html(object):
             elif preview:
                 self.file = tempfile.NamedTemporaryFile(delete=False, suffix=".html")
         except:
-            Logger.error(str(traceback.format_exc()))
+            logger.Log.error(str(traceback.format_exc()))
             raise PyMdownFormatterException("Could not open output file!")
 
     def close(self):
@@ -348,27 +377,27 @@ class Html(object):
                 # Find path relative to basepath or global user path
                 # If basepath is defined set paths relative to the basepath if possible
                 # or just keep the absolute
-                resource, encoding = splitenc(resource)
-                is_abs = is_absolute(resource)
+                resource, encoding = res.splitenc(resource)
+                is_abs = res.is_absolute(resource)
                 if not is_abs and not is_url:
                     # Is relative path
-                    base_temp = normpath(join(self.basepath, resource)) if self.basepath is not None else None
-                    user_temp = normpath(join(self.user_path, resource)) if self.user_path is not None else None
-                    if base_temp is not None and exists(base_temp) and isfile(base_temp):
+                    base_temp = path.normpath(path.join(self.basepath, resource)) if self.basepath is not None else None
+                    user_temp = path.normpath(path.join(self.user_path, resource)) if self.user_path is not None else None
+                    if base_temp is not None and path.exists(base_temp) and path.isfile(base_temp):
                         res_path = resource
-                    elif user_temp is not None and exists(user_temp) and isfile(user_temp):
-                        res_path = relpath(user_temp, self.basepath) if self.basepath else user_temp
+                    elif user_temp is not None and path.exists(user_temp) and path.isfile(user_temp):
+                        res_path = path.relpath(user_temp, self.basepath) if self.basepath else user_temp
                     else:
                         res_path = None
-                elif is_abs and exists(resource) and isfile(resource):
+                elif is_abs and path.exists(resource) and path.isfile(resource):
                     # Is absolute path
-                    res_path = relpath(resource, self.basepath) if self.basepath else resource
+                    res_path = path.relpath(resource, self.basepath) if self.basepath else resource
                 else:
                     # Is a url or an unknown path
                     res_path = None
 
                 # Determine the output directory if possible
-                output = dirname(abspath(self.file.name)) if self.file.name else None
+                output = path.dirname(path.abspath(self.file.name)) if self.file.name else None
 
                 # This is a URL, don't include content
                 if is_url:
@@ -383,13 +412,13 @@ class Html(object):
                     if is_abs or not self.basepath:
                         abs_path = res_path
                     else:
-                        abs_path = abspath(join(self.basepath, res_path))
+                        abs_path = path.abspath(path.join(self.basepath, res_path))
 
                     # Adjust path depending on whehter we are desiring
                     # absolute output or relative output
                     if (self.preview or not omit_conversion):
                         if not absolute_conversion and output:
-                            res_path = relpath(abs_path, output)
+                            res_path = path.relpath(abs_path, output)
                         elif absolute_conversion:
                             res_path = abs_path
 
@@ -399,7 +428,7 @@ class Html(object):
                             res_path = pathname2url(res_path.replace('\\', '/'))
                             link = True
                         else:
-                            res_path = load_text_resource(abs_path, encoding=encoding)
+                            res_path = res.load_text_resource(abs_path, encoding=encoding)
                             link = False
                         resources.append(res_get(res_path, link=link, encoding=encoding))
                         self.added_res.add(abs_path)
@@ -433,31 +462,3 @@ class Html(object):
         self.meta = ['<meta charset="%s">' % self.encoding]
         self.load_css(style)
         self.load_js()
-
-
-class Text(object):
-    def __init__(self, output, encoding):
-        """ Initialize Text object """
-        self.encode_file = True
-        self.encoding = encoding
-
-        # Set the correct output target and create the file if necessary
-        if output is None:
-            self.file = Terminal()
-        else:
-            try:
-                self.file = codecs.open(output, "w", encoding=self.encoding)
-                self.encode_file = False
-            except:
-                Logger.error(str(traceback.format_exc()))
-                raise PyMdownFormatterException("Could not open output file!")
-
-    def write(self, text):
-        """ Write the content """
-        self.file.write(
-            text.encode(self.encoding, errors="xmlcharrefreplace") if self.encode_file else text
-        )
-
-    def close(self):
-        """ Close the file """
-        self.file.close()

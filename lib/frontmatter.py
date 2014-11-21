@@ -26,7 +26,7 @@ import json
 import re
 import codecs
 import yaml
-from .logger import Logger
+from . import logger
 import traceback
 
 
@@ -50,7 +50,7 @@ def get_frontmatter_string(string):
                 try:
                     frontmatter = yaml.load(m.group(2))
                 except:
-                    Logger.error(traceback.format_exc())
+                    logger.Log.error(traceback.format_exc())
                     pass
             string = string[m.end(1):]
 

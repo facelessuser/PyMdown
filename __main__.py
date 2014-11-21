@@ -12,22 +12,23 @@ Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
 from __future__ import unicode_literals
 from __future__ import absolute_import
 from __future__ import print_function
+
 # Egg resoures must be loaded before Pygments gets loaded
-from lib.resources import load_text_resource, load_egg_resources, splitenc, get_user_path, is_absolute
-load_egg_resources()
+import lib.resources as res
+res.load_egg_resources()
+
 import codecs
 import sys
 import subprocess
 import webbrowser
 import traceback
 import json
-from os.path import dirname, abspath, normpath, exists, basename, join, isfile, expanduser, splitext
-from lib.logger import Logger, INFO, CRITICAL, DEBUG
-from lib.settings import Settings
-from lib.settings import CRITIC_IGNORE, CRITIC_ACCEPT, CRITIC_REJECT, CRITIC_DUMP, CRITIC_VIEW
-import lib.critic_dump as critic_dump
-from lib.mdconvert import MdConverts
+import os.path as path
+from lib import logger
+from lib import settings
+from lib import critic_dump
 from lib import formatter
+from lib.mdconvert import MdConverts
 from lib.frontmatter import get_frontmatter_string
 try:
     from lib import scrub
@@ -50,7 +51,7 @@ else:
 PASS = 0
 FAIL = 1
 
-script_path = dirname(abspath(__file__))
+script_path = path.dirname(path.abspath(__file__))
 
 
 def get_files(file_patterns):
@@ -64,7 +65,7 @@ def get_files(file_patterns):
         for pattern in file_patterns:
             files += glob.glob(pattern)
     for f in files:
-        all_files.add(abspath(normpath(f)))
+        all_files.add(path.abspath(path.normpath(f)))
     return list(all_files)
 
 
@@ -80,28 +81,10 @@ def get_file_stream(encoding):
             text.append(line if PY3 else line.decode(encoding))
         stream = ''.join(text)
     except:
-        Logger.error(traceback.format_exc())
+        logger.Log.error(traceback.format_exc())
         stream = None
     text = None
     return stream
-
-
-def open_with_osx_browser(filename):
-    """ Open file with browser id """
-    web_handler = None
-    launch_services = expanduser('~/Library/Preferences/com.apple.LaunchServices.plist')
-    with open(launch_services, "rb") as f:
-        content = f.read()
-    args = ["plutil", "-convert", "json", "-o", "-", "--", "-"]
-    p = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-    p.stdin.write(content)
-    out, err = p.communicate()
-    plist = json.loads(out.decode('utf-8') if PY3 else out)
-    for handler in plist['LSHandlers']:
-        if handler.get('LSHandlerURLScheme', '') == "http":
-            web_handler = handler.get('LSHandlerRoleAll', None)
-    if web_handler is not None:
-        subprocess.Popen(['open', '-b', web_handler, filename])
 
 
 def auto_open(name):
@@ -111,9 +94,25 @@ def auto_open(name):
     # the default browser.  I guess if this doesn't work
     # I could always just inlcude the desktop lib.
     if _PLATFORM == "osx":
+        web_handler = None
         try:
-            open_with_osx_browser(name)
+            launch_services = path.expanduser('~/Library/Preferences/com.apple.LaunchServices.plist')
+            with open(launch_services, "rb") as f:
+                content = f.read()
+            args = ["plutil", "-convert", "json", "-o", "-", "--", "-"]
+            p = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+            p.stdin.write(content)
+            out, err = p.communicate()
+            plist = json.loads(out.decode('utf-8') if PY3 else out)
+            for handler in plist['LSHandlers']:
+                if handler.get('LSHandlerURLScheme', '') == "http":
+                    web_handler = handler.get('LSHandlerRoleAll', None)
+                    break
         except:
+            pass
+        if web_handler is not None:
+            subprocess.Popen(['open', '-b', web_handler, name])
+        else:
             subprocess.Popen(['open', name])
     elif _PLATFORM == "windows":
         webbrowser.open(name, new=2)
@@ -124,20 +123,19 @@ def auto_open(name):
         except OSError:
             webbrowser.open(name, new=2)
             # Well we gave it our best...
-            pass
 
 
 def get_critic_mode(args):
     """ Setp the critic mode """
-    critic_mode = CRITIC_IGNORE
+    critic_mode = settings.CRITIC_IGNORE
     if args.accept and args.reject:
-        critic_mode |= CRITIC_VIEW
+        critic_mode |= settings.CRITIC_VIEW
     elif args.accept:
-        critic_mode |= CRITIC_ACCEPT
+        critic_mode |= settings.CRITIC_ACCEPT
     elif args.reject:
-        critic_mode |= CRITIC_REJECT
+        critic_mode |= settings.CRITIC_REJECT
     if args.critic_dump:
-        critic_mode |= CRITIC_DUMP
+        critic_mode |= settings.CRITIC_DUMP
     return critic_mode
 
 
@@ -146,26 +144,26 @@ def get_references(references, basepath, encoding):
 
     text = ''
     for file_name in references:
-        file_name, encoding = splitenc(file_name, default=encoding)
-        user_path = join(get_user_path(), file_name)
+        file_name, encoding = res.splitenc(file_name, default=encoding)
+        user_path = path.join(res.get_user_path(), file_name)
 
-        is_abs = is_absolute(file_name)
+        is_abs = res.is_absolute(file_name)
 
         # Find path relative to basepath or global user path
         # If basepath is defined set paths relative to the basepath if possible
         # or just keep the absolute
         if not is_abs:
             # Is relative path
-            base_temp = normpath(join(basepath, file_name)) if basepath is not None else None
-            user_temp = normpath(join(user_path, file_name)) if user_path is not None else None
-            if base_temp is not None and exists(base_temp) and isfile(base_temp):
+            base_temp = path.normpath(path.join(basepath, file_name)) if basepath is not None else None
+            user_temp = path.normpath(path.join(user_path, file_name)) if user_path is not None else None
+            if base_temp is not None and path.exists(base_temp) and path.isfile(base_temp):
                 ref_path = base_temp
-            elif user_temp is not None and exists(user_temp) and isfile(user_temp):
+            elif user_temp is not None and path.exists(user_temp) and path.isfile(user_temp):
                 ref_path = user_temp
             else:
                 # Is an unknown path
                 ref_path = None
-        elif is_abs and exists(file_name) and isfile(file_name):
+        elif is_abs and path.exists(file_name) and path.isfile(file_name):
             # Is absolute path
             ref_path = file_name
         else:
@@ -173,9 +171,9 @@ def get_references(references, basepath, encoding):
             ref_path = None
 
         if ref_path is not None:
-            text += load_text_resource(ref_path, encoding=encoding)
+            text += res.load_text_resource(ref_path, encoding=encoding)
         else:
-            Logger.error("Could not find reference file %s!" % file_name)
+            logger.Log.error("Could not find reference file %s!" % file_name)
     return text
 
 
@@ -197,7 +195,7 @@ def get_title(file_name, title_val):
     if title_val is not None:
         title = str(title_val)
     elif file_name is not None:
-        title = splitext(basename(abspath(file_name)))[0]
+        title = path.splitext(path.basename(path.abspath(file_name)))[0]
     else:
         title = None
     return title
@@ -216,7 +214,7 @@ def merge_meta(meta1, meta2, title=None):
 def display_licenses():
     """ Display licenses """
     status = PASS
-    text = load_text_resource(join('data', 'licenses.txt'), internal=True)
+    text = res.load_text_resource(path.join('data', 'licenses.txt'), internal=True)
     if text is not None:
         if PY3:
             sys.stdout.buffer.write(text.encode('utf-8'))
@@ -260,7 +258,7 @@ class Convert(object):
                 file_name, basepath=self.basepath, output=self.output, frontmatter=frontmatter
             )
         except:
-            Logger.error(traceback.format_exc())
+            logger.Log.error(traceback.format_exc())
             status = FAIL
         return status
 
@@ -270,7 +268,7 @@ class Convert(object):
             with codecs.open(file_name, "r", encoding=self.config.encoding) as f:
                 text = f.read()
         except:
-            Logger.error("Failed to open %s!" % file_name)
+            logger.Log.error("Failed to open %s!" % file_name)
             text = None
         return text
 
@@ -286,22 +284,22 @@ class Convert(object):
                 status = FAIL
 
         if status == PASS:
-            if not (self.config.critic & (CRITIC_REJECT | CRITIC_ACCEPT)):
-                Logger.error("Acceptance or rejection was not specified for critic dump!")
+            if not (self.config.critic & (settings.CRITIC_REJECT | settings.CRITIC_ACCEPT)):
+                logger.Log.error("Acceptance or rejection was not specified for critic dump!")
                 status = FAIL
             else:
                 # Create text object
                 try:
                     txt = formatter.Text(self.settings["page"]["destination"], self.config.output_encoding)
                 except:
-                    Logger.error("Failed to create text file!")
+                    logger.Log.error("Failed to create text file!")
                     status = FAIL
 
         if status == PASS:
             text = critic_dump.CriticDump().dump(
                 text,
-                self.config.critic & CRITIC_ACCEPT,
-                self.config.critic & CRITIC_VIEW
+                self.config.critic & settings.CRITIC_ACCEPT,
+                self.config.critic & settings.CRITIC_VIEW
             )
             txt.write(text)
             txt.close()
@@ -340,7 +338,7 @@ class Convert(object):
                     encoding=self.config.output_encoding
                 )
             except:
-                Logger.error(traceback.format_exc())
+                logger.Log.error(traceback.format_exc())
                 status = FAIL
 
         if status == PASS:
@@ -352,11 +350,13 @@ class Convert(object):
                     lazy_ol=self.settings["settings"].get('lazy_ol', True),
                     tab_length=self.settings["settings"].get('tab_length', 4),
                     base_path=self.settings["page"]["basepath"],
-                    relative_output=dirname(html.file.name) if html.file.name else self.config.relative_out,
+                    relative_output=path.dirname(html.file.name) if html.file.name else self.config.relative_out,
                     enable_attributes=self.settings["settings"].get('enable_attributes', True),
                     output_format=self.settings["settings"].get('output_format', 'xhtml1'),
                     extensions=self.settings["settings"]["extensions"]
                 )
+
+                converter.convert()
 
                 # Retrieve meta data if available and merge with frontmatter
                 # meta data.
@@ -366,7 +366,7 @@ class Convert(object):
                     merge_meta(converter.meta, self.settings["page"]["meta"], title=html_title)
                 )
             except:
-                Logger.error(str(traceback.format_exc()))
+                logger.Log.error(str(traceback.format_exc()))
                 html.close()
                 status = FAIL
 
@@ -386,7 +386,7 @@ class Convert(object):
 
         # Make sure we have something we can process
         if files is None or len(files) == 0 or files[0] in ('', None):
-            Logger.error("Nothing to parse!")
+            logger.Log.error("Nothing to parse!")
             status = FAIL
 
         if status == PASS:
@@ -396,15 +396,15 @@ class Convert(object):
                     break
 
                 if self.config.is_stream:
-                    Logger.info("Converting buffer...")
+                    logger.Log.info("Converting buffer...")
                 else:
-                    Logger.info("Converting %s..." % md_file)
+                    logger.Log.info("Converting %s..." % md_file)
 
                 if status == PASS:
                     file_name = md_file if not self.config.is_stream else None
                     text = None if not self.config.is_stream else md_file
                     md_file = None
-                    if self.config.critic & CRITIC_DUMP:
+                    if self.config.critic & settings.CRITIC_DUMP:
                         status = self.critic_dump(file_name, text)
                     else:
                         status = self.html_dump(file_name, text)
@@ -439,7 +439,7 @@ if __name__ == "__main__":
         parser.add_argument('--output-encoding', '-E', default=None, help="Output encoding.")
         parser.add_argument('--clean', '-c', action='store_true', default=False, help=argparse.SUPPRESS)
         # Input configuration
-        parser.add_argument('--settings', '-s', default=join(get_user_path(), "pymdown.cfg"), help="Load the settings file from an alternate location.")
+        parser.add_argument('--settings', '-s', default=path.join(res.get_user_path(), "pymdown.cfg"), help="Load the settings file from an alternate location.")
         parser.add_argument('--encoding', '-e', default="utf-8", help="Encoding for input.")
         parser.add_argument('--basepath', default=None, help="The basepath location pymdown should use.")
         parser.add_argument('markdown', nargs='*', default=[], help="Markdown file(s) or file pattern(s).")
@@ -450,9 +450,9 @@ if __name__ == "__main__":
             return display_licenses()
 
         if args.debug:
-            Logger.set_level(CRITICAL if args.quiet else DEBUG)
+            logger.Log.set_level(logger.CRITICAL if args.quiet else logger.DEBUG)
         else:
-            Logger.set_level(CRITICAL if args.quiet else INFO)
+            logger.Log.set_level(logger.CRITICAL if args.quiet else logger.INFO)
 
         files, stream = get_sources(args)
         if stream:
@@ -461,7 +461,7 @@ if __name__ == "__main__":
             batch = args.batch
 
         if not batch and len(files) > 1:
-            Logger.log("Please use batch mode to process multiple files!")
+            logger.Log.log("Please use batch mode to process multiple files!")
             return FAIL
 
         # It is assumed that the input encoding is desired for output
@@ -469,8 +469,11 @@ if __name__ == "__main__":
         if args.output_encoding is None:
             args.output_encoding = args.encoding
 
+        # Unpack user files if needed
+        res.unpack_user_files()
+
         # Setup config class
-        config = Settings(
+        config = settings.Settings(
             encoding=args.encoding,
             output_encoding=args.output_encoding,
             critic=get_critic_mode(args),
@@ -483,6 +486,7 @@ if __name__ == "__main__":
             force_no_template=args.force_no_template,
             clean=(args.clean if scrublib else False)
         )
+        config.read_settings()
 
         # Convert
         return Convert(
@@ -492,7 +496,7 @@ if __name__ == "__main__":
             config=config
         ).convert(files)
 
-    script_path = dirname(abspath(sys.argv[0]))
+    script_path = path.dirname(path.abspath(sys.argv[0]))
 
     try:
         sys.exit(main())
