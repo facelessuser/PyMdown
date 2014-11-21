@@ -31,8 +31,8 @@
             guess_lang: False
             css_class: highlight
             pygments_style: github2
-        - name: pymdown.pymdown
-        - name: pymdown.b64
+        - name: pymdownx.pymdown
+        - name: pymdownx.b64
           config:
             base_path: ${BASE_PATH}
 ---
