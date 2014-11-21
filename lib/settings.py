@@ -418,11 +418,11 @@ class Settings(object):
             name = extensions[i].get('name', None)
             if name is None:
                 empty.append(i)
-            elif name == "pymdown.pathconverter":
+            elif name == "pymdownx.pathconverter":
                 path_converter = True
-            elif name == "pymdown.critic" and critic_mode != 'ignore':
+            elif name == "pymdownx.critic" and critic_mode != 'ignore':
                 critic_found.append(i)
-            elif name == "pymdown.plainhtml" and self.plain:
+            elif name == "pymdownx.plainhtml" and self.plain:
                 plain_html.append(i)
 
         # Remove plainhtml and critic because CLI is overriding them
@@ -441,7 +441,7 @@ class Settings(object):
             if not path_converter:
                 extensions.append(
                     {
-                        "name": "pymdown.pathconverter",
+                        "name": "pymdownx.pathconverter",
                         "config": {
                             "base_path": "${BASE_PATH}",
                             "relative_path": "${OUTPUT}",
@@ -453,7 +453,7 @@ class Settings(object):
                 # Make sure file output location is the relative ouput location for previews
                 for i in range(0, len(extensions)):
                     name = extensions[i].get('name', None)
-                    if name == 'pymdown.pathconverter':
+                    if name == 'pymdownx.pathconverter':
                         if "config" not in extensions[i]:
                             extensions[i]['config'] = {}
                         extensions[i]['config']["relative_path"] = "${OUTPUT}"
@@ -463,7 +463,7 @@ class Settings(object):
         if critic_mode != "ignore":
             extensions.append(
                 {
-                    "name": "pymdown.critic",
+                    "name": "pymdownx.critic",
                     "config": {"mode": critic_mode}
                 }
             )
@@ -471,7 +471,7 @@ class Settings(object):
         # Append plainhtml.
         # Most reliable when applied to the end. Okay to come after critic.
         if self.plain:
-            extensions.append({"name": "pymdown.plainhtml"})
+            extensions.append({"name": "pymdownx.plainhtml"})
 
         # Set extensions to its own key
         settings["settings"]["extensions"] = extensions
