@@ -98,8 +98,10 @@ class Text(object):
     def __init__(self, output, encoding):
         """ Initialize Text object """
         self.encode_file = True
+        self.file = None
         self.encoding = encoding
 
+    def open(self, output):
         # Set the correct output target and create the file if necessary
         if output is None:
             self.file = Terminal()
@@ -119,12 +121,13 @@ class Text(object):
 
     def close(self):
         """ Close the file """
-        self.file.close()
+        if self.file:
+            self.file.close()
 
 
 class Html(object):
     def __init__(
-        self, output, preview=False, title=None, encoding='utf-8',
+        self, preview=False, title=None, encoding='utf-8',
         basepath=None, plain=False, aliases=[], settings={}
     ):
         self.settings = settings
@@ -133,6 +136,7 @@ class Html(object):
         self.no_body = False
         self.plain = plain
         self.template = None
+        self.file = None
         self.encoding = encoding
         self.basepath = basepath
         self.preview = preview
@@ -140,12 +144,7 @@ class Html(object):
         self.template_file = self.settings.get("template", None)
         self.title = "Untitled"
         self.user_path = res.get_user_path()
-        self.set_output(output, preview)
         self.added_res = set()
-        self.load_header(
-            self.settings.get("style", None)
-        )
-        self.started = False
 
     def set_meta(self, meta):
         """ Create meta data tags """
@@ -280,8 +279,8 @@ class Html(object):
                 template_base = ''
 
             if (
-                self.user_path is not None and
-                (not path.exists(template_base) or not path.isfile(template_base))
+                (not path.exists(template_base) or not path.isfile(template_base)) and
+                self.user_path is not None
             ):
                 template_path = path.join(self.user_path, template_path)
             else:
@@ -309,15 +308,15 @@ class Html(object):
                 self.write(self.template[0:m.start(0)])
                 self.body_end = m.end(0)
 
-    def set_output(self, output, preview):
+    def open(self, output):
         """ Set and create the output target and target related flags """
         if output is None:
             self.file = Terminal()
         try:
-            if not preview and output is not None:
+            if not self.preview and output is not None:
                 self.file = codecs.open(output, "w", encoding=self.encoding, errors="xmlcharrefreplace")
                 self.encode_file = False
-            elif preview:
+            elif self.preview:
                 self.file = tempfile.NamedTemporaryFile(delete=False, suffix=".html")
         except:
             logger.Log.error(str(traceback.format_exc()))
@@ -325,20 +324,31 @@ class Html(object):
 
     def close(self):
         """ Close the output file """
-        if self.body_end is not None:
-            self.write(self.template[self.body_end:])
-        self.file.close()
+        if self.file:
+            self.file.close()
+
+    def write_header(self):
+        """ Write HTML header and body up to Markdown content """
+        if not self.plain:
+            # If we haven't already, print the file head
+            self.load_header(
+                self.settings.get("style", None)
+            )
+            self.write_html_start()
 
     def write(self, text):
         """ Write the given text to the output file """
-        if not self.plain and not self.started:
-            # If we haven't already, print the file head
-            self.started = True
-            self.write_html_start()
+
         if not self.no_body:
             self.file.write(
                 text.encode(self.encoding, errors="xmlcharrefreplace") if self.encode_file else text
             )
+
+    def write_footer(self):
+        """ Write HTML body and footer starting at Markdown content end """
+
+        if self.body_end is not None and not self.plain:
+            self.write(self.template[self.body_end:])
 
     def load_highlight(self, highlight_style):
         """ Load Syntax highlighter CSS """
@@ -354,6 +364,13 @@ class Html(object):
         return css
 
     def load_resources(self, template_resources, res_get, resources):
+        """
+        Load the resource (js or css)
+        - Resolve whether the path needs to be converted to
+          absolute or relative path.
+        - See whether we should embed the file's content or
+          just add a link to the file.
+        """
         if isinstance(template_resources, list) and len(template_resources):
             for pth in template_resources:
                 resource = unicode_string(pth)

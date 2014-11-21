@@ -277,31 +277,40 @@ class Convert(object):
         status = PASS
 
         status = self.get_file_settings(file_name)
+        is_valid_dump = not (
+            self.config.critic &
+            (settings.CRITIC_REJECT | settings.CRITIC_ACCEPT)
+        )
 
         if status == PASS and file_name is not None:
             text = self.read_file(file_name)
             if text is None:
                 status = FAIL
 
-        if status == PASS:
-            if not (self.config.critic & (settings.CRITIC_REJECT | settings.CRITIC_ACCEPT)):
-                logger.Log.error("Acceptance or rejection was not specified for critic dump!")
-                status = FAIL
-            else:
-                # Create text object
-                try:
-                    txt = formatter.Text(self.settings["page"]["destination"], self.config.output_encoding)
-                except:
-                    logger.Log.error("Failed to create text file!")
-                    status = FAIL
+        if status == PASS and is_valid_dump:
+            logger.Log.error("Acceptance or rejection was not specified for critic dump!")
+            status = FAIL
 
         if status == PASS:
-            text = critic_dump.CriticDump().dump(
-                text,
-                self.config.critic & settings.CRITIC_ACCEPT,
-                self.config.critic & settings.CRITIC_VIEW
-            )
-            txt.write(text)
+            txt = formatter.Text(self.config.output_encoding)
+
+            # Create text object
+            try:
+                txt.open(self.settings["page"]["destination"])
+                # Apply critic stripping
+                text = critic_dump.CriticDump().dump(
+                    text,
+                    self.config.critic & settings.CRITIC_ACCEPT,
+                    self.config.critic & settings.CRITIC_VIEW
+                )
+
+                # Dump the converted text
+                txt.write(text)
+            except:
+                logger.Log.error(str(traceback.format_exc()))
+                status = FAIL
+
+            # Close up the text file
             txt.close()
 
         return status
@@ -309,8 +318,6 @@ class Convert(object):
     def html_dump(self, file_name, text):
         """ Convet markdown to HTML """
         status = PASS
-
-        html_title = get_title(file_name, self.title)
 
         if status == PASS and file_name is not None:
             text = self.read_file(file_name)
@@ -322,6 +329,7 @@ class Convert(object):
             status = self.get_file_settings(file_name, frontmatter=frontmatter)
 
         if status == PASS:
+            # Append Markdown reference files to current Markdown content
             text += get_references(
                 self.settings["page"].get("references", []),
                 self.settings["page"]["basepath"],
@@ -329,21 +337,18 @@ class Convert(object):
             )
 
             # Create html object
+            html = formatter.Html(
+                preview=self.config.preview,
+                plain=self.config.plain,
+                settings=self.settings["settings"],
+                basepath=self.settings["page"]["basepath"],
+                aliases=self.settings["page"]["include"],
+                encoding=self.config.output_encoding
+            )
             try:
-                html = formatter.Html(
-                    self.settings["page"]["destination"], preview=self.config.preview,
-                    plain=self.config.plain, settings=self.settings["settings"],
-                    basepath=self.settings["page"]["basepath"],
-                    aliases=self.settings["page"]["include"],
-                    encoding=self.config.output_encoding
-                )
-            except:
-                logger.Log.error(traceback.format_exc())
-                status = FAIL
+                html.open(self.settings["page"]["destination"])
 
-        if status == PASS:
-            # Convert markdown to HTML
-            try:
+                # Set up Converter
                 converter = MdConverts(
                     text,
                     smart_emphasis=self.settings["settings"].get('smart_emphasis', True),
@@ -356,6 +361,7 @@ class Convert(object):
                     extensions=self.settings["settings"]["extensions"]
                 )
 
+                # Markdown -> HTML
                 converter.convert()
 
                 # Retrieve meta data if available and merge with frontmatter
@@ -363,21 +369,30 @@ class Convert(object):
                 #     1. Frontmatter will override normal meta data.
                 #     2. Meta data overrides --title option on command line.
                 html.set_meta(
-                    merge_meta(converter.meta, self.settings["page"]["meta"], title=html_title)
+                    merge_meta(
+                        converter.meta,
+                        self.settings["page"]["meta"],
+                        title=get_title(file_name, self.title)
+                    )
                 )
+
+                # Experimental content scrubbing
+                content = scrub.scrub(converter.markdown) if self.config.clean else converter.markdown
+
+                # Write the markdown to the HTML
+                html.write_header()
+                html.write(content)
+                html.write_footer()
             except:
                 logger.Log.error(str(traceback.format_exc()))
-                html.close()
                 status = FAIL
 
-        if status == PASS:
-            # Write the markdown
-            html.write(scrub.scrub(converter.markdown) if self.config.clean else converter.markdown)
+            # Close the HTML file
             html.close()
 
-            # Preview the markdown
-            if html.file.name is not None and self.config.preview and status == PASS:
-                auto_open(html.file.name)
+        # Preview the markdown
+        if status == PASS and html.file.name is not None and self.config.preview:
+            auto_open(html.file.name)
         return status
 
     def convert(self, files):
