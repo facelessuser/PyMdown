@@ -22,6 +22,7 @@ or
 Licensed under MIT
 Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
 """
+from __future__ import absolute_import
 import json
 import re
 import codecs
