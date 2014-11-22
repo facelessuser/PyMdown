@@ -24,7 +24,7 @@ hookpaths = ['pyinstaller_hooks']
 # process
 #####################################
 data_to_crawl = [
-    "data"
+    "pymdown/data"
 ]
 
 hidden_imports_to_crawl = []
@@ -44,7 +44,7 @@ def crawl_data(src, dest):
         else:
             for f in os.listdir(target):
                 file_path = os.path.join(target, f)
-                if os.path.isfile(file_path) and not f.startswith((".", "~")):
+                if os.path.isfile(file_path) and not f.startswith((".", "~")) and not f.endswith('.py'):
                     name = '/'.join([target, f])
                     dest.append((name, "./%s" % name, "DATA"))
 

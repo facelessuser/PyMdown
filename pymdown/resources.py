@@ -22,11 +22,11 @@ import yaml
 
 RESOURCE_PATH = path.abspath(path.join(path.dirname(__file__), ".."))
 WIN_DRIVE = re.compile(r"(^[A-Za-z]{1}:(?:\\|/))")
-DATA_FOLDER = "data"
-DEFAULT_CSS = "data/default-markdown.css"
-DEFAULT_TEMPLATE = "data/default-template.html"
-DEFAULT_SETTINGS = "data/pymdown.cfg"
-USER_VERSION = "data/version.txt"
+DATA_FOLDER = "pymdown/data"
+DEFAULT_CSS = "pymdown/data/default-markdown.css"
+DEFAULT_TEMPLATE = "pymdown/data/default-template.html"
+DEFAULT_SETTINGS = "pymdown/data/pymdown.cfg"
+USER_VERSION = "pymdown/data/version.txt"
 NO_COPY = ('licenses.txt',)
 NO_UPDATE = (path.basename(DEFAULT_SETTINGS),)
 NOT_DEFAULT = (path.basename(DEFAULT_SETTINGS), 'version.txt')

@@ -269,15 +269,15 @@ def main():
     inputs = parser.parse_args()
     if _PLATFORM == "windows":
         args = Args(
-            "__main__.py", "pymdown", inputs.gui, inputs.clean, ".exe", inputs.icon, inputs.portable
+            "cli.py", "pymdown", inputs.gui, inputs.clean, ".exe", inputs.icon, inputs.portable
         )
     elif _PLATFORM == "osx":
         args = Args(
-            "__main__.py", "pymdown", inputs.gui, inputs.clean, ".app" if inputs.gui else '', inputs.icon
+            "cli.py", "pymdown", inputs.gui, inputs.clean, ".app" if inputs.gui else '', inputs.icon
         )
     else:
         args = Args(
-            "__main__.py", "pymdown", inputs.gui, inputs.clean, '', inputs.icon
+            "cli.py", "pymdown", inputs.gui, inputs.clean, '', inputs.icon
         )
 
     # Parse options
