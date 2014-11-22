@@ -1,0 +1,3 @@
+import pymdown
+
+pymdown.main()
