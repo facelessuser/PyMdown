@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from setuptools import setup, find_packages
+import sys
 
 LONG_DESC = '''
 PyMdown is a CLI batch Markdown conversion / preview tool.
@@ -32,7 +33,10 @@ setup(
     install_requires=['Markdown>=2.5.2', 'Pygments>=2.0.1'],
 
     entry_points={
-        'console_scripts': 'pymdown=pymdown:main',
+        'console_scripts': [
+            'pymdown=pymdown:main',
+            'pymdown%d.%d=pymdown:main' % sys.version_info[:2],
+        ]
     },
 
     package_data={
