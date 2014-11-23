@@ -4,7 +4,7 @@ settings:
         - name: markdown.extensions.codehilite
           config:
             guess_lang: False
-            pygments_style: github
+            pygments_style: github2014
         - name: markdown.extensions.toc
           config:
             title: Table of Contents
