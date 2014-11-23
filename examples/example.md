@@ -30,7 +30,6 @@
           config:
             guess_lang: False
             css_class: highlight
-            pygments_style: github2
         - name: pymdownx.pymdown
         - name: pymdownx.b64
           config:
