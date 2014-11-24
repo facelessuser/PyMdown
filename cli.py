@@ -1,3 +1,3 @@
-import pymdown
+from pymdown import cli
 
-pymdown.main()
+cli.main()

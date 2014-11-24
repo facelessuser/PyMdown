@@ -21,7 +21,7 @@ RE_WORD = re.compile(r'''[^\w\- ]''', re.UNICODE)
 SLUGIFY_EXT = (
     'markdown.extensions.headerid',
     'markdown.extensions.toc',
-    'pymdown.headeranchor'
+    'pymdownx.headeranchor'
 )
 
 if PY3:

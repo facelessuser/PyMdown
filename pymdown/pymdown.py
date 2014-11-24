@@ -25,6 +25,8 @@ try:
 except:
     scrublib = False
 
+version_info = (0, 7, 0)
+
 if sys.platform.startswith('win'):
     _PLATFORM = "windows"
 elif sys.platform == "darwin":

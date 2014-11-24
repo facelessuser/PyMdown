@@ -40,8 +40,8 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'pymdown=pymdown:main',
-            'pymdown%d.%d=pymdown:main' % sys.version_info[:2],
+            'pymdown=pymdown.cli:main',
+            'pymdown%d.%d=pymdown.cli:main' % sys.version_info[:2],
         ]
     },
     package_data={
