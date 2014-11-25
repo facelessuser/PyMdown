@@ -147,11 +147,11 @@ The critic extension does its best by employing a preprocessor to inject the cri
 # Examples
 | Option    |  Description |
 |-----------|--------------|
-| :::critic-markup`\{--delete--}` | {--delete--}|
-| :::critic-markup`\{++delete++}` | {++insert++}|
-| :::critic-markup`\{~~delete and replace~>substitutions~~}`| {~~delete and replace~>substitutions~~} |
-| :::critic-markup`\{==highlight==}`| {==highlight==}|
-| :::critic-markup`\{>>comments<<}` | {>>comments<<} |
+| `#!critic-markup \{--delete--}` | {--delete--}|
+| `#!critic-markup \{++delete++}` | {++insert++}|
+| `#!critic-markup \{~~delete and replace~>substitutions~~}`| {~~delete and replace~>substitutions~~} |
+| `#!critic-markup \{==highlight==}`| {==highlight==}|
+| `#!critic-markup \{>>comments<<}` | {>>comments<<} |
 
 Here they are in action:
 

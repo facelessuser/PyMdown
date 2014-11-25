@@ -1,6 +1,6 @@
 [TOC]
 # Overview
-Tilde optionally adds two different features which are syntatically built around the `~` character: **delete** which inserts :::html`<del></del>` tags and **subscript** which inserts :::html`<sub></sub>` tags.  Syntax behavior for smart and non-smart variants of **delete** models that of [betterem](Extensions/BetterEm.html#differences).
+Tilde optionally adds two different features which are syntatically built around the `~` character: **delete** which inserts `#!html <del></del>` tags and **subscript** which inserts `#!html <sub></sub>` tags.  Syntax behavior for smart and non-smart variants of **delete** models that of [betterem](Extensions/BetterEm.html#differences).
 
 # Options
 

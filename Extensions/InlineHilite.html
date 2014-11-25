@@ -32,13 +32,17 @@
 </ul>
 </div>
 <h2 id="overview"><a name="user-content-overview" href="#overview" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Overview</h2>
-<p>InlineHilite extends CodeHilite to add inline code highlighting.  Borrowing from CodeHilite&rsquo;s existing syntax, InlineHilite utilizes the following syntax to insert inline  highlighted code: <code class="highlight">:::language`mycode`</code> or <code class="highlight">#?language`mycode`</code>.  When using the colon syntax, 3 or more can be used.</p>
+<p>InlineHilite extends CodeHilite to add inline code highlighting.  Borrowing from CodeHilite&rsquo;s existing syntax, InlineHilite utilizes the following syntax to insert inline  highlighted code: <code class="highlight">`:::language mycode`</code> or <code class="highlight">`#!language mycode`</code>.  We will call these specifiers mock shebangs.</p>
+<p>When using the colon mock shebang, 3 or more colons can be used.  Mock shebangs must come <strong>immediately</strong> after the opening backtick(s) and must be followed by at least one space.  If you need to escape a mock shebang at the start of a code block, just put a space before it and it will be treated as part of the code.</p>
 <h2 id="example"><a name="user-content-example" href="#example" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Example</h2>
-<div class="highlight"><pre>Here is some code: #!js`function pad(v){return (&#39;0&#39;+v).split(&#39;&#39;).reverse().splice(0,2).reverse().join(&#39;&#39;)}`
+<div class="highlight"><pre>Here is some code: `#!js function pad(v){return (&#39;0&#39;+v).split(&#39;&#39;).reverse().splice(0,2).reverse().join(&#39;&#39;)}`.
+
+The mock shebang will be treated like text here: ` #!js var test = 0; `.
 </pre></div>
 
 
 <p>Here is some code: <code class="highlight"><span class="kd">function</span> <span class="nx">pad</span><span class="p">(</span><span class="nx">v</span><span class="p">){</span><span class="k">return</span> <span class="p">(</span><span class="s1">&#39;0&#39;</span><span class="o">+</span><span class="nx">v</span><span class="p">).</span><span class="nx">split</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">).</span><span class="nx">reverse</span><span class="p">().</span><span class="nx">splice</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">).</span><span class="nx">reverse</span><span class="p">().</span><span class="nx">join</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)}</span></code></p>
+<p>The mock shebang will be treated like text here: <code class="highlight">#!js var test = 0;</code>.</p>
   </div>
 
   <div class="footer">
