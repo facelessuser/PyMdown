@@ -405,7 +405,12 @@ class Html(object):
                     if base_temp is not None and path.exists(base_temp) and path.isfile(base_temp):
                         res_path = resource
                     elif user_temp is not None and path.exists(user_temp) and path.isfile(user_temp):
-                        res_path = path.relpath(user_temp, self.basepath) if self.basepath else user_temp
+                        try:
+                            res_path = path.relpath(user_temp, self.basepath) if self.basepath else user_temp
+                        except:
+                            # No choice but to use absolute path
+                            res_path = user_temp
+                            is_abs = True
                     else:
                         res_path = None
                 elif is_abs and path.exists(resource) and path.isfile(resource):
@@ -437,7 +442,11 @@ class Html(object):
                     # absolute output or relative output
                     if (self.preview or not omit_conversion):
                         if not absolute_conversion and output:
-                            res_path = path.relpath(abs_path, output)
+                            try:
+                                res_path = path.relpath(abs_path, output)
+                            except:
+                                # No choice put to use absolute path
+                                res_path = abs_path
                         elif absolute_conversion:
                             res_path = abs_path
 
