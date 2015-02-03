@@ -2,7 +2,7 @@
 # Using PyMdown
 PyMdown was written to aid in batch processing Mardown files with Python Markdown and Pygments (but a Javascript highlighter can just as easily be used).  It also adds a number of optional extensions.
 
-PyMdown can use an optional template with CSS and Javascript for styling the Markdown outputs.  Templates, CSS, Javascript, and extensions are all setup in a  configuration file.  If for certain batches different settings are needed, PyMdown can accept paths to specific settings file via the CLI.  If file specific settings are needed, PyMdown supports files with a JSON or YAML frontmatter settings can be configured there along with general meta data.
+PyMdown can use an optional template with CSS and Javascript for styling the Markdown outputs.  Templates, CSS, Javascript, and extensions are all setup in a configuration file.  If for certain batches certain settings need to be tweaked, PyMdown can accept paths to specific settings file via the CLI.  The settings files can be in either JSON or YAML.  PyMdown also supports input sources with a JSON or YAML frontmatter were settings can be configured along with general meta data.
 
 ## Command Line Interface
 
@@ -33,7 +33,7 @@ pymdown -o file.md > file.html
 ```
 
 ### Batch Processing
-PyMdown has a batch processing mode (`--batch` or `-b`). When the batch flag is set, PyMdown will accept multiple paths and wildcard patterns.
+PyMdown has a batch processing mode (`--batch` or `-b`). When the batch flag is set, PyMdown will accept multiple paths and wild-card patterns.
 
 ```
 pymdown -b *.md documents/*md
@@ -76,20 +76,20 @@ pymdown -E utf-8 file.md
 ```
 
 ### Title
-PyMdown, by default, will use the source file's name as the title, or if a file stream it will use **Untitled**.  But this can be set via the `--title` option.  This probably isn't too practical for batch processing.  When batch processing, it may make more since to utilize the frontmatter to set the title per file.
+PyMdown, by default, will use the source file's name as the title, or if the input is a file stream, it will use **Untitled**.  But this can be set overridden with the `--title` option.  This probably isn't practical for batch processing.  When batch processing, it may make more since to utilize the frontmatter to set the title per file.
 
 ```
 pymdown --title "My Awesome File" file.md
 ```
 
 ### Critic
-PyMdown has a couple options from CriticMarkup.  By using the `--accept` or `-a` option, when the Markdown is parsed, the suggested changes will be accepted parsed.
+PyMdown has a couple options from CriticMarkup.  By using the `--accept` or `-a` option, when the Markdown is parsed, the suggested changes will be accepted.
 
 When using the `--reject` or `-r` option when Markdown is parsed, the suggested changes will be rejected and the original content will be used instead.
 
-If both `--accept` and `--reject` are set at the same time, PyMdown will use the view mode and convert the file to HTML and will attempt to highlight the blocks targed with the CriticMarkup.
+If both `--accept` and `--reject` are set at the same time, PyMdown will use the view mode and convert the file to HTML and will attempt to highlight the blocks targeted with the CriticMarkup.
 
-Lastly, the `--critic-dump` option, used with the `--accept` or `--reject` options, will take the source and output it rejecting or accepting CriticMarkup edits that were made essentially removing the CriticMarkup.
+Lastly, the `--critic-dump` option, when used with either the `--accept` or `--reject` option, will take the source and output it accepting or rejecting respectively the CriticMarkup edits that were made (essentially removing the CriticMarkup from the file).
 
 ### Plain HTML
 If a stripped down HTML output is preferred, the `--plain-html` or `-P` option will return a stripped down output with no templates, no HTML comments, and no id, style, class, or on* attributes.
@@ -99,14 +99,14 @@ pymdown -P file.md
 ```
 
 ### Force No Template
-If by default the config file has defined a template, but it is desired to do an output without the template, the `--force-no-template` option can do this.
+If by default the configuration file has defined a template, but it is desired to do an output without the template, the `--force-no-template` option can be used to disable template use.
 
 ```
 pymdown --force-no-template file.md
 ```
 
 ### Force Stdout
-Sometimes a file may have frontmatter that redirects its output to a file, but it may be desirable to send the output to stdout.  In this case, the `--force-stdout` option can be used.
+Sometimes a file may have frontmatter that redirects its output to a file, but it may be desirable to send the output to stdout.  In this case, the `--force-stdout` option can be used to force the output to stdout.
 
 ```
 pymdown --force-stdout file.md
@@ -122,6 +122,8 @@ pymdown -q file.md
 ## Configuration File
 The configuration file is used to specify general Python Markdown settings, optional template, CSS and JS resources for templates, and extensions that will be used.
 
+PyMdown on the first run will unpack user files to `~\.PyMdown` on Windows, `~/.PyMdown` on OSX and `~/.config/PyMdown` on Linux.  The global configuration file can found here at the root of the folder along with default CSS, Javascript, and other resources in the which would be under another sub-folder called `default`.  Files under default will be auto-upgraded when necessary by newer versions of PyMdown and should be left unaltered.  Default files can be copied and altered outside of the `default` location for personal tweaking and usage.
+
 ### Python Markdown Settings
 Python Markdown has a number of settings that can be configured:
 
@@ -131,7 +133,7 @@ tab_length: 4
 
 # Ignore number of first item in ordered list.
 # Setting this to false will force the list to start with the
-# first specified number in the ist.
+# first specified number in the list.
 lazy_ol: true
 
 # Python Markdown by default enables smart logic for _connected_words_
@@ -167,7 +169,7 @@ Pygments can also be disabled entirely:
 use_pygments: true
 ```
 
-If Pygments is disabled, code blocks are converted to a form so that a Javascript library like [highlight.js](https://highlightjs.org/).
+If Pygments is disabled, but the CodeHilite extension is being used, code blocks are converted to a form so that a Javascript library like [highlight.js](https://highlightjs.org/) can process them.
 
 ### Template
 PyMdown allows for specifying a simple HTML template that can be used for the output.  Template files can be specified in the settings file via the `template` keyword.
@@ -247,12 +249,12 @@ css:
 js: []
 ```
 
-CSS files and Javascript files can be URLs or file paths.  When specifying a file path, a `!` can be used to precede the path, then PyMdown will just link skip converting the file to an absolute or relative path.  If the file path is preceded by a `^` the file content will be embedded in the HTML under a style or script tag as depending on the source.
+CSS files and Javascript files can be URLs or file paths.  When specifying a file path, a `!` can be used to precede the path so that PyMdown will just link the file and skip converting the file to an absolute or relative path.  If the file path is preceded by a `^`, the file content will be embedded in the HTML under a style or script tag depending on the source type.
 
 CSS and Javascript files can also be followed by `;encoding` to read in the file with the specified encoding.
 
 ### Javascript and CSS Quickload Aliases
-Sometimes, you may have files you occasionally want to include on the fly.  PyMdown allows for defining aliases that can be referenced in a file's frontmatter to include multiple Javascript and/or CSS files.  CSS and Javascript included in the the quickload aliases follow the same rules as the normal [CSS and Javascript](#javascript-and-css) includes.
+Sometimes you may have files you occasionally want to include on the fly.  PyMdown allows for defining aliases that can be referenced in a file's frontmatter to include multiple Javascript and/or CSS files.  CSS and Javascript included in the the quick-load aliases follow the same rules as the normal [CSS and Javascript](#javascript-and-css) includes.
 
 ```yaml
 # Quick load aliases
@@ -290,7 +292,7 @@ Sometimes, you may have files you occasionally want to include on the fly.  PyMd
 ```
 
 ### Path Conversions
-By default, PyMdown converts paths to be relative to the output location.  If desired this can be changed to an absolute path:
+By default, PyMdown converts paths to be relative to the output location.  If desired, this can be changed to an absolute path:
 
 ```yaml
 # By default resource paths are converted to relative file paths when possible;
@@ -336,7 +338,7 @@ extensions:
 ```
 
 ## Frontmatter
-Frontmatter can be used at the very beginning of a Markdown file.  they begin with `---` and end with `---`.  Frontmatter must be the very first thing in the file and start at the very first line.
+Frontmatter can be used at the very beginning of a Markdown file.  Frontmatter blocks begin with `---` and end with `---`.  Frontmatter must be the very beginning of the file and start on the very first line.
 
 PyMdown front matter content can be either YAML or JSON (JSON is modified to allow Javascript comments).  The frontmatter is a dictionary of key value pairs which are translated into meta data for all keys except for a few **special** keywords.  For meta data, the key will become the content of the `meta` tag's `name` attribute, and the value will become the data for the `content` attribute.  If an array is specified as the value, each member of the array will be converted to a string and all of them will be strung together and separated by commas.  In all other cases, the value will just be converted to a string.
 

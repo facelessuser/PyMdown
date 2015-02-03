@@ -8,7 +8,7 @@ The Github extension is a convenience extension to load up and configure the min
 !!! Caution "Reminder"
     Be mindful of which extensions are being loaded here.  If you load `pymdown.github` and `markdown.extensions.extra`, you will be loading some extensions multiple times.
 
-    You will also need to load the `markdown.extensions.codehilite` extension yourself as well with `guess_lang=False` and your preferred Pygments style (if available or use some other Javascript highlighter).  Though there is no github style included with the extension, the PyModwn tool comes with the original github style (github) and the newest github 2014 style (github2).
+    You will also need to load the `markdown.extensions.codehilite` extension yourself as well with `guess_lang=False` and your preferred Pygments style (if available) or use some other Javascript highlighter.  Though there is no github style included with the extension, the PyModwn tool comes with the original Pygments github style (github) and the github 2014 style (github2014) which they Github used before they ditched Pygments for their own in-house highlighter.
 
 Extensions that get loaded:
 

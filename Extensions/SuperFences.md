@@ -7,10 +7,10 @@ include:
 # Overview
 SuperFences provides 4 features:
 
-- The ability to nest fences under blockquotes, lists, or other block elements (this feature is provided as a workaround until a more official and better implementation is provided by the Python Markdown team; see [Limitations](#limitations) for more info).
-- Special UML flowchart fence via the `flow` language specifier.
-- Special UML sequence diagram via the `sequence` language specifier.
-- The ability to disable indented code blocks in favor of only using the fenced variant (off by default).
+1. The ability to nest fences under blockquotes, lists, or other block elements (this feature is provided as a workaround until a more official and better implementation is provided by the Python Markdown team; see [Limitations](#limitations) for more info).
+2. Special UML flowchart fence via the `flow` language specifier.
+3. Special UML sequence diagram via the `sequence` language specifier.
+4. The ability to disable indented code blocks in favor of only using the fenced variant (off by default).
 
 All features can be turned on or off.
 

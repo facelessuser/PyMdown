@@ -3,14 +3,14 @@ references: _references/references.md
 ---
 [TOC]
 # Overview
-BetterEm is an extension that aims to improve emphasis (bold and italic) handling.  It provides two modes for both asterisks and underscore bold and italics: smart via when `smart_enable` is truned on and normal if `smart_enable` is turned off.  BetterEm overrides all the current bold and italic rules in Python Markdown with its own.  When **smart** is enabled for either asterisks and/or underscores, it is enabled for all variants: single, double, and triple.  When smart is enabled, the behavior will be very similar in feel to GFM bold and italic (but not necessarily exact).
+BetterEm is an extension that aims to improve emphasis (bold and italic) handling.  It provides two modes for both asterisk and underscore bold and italics: **smart** when `smart_enable` is turned on and normal if `smart_enable` is turned off.  BetterEm overrides all the current bold and italic rules in Python Markdown with its own.  When **smart** is enabled for either asterisks and/or underscores, it is enabled for all variants: single, double, and triple.  When **smart** is enabled, the behavior will be very similar in feel to GFM bold and italic (but not necessarily exact).
 
 # Differences
 
 !!! Note "Note"
     For all examples on this page, underscores are __smart__ and asterisks are not.
 
-BetterEm requires that non-whitespace characters follow the opening token(s) and precede the closing tokens.
+BetterEm requires that non-whitespace characters follow the opening token(s) and precede the closing token(s).
 
 | Test | Result |
 |------|---------|
