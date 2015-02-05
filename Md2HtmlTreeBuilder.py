@@ -188,11 +188,11 @@ class Md2HtmlTreeBuilder(object):
             self.log(traceback.format_exc())
             self.log("ERROR: Either pymdown wasn't found, or there was a problem parsing a file!")
 
-    def stream_convert(self, text, no_template=False):
+    def stream_convert(self, text, relpath=None, no_template=False):
         """ Convert a text object to HTML """
         results = None
         try:
-            cmd = ['pymdown', '-b', '-q', '--basepath', '.']
+            cmd = ['pymdown', '-q', '--basepath', '.', '--relpath', relpath]
             if no_template:
                 cmd.append('--force-no-template')
             if DEBUG:
@@ -267,12 +267,12 @@ class Md2HtmlTreeBuilder(object):
         if len(updated):
             if not index_exists:
                 self.log("Generating %s..." % join(pth, 'index.html'))
-                text = self.stream_convert(text)
+                text = self.stream_convert(text, relpath=pth)
                 if text is not None:
                     with codecs.open(join(pth, 'index.html'), 'w', encoding='utf-8') as f:
                         f.write(text)
             else:
-                text = self.stream_convert(text, no_template=True)
+                text = self.stream_convert(text, relpath=pth, no_template=True)
 
             # Convert all 'md' files.
             if not self.force_update:
@@ -399,7 +399,7 @@ class Md2HtmlTreeBuilder(object):
             self.convert_markdown(folders + docs, pth, index_exists, updated)
 
             if pth == '.' and self.site_map and len(folders + docs) and self.updated:
-                text = self.stream_convert(self.site)
+                text = self.stream_convert(self.site, relpath=pth)
                 self.log('Generating the site map...')
                 if text is not None:
                     with codecs.open(join(pth, '%s.html' % self.site_map), 'w', encoding='utf-8') as f:
