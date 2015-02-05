@@ -97,12 +97,14 @@ class MdConvert(object):
         """ Initialize """
 
         base_path = kwargs.get('base_path')
-        relative_output = kwargs.get('relative_output')
+        relative_path = kwargs.get('relative_path')
+        output_path = kwargs.get('output_path')
 
         self.meta = {}
         self.source = source
         self.base_path = base_path if base_path is not None else ''
-        self.relative_output = relative_output if relative_output is not None else ''
+        self.relative_path = relative_path if relative_path is not None else ''
+        self.output_path = output_path if output_path is not None else ''
         self.encoding = kwargs.get('encoding', 'utf-8')
         self.check_extensions(kwargs.get('extensions', []))
         self.tab_length = kwargs.get('tab_length', 4)
@@ -131,7 +133,9 @@ class MdConvert(object):
                         config[k] = v.replace(
                             '${BASE_PATH}', self.base_path
                         ).replace(
-                            '${OUTPUT}', self.relative_output
+                            '${REL_PATH}', self.relative_path
+                        ).replace(
+                            '${OUTPUT}', self.output_path
                         )
                 # Add extension
                 self.extensions.append(name)

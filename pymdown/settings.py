@@ -66,6 +66,7 @@ class Settings(object):
             "page": {
                 "destination": None,
                 "basepath": None,
+                "relpath": None,
                 "references": [],
                 "include": [],
                 "meta": {}
@@ -113,12 +114,13 @@ class Settings(object):
 
         self.settings["settings"] = settings
 
-    def get(self, file_name, output, basepath, frontmatter=None):
+    def get(self, file_name, output=None, basepath=None, relpath=None, frontmatter=None):
         """ Get the complete settings object for the given file """
         self.file_name = file_name
         settings = deepcopy(self.settings)
         settings["page"]["destination"] = self.resolve_output(output)
         settings["page"]["basepath"] = self.resolve_base_path(basepath)
+        settings["page"]["relpath"] = self.resolve_rel_path(relpath)
         if frontmatter is not None:
             self.apply_frontmatter(frontmatter, settings)
         # Store destination as our output reference directory.
@@ -126,13 +128,19 @@ class Settings(object):
         # If there is no output location, try to come up with a rational
         # output reference directory by falling back to the source file.
         if settings['page']['destination'] is not None:
-            self.relative_out = path.dirname(path.abspath(settings['page']['destination']))
+            self.out = path.dirname(path.abspath(settings['page']['destination']))
         elif file_name:
-            self.relative_out = path.dirname(path.abspath(self.file_name))
+            self.out = path.dirname(path.abspath(self.file_name))
         # elif settings["page"]["basepath"] is not None:
-        #     self.relative_out = settings["page"]["basepath"]
+        #     self.out = settings["page"]["basepath"]
         else:
-            self.relative_out = None
+            self.out = None
+        # Try to come up with a sane relative path since one was not provided
+        if settings['page']['relpath'] is None:
+            if settings['page']['destination'] is not None:
+                settings['page']['relpath'] = path.dirname(path.abspath(settings['page']['destination']))
+            elif file_name:
+                settings['page']['relpath'] = path.dirname(path.abspath(self.file_name))
         if self.force_stdout:
             settings["page"]["destination"] = None
         if self.force_no_template:
@@ -172,8 +180,24 @@ class Settings(object):
 
         return output
 
-    def resolve_base_path(self, basepath):
+    def resolve_rel_path(self, relpath):
         """ Get the base path to use when resolving basepath paths if possible """
+        if relpath is not None:
+            relpath = path.expanduser(relpath)
+        if relpath is not None and path.exists(relpath):
+            # A valid path was fed in
+            pth = relpath
+            relpath = path.dirname(path.abspath(pth)) if path.isfile(pth) else path.abspath(pth)
+        else:
+            # Okay, there is no way to tell the orign.
+            # We are probably a stream that has no specified
+            # physical location.
+            relpath = None
+
+        return relpath
+
+    def resolve_base_path(self, basepath):
+        """ Get the relative path to use when resolving relative paths if possible """
         if basepath is not None:
             basepath = path.expanduser(basepath)
         if basepath is not None and path.exists(basepath):
@@ -244,6 +268,12 @@ class Settings(object):
             settings["page"]["basepath"] = self.resolve_base_path(value)
             del frontmatter["basepath"]
         base = settings["page"]["basepath"]
+
+        # Handle relative path
+        if "relpath" in frontmatter:
+            value = frontmatter["relpath"]
+            settings["page"]["relpath"] = self.resolve_rel_path(value)
+            del frontmatter["relpath"]
 
         # The destination/output location and name
         if "destination" in frontmatter:
@@ -448,7 +478,7 @@ class Settings(object):
                         "name": "pymdownx.pathconverter",
                         "config": {
                             "base_path": "${BASE_PATH}",
-                            "relative_path": "${OUTPUT}",
+                            "relative_path": "${REL_PATH}" if not self.preview else "${OUTPUT}",
                             "absolute": path_conversion_absolute
                         }
                     }

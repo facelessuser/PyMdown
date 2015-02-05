@@ -127,6 +127,7 @@ def main():
     parser.add_argument('--settings', '-s', default=path.join(res.get_user_path(), "pymdown.cfg"), help="Load the settings file from an alternate location.")
     parser.add_argument('--encoding', '-e', default="utf-8", help="Encoding for input.")
     parser.add_argument('--basepath', default=None, help="The basepath location pymdown should use.")
+    parser.add_argument('--relpath', default=None, help="The path that things will be relative to (default is output).")
     parser.add_argument('markdown', nargs='*', default=[], help="Markdown file(s) or file pattern(s).")
 
     args = parser.parse_args()
@@ -174,6 +175,7 @@ def main():
     sys.exit(
         pymdown.Convert(
             basepath=args.basepath,
+            relpath=args.relpath,
             title=args.title,
             output=args.output,
             config=config

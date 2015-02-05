@@ -140,12 +140,13 @@ def merge_meta(meta1, meta2, title=None):
 class Convert(object):
     def __init__(
         self, config,
-        output=None, basepath=None,
+        output=None, basepath=None, relpath=None,
         title=None, settings_path=None
     ):
         self.config = config
         self.output = output
         self.basepath = basepath
+        self.relpath = relpath
         self.title = title
         self.settings_path = settings_path
 
@@ -167,7 +168,8 @@ class Convert(object):
         status = PASS
         try:
             self.settings = self.config.get(
-                file_name, basepath=self.basepath, output=self.output, frontmatter=frontmatter
+                file_name, output=self.output, basepath=self.basepath,
+                relpath=self.relpath, frontmatter=frontmatter
             )
         except:
             logger.Log.error(traceback.format_exc())
@@ -254,6 +256,7 @@ class Convert(object):
                 plain=self.config.plain,
                 settings=self.settings["settings"],
                 basepath=self.settings["page"]["basepath"],
+                relative=self.settings["page"]["relpath"],
                 aliases=self.settings["page"]["include"],
                 encoding=self.config.output_encoding
             )
@@ -267,7 +270,8 @@ class Convert(object):
                     lazy_ol=self.settings["settings"].get('lazy_ol', True),
                     tab_length=self.settings["settings"].get('tab_length', 4),
                     base_path=self.settings["page"]["basepath"],
-                    relative_output=path.dirname(html.file.name) if html.file.name else self.config.relative_out,
+                    relative_path=self.settings["page"]["relpath"],
+                    output_path=path.dirname(html.file.name) if html.file.name else self.config.out,
                     enable_attributes=self.settings["settings"].get('enable_attributes', True),
                     output_format=self.settings["settings"].get('output_format', 'xhtml1'),
                     extensions=self.settings["settings"]["extensions"]

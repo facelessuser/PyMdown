@@ -128,7 +128,7 @@ class Text(object):
 class Html(object):
     def __init__(
         self, preview=False, title=None, encoding='utf-8',
-        basepath=None, plain=False, aliases=[], settings={}
+        basepath=None, relative=None, plain=False, aliases=[], settings={}
     ):
         self.settings = settings
         self.encode_file = True
@@ -140,6 +140,7 @@ class Html(object):
         self.meta = []
         self.encoding = encoding
         self.basepath = basepath
+        self.relative_output = relative
         self.preview = preview
         self.aliases = aliases
         self.template_file = self.settings.get("template", None)
@@ -223,9 +224,6 @@ class Html(object):
             # Is an unknown path
             file_path = None
 
-        # Determine the output directory if possible
-        output = path.dirname(path.abspath(self.file.name)) if self.file.name else None
-
         if file_path is not None:
             # Calculate the absolute path
             if is_abs or not self.basepath:
@@ -235,8 +233,8 @@ class Html(object):
 
             # Adjust path depending on whether we are desiring
             # absolute output or relative output
-            if not absolute_conversion and output:
-                file_path = path.relpath(abs_path, output)
+            if not absolute_conversion and self.relative_output:
+                file_path = path.relpath(abs_path, self.relative_output)
             elif absolute_conversion:
                 file_path = abs_path
 
@@ -314,6 +312,7 @@ class Html(object):
         """ Set and create the output target and target related flags """
         if output is None:
             self.file = Terminal()
+            self.file.name = self.relative_output
         try:
             if not self.preview and output is not None:
                 self.file = codecs.open(output, "w", encoding=self.encoding, errors="xmlcharrefreplace")
@@ -420,9 +419,6 @@ class Html(object):
                     # Is a url or an unknown path
                     res_path = None
 
-                # Determine the output directory if possible
-                output = path.dirname(path.abspath(self.file.name)) if self.file.name else None
-
                 # This is a URL, don't include content
                 if is_url:
                     if resource not in self.added_res:
@@ -441,9 +437,9 @@ class Html(object):
                     # Adjust path depending on whehter we are desiring
                     # absolute output or relative output
                     if (self.preview or not omit_conversion):
-                        if not absolute_conversion and output:
+                        if not absolute_conversion and self.relative_output:
                             try:
-                                res_path = path.relpath(abs_path, output)
+                                res_path = path.relpath(abs_path, self.relative_output)
                             except:
                                 # No choice put to use absolute path
                                 res_path = abs_path
