@@ -33,6 +33,7 @@
 <li><a href="#batch-processing">Batch Processing</a></li>
 <li><a href="#previewing-markdown">Previewing Markdown</a></li>
 <li><a href="#basepath">Basepath</a></li>
+<li><a href="#relpath">Relpath</a></li>
 <li><a href="#settings">Settings</a></li>
 <li><a href="#encoding">Encoding</a></li>
 <li><a href="#title">Title</a></li>
@@ -100,6 +101,12 @@
 <h4 id="basepath"><a name="user-content-basepath" href="#basepath" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Basepath</h4>
 <p>PyMdown in various circumstances will try and resolve image, CSS, and JS asset paths for previews or for base64 encoding etc.  In order for this to work, a basepath may be required and can be specified using the <code class="highlight">--basepath</code> option.  If no basepath is given, the basepath will be that of the source file or <code class="highlight">None</code> if the source is a file stream.</p>
 <div class="highlight"><pre>pymdown --basepath ../assets file.md
+</pre></div>
+
+
+<h4 id="relpath"><a name="user-content-relpath" href="#relpath" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Relpath</h4>
+<p>PyMdown is various circumstances will try to create relative paths to assets or sources such as images, CSS, and JS.  In order for this to work, a relative path is needed.  the <code class="highlight">--relpath</code> option is used to set this.  If <code class="highlight">--relpath</code> is not set, it defaults to the output directory.  If the output directory is also not set (when output is dumpped to stdout), the relative path will not be set.</p>
+<div class="highlight"><pre>pymdown --relpath ../somedirectory file.md
 </pre></div>
 
 
@@ -359,7 +366,7 @@
 <div class="admonition caution">
 <p class="admonition-title">Note</p>
 <p>PyMdown utilizes the <a href="Extensions/PathConverter.html">pathconverter</a> extension to convert links and references in the actual markdown content.  If <code class="highlight">pathconverter</code> is manually configured instead of letting PyMdown handle it, these settings will have no effect.</p>
-<p>The other exception is with previews.  In order for links and references to work in previews, they must be paths that are relative to the preview&rsquo;s temp directory or they must be absolute paths.  For this reason, PyMdown will always enable path conversions for previews.  If you have manually set up the <code class="highlight">pathconverter</code> extension, preview&rsquo;s will overwrite the <code class="highlight">relative_path</code> argument to ensure it is set to <code class="highlight">${OUTPUT}</code> which will allow the preview to display content properly.</p>
+<p>The other exception is with previews.  In order for links and references to work in previews, they must be paths that are relative to the preview&rsquo;s temp directory or they must be absolute paths.  For this reason, PyMdown will always enable path conversions for previews.  If you have manually set up the <code class="highlight">pathconverter</code> extension, preview&rsquo;s will overwrite the <code class="highlight">relative_path</code> argument to ensure it is set to <code class="highlight">${OUTPUT}</code> which will allow the preview to display content properly by making asset paths relative to the previews location.  By default, the <code class="highlight">relative_path</code> is set to <code class="highlight">${REL_PATH}</code> which is the output path by default, but can be altered via the command line option <code class="highlight">--relpath</code> or the <code class="highlight">relpath</code> frontmatter option.</p>
 </div>
 <h4 id="python-markdown-extensions"><a name="user-content-python-markdown-extensions" href="#python-markdown-extensions" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Python Markdown Extensions</h4>
 <p>Extensions to be used are defined under the <strong>extensions</strong> keyword.  Each entry in the extensions are dictionaries.  They must have the <code class="highlight">name</code> key which should specify the Python module that is to be loaded, and they can optionally contain <code class="highlight">config</code> which would be another dictionary setting up the given extension&rsquo;s settings.</p>
@@ -411,6 +418,10 @@
 <tr>
 <td>basepath</td>
 <td>This is used to specify the path that PyMdown should use to look for reference material like CSS or JS files and even <code class="highlight">references</code> defined in the frontmatter. It is also used in plugins such as <code class="highlight">pathconverter</code> and <code class="highlight">b64</code>.  This can override the <code class="highlight">basepath</code> fed in at the command line.</td>
+</tr>
+<tr>
+<td>relpath</td>
+<td>This is used ot specify the path that images and paths are relative to. It is used in plugins such as <code class="highlight">pathconverter</code>.  This can override the <code class="highlight">relpath</code> fed in at the command line.</td>
 </tr>
 <tr>
 <td>include</td>

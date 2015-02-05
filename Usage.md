@@ -55,6 +55,13 @@ PyMdown in various circumstances will try and resolve image, CSS, and JS asset p
 pymdown --basepath ../assets file.md
 ```
 
+### Relpath
+PyMdown is various circumstances will try to create relative paths to assets or sources such as images, CSS, and JS.  In order for this to work, a relative path is needed.  the `--relpath` option is used to set this.  If `--relpath` is not set, it defaults to the output directory.  If the output directory is also not set (when output is dumpped to stdout), the relative path will not be set.
+
+```
+pymdown --relpath ../somedirectory file.md
+```
+
 ### Settings
 PyMdown will normally look in the location of the pymdown binary to find the settings file, but the filename and path can be redirected with the `--setttings` or `-s` option.
 
@@ -311,7 +318,7 @@ disable_path_conversion: false
 !!! caution "Note"
     PyMdown utilizes the [pathconverter](Extensions/PathConverter.html) extension to convert links and references in the actual markdown content.  If `pathconverter` is manually configured instead of letting PyMdown handle it, these settings will have no effect.
 
-    The other exception is with previews.  In order for links and references to work in previews, they must be paths that are relative to the preview's temp directory or they must be absolute paths.  For this reason, PyMdown will always enable path conversions for previews.  If you have manually set up the `pathconverter` extension, preview's will overwrite the `relative_path` argument to ensure it is set to `${OUTPUT}` which will allow the preview to display content properly.
+    The other exception is with previews.  In order for links and references to work in previews, they must be paths that are relative to the preview's temp directory or they must be absolute paths.  For this reason, PyMdown will always enable path conversions for previews.  If you have manually set up the `pathconverter` extension, preview's will overwrite the `relative_path` argument to ensure it is set to `${OUTPUT}` which will allow the preview to display content properly by making asset paths relative to the previews location.  By default, the `relative_path` is set to `${REL_PATH}` which is the output path by default, but can be altered via the command line option `--relpath` or the `relpath` frontmatter option.
 
 ### Python Markdown Extensions
 Extensions to be used are defined under the **extensions** keyword.  Each entry in the extensions are dictionaries.  They must have the `name` key which should specify the Python module that is to be loaded, and they can optionally contain `config` which would be another dictionary setting up the given extension's settings.
@@ -350,6 +357,7 @@ PyMdown has a few keywords that can be defined to alter the output.
 | destination | This keyword is the location and file name were the output should be placed. |
 | references | This can specify a separate Markdown file containing footnotes, attributes, etc. This feature could be abused to just insert normal Markdown files into other Markdown files; PyMdown currently does nothing to prevent this, but this is not really advised. References can be followed by `;encoding` to specify the read encoding. By default, the encoding from the command line will be used, but this can override it. |
 | basepath | This is used to specify the path that PyMdown should use to look for reference material like CSS or JS files and even `references` defined in the frontmatter. It is also used in plugins such as `pathconverter` and `b64`.  This can override the `basepath` fed in at the command line. |
+| relpath | This is used ot specify the path that images and paths are relative to. It is used in plugins such as `pathconverter`.  This can override the `relpath` fed in at the command line. |
 | include | This keyword's value is an array of strings and accepts [quickload aliases](#javascript-and-css-quckload-aliases) (the `@` symbol is omitted from the name). So if a quickload alias named `@alias` is desired, `alias` would be defined under the `include` keyword. |
 | include.css | This keyword's value is an array of strings denoting additional single CSS files to include.  They follow the same convention as CSS defined in the settings file: `;encoding` at tail will define the encoding used to access the file, paths starting with `!` will not have their path converted to absolute or relative paths, and `^` will directly embed the content in the HTML file. |
 | include.js | This keyword's value is an array of strings denoting additional single Javascript files to include.  They follow the same convention as Javascript defined in the settings file: `;encoding` at tail will define the encoding used to access the file, paths starting with `!` will not have their path converted to absolute or relative paths, and `^` will directly embed the content in the HTML file. |
