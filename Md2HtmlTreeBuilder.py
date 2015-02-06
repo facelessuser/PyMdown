@@ -276,12 +276,13 @@ class Md2HtmlTreeBuilder(object):
 
             # Convert all 'md' files.
             if not self.force_update:
-                patterns = [join(pth, md) for md in updated]
+                patterns = [join(pth, md) for md in updated if isfile(join(pth, md))]
                 if index_exists:
                     patterns.append(join(pth, 'index.md'))
             else:
                 patterns = [join(pth, '*.md')]
-            self.batch_convert(patterns)
+            if len(patterns):
+                self.batch_convert(patterns)
 
             if index_exists:
                 try:
@@ -375,6 +376,7 @@ class Md2HtmlTreeBuilder(object):
                         folders.append(f)
                         if levels + 1 > levels_deep:
                             levels_deep = levels
+                        updated.append(f)
                 elif item.lower().endswith('.md'):
                     if not self.force_update:
                         converted = item[:-2] + 'html'
