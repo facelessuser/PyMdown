@@ -28,12 +28,15 @@
   <h1>InlineHilite</h1>
   <div class="toc"><span class="toctitle">Table of Contents</span><ul>
 <li><a href="#overview">Overview</a></li>
+<li><a href="#options">Options</a></li>
 <li><a href="#example">Example</a></li>
 </ul>
 </div>
 <h2 id="overview"><a name="user-content-overview" href="#overview" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Overview</h2>
 <p>InlineHilite extends CodeHilite to add inline code highlighting.  Borrowing from CodeHilite&rsquo;s existing syntax, InlineHilite utilizes the following syntax to insert inline  highlighted code: <code class="highlight">`:::language mycode`</code> or <code class="highlight">`#!language mycode`</code>.  We will call these specifiers mock shebangs.</p>
 <p>When using the colon mock shebang, 3 or more colons can be used.  Mock shebangs must come <strong>immediately</strong> after the opening backtick(s) and must be followed by at least one space.  If you need to escape a mock shebang at the start of a code block, just put a space before it and it will be treated as part of the code.</p>
+<h2 id="options"><a name="user-content-options" href="#options" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Options</h2>
+<p>InlineHilite has no options, but it relies on Codehilite and its options.  The idea is that InlineHilite extends Codehilite.  So InlineHilite only works when Codehilite is enabled, and it uses the same options that Codehilite uses; namely: <code class="highlight">guess_lang</code>, <code class="highlight">css_class</code>, <code class="highlight">pygments_style</code>, <code class="highlight">use_pygments</code>.</p>
 <h2 id="example"><a name="user-content-example" href="#example" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Example</h2>
 <div class="highlight"><pre>Here is some code: `#!js function pad(v){return (&#39;0&#39;+v).split(&#39;&#39;).reverse().splice(0,2).reverse().join(&#39;&#39;)}`.
 

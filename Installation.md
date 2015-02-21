@@ -13,8 +13,8 @@ In order for PyMdown to work, there are a couple of prerequisites.  If installin
 | Name | Details |
 |------|---------|
 | [PyMdown Extensions](https://github.com/facelessuser/pymdown-extensions) | Extensions for PyMdown. |
-| [Python Markdown 2.5.2+][py_md] | Python Markdown must be installed as it is the Markdown parser that is being used.  It must be 2.5.2 or greater as certain fixes are needed that were added in 2.5.2. |
-| [Pygments 2.0rc1+ (optional)][pygments] | If Pygments Syntax highlighting is desired, Pygments must be installed.  This can be omitted, and code blocks (if using the CodeHilite extension) will be formatter for use with Javascript code highlighters. |
+| [Python Markdown 2.6.0+][py_md] | Python Markdown must be installed as it is the Markdown parser that is being used. |
+| [Pygments 2.0.1+ (optional)][pygments] | If Pygments Syntax highlighting is desired, Pygments must be installed.  This can be omitted, and code blocks (if using the CodeHilite extension) will be formatter for use with Javascript code highlighters. |
 | [PyYaml 3.10+][pyyaml] | PyYaml is required. Older versions may work, but I am arbitrarily specifying 3.10 as the earliest I am aware of that works. |
 | [PyMdown Styles](https://github.com/facelessuser/pymdown-styles) | Optional package that adds a couple of custom Pygments styles. |
 | [PyMdown Lexers](https://github.com/facelessuser/pymdown-lexers) | Optional package that adds a couple of non-standard lexers.  Also a great example for adding your own custom lexers. |

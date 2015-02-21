@@ -168,14 +168,6 @@ The following setting is used when it is not desired to have PyMdown inject the 
 use_pygments_css: true,
 ```
 
-Pygments can also be disabled entirely:
-
-```yaml
-# Enable or disable the use of Pygments
-# This is useful if you prefer to use a Javascript syntax highlighter
-use_pygments: true
-```
-
 If Pygments is disabled, but the CodeHilite extension is being used, code blocks are converted to a form so that a Javascript library like [highlight.js](https://highlightjs.org/) can process them.
 
 ### Template
