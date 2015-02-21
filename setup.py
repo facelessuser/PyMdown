@@ -26,7 +26,7 @@ setup(
     url='https://github.com/facelessuser/PyMdown',
     packages=find_packages(exclude=['pyinstaller*']),
     install_requires=[
-        'Markdown>=2.5.2',
+        'Markdown>=2.6.0',
         'Pygments>=2.0.1',
         'pymdown-extensions>=1.0.0',
         'pymdown-lexers>=1.0.0',

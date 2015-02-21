@@ -19,10 +19,9 @@ from . import resources as res
 from . import logger
 import yaml
 from . import file_strip as fstrip
-import markdown.extensions.codehilite as codehilite
 try:
     from pygments.styles import get_style_by_name
-    PYGMENTS_AVAILABLE = codehilite.pygments
+    PYGMENTS_AVAILABLE = True
 except:
     PYGMENTS_AVAILABLE = False
 
@@ -382,22 +381,20 @@ class Settings(object):
         """
         style = None
 
-        use_pygments = settings["settings"].get('use_pygments', True)
-        if use_pygments and not PYGMENTS_AVAILABLE:
-            use_pygments = False
-        if use_pygments:
-            codehilite.pygments = True
-        else:
-            codehilite.pygments = False
+        if not PYGMENTS_AVAILABLE:
             settings["settings"]["use_pygments_css"] = False
 
-        count = 0
         for e in extensions:
             # Search for codehilite to see what style is being set.
             if e.get('name', '') == "markdown.extensions.codehilite":
-                config = e.get('config', {})
+                if 'config' not in e:
+                    e['config'] = {}
+                config = e['config']
 
-                if bool(config.get('noclasses', False)):
+                if not PYGMENTS_AVAILABLE and bool(config.get('use_pygments', True)):
+                    config['use_pygments'] = False
+
+                if bool(config.get('noclasses', False)) or not bool(config.get('use_pygments', True)):
                     settings["settings"]["use_pygments_css"] = False
 
                 css_class = config.get('css_class', None)
@@ -420,7 +417,6 @@ class Settings(object):
                         style = "default"
                 config['pygments_style'] = style
 
-            count += 1
         settings["settings"]["style"] = style
 
     def post_process_settings(self, settings):

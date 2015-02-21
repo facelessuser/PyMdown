@@ -25,7 +25,6 @@ try:
     pygments = True
 except:
     pygments = False
-    pass
 
 PY3 = sys.version_info >= (3, 0)
 
