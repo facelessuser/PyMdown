@@ -17,7 +17,7 @@ https://github.com/facelessuser/PyMdown.
 
 setup(
     name='PyMdown',
-    version='0.7.0',
+    version='0.8.0',
     keywords='markdown html batch',
     description='CLI Markdown batch converter/previewer.',
     long_description=LONG_DESC,
