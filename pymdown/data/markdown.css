@@ -83,7 +83,7 @@
   text-align: center;
   border-color: #ededed;
   border-width: 0;
-  color: #ededed;
+  color: #dddddd;
   border-style: dotted;
 }
 
@@ -422,7 +422,7 @@
 
 /* Block Quotes */
 .markdown-body blockquote {
-  margin: 0;
+  margin: 0 2em;
   color: #777;
   font-style: italic;
   position: relative;
@@ -440,6 +440,7 @@
   margin-bottom: 0;
 }
 
+/*.markdown-body blockquote::before {*/
 .markdown-body blockquote::before,
 .markdown-body blockquote::after {
   font: normal normal 16px fontawesome-mini;
@@ -450,7 +451,7 @@
   font-style: italic;
   user-select: none;
   line-height: 1.5;
-  color: #777;
+  color: #ddd;
   position: absolute;
 }
 
@@ -462,12 +463,13 @@
   top: 0;
 }
 
-/*.markdown-body blockquote::after {
-  padding-right: 5px;
+.markdown-body blockquote::after {
+  padding-right: 10px;
+  padding-bottom: 10px;
   content: "\00a0\f10e";
   right: 0;
   bottom: 0;
-}*/
+}
 
 /* Text Blocks */
 .markdown-body code,
@@ -494,7 +496,7 @@
   box-shadow: 0 1px 0 rgba(0,0,0,0.2),0 0 0 2px #fff inset;
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
-  border-radius: 3px;border-radius: 3px;
+  border-radius: 3px;
   display: inline-block;
   margin: 0 .1em;
   text-shadow: 0 1px 0 #fff;
@@ -508,7 +510,8 @@
   padding-bottom: 0.2em;
   margin: 0;
   font-size: 85%;
-  background-color: #fafafa;
+  color: #4d4d4c;
+  background-color: #fcfcfc;
   border: 1px solid #e0e0e0;
   /*background-color: rgba(0, 0, 0, 0.016);*/
   /*border: 1px solid rgba(0, 0, 0, .1);*/
@@ -550,7 +553,7 @@
   -webkit-border-radius: 3px;
   -moz-border-radius: 3px;
   border-radius: 3px;
-  background-color: #fafafa;
+  background-color: #fcfcfc;
   border: 1px solid #e0e0e0;
   border-left: 6px solid #e0e0e0;
 }
@@ -590,7 +593,7 @@
 }
 
 .markdown-body .highlight .hll {
-  display: inherit;
+  padding: .3em 0;
 }
 
 /* Header Anchors */
