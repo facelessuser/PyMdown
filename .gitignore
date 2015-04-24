@@ -10,3 +10,4 @@ pymdown.spec
 markdown/*
 pygments/*
 *egg-info/*
+site/*

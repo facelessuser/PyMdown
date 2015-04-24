@@ -1,0 +1,41 @@
+site_name: PyMdown Documentation
+repo_url: https://github.com/facelessuser/PyMdown
+site_description: A Python Markdown Preview and Converter Tool
+copyright: Copyright &copy; 2014 - 2015 <a href="https://github.com/facelessuser">Isaac Muse</a>
+pages:
+- ['index.md', 'Home']
+- ['user-guide/installation.md', 'User Guide', 'Installation']
+- ['user-guide/markdown-syntax.md', 'User Guide', 'Markdown Syntax']
+- ['user-guide/general-usage.md', 'User Guide', 'General Usage']
+- ['user-guide/pygments-customization.md', 'User Guide', 'Pygments Customization']
+- ['user-guide/pymdown-extensions.md', 'User Guide', 'PyMdown Extensions']
+- ['extensions/b64.md', 'Extensions', 'B64']
+- ['extensions/betterem.md', 'Extensions', 'BetterEm']
+- ['extensions/caret.md', 'Extensions', 'Caret']
+- ['extensions/critic.md', 'Extensions', 'Critic']
+- ['extensions/github.md', 'Extensions', 'Github']
+- ['extensions/githubemoji.md', 'Extensions', 'GithubEmoji']
+- ['extensions/headeranchor.md', 'Extensions', 'HeaderAnchor']
+- ['extensions/inlinehilite.md', 'Extensions', 'InlineHilite']
+- ['extensions/magiclink.md', 'Extensions', 'MagicLink']
+- ['extensions/mark.md', 'Extensions', 'Mark']
+- ['extensions/math.md', 'Extensions', 'Math']
+- ['extensions/pathconverter.md', 'Extensions', 'PathConverter']
+- ['extensions/plainhtml.md', 'Extensions', 'PlainHtml']
+- ['extensions/progressbar.md', 'Extensions', 'ProgressBar']
+- ['extensions/pymdown.md', 'Extensions', 'PyMdown']
+- ['extensions/smartsymbols.md', 'Extensions', 'SmartSymbols']
+- ['extensions/superfences.md', 'Extensions', 'SuperFences']
+- ['extensions/tasklist.md', 'Extensions', 'Tasklist']
+- ['extensions/tilde.md', 'Extensions', 'Tilde']
+- ['license.md', 'License']
+theme: readthedocs
+theme_dir: doc_theme
+markdown_extensions:
+- markdown.extensions.extra
+- markdown.extensions.admonition
+- markdown.extensions.smarty
+- markdown.extensions.nl2br
+- markdown.extensions.codehilite(guess_lang=False)
+- pymdownx.pymdown
+- pymdownx.critic
