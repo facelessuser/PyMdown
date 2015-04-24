@@ -36,7 +36,61 @@
 <p>InlineHilite extends CodeHilite to add inline code highlighting.  Borrowing from CodeHilite&rsquo;s existing syntax, InlineHilite utilizes the following syntax to insert inline  highlighted code: <code class="highlight">`:::language mycode`</code> or <code class="highlight">`#!language mycode`</code>.  We will call these specifiers mock shebangs.</p>
 <p>When using the colon mock shebang, 3 or more colons can be used.  Mock shebangs must come <strong>immediately</strong> after the opening backtick(s) and must be followed by at least one space.  If you need to escape a mock shebang at the start of a code block, just put a space before it and it will be treated as part of the code.</p>
 <h2 id="options"><a name="user-content-options" href="#options" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Options</h2>
-<p>InlineHilite has no options, but it relies on Codehilite and its options.  The idea is that InlineHilite extends Codehilite.  So InlineHilite only works when Codehilite is enabled, and it uses the same options that Codehilite uses; namely: <code class="highlight">guess_lang</code>, <code class="highlight">css_class</code>, <code class="highlight">pygments_style</code>, <code class="highlight">use_pygments</code>.</p>
+<p>By default, InlineHilite will use CodeHilite&rsquo;s settings if it is being used, but InlineHilite can be run without CodeHilite, and if desired, it can be run along side it and ignore CodeHilite&rsquo;s settings.</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>style_plain_text</td>
+<td>bool</td>
+<td>False</td>
+<td>By default, InlineHilite will ignore a code block with no language specified or the <code class="highlight">text</code> language specified.  No classes or style will be applied, the code block will be styled as normal.  If this is set true, text blocks will be processed and have classes injected into them even though only the plain text lexer is applied.</td>
+</tr>
+<tr>
+<td>use_codehilite_settings</td>
+<td>boolean</td>
+<td>True</td>
+<td>Determine whether CodeHilite&rsquo;s settings should be used, or if InlineHilite should use a different set.</td>
+</tr>
+<tr>
+<td>guess_lang</td>
+<td>boolean</td>
+<td>True</td>
+<td>If ignoring CodeHilite&rsquo;s settings, determine whether InlineHilite should try to guess a code block&rsquo;s language if not specified.</td>
+</tr>
+<tr>
+<td>css_class</td>
+<td>string</td>
+<td>&lsquo;inlinehilite&rsquo;</td>
+<td>If ignoring CodeHilite&rsquo;s settings, this is the class name that will be injected into code tags when they are processed.</td>
+</tr>
+<tr>
+<td>pygments_style</td>
+<td>string</td>
+<td>&lsquo;default&rsquo;</td>
+<td>If ignoring CodeHilite&rsquo;s settings, this is the pygments style to use.  When using Python Markdown, this really only has an effect when using <code class="highlight">noclasses</code>.  But when paired with the PyMdown tool, PyMdown will actually include the relevant CSS.</td>
+</tr>
+<tr>
+<td>noclasses</td>
+<td>boolean</td>
+<td>False</td>
+<td>If ignoring CodeHilite&rsquo;s settings, this will cause the styles to directly be written to the tag&rsquo;s style attribute instead of requiring a stylesheet.</td>
+</tr>
+<tr>
+<td>use_pygments</td>
+<td>boolean</td>
+<td>True</td>
+<td>If Pygments is available, and if ignoring CodeHilite&rsquo;s settings, this will control whether Pygements is used on the code block, or if the block&rsquo;s content will just be escaped and prepped for a JavaScript syntax highlighter.</td>
+</tr>
+</tbody>
+</table>
 <h2 id="example"><a name="user-content-example" href="#example" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Example</h2>
 <div class="highlight"><pre>Here is some code: `#!js function pad(v){return (&#39;0&#39;+v).split(&#39;&#39;).reverse().splice(0,2).reverse().join(&#39;&#39;)}`.
 
