@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Markdown Syntax - PyMdown Documentation</title>
+  
+
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme_custom.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/highlight.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.4/sequence-diagram-min.js"></script>
+  <script src="../../js/jquery-2.1.1.min.js"></script>
+  <script src="../../js/modernizr-2.8.3.min.js"></script>
+  <script src="../../js/flowchart-min.js"></script>
+  <script src="../../js/theme.js"></script>
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> 
+
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> PyMdown Documentation</a>
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+      <ul class="current">
+    
+        
+            <li class="toctree-l1 ">
+                <a class="" href="../..">Home</a>
+                
+            </li>
+        
+
+    
+        
+            <span>User Guide</span>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../installation/">Installation</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 current">
+                    <a class="current" href="./">Markdown Syntax</a>
+                    
+                        <ul>
+                        
+                            <li class="toctree-l3"><a href="#overview">Overview</a></li>
+                            
+                                <li><a class="toctree-l4" href="#philosophy">Philosophy</a></li>
+                            
+                                <li><a class="toctree-l4" href="#html">Inline HTML</a></li>
+                            
+                                <li><a class="toctree-l4" href="#autoescape">Automatic Escaping for Special Characters</a></li>
+                            
+                        
+                            <li class="toctree-l3"><a href="#block">Block Elements</a></li>
+                            
+                                <li><a class="toctree-l4" href="#p">Paragraphs and Line Breaks</a></li>
+                            
+                                <li><a class="toctree-l4" href="#header">Headers</a></li>
+                            
+                                <li><a class="toctree-l4" href="#blockquote">Blockquotes</a></li>
+                            
+                                <li><a class="toctree-l4" href="#list">Lists</a></li>
+                            
+                                <li><a class="toctree-l4" href="#precode">Code Blocks</a></li>
+                            
+                                <li><a class="toctree-l4" href="#hr">Horizontal Rules</a></li>
+                            
+                        
+                            <li class="toctree-l3"><a href="#span">Span Elements</a></li>
+                            
+                                <li><a class="toctree-l4" href="#link">Links</a></li>
+                            
+                                <li><a class="toctree-l4" href="#em">Emphasis</a></li>
+                            
+                                <li><a class="toctree-l4" href="#code">Code</a></li>
+                            
+                                <li><a class="toctree-l4" href="#img">Images</a></li>
+                            
+                        
+                            <li class="toctree-l3"><a href="#misc">Miscellaneous</a></li>
+                            
+                                <li><a class="toctree-l4" href="#autolink">Automatic Links</a></li>
+                            
+                                <li><a class="toctree-l4" href="#backslash">Backslash Escapes</a></li>
+                            
+                        
+                        </ul>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../general-usage/">General Usage</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../pygments-customization/">Pygments Customization</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../pymdown-extensions/">PyMdown Extensions</a>
+                    
+                </li>
+            
+        
+
+    
+        
+            <span>Extensions</span>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/b64/">B64</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/betterem/">BetterEm</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/caret/">Caret</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/critic/">Critic</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/github/">Github</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/githubemoji/">GithubEmoji</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/headeranchor/">HeaderAnchor</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/inlinehilite/">InlineHilite</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/magiclink/">MagicLink</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/mark/">Mark</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/math/">Math</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/pathconverter/">PathConverter</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/plainhtml/">PlainHtml</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/progressbar/">ProgressBar</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/pymdown/">PyMdown</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/smartsymbols/">SmartSymbols</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/superfences/">SuperFences</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/tasklist/">Tasklist</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/tilde/">Tilde</a>
+                    
+                </li>
+            
+        
+
+    
+        
+            <li class="toctree-l1 ">
+                <a class="" href="../../license/">License</a>
+                
+            </li>
+        
+
+    
+</ul>
+
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">PyMdown Documentation</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+        <li>User Guide &raquo;</li>
+      
+    
+    <li>Markdown Syntax</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="https://github.com/facelessuser/PyMdown" class="icon icon-github"> Edit on GitHub</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              <div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This documentation lays out the syntax of Mark Gruber&rsquo;s Markdown specifications.  It is taken from his <a href="http://daringfireball.net/projects/markdown/syntax">site</a>.  The content and info is his words, but it is here for convience.</p>
+</div>
+<h1 id="overview"><a name="user-content-overview" href="#overview" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Overview</h1>
+<h2 id="philosophy"><a name="user-content-philosophy" href="#philosophy" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Philosophy</h2>
+<p>Markdown is intended to be as easy-to-read and easy-to-write as is feasible.</p>
+<p>Readability, however, is emphasized above all else. A Markdown-formatted document should be publishable as-is, as plain text, without looking like it&rsquo;s been marked up with tags or formatting instructions. While Markdown&rsquo;s syntax has been influenced by several existing text-to-HTML filters &ndash; including <a href="http://docutils.sourceforge.net/mirror/setext.html">Setext</a>, <a href="http://www.aaronsw.com/2002/atx/">atx</a>, <a href="http://textism.com/tools/textile/">Textile</a>, <a href="http://docutils.sourceforge.net/rst.html">reStructuredText</a>,<br />
+<a href="http://www.triptico.com/software/grutatxt.html">Grutatext</a>, and <a href="http://ettext.taint.org/doc/">EtText</a> &ndash; the single biggest source of inspiration for Markdown&rsquo;s syntax is the format of plain text email.</p>
+<p>To this end, Markdown&rsquo;s syntax is comprised entirely of punctuation characters, which punctuation characters have been carefully chosen so as to look like what they mean. E.g., asterisks around a word actually look like *emphasis*. Markdown lists look like, well, lists. Even blockquotes look like quoted passages of text, assuming you&rsquo;ve ever used email.</p>
+<h2 id="html"><a name="user-content-html" href="#html" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Inline HTML</h2>
+<p>Markdown&rsquo;s syntax is intended for one purpose: to be used as a format for <em>writing</em> for the web.</p>
+<p>Markdown is not a replacement for HTML, or even close to it. Its syntax is very small, corresponding only to a very small subset of HTML tags. The idea is <em>not</em> to create a syntax that makes it easier to insert HTML tags. In my opinion, HTML tags are already easy to insert. The idea for Markdown is to make it easy to read, write, and edit prose. HTML is a <em>publishing</em> format; Markdown is a <em>writing</em> format. Thus, Markdown&rsquo;s formatting syntax only addresses issues that can be conveyed in plain text.</p>
+<p>For any markup that is not covered by Markdown&rsquo;s syntax, you simply use HTML itself. There&rsquo;s no need to preface it or delimit it to indicate that you&rsquo;re switching from Markdown to HTML; you just use the tags.</p>
+<p>The only restrictions are that block-level HTML elements &ndash; e.g. <code>&lt;div&gt;</code>, <code>&lt;table&gt;</code>, <code>&lt;pre&gt;</code>, <code>&lt;p&gt;</code>, etc. &ndash; must be separated from surrounding content by blank lines, and the start and end tags of the block should not be indented with tabs or spaces. Markdown is smart enough not to add extra (unwanted) <code>&lt;p&gt;</code> tags around HTML block-level tags.</p>
+<p>For example, to add an HTML table to a Markdown article:</p>
+<div class="codehilite"><pre>This is a regular paragraph.
+
+&lt;table&gt;
+    &lt;tr&gt;
+        &lt;td&gt;Foo&lt;/td&gt;
+    &lt;/tr&gt;
+&lt;/table&gt;
+
+This is another regular paragraph.
+</pre></div>
+
+
+<p>Note that Markdown formatting syntax is not processed within block-level HTML tags. E.g., you can&rsquo;t use Markdown-style <code>*emphasis*</code> inside an HTML block.</p>
+<p>Span-level HTML tags &ndash; e.g. <code>&lt;span&gt;</code>, <code>&lt;cite&gt;</code>, or <code>&lt;del&gt;</code> &ndash; can be used anywhere in a Markdown paragraph, list item, or header. If you want, you can even use HTML tags instead of Markdown formatting; e.g. if you&rsquo;d prefer to use HTML <code>&lt;a&gt;</code> or <code>&lt;img&gt;</code> tags instead of Markdown&rsquo;s link or image syntax, go right ahead.</p>
+<p>Unlike block-level HTML tags, Markdown syntax <em>is</em> processed within span-level tags.</p>
+<h2 id="autoescape"><a name="user-content-autoescape" href="#autoescape" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Automatic Escaping for Special Characters</h2>
+<p>In HTML, there are two characters that demand special treatment: <code>&lt;</code> and <code>&amp;</code>. Left angle brackets are used to start tags; ampersands are used to denote HTML entities. If you want to use them as literal characters, you must escape them as entities, e.g. <code>&amp;lt;</code>, and <code>&amp;amp;</code>.</p>
+<p>Ampersands in particular are bedeviling for web writers. If you want to write about &lsquo;AT&amp;T&rsquo;, you need to write &lsquo;<code>AT&amp;amp;T</code>&lsquo;. You even need to escape ampersands within URLs. Thus, if you want to link to:</p>
+<div class="codehilite"><pre>http://images.google.com/images?num=30&amp;q=larry+bird
+</pre></div>
+
+
+<p>you need to encode the URL as:</p>
+<div class="codehilite"><pre>http://images.google.com/images?num=30&amp;amp;q=larry+bird
+</pre></div>
+
+
+<p>in your anchor tag <code>href</code> attribute. Needless to say, this is easy to forget, and is probably the single most common source of HTML validation errors in otherwise well-marked-up web sites.</p>
+<p>Markdown allows you to use these characters naturally, taking care of all the necessary escaping for you. If you use an ampersand as part of an HTML entity, it remains unchanged; otherwise it will be translated into <code>&amp;amp;</code>.</p>
+<p>So, if you want to include a copyright symbol in your article, you can write:</p>
+<div class="codehilite"><pre>&amp;copy;
+</pre></div>
+
+
+<p>and Markdown will leave it alone. But if you write:</p>
+<div class="codehilite"><pre>AT&amp;T
+</pre></div>
+
+
+<p>Markdown will translate it to:</p>
+<div class="codehilite"><pre>AT&amp;amp;T
+</pre></div>
+
+
+<p>Similarly, because Markdown supports <a href="#html">inline HTML</a>, if you use angle brackets as delimiters for HTML tags, Markdown will treat them as such. But if you write:</p>
+<div class="codehilite"><pre>4 &lt; 5
+</pre></div>
+
+
+<p>Markdown will translate it to:</p>
+<div class="codehilite"><pre>4 &amp;lt; 5
+</pre></div>
+
+
+<p>However, inside Markdown code spans and blocks, angle brackets and ampersands are <em>always</em> encoded automatically. This makes it easy to use Markdown to write about HTML code. (As opposed to raw HTML, which is a terrible format for writing about HTML syntax, because every single <code>&lt;</code> and <code>&amp;</code> in your example code needs to be escaped.)</p>
+<hr />
+<h1 id="block"><a name="user-content-block" href="#block" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Block Elements</h1>
+<h2 id="p"><a name="user-content-p" href="#p" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Paragraphs and Line Breaks</h2>
+<p>A paragraph is simply one or more consecutive lines of text, separated by one or more blank lines. (A blank line is any line that looks like a blank line &ndash; a line containing nothing but spaces or tabs is considered blank.) Normal paragraphs should not be indented with spaces or tabs.</p>
+<p>The implication of the &ldquo;one or more consecutive lines of text&rdquo; rule is that Markdown supports &ldquo;hard-wrapped&rdquo; text paragraphs. This differs significantly from most other text-to-HTML formatters (including Movable Type&rsquo;s &ldquo;Convert Line Breaks&rdquo; option) which translate every line break character in a paragraph into a <code>&lt;br /&gt;</code> tag.</p>
+<p>When you <em>do</em> want to insert a <code>&lt;br /&gt;</code> break tag using Markdown, you end a line with two or more spaces, then type return.</p>
+<p>Yes, this takes a tad more effort to create a <code>&lt;br /&gt;</code>, but a simplistic &ldquo;every line break is a <code>&lt;br /&gt;</code>&rdquo; rule wouldn&rsquo;t work for Markdown. Markdown&rsquo;s email-style <a href="#blockquote">blockquoting</a> and multi-paragraph <a href="#list">list items</a> work best &ndash; and look better &ndash; when you format them with hard breaks.</p>
+<h2 id="header"><a name="user-content-header" href="#header" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Headers</h2>
+<p>Markdown supports two styles of headers, <a href="http://docutils.sourceforge.net/mirror/setext.html">Setext</a> and <a href="http://www.aaronsw.com/2002/atx/">atx</a>.</p>
+<p>Setext-style headers are &ldquo;underlined&rdquo; using equal signs (for first-level headers) and dashes (for second-level headers). For example:</p>
+<div class="codehilite"><pre>This is an H1
+=============
+
+This is an H2
+-------------
+</pre></div>
+
+
+<p>Any number of underlining <code>=</code>&lsquo;s or <code>-</code>&lsquo;s will work.</p>
+<p>Atx-style headers use 1-6 hash characters at the start of the line, corresponding to header levels 1-6. For example:</p>
+<div class="codehilite"><pre># This is an H1
+
+## This is an H2
+
+###### This is an H6
+</pre></div>
+
+
+<p>Optionally, you may &ldquo;close&rdquo; atx-style headers. This is purely cosmetic &ndash; you can use this if you think it looks better. The closing hashes don&rsquo;t even need to match the number of hashes used to open the header. (The number of opening hashes determines the header level.) :</p>
+<div class="codehilite"><pre># This is an H1 #
+
+## This is an H2 ##
+
+### This is an H3 ######
+</pre></div>
+
+
+<h2 id="blockquote"><a name="user-content-blockquote" href="#blockquote" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Blockquotes</h2>
+<p>Markdown uses email-style <code>&gt;</code> characters for blockquoting. If you&rsquo;re familiar with quoting passages of text in an email message, then you know how to create a blockquote in Markdown. It looks best if you hard wrap the text and put a <code>&gt;</code> before every line:</p>
+<div class="codehilite"><pre>&gt; This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.
+&gt; 
+&gt; Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing.
+</pre></div>
+
+
+<p>Markdown allows you to be lazy and only put the <code>&gt;</code> before the first line of a hard-wrapped paragraph:</p>
+<div class="codehilite"><pre>&gt; This is a blockquote with two paragraphs. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.
+
+&gt; Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing.
+</pre></div>
+
+
+<p>Blockquotes can be nested (i.e. a blockquote-in-a-blockquote) by adding additional levels of <code>&gt;</code>:</p>
+<div class="codehilite"><pre>&gt; This is the first level of quoting.
+&gt;
+&gt; &gt; This is nested blockquote.
+&gt;
+&gt; Back to the first level.
+</pre></div>
+
+
+<p>Blockquotes can contain other Markdown elements, including headers, lists, and code blocks:</p>
+<div class="codehilite"><pre>&gt; ## This is a header.
+&gt; 
+&gt; 1.   This is the first list item.
+&gt; 2.   This is the second list item.
+&gt; 
+&gt; Here&#39;s some example code:
+&gt; 
+&gt;     return shell_exec(&quot;echo $input | $markdown_script&quot;);
+</pre></div>
+
+
+<p>Any decent text editor should make email-style quoting easy. For example, with BBEdit, you can make a selection and choose Increase Quote Level from the Text menu.</p>
+<h2 id="list"><a name="user-content-list" href="#list" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Lists</h2>
+<p>Markdown supports ordered (numbered) and unordered (bulleted) lists.</p>
+<p>Unordered lists use asterisks, pluses, and hyphens &ndash; interchangably<br />
+&ndash; as list markers:</p>
+<div class="codehilite"><pre>*   Red
+*   Green
+*   Blue
+</pre></div>
+
+
+<p>is equivalent to:</p>
+<div class="codehilite"><pre>+   Red
++   Green
++   Blue
+</pre></div>
+
+
+<p>and:</p>
+<div class="codehilite"><pre>-   Red
+-   Green
+-   Blue
+</pre></div>
+
+
+<p>Ordered lists use numbers followed by periods:</p>
+<div class="codehilite"><pre>1.  Bird
+2.  McHale
+3.  Parish
+</pre></div>
+
+
+<p>It&rsquo;s important to note that the actual numbers you use to mark the list have no effect on the HTML output Markdown produces. The HTML Markdown produces from the above list is:</p>
+<div class="codehilite"><pre>&lt;ol&gt;
+&lt;li&gt;Bird&lt;/li&gt;
+&lt;li&gt;McHale&lt;/li&gt;
+&lt;li&gt;Parish&lt;/li&gt;
+&lt;/ol&gt;
+</pre></div>
+
+
+<p>If you instead wrote the list in Markdown like this:</p>
+<div class="codehilite"><pre>1.  Bird
+1.  McHale
+1.  Parish
+</pre></div>
+
+
+<p>or even:</p>
+<div class="codehilite"><pre>3. Bird
+1. McHale
+8. Parish
+</pre></div>
+
+
+<p>you&rsquo;d get the exact same HTML output. The point is, if you want to, you can use ordinal numbers in your ordered Markdown lists, so that the numbers in your source match the numbers in your published HTML. But if you want to be lazy, you don&rsquo;t have to.</p>
+<p>If you do use lazy list numbering, however, you should still start the list with the number 1. At some point in the future, Markdown may support starting ordered lists at an arbitrary number.</p>
+<p>List markers typically start at the left margin, but may be indented by up to three spaces. List markers must be followed by one or more spaces or a tab.</p>
+<p>To make lists look nice, you can wrap items with hanging indents:</p>
+<div class="codehilite"><pre>*   Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.
+*   Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing.
+</pre></div>
+
+
+<p>But if you want to be lazy, you don&rsquo;t have to:</p>
+<div class="codehilite"><pre>*   Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus. Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus.
+*   Donec sit amet nisl. Aliquam semper ipsum sit amet velit. Suspendisse id sem consectetuer libero luctus adipiscing.
+</pre></div>
+
+
+<p>If list items are separated by blank lines, Markdown will wrap the<br />
+items in <code>&lt;p&gt;</code> tags in the HTML output. For example, this input:</p>
+<div class="codehilite"><pre>*   Bird
+*   Magic
+</pre></div>
+
+
+<p>will turn into:</p>
+<div class="codehilite"><pre>&lt;ul&gt;
+&lt;li&gt;Bird&lt;/li&gt;
+&lt;li&gt;Magic&lt;/li&gt;
+&lt;/ul&gt;
+</pre></div>
+
+
+<p>But this:</p>
+<div class="codehilite"><pre>*   Bird
+
+*   Magic
+</pre></div>
+
+
+<p>will turn into:</p>
+<div class="codehilite"><pre>&lt;ul&gt;
+&lt;li&gt;&lt;p&gt;Bird&lt;/p&gt;&lt;/li&gt;
+&lt;li&gt;&lt;p&gt;Magic&lt;/p&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</pre></div>
+
+
+<p>List items may consist of multiple paragraphs. Each subsequent paragraph in a list item must be indented by either 4 spaces or one tab:</p>
+<div class="codehilite"><pre>1.  This is a list item with two paragraphs. Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Aliquam hendrerit mi posuere lectus.
+
+    Vestibulum enim wisi, viverra nec, fringilla in, laoreet vitae, risus. Donec sit amet nisl. Aliquam semper ipsum sit amet velit.
+
+2.  Suspendisse id sem consectetuer libero luctus adipiscing.
+</pre></div>
+
+
+<p>It looks nice if you indent every line of the subsequent paragraphs, but here again, Markdown will allow you to be lazy:</p>
+<div class="codehilite"><pre>*   This is a list item with two paragraphs.
+
+    This is the second paragraph in the list item. You&#39;re only required to indent the first line. Lorem ipsum dolor sit amet, consectetuer adipiscing elit.
+
+*   Another item in the same list.
+</pre></div>
+
+
+<p>To put a blockquote within a list item, the blockquote&rsquo;s <code>&gt;</code> delimiters need to be indented:</p>
+<div class="codehilite"><pre>*   A list item with a blockquote:
+
+    &gt; This is a blockquote
+    &gt; inside a list item.
+</pre></div>
+
+
+<p>To put a code block within a list item, the code block needs to be indented <em>twice</em> &ndash; 8 spaces or two tabs:</p>
+<div class="codehilite"><pre>*   A list item with a code block:
+
+        &lt;code goes here&gt;
+</pre></div>
+
+
+<p>It&rsquo;s worth noting that it&rsquo;s possible to trigger an ordered list by accident, by writing something like this:</p>
+<div class="codehilite"><pre>1986. What a great season.
+</pre></div>
+
+
+<p>In other words, a <em>number-period-space</em> sequence at the beginning of a line. To avoid this, you can backslash-escape the period:</p>
+<div class="codehilite"><pre>1986\. What a great season.
+</pre></div>
+
+
+<h2 id="precode"><a name="user-content-precode" href="#precode" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Code Blocks</h2>
+<p>Pre-formatted code blocks are used for writing about programming or markup source code. Rather than forming normal paragraphs, the lines of a code block are interpreted literally. Markdown wraps a code block in both <code>&lt;pre&gt;</code> and <code>&lt;code&gt;</code> tags.</p>
+<p>To produce a code block in Markdown, simply indent every line of the block by at least 4 spaces or 1 tab. For example, given this input:</p>
+<div class="codehilite"><pre>This is a normal paragraph:
+
+    This is a code block.
+</pre></div>
+
+
+<p>Markdown will generate:</p>
+<div class="codehilite"><pre>&lt;p&gt;This is a normal paragraph:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;This is a code block.
+&lt;/code&gt;&lt;/pre&gt;
+</pre></div>
+
+
+<p>One level of indentation &ndash; 4 spaces or 1 tab &ndash; is removed from each line of the code block. For example, this:</p>
+<div class="codehilite"><pre>Here is an example of AppleScript:
+
+    tell application &quot;Foo&quot;
+        beep
+    end tell
+</pre></div>
+
+
+<p>will turn into:</p>
+<div class="codehilite"><pre>&lt;p&gt;Here is an example of AppleScript:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;tell application &quot;Foo&quot;
+    beep
+end tell
+&lt;/code&gt;&lt;/pre&gt;
+</pre></div>
+
+
+<p>A code block continues until it reaches a line that is not indented (or the end of the article).</p>
+<p>Within a code block, ampersands (<code>&amp;</code>) and angle brackets (<code>&lt;</code> and <code>&gt;</code>) are automatically converted into HTML entities. This makes it very easy to include example HTML source code using Markdown &ndash; just paste it and indent it, and Markdown will handle the hassle of encoding the ampersands and angle brackets. For example, this:</p>
+<div class="codehilite"><pre>    &lt;div class=&quot;footer&quot;&gt;
+        &amp;copy; 2004 Foo Corporation
+    &lt;/div&gt;
+</pre></div>
+
+
+<p>will turn into:</p>
+<div class="codehilite"><pre>&lt;pre&gt;&lt;code&gt;&amp;lt;div class=&quot;footer&quot;&amp;gt;
+    &amp;amp;copy; 2004 Foo Corporation
+&amp;lt;/div&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+</pre></div>
+
+
+<p>Regular Markdown syntax is not processed within code blocks. E.g., asterisks are just literal asterisks within a code block. This means it&rsquo;s also easy to use Markdown to write about Markdown&rsquo;s own syntax.</p>
+<h2 id="hr"><a name="user-content-hr" href="#hr" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Horizontal Rules</h2>
+<p>You can produce a horizontal rule tag (<code>&lt;hr /&gt;</code>) by placing three or more hyphens, asterisks, or underscores on a line by themselves. If you wish, you may use spaces between the hyphens or asterisks. Each of the following lines will produce a horizontal rule:</p>
+<div class="codehilite"><pre>* * *
+
+***
+
+*****
+
+- - -
+
+---------------------------------------
+</pre></div>
+
+
+<hr />
+<h1 id="span"><a name="user-content-span" href="#span" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Span Elements</h1>
+<h2 id="link"><a name="user-content-link" href="#link" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Links</h2>
+<p>Markdown supports two style of links: <em>inline</em> and <em>reference</em>.</p>
+<p>In both styles, the link text is delimited by [square brackets].</p>
+<p>To create an inline link, use a set of regular parentheses immediately after the link text&rsquo;s closing square bracket. Inside the parentheses, put the URL where you want the link to point, along with an <em>optional</em> title for the link, surrounded in quotes. For example:</p>
+<div class="codehilite"><pre>This is [an example](http://example.com/ &quot;Title&quot;) inline link.
+
+[This link](http://example.net/) has no title attribute.
+</pre></div>
+
+
+<p>Will produce:</p>
+<div class="codehilite"><pre>&lt;p&gt;This is &lt;a href=&quot;http://example.com/&quot; title=&quot;Title&quot;&gt;
+an example&lt;/a&gt; inline link.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;http://example.net/&quot;&gt;This link&lt;/a&gt; has no
+title attribute.&lt;/p&gt;
+</pre></div>
+
+
+<p>If you&rsquo;re referring to a local resource on the same server, you can use relative paths:</p>
+<div class="codehilite"><pre>See my [About](/about/) page for details.
+</pre></div>
+
+
+<p>Reference-style links use a second set of square brackets, inside which you place a label of your choosing to identify the link:</p>
+<div class="codehilite"><pre>This is [an example][id] reference-style link.
+</pre></div>
+
+
+<p>You can optionally use a space to separate the sets of brackets:</p>
+<div class="codehilite"><pre>This is [an example] [id] reference-style link.
+</pre></div>
+
+
+<p>Then, anywhere in the document, you define your link label like this, on a line by itself:</p>
+<div class="codehilite"><pre>[id]: http://example.com/  &quot;Optional Title Here&quot;
+</pre></div>
+
+
+<p>That is:</p>
+<ul>
+<li>Square brackets containing the link identifier (optionally indented from the left margin using up to three spaces);</li>
+<li>followed by a colon;</li>
+<li>followed by one or more spaces (or tabs);</li>
+<li>followed by the URL for the link;</li>
+<li>optionally followed by a title attribute for the link, enclosed in double or single quotes, or enclosed in parentheses.</li>
+</ul>
+<p>The following three link definitions are equivalent:</p>
+<div class="codehilite"><pre>[foo]: http://example.com/  &quot;Optional Title Here&quot;
+[foo]: http://example.com/  &#39;Optional Title Here&#39;
+[foo]: http://example.com/  (Optional Title Here)
+</pre></div>
+
+
+<p><strong>Note:</strong> There is a known bug in Markdown.pl 1.0.1 which prevents single quotes from being used to delimit link titles.</p>
+<p>The link URL may, optionally, be surrounded by angle brackets:</p>
+<div class="codehilite"><pre>[id]: &lt;http://example.com/&gt;  &quot;Optional Title Here&quot;
+</pre></div>
+
+
+<p>You can put the title attribute on the next line and use extra spaces or tabs for padding, which tends to look better with longer URLs:</p>
+<div class="codehilite"><pre>[id]: http://example.com/longish/path/to/resource/here
+    &quot;Optional Title Here&quot;
+</pre></div>
+
+
+<p>Link definitions are only used for creating links during Markdown processing, and are stripped from your document in the HTML output.</p>
+<p>Link definition names may consist of letters, numbers, spaces, and punctuation &ndash; but they are <em>not</em> case sensitive. E.g. these two links:</p>
+<div class="codehilite"><pre>[link text][a]
+[link text][A]
+</pre></div>
+
+
+<p>are equivalent.</p>
+<p>The <em>implicit link name</em> shortcut allows you to omit the name of the link, in which case the link text itself is used as the name. Just use an empty set of square brackets &ndash; e.g., to link the word &ldquo;Google&rdquo; to the google.com web site, you could simply write:</p>
+<div class="codehilite"><pre>[Google][]
+</pre></div>
+
+
+<p>And then define the link:</p>
+<div class="codehilite"><pre>[Google]: http://google.com/
+</pre></div>
+
+
+<p>Because link names may contain spaces, this shortcut even works for multiple words in the link text:</p>
+<div class="codehilite"><pre>Visit [Daring Fireball][] for more information.
+</pre></div>
+
+
+<p>And then define the link:</p>
+<div class="codehilite"><pre>[Daring Fireball]: http://daringfireball.net/
+</pre></div>
+
+
+<p>Link definitions can be placed anywhere in your Markdown document. I tend to put them immediately after each paragraph in which they&rsquo;re used, but if you want, you can put them all at the end of your document, sort of like footnotes.</p>
+<p>Here&rsquo;s an example of reference links in action:</p>
+<div class="codehilite"><pre>I get 10 times more traffic from [Google] [1] than from
+[Yahoo] [2] or [MSN] [3].
+
+  [1]: http://google.com/        &quot;Google&quot;
+  [2]: http://search.yahoo.com/  &quot;Yahoo Search&quot;
+  [3]: http://search.msn.com/    &quot;MSN Search&quot;
+</pre></div>
+
+
+<p>Using the implicit link name shortcut, you could instead write:</p>
+<div class="codehilite"><pre>I get 10 times more traffic from [Google][] than from
+[Yahoo][] or [MSN][].
+
+  [google]: http://google.com/        &quot;Google&quot;
+  [yahoo]:  http://search.yahoo.com/  &quot;Yahoo Search&quot;
+  [msn]:    http://search.msn.com/    &quot;MSN Search&quot;
+</pre></div>
+
+
+<p>Both of the above examples will produce the following HTML output:</p>
+<div class="codehilite"><pre>&lt;p&gt;I get 10 times more traffic from &lt;a href=&quot;http://google.com/&quot;
+title=&quot;Google&quot;&gt;Google&lt;/a&gt; than from
+&lt;a href=&quot;http://search.yahoo.com/&quot; title=&quot;Yahoo Search&quot;&gt;Yahoo&lt;/a&gt;
+or &lt;a href=&quot;http://search.msn.com/&quot; title=&quot;MSN Search&quot;&gt;MSN&lt;/a&gt;.&lt;/p&gt;
+</pre></div>
+
+
+<p>For comparison, here is the same paragraph written using Markdown&rsquo;s inline link style:</p>
+<div class="codehilite"><pre>I get 10 times more traffic from [Google](http://google.com/ &quot;Google&quot;)
+than from [Yahoo](http://search.yahoo.com/ &quot;Yahoo Search&quot;) or
+[MSN](http://search.msn.com/ &quot;MSN Search&quot;).
+</pre></div>
+
+
+<p>The point of reference-style links is not that they&rsquo;re easier to write. The point is that with reference-style links, your document source is vastly more readable. Compare the above examples: using reference-style links, the paragraph itself is only 81 characters long; with inline-style links, it&rsquo;s 176 characters; and as raw HTML, it&rsquo;s 234 characters. In the raw HTML, there&rsquo;s more markup than there is text.</p>
+<p>With Markdown&rsquo;s reference-style links, a source document much more closely resembles the final output, as rendered in a browser. By allowing you to move the markup-related metadata out of the paragraph, you can add links without interrupting the narrative flow of your prose.</p>
+<h2 id="em"><a name="user-content-em" href="#em" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Emphasis</h2>
+<p>Markdown treats asterisks (<code>*</code>) and underscores (<code>_</code>) as indicators of emphasis. Text wrapped with one <code>*</code> or <code>_</code> will be wrapped with an HTML <code>&lt;em&gt;</code> tag; double <code>*</code>&lsquo;s or <code>_</code>&lsquo;s will be wrapped with an HTML <code>&lt;strong&gt;</code> tag. E.g., this input:</p>
+<div class="codehilite"><pre>*single asterisks*
+
+_single underscores_
+
+**double asterisks**
+
+__double underscores__
+</pre></div>
+
+
+<p>will produce:</p>
+<div class="codehilite"><pre>&lt;em&gt;single asterisks&lt;/em&gt;
+
+&lt;em&gt;single underscores&lt;/em&gt;
+
+&lt;strong&gt;double asterisks&lt;/strong&gt;
+
+&lt;strong&gt;double underscores&lt;/strong&gt;
+</pre></div>
+
+
+<p>You can use whichever style you prefer; the lone restriction is that the same character must be used to open and close an emphasis span.</p>
+<p>Emphasis can be used in the middle of a word:</p>
+<div class="codehilite"><pre>un*frigging*believable
+</pre></div>
+
+
+<p>But if you surround an <code>*</code> or <code>_</code> with spaces, it&rsquo;ll be treated as a literal asterisk or underscore.</p>
+<p>To produce a literal asterisk or underscore at a position where it would otherwise be used as an emphasis delimiter, you can backslash escape it:</p>
+<div class="codehilite"><pre>\*this text is surrounded by literal asterisks\*
+</pre></div>
+
+
+<h2 code="code" id="code"><a name="user-content-code" href="#code" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Code</h2>
+<p>To indicate a span of code, wrap it with backtick quotes (<code>`</code>). Unlike a pre-formatted code block, a code span indicates code within a normal paragraph. For example:</p>
+<div class="codehilite"><pre>Use the `printf()` function.
+</pre></div>
+
+
+<p>will produce:</p>
+<div class="codehilite"><pre>&lt;p&gt;Use the &lt;code&gt;printf()&lt;/code&gt; function.&lt;/p&gt;
+</pre></div>
+
+
+<p>To include a literal backtick character within a code span, you can use multiple backticks as the opening and closing delimiters:</p>
+<div class="codehilite"><pre>``There is a literal backtick (`) here.``
+</pre></div>
+
+
+<p>which will produce this:</p>
+<div class="codehilite"><pre>&lt;p&gt;&lt;code&gt;There is a literal backtick (`) here.&lt;/code&gt;&lt;/p&gt;
+</pre></div>
+
+
+<p>The backtick delimiters surrounding a code span may include spaces &ndash; one after the opening, one before the closing. This allows you to place literal backtick characters at the beginning or end of a code span:</p>
+<div class="codehilite"><pre>A single backtick in a code span: `` ` ``
+
+A backtick-delimited string in a code span: `` `foo` ``
+</pre></div>
+
+
+<p>will produce:</p>
+<div class="codehilite"><pre>&lt;p&gt;A single backtick in a code span: &lt;code&gt;`&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;A backtick-delimited string in a code span: &lt;code&gt;`foo`&lt;/code&gt;&lt;/p&gt;
+</pre></div>
+
+
+<p>With a code span, ampersands and angle brackets are encoded as HTML entities automatically, which makes it easy to include example HTML tags. Markdown will turn this:</p>
+<div class="codehilite"><pre>Please don&#39;t use any `&lt;blink&gt;` tags.
+</pre></div>
+
+
+<p>into:</p>
+<div class="codehilite"><pre>&lt;p&gt;Please don&#39;t use any &lt;code&gt;&amp;lt;blink&amp;gt;&lt;/code&gt; tags.&lt;/p&gt;
+</pre></div>
+
+
+<p>You can write this:</p>
+<div class="codehilite"><pre>`&amp;#8212;` is the decimal-encoded equivalent of `&amp;mdash;`.
+</pre></div>
+
+
+<p>to produce:</p>
+<div class="codehilite"><pre>&lt;p&gt;&lt;code&gt;&amp;amp;#8212;&lt;/code&gt; is the decimal-encoded
+equivalent of &lt;code&gt;&amp;amp;mdash;&lt;/code&gt;.&lt;/p&gt;
+</pre></div>
+
+
+<h2 id="img"><a name="user-content-img" href="#img" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Images</h2>
+<p>Admittedly, it&rsquo;s fairly difficult to devise a &ldquo;natural&rdquo; syntax for placing images into a plain text document format.</p>
+<p>Markdown uses an image syntax that is intended to resemble the syntax for links, allowing for two styles: <em>inline</em> and <em>reference</em>.</p>
+<p>Inline image syntax looks like this:</p>
+<div class="codehilite"><pre>![Alt text](/path/to/img.jpg)
+
+![Alt text](/path/to/img.jpg &quot;Optional title&quot;)
+</pre></div>
+
+
+<p>That is:</p>
+<ul>
+<li>An exclamation mark: <code>!</code>;</li>
+<li>followed by a set of square brackets, containing the <code>alt</code> attribute text for the image;</li>
+<li>followed by a set of parentheses, containing the URL or path to the image, and an optional <code>title</code> attribute enclosed in double or single quotes.</li>
+</ul>
+<p>Reference-style image syntax looks like this:</p>
+<div class="codehilite"><pre>![Alt text][id]
+</pre></div>
+
+
+<p>Where &ldquo;id&rdquo; is the name of a defined image reference. Image references are defined using syntax identical to link references:</p>
+<div class="codehilite"><pre>[id]: url/to/image  &quot;Optional title attribute&quot;
+</pre></div>
+
+
+<p>As of this writing, Markdown has no syntax for specifying the dimensions of an image; if this is important to you, you can simply use regular HTML <code>&lt;img&gt;</code> tags.</p>
+<hr />
+<h1 id="misc"><a name="user-content-misc" href="#misc" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Miscellaneous</h1>
+<h2 id="autolink"><a name="user-content-autolink" href="#autolink" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Automatic Links</h2>
+<p>Markdown supports a shortcut style for creating &ldquo;automatic&rdquo; links for URLs and email addresses: simply surround the URL or email address with angle brackets. What this means is that if you want to show the actual text of a URL or email address, and also have it be a clickable link, you can do this:</p>
+<div class="codehilite"><pre>&lt;http://example.com/&gt;
+</pre></div>
+
+
+<p>Markdown will turn this into:</p>
+<div class="codehilite"><pre>&lt;a href=&quot;http://example.com/&quot;&gt;http://example.com/&lt;/a&gt;
+</pre></div>
+
+
+<p>Automatic links for email addresses work similarly, except that Markdown will also perform a bit of randomized decimal and hex entity-encoding to help obscure your address from address-harvesting spambots. For example, Markdown will turn this:</p>
+<div class="codehilite"><pre>&lt;address@example.com&gt;
+</pre></div>
+
+
+<p>into something like this:</p>
+<div class="codehilite"><pre>&lt;a href=&quot;&amp;#x6D;&amp;#x61;i&amp;#x6C;&amp;#x74;&amp;#x6F;:&amp;#x61;&amp;#x64;&amp;#x64;&amp;#x72;&amp;#x65;
+&amp;#115;&amp;#115;&amp;#64;&amp;#101;&amp;#120;&amp;#x61;&amp;#109;&amp;#x70;&amp;#x6C;e&amp;#x2E;&amp;#99;&amp;#111;
+&amp;#109;&quot;&gt;&amp;#x61;&amp;#x64;&amp;#x64;&amp;#x72;&amp;#x65;&amp;#115;&amp;#115;&amp;#64;&amp;#101;&amp;#120;&amp;#x61;
+&amp;#109;&amp;#x70;&amp;#x6C;e&amp;#x2E;&amp;#99;&amp;#111;&amp;#109;&lt;/a&gt;
+</pre></div>
+
+
+<p>which will render in a browser as a clickable link to &ldquo;<a href="mailto:address@example.com">address@example.com</a>&rdquo;.</p>
+<p>(This sort of entity-encoding trick will indeed fool many, if not most, address-harvesting bots, but it definitely won&rsquo;t fool all of them. It&rsquo;s better than nothing, but an address published in this way will probably eventually start receiving spam.)</p>
+<h2 id="backslash"><a name="user-content-backslash" href="#backslash" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Backslash Escapes</h2>
+<p>Markdown allows you to use backslash escapes to generate literal characters which would otherwise have special meaning in Markdown&rsquo;s formatting syntax. For example, if you wanted to surround a word with literal asterisks (instead of an HTML <code>&lt;em&gt;</code> tag), you can use backslashes before the asterisks, like this:</p>
+<div class="codehilite"><pre>\*literal asterisks\*
+</pre></div>
+
+
+<p>Markdown provides backslash escapes for the following characters:</p>
+<div class="codehilite"><pre>\   backslash
+`   backtick
+*   asterisk
+_   underscore
+{}  curly braces
+[]  square brackets
+()  parentheses
+#   hash mark
++   plus sign
+-   minus sign (hyphen)
+.   dot
+!   exclamation mark
+</pre></div>
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../general-usage/" class="btn btn-neutral float-right" title="General Usage"/>Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../installation/" class="btn btn-neutral" title="Installation"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    
+    Copyright &copy; 2014 - 2015 <a href="https://github.com/facelessuser">Isaac Muse</a>
+    
+    </p>
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+    
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+<div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+        
+            <a href="https://github.com/facelessuser/PyMdown" class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
+        
+      <span><a href="../installation/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      <span style="margin-left: 15px"><a href="../general-usage/" style="color: #fcfcfc">Next &raquo;</a></span>
+    </span>
+</div>
+
+<!--
+MkDocs version  : 0.12.2
+Docs Build Date : 2015-04-24 14:30:43.293526
+-->
+</body>
+</html>

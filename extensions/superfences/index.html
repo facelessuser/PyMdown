@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>SuperFences - PyMdown Documentation</title>
+  
+
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme_custom.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/highlight.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.4/sequence-diagram-min.js"></script>
+  <script src="../../js/jquery-2.1.1.min.js"></script>
+  <script src="../../js/modernizr-2.8.3.min.js"></script>
+  <script src="../../js/flowchart-min.js"></script>
+  <script src="../../js/theme.js"></script>
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> 
+
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> PyMdown Documentation</a>
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+      <ul class="current">
+    
+        
+            <li class="toctree-l1 ">
+                <a class="" href="../..">Home</a>
+                
+            </li>
+        
+
+    
+        
+            <span>User Guide</span>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../user-guide/installation/">Installation</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../user-guide/markdown-syntax/">Markdown Syntax</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../user-guide/general-usage/">General Usage</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../user-guide/pygments-customization/">Pygments Customization</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../user-guide/pymdown-extensions/">PyMdown Extensions</a>
+                    
+                </li>
+            
+        
+
+    
+        
+            <span>Extensions</span>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../b64/">B64</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../betterem/">BetterEm</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../caret/">Caret</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../critic/">Critic</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../github/">Github</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../githubemoji/">GithubEmoji</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../headeranchor/">HeaderAnchor</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../inlinehilite/">InlineHilite</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../magiclink/">MagicLink</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../mark/">Mark</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../math/">Math</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../pathconverter/">PathConverter</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../plainhtml/">PlainHtml</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../progressbar/">ProgressBar</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../pymdown/">PyMdown</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../smartsymbols/">SmartSymbols</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 current">
+                    <a class="current" href="./">SuperFences</a>
+                    
+                        <ul>
+                        
+                            <li class="toctree-l3"><a href="#overview">Overview</a></li>
+                            
+                                <li><a class="toctree-l4" href="#nested-fenced-blocks">Nested Fenced Blocks</a></li>
+                            
+                                <li><a class="toctree-l4" href="#uml-diagrams">UML Diagrams</a></li>
+                            
+                        
+                            <li class="toctree-l3"><a href="#limitations">Limitations</a></li>
+                            
+                        
+                            <li class="toctree-l3"><a href="#options">Options</a></li>
+                            
+                        
+                            <li class="toctree-l3"><a href="#examples">Examples</a></li>
+                            
+                                <li><a class="toctree-l4" href="#neseted-fences">Neseted Fences:</a></li>
+                            
+                                <li><a class="toctree-l4" href="#uml-flow-charts">UML Flow Charts</a></li>
+                            
+                                <li><a class="toctree-l4" href="#uml-sequence-diagrams">UML Sequence Diagrams</a></li>
+                            
+                        
+                        </ul>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../tasklist/">Tasklist</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../tilde/">Tilde</a>
+                    
+                </li>
+            
+        
+
+    
+        
+            <li class="toctree-l1 ">
+                <a class="" href="../../license/">License</a>
+                
+            </li>
+        
+
+    
+</ul>
+
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">PyMdown Documentation</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+        <li>Extensions &raquo;</li>
+      
+    
+    <li>SuperFences</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="https://github.com/facelessuser/PyMdown" class="icon icon-github"> Edit on GitHub</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              <h1 id="overview"><a name="user-content-overview" href="#overview" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Overview</h1>
+<p>SuperFences provides 4 features:</p>
+<ol>
+<li>The ability to nest fences under blockquotes, lists, or other block elements (this feature is provided as a workaround until a more official and better implementation is provided by the Python Markdown team; see <a href="#limitations">Limitations</a> for more info).</li>
+<li>Special UML flowchart fence via the <code>flow</code> language specifier.</li>
+<li>Special UML sequence diagram via the <code>sequence</code> language specifier.</li>
+<li>The ability to disable indented code blocks in favor of only using the fenced variant (off by default).</li>
+</ol>
+<p>All features can be turned on or off.</p>
+<h2 id="nested-fenced-blocks"><a name="user-content-nested-fenced-blocks" href="#nested-fenced-blocks" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Nested Fenced Blocks</h2>
+<p>Fenced blocks requires all nested fence content to be at least at the indentation levels of the fences (blank lines excluded).  The opening and closing fence markers must be indented at the same level.  If you are using a fenced block inside a blockquote, at least the first line of the fenced block needs to have the appropriate number of <code>&gt;</code> characters signifying the quote depth.</p>
+<div class="codehilite"><pre>&gt; ```
+  a fenced block
+  ```
+</pre></div>
+
+
+<p>Keep in mind that too many blank lines will cause a blockquote to terminate, so remember to use <code>&gt;</code> markers accordingly if not marking every line.</p>
+<div class="codehilite"><pre>&gt; ```
+  a fenced block
+
+&gt; with blank lines
+  ```
+</pre></div>
+
+
+<p>If using a fenced block as the first line of a list, you will have to leave the first line blank, but remember that the list marker must be followed by a space.</p>
+<div class="codehilite"><pre>-&lt;space&gt;
+    ```
+    a fenced block
+    ```
+
+Definition
+:&lt;space&gt;
+    ```
+    a fenced block
+    ```
+</pre></div>
+
+
+<h2 id="uml-diagrams"><a name="user-content-uml-diagrams" href="#uml-diagrams" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>UML Diagrams</h2>
+<p>When using the UML diagram features, you must provide the necessary Javascript files for the HTML output.  The requirements are listed below:</p>
+<p><strong>flowcharts:</strong></p>
+<ul>
+<li><a href="http://raphaeljs.com/">raphael.js</a></li>
+<li><a href="http://adrai.github.io/flowchart.js/">flowchart.js</a></li>
+</ul>
+<p><strong>sequence diagrams:</strong></p>
+<ul>
+<li><a href="http://raphaeljs.com/">raphael.js</a></li>
+<li><a href="http://underscorejs.org/">underscore.js</a></li>
+<li><a href="http://bramp.github.io/js-sequence-diagrams/">sequece-diagram.js</a></li>
+</ul>
+<p>Simply including the libraries above is not enough as these libraries need to be pointed at the elements they need to convert.  If using the PyMdown application, and not just the extension, PyMdown provides a script <code>uml-loader.py</code> that can be used to target the HTML elements and execute the appropriate library on their content to create the desired diagrams.  <code>uml-loader.py</code> does not have to be used, and you can modify it or write your own to suite your needs; it is provided for convenience.</p>
+<p>UML flowcharts and sequence diagrams will be rendered as HTML <code>&lt;pre&gt;&lt;code&gt;</code> tags before the Javascript libraries are run on them.  They will be assigned CSS classes <code>uml-flowchart</code> and <code>uml-sequence-diagram</code> respectively for flowcharts and sequence diagrams.</p>
+<h1 id="limitations"><a name="user-content-limitations" href="#limitations" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Limitations</h1>
+<p>This extension suffers from the same issues that the original fenced block extension suffers from.  Normally Python Markdown does not parse content inside HTML tags unless they are marked with the attribute <code>markdown='1'</code> etc.  But since this is run as a preprocessor, it is not aware of the HTML blocks.  So be aware of this.</p>
+<p>SuperFences is made to work with the default extensions out of the box.  It will probably not work with other extensions such as Grid Tables since that extension allows for characters to obscure the blocks like blockquote syntax does (though this has been designed to work with blockquotes).  Ideally fenced blocks needs to be handled as a block parser, but there is much work to be done on Python Markdown&rsquo;s internal block handlers before this is possible.</p>
+<p>SuperFences works best when following the guidelines.  If the guidelines are not followed, odd results may be encountered.</p>
+<p>For the reasons above, the nested fences feature really is just a workaround.  But for a lot of people (including myself), this functionality is more than sufficient.</p>
+<h1 id="options"><a name="user-content-options" href="#options" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Options</h1>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>disable_indented_code_blocks</td>
+<td>bool</td>
+<td>False</td>
+<td>Disables Python Markdown&rsquo;s indented code block parsing.  This is nice if you only ever use fenced blocks.</td>
+</tr>
+<tr>
+<td>nested</td>
+<td>bool</td>
+<td>True</td>
+<td>Use nested fences.</td>
+</tr>
+<tr>
+<td>uml_flow</td>
+<td>bool</td>
+<td>True</td>
+<td>Enable flowcharts.</td>
+</tr>
+<tr>
+<td>uml_sequence</td>
+<td>bool</td>
+<td>True</td>
+<td>Enable sequence diagrams.</td>
+</tr>
+</tbody>
+</table>
+<h1 id="examples"><a name="user-content-examples" href="#examples" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Examples</h1>
+<p>This highlights the special features of this extension except for <code>disable_indented_code_blocks</code>.</p>
+<h2 id="neseted-fences"><a name="user-content-neseted-fences" href="#neseted-fences" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Neseted Fences:</h2>
+<div class="codehilite"><pre>    ```
+    This will still be parsed
+    as a normal indented code block.
+    ```
+
+```
+This will still be parsed
+as a fenced code block.
+```
+
+- This is a list that contains multiple code blocks.
+
+    - Here is an indented block
+
+            ```
+            This will still be parsed
+            as a normal indented code block.
+            ```
+
+    - Here is a fenced code block:
+
+        ```
+        This will still be parsed
+        as a fenced code block.
+        ```
+
+        &gt; ```
+        &gt; Blockquotes?
+        &gt; Not a problem!
+        &gt; ```
+</pre></div>
+
+
+<div class="codehilite"><pre>```
+This will still be parsed
+as a normal indented code block.
+```
+</pre></div>
+
+
+<div class="codehilite"><pre>This will still be parsed
+as a fenced code block.
+</pre></div>
+
+
+<ul>
+<li>
+<p>This is a list that contains multiple code blocks.</p>
+<ul>
+<li>
+<p>Here is an indented block</p>
+<div class="codehilite"><pre>```
+This will still be parsed
+as a normal indented code block.
+```
+</pre></div>
+
+
+</li>
+<li>
+<p>Here is a fenced code block:</p>
+<div class="codehilite"><pre>This will still be parsed
+as a fenced code block.
+</pre></div>
+
+
+<blockquote>
+<div class="codehilite"><pre>Blockquotes?
+Not a problem!
+</pre></div>
+
+
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="uml-flow-charts"><a name="user-content-uml-flow-charts" href="#uml-flow-charts" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>UML Flow Charts</h2>
+<div class="codehilite"><pre>```flow
+st=&gt;start: Start:&gt;http://www.google.com[blank]
+e=&gt;end:&gt;http://www.google.com
+op1=&gt;operation: My Operation
+sub1=&gt;subroutine: My Subroutine
+cond=&gt;condition: Yes
+or No?:&gt;http://www.google.com
+io=&gt;inputoutput: catch something...
+
+st-&gt;op1-&gt;cond
+cond(yes)-&gt;io-&gt;e
+cond(no)-&gt;sub1(right)-&gt;op1
+```
+</pre></div>
+
+
+<pre class="uml-flowchart"><code>st=&gt;start: Start:&gt;http://www.google.com[blank]
+e=&gt;end:&gt;http://www.google.com
+op1=&gt;operation: My Operation
+sub1=&gt;subroutine: My Subroutine
+cond=&gt;condition: Yes
+or No?:&gt;http://www.google.com
+io=&gt;inputoutput: catch something...
+
+st-&gt;op1-&gt;cond
+cond(yes)-&gt;io-&gt;e
+cond(no)-&gt;sub1(right)-&gt;op1
+</code></pre>
+
+<h2 id="uml-sequence-diagrams"><a name="user-content-uml-sequence-diagrams" href="#uml-sequence-diagrams" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>UML Sequence Diagrams</h2>
+<div class="codehilite"><pre>```sequence
+Title: Here is a title
+A-&gt;B: Normal line
+B--&gt;C: Dashed line
+C-&gt;&gt;D: Open arrow
+D--&gt;&gt;A: Dashed open arrow
+```
+</pre></div>
+
+
+<pre class="uml-sequence-diagram"><code>Title: Here is a title
+A-&gt;B: Normal line
+B--&gt;C: Dashed line
+C-&gt;&gt;D: Open arrow
+D--&gt;&gt;A: Dashed open arrow
+</code></pre>
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../tasklist/" class="btn btn-neutral float-right" title="Tasklist"/>Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../smartsymbols/" class="btn btn-neutral" title="SmartSymbols"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    
+    Copyright &copy; 2014 - 2015 <a href="https://github.com/facelessuser">Isaac Muse</a>
+    
+    </p>
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+    
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+<div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+        
+            <a href="https://github.com/facelessuser/PyMdown" class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
+        
+      <span><a href="../smartsymbols/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      <span style="margin-left: 15px"><a href="../tasklist/" style="color: #fcfcfc">Next &raquo;</a></span>
+    </span>
+</div>
+
+<!--
+MkDocs version  : 0.12.2
+Docs Build Date : 2015-04-24 14:30:45.252959
+-->
+</body>
+</html>

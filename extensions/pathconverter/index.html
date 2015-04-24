@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>PathConverter - PyMdown Documentation</title>
+  
+
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme_custom.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/highlight.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.4/sequence-diagram-min.js"></script>
+  <script src="../../js/jquery-2.1.1.min.js"></script>
+  <script src="../../js/modernizr-2.8.3.min.js"></script>
+  <script src="../../js/flowchart-min.js"></script>
+  <script src="../../js/theme.js"></script>
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> 
+
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> PyMdown Documentation</a>
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+      <ul class="current">
+    
+        
+            <li class="toctree-l1 ">
+                <a class="" href="../..">Home</a>
+                
+            </li>
+        
+
+    
+        
+            <span>User Guide</span>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../user-guide/installation/">Installation</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../user-guide/markdown-syntax/">Markdown Syntax</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../user-guide/general-usage/">General Usage</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../user-guide/pygments-customization/">Pygments Customization</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../user-guide/pymdown-extensions/">PyMdown Extensions</a>
+                    
+                </li>
+            
+        
+
+    
+        
+            <span>Extensions</span>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../b64/">B64</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../betterem/">BetterEm</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../caret/">Caret</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../critic/">Critic</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../github/">Github</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../githubemoji/">GithubEmoji</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../headeranchor/">HeaderAnchor</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../inlinehilite/">InlineHilite</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../magiclink/">MagicLink</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../mark/">Mark</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../math/">Math</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 current">
+                    <a class="current" href="./">PathConverter</a>
+                    
+                        <ul>
+                        
+                            <li class="toctree-l3"><a href="#overview">Overview</a></li>
+                            
+                        
+                            <li class="toctree-l3"><a href="#options">Options</a></li>
+                            
+                        
+                        </ul>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../plainhtml/">PlainHtml</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../progressbar/">ProgressBar</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../pymdown/">PyMdown</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../smartsymbols/">SmartSymbols</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../superfences/">SuperFences</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../tasklist/">Tasklist</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../tilde/">Tilde</a>
+                    
+                </li>
+            
+        
+
+    
+        
+            <li class="toctree-l1 ">
+                <a class="" href="../../license/">License</a>
+                
+            </li>
+        
+
+    
+</ul>
+
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">PyMdown Documentation</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+        <li>Extensions &raquo;</li>
+      
+    
+    <li>PathConverter</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="https://github.com/facelessuser/PyMdown" class="icon icon-github"> Edit on GitHub</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              <h1 id="overview"><a name="user-content-overview" href="#overview" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Overview</h1>
+<p>PathConverter is an extension that can convert paths to absolute or relative paths for links and images.  PathConverter takes a base path (an absolute path used as a reference for locating images and referenced files) and a relative path (an absolute path that the links will be relative to after conversion if not running in absolute mode) and then converts paths for the <code>href</code> and/or <code>src</code> attributes in <code>a</code>, <code>script</code>, <code>img</code>, and <code>link</code> tags.</p>
+<p>PathConverter will only operate on file paths that can be confirmed to exist on the system it is run on.  Absolute mode is mostly useful for PyMdown tool to render previews.  Relative mode is the more useful mode as it can be used to render HTML for use in an actual website.  This entire documentation site was created using the this extension in relative mode.</p>
+<p>PathConverter is also intelligent enough to only operate on the file portion of the a path link.  Consider the following scenario:  <code>path/to/file.html#header-to-jump-to</code>.  In the example, <code>path/to/file.html</code> will be converted, but <code>#header-to-jump-to</code> will be left unaltered.</p>
+<h1 id="options"><a name="user-content-options" href="#options" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Options</h1>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>base_path</td>
+<td>string</td>
+<td>&rsquo;&lsquo;</td>
+<td>A string indicating an absolute base path to be used to find referenced files.</td>
+</tr>
+<tr>
+<td>relative_path</td>
+<td>string</td>
+<td>&rsquo;&lsquo;</td>
+<td>A string indicating an absolute path that the references are to be relative to (not used when <code>absolute</code> is set <code>True</code>).</td>
+</tr>
+<tr>
+<td>absolute</td>
+<td>bool</td>
+<td>True</td>
+<td>Determines whether paths are converted to absolute or relative.</td>
+</tr>
+<tr>
+<td>tags</td>
+<td>string</td>
+<td>&lsquo;a script img link&rsquo;</td>
+<td>Tags (separated by spaces) that are searched to find <code>href</code> and <code>src</code> attributes.</td>
+</tr>
+</tbody>
+</table>
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../plainhtml/" class="btn btn-neutral float-right" title="PlainHtml"/>Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../math/" class="btn btn-neutral" title="Math"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    
+    Copyright &copy; 2014 - 2015 <a href="https://github.com/facelessuser">Isaac Muse</a>
+    
+    </p>
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+    
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+<div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+        
+            <a href="https://github.com/facelessuser/PyMdown" class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
+        
+      <span><a href="../math/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      <span style="margin-left: 15px"><a href="../plainhtml/" style="color: #fcfcfc">Next &raquo;</a></span>
+    </span>
+</div>
+
+<!--
+MkDocs version  : 0.12.2
+Docs Build Date : 2015-04-24 14:30:44.971247
+-->
+</body>
+</html>

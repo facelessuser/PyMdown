@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Pygments Customization - PyMdown Documentation</title>
+  
+
+  <link rel="shortcut icon" href="../../img/favicon.ico">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="../../css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/theme_custom.css" type="text/css" />
+  <link rel="stylesheet" href="../../css/highlight.css">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.4/sequence-diagram-min.js"></script>
+  <script src="../../js/jquery-2.1.1.min.js"></script>
+  <script src="../../js/modernizr-2.8.3.min.js"></script>
+  <script src="../../js/flowchart-min.js"></script>
+  <script src="../../js/theme.js"></script>
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script> 
+
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href="../.." class="icon icon-home"> PyMdown Documentation</a>
+        
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+      <ul class="current">
+    
+        
+            <li class="toctree-l1 ">
+                <a class="" href="../..">Home</a>
+                
+            </li>
+        
+
+    
+        
+            <span>User Guide</span>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../installation/">Installation</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../markdown-syntax/">Markdown Syntax</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../general-usage/">General Usage</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 current">
+                    <a class="current" href="./">Pygments Customization</a>
+                    
+                        <ul>
+                        
+                            <li class="toctree-l3"><a href="#overview">Overview</a></li>
+                            
+                        
+                            <li class="toctree-l3"><a href="#adding-to-provided-custom-eggs-or-create-your-own">Adding to Provided Custom Eggs or Create Your Own</a></li>
+                            
+                        
+                            <li class="toctree-l3"><a href="#generate-and-include-eggs">Generate and Include Eggs</a></li>
+                            
+                        
+                        </ul>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../pymdown-extensions/">PyMdown Extensions</a>
+                    
+                </li>
+            
+        
+
+    
+        
+            <span>Extensions</span>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/b64/">B64</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/betterem/">BetterEm</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/caret/">Caret</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/critic/">Critic</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/github/">Github</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/githubemoji/">GithubEmoji</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/headeranchor/">HeaderAnchor</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/inlinehilite/">InlineHilite</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/magiclink/">MagicLink</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/mark/">Mark</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/math/">Math</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/pathconverter/">PathConverter</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/plainhtml/">PlainHtml</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/progressbar/">ProgressBar</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/pymdown/">PyMdown</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/smartsymbols/">SmartSymbols</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/superfences/">SuperFences</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/tasklist/">Tasklist</a>
+                    
+                </li>
+            
+                <li class="toctree-l2 ">
+                    <a class="" href="../../extensions/tilde/">Tilde</a>
+                    
+                </li>
+            
+        
+
+    
+        
+            <li class="toctree-l1 ">
+                <a class="" href="../../license/">License</a>
+                
+            </li>
+        
+
+    
+</ul>
+
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../..">PyMdown Documentation</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../..">Docs</a> &raquo;</li>
+    
+      
+        <li>User Guide &raquo;</li>
+      
+    
+    <li>Pygments Customization</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="https://github.com/facelessuser/PyMdown" class="icon icon-github"> Edit on GitHub</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              <h1 id="overview"><a name="user-content-overview" href="#overview" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Overview</h1>
+<p>Pygments allows for people to write their own lexers and styles, but they need to have an entry point of <code>pymdown.lexers</code> or <code>pymdown.styles</code> for the respective plugin type.  This can only be done by either directly adding your plugin to the Pygments package, or creating and installing your own package that defines the entry points as mentioned.  If you know how to create your own package and install it, PyMdown should able to use it, but you have to play with the pyinstaller hooks if compiling a binary.  Another way is to create an egg that defines the proper entry point, and add the egg to the system path.</p>
+<h1 id="adding-to-provided-custom-eggs-or-create-your-own"><a name="user-content-adding-to-provided-custom-eggs-or-create-your-own" href="#adding-to-provided-custom-eggs-or-create-your-own" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Adding to Provided Custom Eggs or Create Your Own</h1>
+<p>PyMdown comes with a couple of optional eggs that can be included.  One is for <a href="https://github.com/facelessuser/PyMdown/tree/master/pymdown-lexers">lexers</a>, the other is for <a href="https://github.com/facelessuser/PyMdown/tree/master/pymdown-styles">styles</a>.  You can create your own lexer and/or style and drop it in with the others.  Then just edit the <code>__init__.py</code> file and expose your module (style example shown below):</p>
+<div class="codehilite"><pre><span class="kn">from</span> <span class="nn">.tomorrow</span> <span class="kn">import</span> <span class="n">TomorrowStyle</span>
+<span class="kn">from</span> <span class="nn">.tomorrownight</span> <span class="kn">import</span> <span class="n">TomorrownightStyle</span>
+<span class="kn">from</span> <span class="nn">.tomorrownightblue</span> <span class="kn">import</span> <span class="n">TomorrownightblueStyle</span>
+<span class="kn">from</span> <span class="nn">.tomorrownightbright</span> <span class="kn">import</span> <span class="n">TomorrownightbrightStyle</span>
+<span class="kn">from</span> <span class="nn">.tomorrownighteighties</span> <span class="kn">import</span> <span class="n">TomorrownighteightiesStyle</span>
+<span class="kn">from</span> <span class="nn">.github</span> <span class="kn">import</span> <span class="n">GithubStyle</span>
+<span class="kn">from</span> <span class="nn">.github2</span> <span class="kn">import</span> <span class="n">Github2Style</span>
+</pre></div>
+
+
+<p>Then edit the <code>setup.py</code> file and define the entry point (style example shown below):</p>
+<div class="codehilite"><pre><span class="kn">from</span> <span class="nn">setuptools</span> <span class="kn">import</span> <span class="n">setup</span><span class="p">,</span> <span class="n">find_packages</span>
+
+<span class="n">entry_points</span> <span class="o">=</span> <span class="s">&#39;&#39;&#39;</span>
+<span class="s">[pygments.styles]</span>
+<span class="s">github=pymdown_styles:GithubStyle</span>
+<span class="s">github2=pymdown_styles:Github2Style</span>
+<span class="s">tomorrow=pymdown_styles:TomorrowStyle</span>
+<span class="s">tomorrownight=pymdown_styles:TomorrownightStyle</span>
+<span class="s">tomorrownightblue=pymdown_styles:TomorrownightblueStyle</span>
+<span class="s">tomorrownightbright=pymdown_styles:TomorrownightbrightStyle</span>
+<span class="s">tomorrownighteighties=pymdown_styles:TomorrownighteightiesStyle</span>
+<span class="s">&#39;&#39;&#39;</span>
+
+<span class="n">setup</span><span class="p">(</span>
+    <span class="n">name</span><span class="o">=</span><span class="s">&#39;pymdown-styles&#39;</span><span class="p">,</span>
+    <span class="n">version</span><span class="o">=</span><span class="s">&#39;1.0&#39;</span><span class="p">,</span>
+    <span class="n">packages</span><span class="o">=</span><span class="n">find_packages</span><span class="p">(),</span>
+    <span class="n">entry_points</span><span class="o">=</span><span class="n">entry_points</span><span class="p">,</span>
+    <span class="n">zip_safe</span><span class="o">=</span><span class="bp">True</span>
+<span class="p">)</span>
+</pre></div>
+
+
+<p>Optionally, you can follow the pattern of the provided custom lexers and styles, and have your own egg built along side or in place of the the provided ones.  If you add your own custom egg, its name must start with <code>pymdown_</code> as the egg will not be loaded if its name does not start with <code>pymdown_</code> and end with the appropriate python version.</p>
+<h1 id="generate-and-include-eggs"><a name="user-content-generate-and-include-eggs" href="#generate-and-include-eggs" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Generate and Include Eggs</h1>
+<p>A script is provided for generating custom eggs.  It is called <a href="https://github.com/facelessuser/PyMdown/blob/master/tools/gen_egg.py">gen_egg.py</a>.  It can be run from PyMdown&rsquo;s root directory.  To build the provided custom eggs, do the following from the project&rsquo;s root directory:</p>
+<div class="codehilite"><pre>python tools/gen_egg.py pymdown-styles
+python tools/gen_egg.py pymdown-lexers
+</pre></div>
+
+
+<p>The eggs will be generated and copied to the an <code>eggs</code> folder.  Now when compiling PyMdown, the eggs will be bundled in the application and be usable, and if not compiling, the eggs will be included in the system path and be usable.  In both cases the eggs modules will be accessible as if they were native to Pygments.  As mentioned before, PyMdown will not load the egg if it doesn&rsquo;t start with <code>pymdown_</code>.  The generation script will append the Python version to the end of the egg name, so only when PyMdown is run with or built with the same version of Python that created the egg will it get loaded.</p>
+            </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="../pymdown-extensions/" class="btn btn-neutral float-right" title="PyMdown Extensions"/>Next <span class="icon icon-circle-arrow-right"></span></a>
+      
+      
+        <a href="../general-usage/" class="btn btn-neutral" title="General Usage"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+    
+    Copyright &copy; 2014 - 2015 <a href="https://github.com/facelessuser">Isaac Muse</a>
+    
+    </p>
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+    
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+<div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+        
+            <a href="https://github.com/facelessuser/PyMdown" class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
+        
+      <span><a href="../general-usage/" style="color: #fcfcfc;">&laquo; Previous</a></span>
+      <span style="margin-left: 15px"><a href="../pymdown-extensions/" style="color: #fcfcfc">Next &raquo;</a></span>
+    </span>
+</div>
+
+<!--
+MkDocs version  : 0.12.2
+Docs Build Date : 2015-04-24 14:30:43.685099
+-->
+</body>
+</html>
