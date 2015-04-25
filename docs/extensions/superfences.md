@@ -1,3 +1,9 @@
+# SuperFences {: .doctitle}
+Better fenced blocks.
+{: .doctitle-info}
+
+---
+
 # Overview
 SuperFences provides 4 features:
 
@@ -43,7 +49,7 @@ Definition
 ````
 
 ## UML Diagrams
-When using the UML diagram features, you must provide the necessary Javascript files for the HTML output.  The requirements are listed below:
+When using the UML diagram features, you must provide the necessary JavaScript files for the HTML output.  The requirements are listed below:
 
 **flowcharts:**
 
@@ -59,7 +65,7 @@ When using the UML diagram features, you must provide the necessary Javascript f
 
 Simply including the libraries above is not enough as these libraries need to be pointed at the elements they need to convert.  If using the PyMdown application, and not just the extension, PyMdown provides a script `uml-loader.py` that can be used to target the HTML elements and execute the appropriate library on their content to create the desired diagrams.  `uml-loader.py` does not have to be used, and you can modify it or write your own to suite your needs; it is provided for convenience.
 
-UML flowcharts and sequence diagrams will be rendered as HTML `<pre><code>` tags before the Javascript libraries are run on them.  They will be assigned CSS classes `uml-flowchart` and `uml-sequence-diagram` respectively for flowcharts and sequence diagrams.
+UML flowcharts and sequence diagrams will be rendered as HTML `<pre><code>` tags before the JavaScript libraries are run on them.  They will be assigned CSS classes `uml-flowchart` and `uml-sequence-diagram` respectively for flowcharts and sequence diagrams.
 
 # Limitations
 This extension suffers from the same issues that the original fenced block extension suffers from.  Normally Python Markdown does not parse content inside HTML tags unless they are marked with the attribute `markdown='1'` etc.  But since this is run as a preprocessor, it is not aware of the HTML blocks.  So be aware of this.
@@ -82,7 +88,7 @@ For the reasons above, the nested fences feature really is just a workaround.  B
 # Examples
 This highlights the special features of this extension except for `disable_indented_code_blocks`.
 
-## Neseted Fences:
+## Nested Fences:
 
 ````
     ```

@@ -1,5 +1,11 @@
+# Markdown Syntax {: .doctitle}
+Mark Gruber's Markdown syntax.
+{: .doctitle-info}
+
+---
+
 !!! Note "Note"
-    This documentation lays out the syntax of Mark Gruber's Markdown specifications.  It is taken from his [site](http://daringfireball.net/projects/markdown/syntax).  The content and info is his words, but it is here for convience.
+    This documentation lays out the syntax of Mark Gruber's Markdown specifications.  It is taken from his [site](http://daringfireball.net/projects/markdown/syntax).  The content and info is his words, but it is here for convenience.
 
 # Overview {: #overview}
 

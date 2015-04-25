@@ -1,3 +1,9 @@
+# Math {: .doctitle}
+Syntax for MathJax support.
+{: .doctitle-info}
+
+---
+
 # Overview
 The math extension searches for `#!tex $...$` or `#!tex $$...$$` and formats them so that [MathJax](http://www.mathjax.org/) can detect them in the HTML output.
 

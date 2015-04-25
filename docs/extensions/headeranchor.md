@@ -1,3 +1,9 @@
+# HeaderAnchor {: .doctitle}
+Github style header anchors.
+{: .doctitle-info}
+
+---
+
 # Overview
 HeaderAnchor adds anchors to headers in the style of GFM's header anchors. The header anchors in this document were all generated with this extension.
 

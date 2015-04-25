@@ -1,7 +1,13 @@
-# Extensions
-PyMdown can use any extension for Python Markdown.  If using a compiled version of PyMdown, you may have to compile in the extensions you want, but traditionally it uses the built-in Python Markdown extensions and a set of extensions built specifically for PyMdown. They come from the [pymdown-extensions](https://github.com/facelessuser/pymdown-extensions) repo.
+# Extensions {: .doctitle}
+PyMdown extensions.
+{: .doctitle-info}
 
-Check out the individual extension documentation for more info.
+---
+
+# Available Extensions
+PyMdown can use any Python Markdown extensions, but the default extensions and [PyMdown extensions](https://github.com/facelessuser/pymdown-extensions) (which were specifically created for PyMdown) are required.  Keep in mind, the PyMdown extensions are designed to work around the default extensions.  If adding other non-standard extensions, the interaction of the extensions may have undesirable outcomes. If using a compiled version of PyMdown, you may have to compile in the extensions additional extensions you want.
+
+Check out the individual extension document pages for more info.
 
 | Extension                                             | Name   |
 |-------------------------------------------------------|--------|

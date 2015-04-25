@@ -1,3 +1,9 @@
+# Tasklist {: .doctitle}
+Github style tasklists.
+{: .doctitle-info}
+
+---
+
 # Overview
 The Tasklist extension adds Github style checkbox lists.  They follow the same syntax as Github.
 

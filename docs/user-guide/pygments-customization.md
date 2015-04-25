@@ -1,3 +1,9 @@
+# Pygments Customization {: .doctitle}
+Adding Pygments themes.
+{: .doctitle-info}
+
+---
+
 # Overview
 Pygments allows for people to write their own lexers and styles, but they need to have an entry point of `pymdown.lexers` or `pymdown.styles` for the respective plugin type.  This can only be done by either directly adding your plugin to the Pygments package, or creating and installing your own package that defines the entry points as mentioned.  If you know how to create your own package and install it, PyMdown should able to use it, but you have to play with the pyinstaller hooks if compiling a binary.  Another way is to create an egg that defines the proper entry point, and add the egg to the system path.
 

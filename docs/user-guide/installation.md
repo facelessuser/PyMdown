@@ -1,3 +1,9 @@
+# Installation {: .doctitle}
+Installation of PyMdown.
+{: .doctitle-info}
+
+---
+
 # Overview
 PyMdown can be downloaded and installed as a library via `python setup.py build` and `python setup.py install`.  You can also use [Pyinstaller][pyinstaller] to build a binary that you can drop in your system's path so you can run it from anywhere; the procedure for this is outlined [below](#build).  You can also just run it directly if you have the necessary [requirements](#requirements) installed.
 
@@ -9,7 +15,7 @@ In order for PyMdown to work, there are a couple of prerequisites.  If installin
 |------|---------|
 | [PyMdown Extensions](https://github.com/facelessuser/pymdown-extensions) | Extensions for PyMdown. |
 | [Python Markdown 2.6.0+][py_md] | Python Markdown must be installed as it is the Markdown parser that is being used. |
-| [Pygments 2.0.1+ (optional)][pygments] | If Pygments Syntax highlighting is desired, Pygments must be installed.  This can be omitted, and code blocks (if using the CodeHilite extension) will be formatter for use with Javascript code highlighters. |
+| [Pygments 2.0.1+ (optional)][pygments] | If Pygments Syntax highlighting is desired, Pygments must be installed.  This can be omitted, and code blocks (if using the CodeHilite extension) will be formatter for use with JavaScript code highlighters. |
 | [PyYaml 3.10+][pyyaml] | PyYaml is required. Older versions may work, but I am arbitrarily specifying 3.10 as the earliest I am aware of that works. |
 | [PyMdown Styles](https://github.com/facelessuser/pymdown-styles) | Optional package that adds a couple of custom Pygments styles. |
 | [PyMdown Lexers](https://github.com/facelessuser/pymdown-lexers) | Optional package that adds a couple of non-standard lexers.  Also a great example for adding your own custom lexers. |

@@ -1,3 +1,9 @@
+# Critic {: .doctitle}
+Process and visualize Critic Markup.
+{: .doctitle-info}
+
+---
+
 # Overview
 Critic is an extension that adds handling and support of [Critic Markup](http://criticmarkup.com/).  This extension runs before all other extensions to parse the critic edits.  It allows for the stripping or accepting of critic modifications and modifies the source to reflect the rejection or accepting of the edits (mark wrappers and comments are stripped in both cases).  It also allows for visually displaying the changes in HTML output ([mileage may vary](#limitations-with-previewing-critic-markup)).
 

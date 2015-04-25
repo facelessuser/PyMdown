@@ -1,4 +1,7 @@
-# License
+# License {: .doctitle}
+
+---
+
 MIT license.
 
 Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>

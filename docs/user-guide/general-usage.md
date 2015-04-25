@@ -1,11 +1,17 @@
+# General Usage {: .doctitle}
+Using PyMdown.
+{: .doctitle-info}
+
+---
+
 # Using PyMdown
-PyMdown was written to aid in batch processing Mardown files with Python Markdown and Pygments (but a Javascript highlighter can just as easily be used).  It also adds a number of optional extensions.
+PyMdown was written to aid in batch processing Markdown files with Python Markdown and Pygments (but a JavaScript highlighter can just as easily be used).  It also adds a number of optional extensions.
 
-PyMdown can use an optional template with CSS and Javascript for styling the Markdown outputs.  Templates, CSS, Javascript, and extensions are all setup in a configuration file.  If for certain batches certain settings need to be tweaked, PyMdown can accept paths to specific settings file via the CLI.  The settings files can be in either JSON or YAML.  PyMdown also supports input sources with a JSON or YAML frontmatter were settings can be configured along with general meta data.
+PyMdown can use an optional template with CSS and JavaScript for styling the Markdown outputs.  Templates, CSS, JavaScript, and extensions are all setup in a configuration file.  If for certain batches certain settings need to be tweaked, PyMdown can accept paths to specific settings file via the CLI.  The settings files can be in either JSON or YAML.  PyMdown also supports input sources with a JSON or YAML frontmatter were settings can be configured along with general meta data.
 
-## Command Line Interface
+# Command Line Interface
 
-### Input Files
+## Input Files
 In its most basic usage, PyMdown accepts a markdown file:
 
 ```
@@ -18,7 +24,7 @@ or a file stream:
 pymdown < file.md
 ```
 
-### Specifying Output
+## Specifying Output
 PyMdown allows the output to be specified with the `--output` or `-o` option:
 
 ```
@@ -31,7 +37,7 @@ Alternatively you can output like this as well:
 pymdown -o file.md > file.html
 ```
 
-### Batch Processing
+## Batch Processing
 PyMdown has a batch processing mode (`--batch` or `-b`). When the batch flag is set, PyMdown will accept multiple paths and wild-card patterns.
 
 ```
@@ -40,35 +46,35 @@ pymdown -b *.md documents/*md
 
 When in batch mode, PyMdown will simply transform the input file name: `file.md` -> `file.html`. It will then save the output file in the same location as the input.
 
-### Previewing Markdown
+## Previewing Markdown
 With the `--preview` or `-p` option, PyMdown will generate a temp HTML file and open it in the default web browser.  Preview mode will work in normal and batch mode.
 
 ```
 pymdown -p file.md
 ```
 
-### Basepath
+## Basepath
 PyMdown in various circumstances will try and resolve image, CSS, and JS asset paths for previews or for base64 encoding etc.  In order for this to work, a basepath may be required and can be specified using the `--basepath` option.  If no basepath is given, the basepath will be that of the source file or `None` if the source is a file stream.
 
 ```
 pymdown --basepath ../assets file.md
 ```
 
-### Relpath
-PyMdown is various circumstances will try to create relative paths to assets or sources such as images, CSS, and JS.  In order for this to work, a relative path is needed.  the `--relpath` option is used to set this.  If `--relpath` is not set, it defaults to the output directory.  If the output directory is also not set (when output is dumpped to stdout), the relative path will not be set.
+## Relpath
+PyMdown is various circumstances will try to create relative paths to assets or sources such as images, CSS, and JS.  In order for this to work, a relative path is needed.  the `--relpath` option is used to set this.  If `--relpath` is not set, it defaults to the output directory.  If the output directory is also not set (when output is dumped to stdout), the relative path will not be set.
 
 ```
 pymdown --relpath ../somedirectory file.md
 ```
 
-### Settings
-PyMdown will normally look in the location of the pymdown binary to find the settings file, but the filename and path can be redirected with the `--setttings` or `-s` option.
+## Settings
+PyMdown will normally look in the location of the pymdown binary to find the settings file, but the filename and path can be redirected with the `--settings` or `-s` option.
 
 ```
 pymdown -s ../my_settings.cfg file.md
 ```
 
-### Encoding
+## Encoding
 PyMdown can be configured to read the Markdown file(s) with a different encoding than the default `UTF-8`.  This is done with the `--encoding` or `-e` option.
 
 ```
@@ -81,14 +87,14 @@ By default, the output encoding will be the same as the input, but greater contr
 pymdown -E utf-8 file.md
 ```
 
-### Title
+## Title
 PyMdown, by default, will use the source file's name as the title, or if the input is a file stream, it will use **Untitled**.  But this can be set overridden with the `--title` option.  This probably isn't practical for batch processing.  When batch processing, it may make more since to utilize the frontmatter to set the title per file.
 
 ```
 pymdown --title "My Awesome File" file.md
 ```
 
-### Critic
+## Critic
 PyMdown has a couple options from CriticMarkup.  By using the `--accept` or `-a` option, when the Markdown is parsed, the suggested changes will be accepted.
 
 When using the `--reject` or `-r` option when Markdown is parsed, the suggested changes will be rejected and the original content will be used instead.
@@ -97,40 +103,40 @@ If both `--accept` and `--reject` are set at the same time, PyMdown will use the
 
 Lastly, the `--critic-dump` option, when used with either the `--accept` or `--reject` option, will take the source and output it accepting or rejecting respectively the CriticMarkup edits that were made (essentially removing the CriticMarkup from the file).
 
-### Plain HTML
+## Plain HTML
 If a stripped down HTML output is preferred, the `--plain-html` or `-P` option will return a stripped down output with no templates, no HTML comments, and no id, style, class, or on* attributes.
 
 ```
 pymdown -P file.md
 ```
 
-### Force No Template
+## Force No Template
 If by default the configuration file has defined a template, but it is desired to do an output without the template, the `--force-no-template` option can be used to disable template use.
 
 ```
 pymdown --force-no-template file.md
 ```
 
-### Force Stdout
+## Force Stdout
 Sometimes a file may have frontmatter that redirects its output to a file, but it may be desirable to send the output to stdout.  In this case, the `--force-stdout` option can be used to force the output to stdout.
 
 ```
 pymdown --force-stdout file.md
 ```
 
-### Quiet
+## Quiet
 In some situations it may be desired to hide error messages and general info from the stdout.  In this case, the `--quiet` or `-q` option may be used.
 
 ```
 pymdown -q file.md
 ```
 
-## Configuration File
+# Configuration File
 The configuration file is used to specify general Python Markdown settings, optional template, CSS and JS resources for templates, and extensions that will be used.
 
-PyMdown on the first run will unpack user files to `~\.PyMdown` on Windows, `~/.PyMdown` on OSX and `~/.config/PyMdown` on Linux.  The global configuration file can found here at the root of the folder along with default CSS, Javascript, and other resources in the which would be under another sub-folder called `default`.  Files under default will be auto-upgraded when necessary by newer versions of PyMdown and should be left unaltered.  Default files can be copied and altered outside of the `default` location for personal tweaking and usage.
+PyMdown on the first run will unpack user files to `~\.PyMdown` on Windows, `~/.PyMdown` on OSX and `~/.config/PyMdown` on Linux.  The global configuration file can found here at the root of the folder along with default CSS, JavaScript, and other resources in the which would be under another sub-folder called `default`.  Files under default will be auto-upgraded when necessary by newer versions of PyMdown and should be left unaltered.  Default files can be copied and altered outside of the `default` location for personal tweaking and usage.
 
-### Python Markdown Settings
+## Python Markdown Settings
 Python Markdown has a number of settings that can be configured:
 
 ```yaml
@@ -159,7 +165,7 @@ output_format: 'xhtml1'
 
 Safe mode setting is omitted as it is pending deprecation in Python Markdown.
 
-### Pygment Settings
+## Pygment Settings
 The following setting is used when it is not desired to have PyMdown inject the Pygments CSS style into the template:
 
 ```yaml
@@ -167,9 +173,9 @@ The following setting is used when it is not desired to have PyMdown inject the 
 use_pygments_css: true,
 ```
 
-If Pygments is disabled, but the CodeHilite extension is being used, code blocks are converted to a form so that a Javascript library like [highlight.js](https://highlightjs.org/) can process them.
+If Pygments is disabled, but the CodeHilite extension is being used, code blocks are converted to a form so that a JavaScript library like [highlight.js](https://highlightjs.org/) can process them.
 
-### Template
+## Template
 PyMdown allows for specifying a simple HTML template that can be used for the output.  Template files can be specified in the settings file via the `template` keyword.
 
 ```yaml
@@ -184,7 +190,7 @@ In the template file, you can add special markup to insert certain items:
 |--------|-------------|
 | `{{ meta }}` |This is where meta data will be inserted.  Mainly the character encoding, and general user defined meta data from the frontmatter. |
 | `{{ css }}` | Where user defined stylesheets are inserted. |
-| `{{ js }}` | Where user defined Javascript is inserted. |
+| `{{ js }}` | Where user defined JavaScript is inserted. |
 | `{{ title }}` | The page title will be inserted here. |
 | `{{ content }}` | The parsed markdown content gets inserted here. |
 | `{{ getPath(myfile/path/img.png) }}` | CSS and JS paths, if local, under go conversions internally to make the paths relative or absolute as needed.  If in your template you need to point to a reference a file and want the file path to be converted to an absolute path or a relative path, you can use this to convert it in the template; the file can be preceded by a `!` to prevent path conversion to an absolute or relative path; this is mainly useful if you are just looking to escape the path. |
@@ -192,7 +198,7 @@ In the template file, you can add special markup to insert certain items:
 
 Template files in the settings or frontmatter can be followed by `;encoding` to cause the file to be opened and read with the specified encoding.
 
-### Javascript and CSS
+## Javascript and CSS
 Javascript and CSS can be included in the template by adding them to the following arrays:
 
 ```yaml
@@ -247,12 +253,12 @@ css:
 js: []
 ```
 
-CSS files and Javascript files can be URLs or file paths.  When specifying a file path, a `!` can be used to precede the path so that PyMdown will just link the file and skip converting the file to an absolute or relative path.  If the file path is preceded by a `^`, the file content will be embedded in the HTML under a style or script tag depending on the source type.
+CSS files and JavaScript files can be URLs or file paths.  When specifying a file path, a `!` can be used to precede the path so that PyMdown will just link the file and skip converting the file to an absolute or relative path.  If the file path is preceded by a `^`, the file content will be embedded in the HTML under a style or script tag depending on the source type.
 
-CSS and Javascript files can also be followed by `;encoding` to read in the file with the specified encoding.
+CSS and JavaScript files can also be followed by `;encoding` to read in the file with the specified encoding.
 
-### Javascript and CSS Quickload Aliases
-Sometimes you may have files you occasionally want to include on the fly.  PyMdown allows for defining aliases that can be referenced in a file's frontmatter to include multiple Javascript and/or CSS files.  CSS and Javascript included in the the quick-load aliases follow the same rules as the normal [CSS and Javascript](#javascript-and-css) includes.
+## JavaScript and CSS Quickload Aliases
+Sometimes you may have files you occasionally want to include on the fly.  PyMdown allows for defining aliases that can be referenced in a file's frontmatter to include multiple JavaScript and/or CSS files.  CSS and JavaScript included in the the quick-load aliases follow the same rules as the normal [CSS and JavaScript](#javascript-and-css) includes.
 
 ```yaml
 # Quick load aliases
@@ -289,7 +295,7 @@ Sometimes you may have files you occasionally want to include on the fly.  PyMdo
         -   'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
 ```
 
-### Path Conversions
+## Path Conversions
 By default, PyMdown converts paths to be relative to the output location.  If desired, this can be changed to an absolute path:
 
 ```yaml
@@ -311,7 +317,7 @@ disable_path_conversion: false
 
     The other exception is with previews.  In order for links and references to work in previews, they must be paths that are relative to the preview's temp directory or they must be absolute paths.  For this reason, PyMdown will always enable path conversions for previews.  If you have manually set up the `pathconverter` extension, preview's will overwrite the `relative_path` argument to ensure it is set to `${OUTPUT}` which will allow the preview to display content properly by making asset paths relative to the previews location.  By default, the `relative_path` is set to `${REL_PATH}` which is the output path by default, but can be altered via the command line option `--relpath` or the `relpath` frontmatter option.
 
-### Python Markdown Extensions
+## Python Markdown Extensions
 Extensions to be used are defined under the **extensions** keyword.  Each entry in the extensions are dictionaries.  They must have the `name` key which should specify the Python module that is to be loaded, and they can optionally contain `config` which would be another dictionary setting up the given extension's settings.
 
 ```yaml
@@ -335,10 +341,10 @@ extensions:
 -   name: pymdown.critic
 ```
 
-## Frontmatter
+# Frontmatter
 Frontmatter can be used at the very beginning of a Markdown file.  Frontmatter blocks begin with `---` and end with `---`.  Frontmatter must be the very beginning of the file and start on the very first line.
 
-PyMdown front matter content can be either YAML or JSON (JSON is modified to allow Javascript comments).  The frontmatter is a dictionary of key value pairs which are translated into meta data for all keys except for a few **special** keywords.  For meta data, the key will become the content of the `meta` tag's `name` attribute, and the value will become the data for the `content` attribute.  If an array is specified as the value, each member of the array will be converted to a string and all of them will be strung together and separated by commas.  In all other cases, the value will just be converted to a string.
+PyMdown front matter content can be either YAML or JSON (JSON is modified to allow JavaScript comments).  The frontmatter is a dictionary of key value pairs which are translated into meta data for all keys except for a few **special** keywords.  For meta data, the key will become the content of the `meta` tag's `name` attribute, and the value will become the data for the `content` attribute.  If an array is specified as the value, each member of the array will be converted to a string and all of them will be strung together and separated by commas.  In all other cases, the value will just be converted to a string.
 
 PyMdown has a few keywords that can be defined to alter the output.
 
@@ -351,5 +357,5 @@ PyMdown has a few keywords that can be defined to alter the output.
 | relpath | This is used ot specify the path that images and paths are relative to. It is used in plugins such as `pathconverter`.  This can override the `relpath` fed in at the command line. |
 | include | This keyword's value is an array of strings and accepts [quickload aliases](#javascript-and-css-quckload-aliases) (the `@` symbol is omitted from the name). So if a quickload alias named `@alias` is desired, `alias` would be defined under the `include` keyword. |
 | include.css | This keyword's value is an array of strings denoting additional single CSS files to include.  They follow the same convention as CSS defined in the settings file: `;encoding` at tail will define the encoding used to access the file, paths starting with `!` will not have their path converted to absolute or relative paths, and `^` will directly embed the content in the HTML file. |
-| include.js | This keyword's value is an array of strings denoting additional single Javascript files to include.  They follow the same convention as Javascript defined in the settings file: `;encoding` at tail will define the encoding used to access the file, paths starting with `!` will not have their path converted to absolute or relative paths, and `^` will directly embed the content in the HTML file. |
+| include.js | This keyword's value is an array of strings denoting additional single JavaScript files to include.  They follow the same convention as JavaScript defined in the settings file: `;encoding` at tail will define the encoding used to access the file, paths starting with `!` will not have their path converted to absolute or relative paths, and `^` will directly embed the content in the HTML file. |
 | settings | This is a dictionary and allows the overriding of any of the settings found in the original configuration file. |
