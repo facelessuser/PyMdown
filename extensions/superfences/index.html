@@ -171,6 +171,9 @@
                     
                         <ul>
                         
+                            <li class="toctree-l3"><a href="#superfences">SuperFences</a></li>
+                            
+                        
                             <li class="toctree-l3"><a href="#overview">Overview</a></li>
                             
                                 <li><a class="toctree-l4" href="#nested-fenced-blocks">Nested Fenced Blocks</a></li>
@@ -186,7 +189,7 @@
                         
                             <li class="toctree-l3"><a href="#examples">Examples</a></li>
                             
-                                <li><a class="toctree-l4" href="#neseted-fences">Neseted Fences:</a></li>
+                                <li><a class="toctree-l4" href="#nested-fences">Nested Fences:</a></li>
                             
                                 <li><a class="toctree-l4" href="#uml-flow-charts">UML Flow Charts</a></li>
                             
@@ -256,7 +259,10 @@
 </div>
           <div role="main">
             <div class="section">
-              <h1 id="overview"><a name="user-content-overview" href="#overview" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Overview</h1>
+              <h1 class="doctitle" id="superfences"><a name="user-content-superfences" href="#superfences" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>SuperFences</h1>
+<p class="doctitle-info">Better fenced blocks.<br /></p>
+<hr />
+<h1 id="overview"><a name="user-content-overview" href="#overview" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Overview</h1>
 <p>SuperFences provides 4 features:</p>
 <ol>
 <li>The ability to nest fences under blockquotes, lists, or other block elements (this feature is provided as a workaround until a more official and better implementation is provided by the Python Markdown team; see <a href="#limitations">Limitations</a> for more info).</li>
@@ -297,7 +303,7 @@ Definition
 
 
 <h2 id="uml-diagrams"><a name="user-content-uml-diagrams" href="#uml-diagrams" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>UML Diagrams</h2>
-<p>When using the UML diagram features, you must provide the necessary Javascript files for the HTML output.  The requirements are listed below:</p>
+<p>When using the UML diagram features, you must provide the necessary JavaScript files for the HTML output.  The requirements are listed below:</p>
 <p><strong>flowcharts:</strong></p>
 <ul>
 <li><a href="http://raphaeljs.com/">raphael.js</a></li>
@@ -310,7 +316,7 @@ Definition
 <li><a href="http://bramp.github.io/js-sequence-diagrams/">sequece-diagram.js</a></li>
 </ul>
 <p>Simply including the libraries above is not enough as these libraries need to be pointed at the elements they need to convert.  If using the PyMdown application, and not just the extension, PyMdown provides a script <code>uml-loader.py</code> that can be used to target the HTML elements and execute the appropriate library on their content to create the desired diagrams.  <code>uml-loader.py</code> does not have to be used, and you can modify it or write your own to suite your needs; it is provided for convenience.</p>
-<p>UML flowcharts and sequence diagrams will be rendered as HTML <code>&lt;pre&gt;&lt;code&gt;</code> tags before the Javascript libraries are run on them.  They will be assigned CSS classes <code>uml-flowchart</code> and <code>uml-sequence-diagram</code> respectively for flowcharts and sequence diagrams.</p>
+<p>UML flowcharts and sequence diagrams will be rendered as HTML <code>&lt;pre&gt;&lt;code&gt;</code> tags before the JavaScript libraries are run on them.  They will be assigned CSS classes <code>uml-flowchart</code> and <code>uml-sequence-diagram</code> respectively for flowcharts and sequence diagrams.</p>
 <h1 id="limitations"><a name="user-content-limitations" href="#limitations" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Limitations</h1>
 <p>This extension suffers from the same issues that the original fenced block extension suffers from.  Normally Python Markdown does not parse content inside HTML tags unless they are marked with the attribute <code>markdown='1'</code> etc.  But since this is run as a preprocessor, it is not aware of the HTML blocks.  So be aware of this.</p>
 <p>SuperFences is made to work with the default extensions out of the box.  It will probably not work with other extensions such as Grid Tables since that extension allows for characters to obscure the blocks like blockquote syntax does (though this has been designed to work with blockquotes).  Ideally fenced blocks needs to be handled as a block parser, but there is much work to be done on Python Markdown&rsquo;s internal block handlers before this is possible.</p>
@@ -355,7 +361,7 @@ Definition
 </table>
 <h1 id="examples"><a name="user-content-examples" href="#examples" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Examples</h1>
 <p>This highlights the special features of this extension except for <code>disable_indented_code_blocks</code>.</p>
-<h2 id="neseted-fences"><a name="user-content-neseted-fences" href="#neseted-fences" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Neseted Fences:</h2>
+<h2 id="nested-fences"><a name="user-content-nested-fences" href="#nested-fences" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Nested Fences:</h2>
 <div class="codehilite"><pre>    ```
     This will still be parsed
     as a normal indented code block.
@@ -526,7 +532,7 @@ D--&gt;&gt;A: Dashed open arrow
 
 <!--
 MkDocs version  : 0.12.2
-Docs Build Date : 2015-04-25 01:57:13.379863
+Docs Build Date : 2015-04-25 05:32:43.857402
 -->
 </body>
 </html>

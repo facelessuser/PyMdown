@@ -126,6 +126,9 @@
                     
                         <ul>
                         
+                            <li class="toctree-l3"><a href="#inlinehilite">InlineHilite</a></li>
+                            
+                        
                             <li class="toctree-l3"><a href="#overview">Overview</a></li>
                             
                         
@@ -243,7 +246,10 @@
 </div>
           <div role="main">
             <div class="section">
-              <h1 id="overview"><a name="user-content-overview" href="#overview" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Overview</h1>
+              <h1 class="doctitle" id="inlinehilite"><a name="user-content-inlinehilite" href="#inlinehilite" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>InlineHilite</h1>
+<p class="doctitle-info">Inline syntax highlighting.<br /></p>
+<hr />
+<h1 id="overview"><a name="user-content-overview" href="#overview" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Overview</h1>
 <p>InlineHilite extends CodeHilite to add inline code highlighting.  Borrowing from CodeHilite&rsquo;s existing syntax, InlineHilite utilizes the following syntax to insert inline  highlighted code: <code>`:::language mycode`</code> or <code>`#!language mycode`</code>.  We will call these specifiers mock shebangs.</p>
 <p>When using the colon mock shebang, 3 or more colons can be used.  Mock shebangs must come <strong>immediately</strong> after the opening backtick(s) and must be followed by at least one space.  If you need to escape a mock shebang at the start of a code block, just put a space before it and it will be treated as part of the code.</p>
 <h1 id="options"><a name="user-content-options" href="#options" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Options</h1>
@@ -266,13 +272,13 @@
 </tr>
 <tr>
 <td>use_codehilite_settings</td>
-<td>boolean</td>
+<td>bool</td>
 <td>True</td>
 <td>Determine whether CodeHilite&rsquo;s settings should be used, or if InlineHilite should use a different set.</td>
 </tr>
 <tr>
 <td>guess_lang</td>
-<td>boolean</td>
+<td>bool</td>
 <td>True</td>
 <td>If ignoring CodeHilite&rsquo;s settings, determine whether InlineHilite should try to guess a code block&rsquo;s language if not specified.</td>
 </tr>
@@ -290,13 +296,13 @@
 </tr>
 <tr>
 <td>noclasses</td>
-<td>boolean</td>
+<td>bool</td>
 <td>False</td>
 <td>If ignoring CodeHilite&rsquo;s settings, this will cause the styles to directly be written to the tag&rsquo;s style attribute instead of requiring a stylesheet.</td>
 </tr>
 <tr>
 <td>use_pygments</td>
-<td>boolean</td>
+<td>bool</td>
 <td>True</td>
 <td>If Pygments is available, and if ignoring CodeHilite&rsquo;s settings, this will control whether Pygements is used on the code block, or if the block&rsquo;s content will just be escaped and prepped for a JavaScript syntax highlighter.</td>
 </tr>
@@ -357,7 +363,7 @@ The mock shebang will be treated like text here: ` #!js var test = 0; `.
 
 <!--
 MkDocs version  : 0.12.2
-Docs Build Date : 2015-04-25 01:57:12.896567
+Docs Build Date : 2015-04-25 05:32:43.304840
 -->
 </body>
 </html>

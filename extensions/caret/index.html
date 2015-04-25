@@ -101,6 +101,9 @@
                     
                         <ul>
                         
+                            <li class="toctree-l3"><a href="#caret">Caret</a></li>
+                            
+                        
                             <li class="toctree-l3"><a href="#overview">Overview</a></li>
                             
                         
@@ -243,8 +246,11 @@
 </div>
           <div role="main">
             <div class="section">
-              <h1 id="overview"><a name="user-content-overview" href="#overview" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Overview</h1>
-<p>Caret optionally adds two different features which are syntatically built around the <code>^</code> character: <strong>insert</strong> which inserts <code class="codehilite"><span class="nt">&lt;ins&gt;&lt;/ins&gt;</span></code> tags and <strong>superscript</strong> which inserts <code class="codehilite"><span class="nt">&lt;sup&gt;&lt;/sup&gt;</span></code> tags.  Syntax behavior for smart and non-smart variants of <strong>insert</strong> models that of <a href="../betterem/#differences">betterem</a>.</p>
+              <h1 class="doctitle" id="caret"><a name="user-content-caret" href="#caret" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Caret</h1>
+<p class="doctitle-info">Additional caret based syntax.<br /></p>
+<hr />
+<h1 id="overview"><a name="user-content-overview" href="#overview" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Overview</h1>
+<p>Caret optionally adds two different features which are syntactically built around the <code>^</code> character: <strong>insert</strong> which inserts <code class="codehilite"><span class="nt">&lt;ins&gt;&lt;/ins&gt;</span></code> tags and <strong>superscript</strong> which inserts <code class="codehilite"><span class="nt">&lt;sup&gt;&lt;/sup&gt;</span></code> tags.  Syntax behavior for smart and non-smart variants of <strong>insert</strong> models that of <a href="../betterem/#differences">betterem</a>.</p>
 <h1 id="options"><a name="user-content-options" href="#options" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Options</h1>
 <table>
 <thead>
@@ -277,7 +283,7 @@
 </tbody>
 </table>
 <h1 id="examples"><a name="user-content-examples" href="#examples" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Examples</h1>
-<p>The first feature adds underline emphasis (<code>ins</code> tags) when inline text is surounded by double carets: <code>^^underline me^^</code> &rarr; <ins>underline me</ins>.  It can optionally be configured to use smart logic: <code>^^underline^^me^^</code> &rarr; <ins>underline^^me</ins>.</p>
+<p>The first feature adds underline emphasis (<code>ins</code> tags) when inline text is surrounded by double carets: <code>^^underline me^^</code> &rarr; <ins>underline me</ins>.  It can optionally be configured to use smart logic: <code>^^underline^^me^^</code> &rarr; <ins>underline^^me</ins>.</p>
 <p>The second feature adds superscript using single carets: <code>H^2^0</code> &rarr; H<sup>2</sup>0.  It uses Pandoc style logic, so if your superscript needs to have spaces, you must escape the spaces: <code>text^a\ superscript^</code> &rarr; text<sup>a superscript</sup>.</p>
             </div>
           </div>
@@ -325,7 +331,7 @@
 
 <!--
 MkDocs version  : 0.12.2
-Docs Build Date : 2015-04-25 01:57:12.450719
+Docs Build Date : 2015-04-25 05:32:42.823538
 -->
 </body>
 </html>

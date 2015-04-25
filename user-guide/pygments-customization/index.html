@@ -75,6 +75,9 @@
                     
                         <ul>
                         
+                            <li class="toctree-l3"><a href="#pygments-customization">Pygments Customization</a></li>
+                            
+                        
                             <li class="toctree-l3"><a href="#overview">Overview</a></li>
                             
                         
@@ -243,7 +246,10 @@
 </div>
           <div role="main">
             <div class="section">
-              <h1 id="overview"><a name="user-content-overview" href="#overview" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Overview</h1>
+              <h1 class="doctitle" id="pygments-customization"><a name="user-content-pygments-customization" href="#pygments-customization" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Pygments Customization</h1>
+<p class="doctitle-info">Adding Pygments themes.<br /></p>
+<hr />
+<h1 id="overview"><a name="user-content-overview" href="#overview" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Overview</h1>
 <p>Pygments allows for people to write their own lexers and styles, but they need to have an entry point of <code>pymdown.lexers</code> or <code>pymdown.styles</code> for the respective plugin type.  This can only be done by either directly adding your plugin to the Pygments package, or creating and installing your own package that defines the entry points as mentioned.  If you know how to create your own package and install it, PyMdown should able to use it, but you have to play with the pyinstaller hooks if compiling a binary.  Another way is to create an egg that defines the proper entry point, and add the egg to the system path.</p>
 <h1 id="adding-to-provided-custom-eggs-or-create-your-own"><a name="user-content-adding-to-provided-custom-eggs-or-create-your-own" href="#adding-to-provided-custom-eggs-or-create-your-own" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Adding to Provided Custom Eggs or Create Your Own</h1>
 <p>PyMdown comes with a couple of optional eggs that can be included.  One is for <a href="https://github.com/facelessuser/PyMdown/tree/master/pymdown-lexers">lexers</a>, the other is for <a href="https://github.com/facelessuser/PyMdown/tree/master/pymdown-styles">styles</a>.  You can create your own lexer and/or style and drop it in with the others.  Then just edit the <code>__init__.py</code> file and expose your module (style example shown below):</p>
@@ -336,7 +342,7 @@ python tools/gen_egg.py pymdown-lexers
 
 <!--
 MkDocs version  : 0.12.2
-Docs Build Date : 2015-04-25 01:57:12.215950
+Docs Build Date : 2015-04-25 05:32:42.481623
 -->
 </body>
 </html>

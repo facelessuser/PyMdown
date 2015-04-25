@@ -141,6 +141,9 @@
                     
                         <ul>
                         
+                            <li class="toctree-l3"><a href="#math">Math</a></li>
+                            
+                        
                             <li class="toctree-l3"><a href="#overview">Overview</a></li>
                             
                         
@@ -240,7 +243,10 @@
 </div>
           <div role="main">
             <div class="section">
-              <h1 id="overview"><a name="user-content-overview" href="#overview" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Overview</h1>
+              <h1 class="doctitle" id="math"><a name="user-content-math" href="#math" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Math</h1>
+<p class="doctitle-info">Syntax for MathJax support.<br /></p>
+<hr />
+<h1 id="overview"><a name="user-content-overview" href="#overview" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Overview</h1>
 <p>The math extension searches for <code class="codehilite"><span class="s">$</span><span class="nb">...</span><span class="s">$</span></code> or <code class="codehilite"><span class="sb">$$</span><span class="nb">...</span><span class="s">$$</span></code> and formats them so that <a href="http://www.mathjax.org/">MathJax</a> can detect them in the HTML output.</p>
 <p><code class="codehilite"><span class="s">$</span><span class="nb">...</span><span class="s">$</span></code> is the inline form and requires the opening token (<code class="codehilite"><span class="s">$</span><span class="nb"></span></code>) to be followed by a non-whitespace character, and the closing to be preceded by a non-whitespace character.  This is to help avoid false positives when using the dollar sign in traditional ways such as: I have $2.00 and Bob has $10.00.  The previous statement required no escaping of the <code class="codehilite"><span class="s">$</span><span class="nb"></span></code> character.  But when needed, the <code class="codehilite"><span class="s">$</span><span class="nb"></span></code> character can be escaped using <code class="codehilite"><span class="k">\$</span></code>.</p>
 <p><code class="codehilite"><span class="sb">$$</span><span class="nb">...</span><span class="s">$$</span></code> is the <em>display</em> or <em>block</em> form.  When using <code class="codehilite"><span class="sb">$$</span><span class="nb"></span></code>, the block must start with <code class="codehilite"><span class="sb">$$</span><span class="nb"></span></code> and end with <code class="codehilite"><span class="sb">$$</span><span class="nb"></span></code>; a block contains no empty lines.</p>
@@ -330,7 +336,7 @@ E(\mathbf{v}, \mathbf{h}) = -\sum_{i,j}w_{ij}v_i h_j - \sum_i b_i v_i - \sum_j c
 
 <!--
 MkDocs version  : 0.12.2
-Docs Build Date : 2015-04-25 01:57:13.046928
+Docs Build Date : 2015-04-25 05:32:43.502713
 -->
 </body>
 </html>

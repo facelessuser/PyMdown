@@ -181,6 +181,9 @@
                     
                         <ul>
                         
+                            <li class="toctree-l3"><a href="#extensions">Extensions</a></li>
+                            
+                        
                             <li class="toctree-l3"><a href="#overview">Overview</a></li>
                             
                         
@@ -243,8 +246,11 @@
 </div>
           <div role="main">
             <div class="section">
-              <h1 id="overview"><a name="user-content-overview" href="#overview" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Overview</h1>
-<p>Tilde optionally adds two different features which are syntatically built around the <code>~</code> character: <strong>delete</strong> which inserts <code class="codehilite"><span class="nt">&lt;del&gt;&lt;/del&gt;</span></code> tags and <strong>subscript</strong> which inserts <code class="codehilite"><span class="nt">&lt;sub&gt;&lt;/sub&gt;</span></code> tags.  Syntax behavior for smart and non-smart variants of <strong>delete</strong> models that of <a href="../betterem/#differences">betterem</a>.</p>
+              <h1 class="doctitle" id="extensions"><a name="user-content-extensions" href="#extensions" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Extensions</h1>
+<p class="doctitle-info">Additional tilde based syntax.<br /></p>
+<hr />
+<h1 id="overview"><a name="user-content-overview" href="#overview" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Overview</h1>
+<p>Tilde optionally adds two different features which are syntactically built around the <code>~</code> character: <strong>delete</strong> which inserts <code class="codehilite"><span class="nt">&lt;del&gt;&lt;/del&gt;</span></code> tags and <strong>subscript</strong> which inserts <code class="codehilite"><span class="nt">&lt;sub&gt;&lt;/sub&gt;</span></code> tags.  Syntax behavior for smart and non-smart variants of <strong>delete</strong> models that of <a href="../betterem/#differences">betterem</a>.</p>
 <h1 id="options"><a name="user-content-options" href="#options" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Options</h1>
 <table>
 <thead>
@@ -277,7 +283,7 @@
 </tbody>
 </table>
 <h1 id="examples"><a name="user-content-examples" href="#examples" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Examples</h1>
-<p>The first feature adds delete emphasis (<code>del</code> tags) when inline text is surounded by double tildes: <code>~~delete me~~</code> &rarr; <del>delete me</del>.  It can optionally be configured to use smart logic: <code>~~delete~~me~~</code> &rarr; <del>delete~~me</del>.</p>
+<p>The first feature adds delete emphasis (<code>del</code> tags) when inline text is surrounded by double tildes: <code>~~delete me~~</code> &rarr; <del>delete me</del>.  It can optionally be configured to use smart logic: <code>~~delete~~me~~</code> &rarr; <del>delete~~me</del>.</p>
 <p>The second feature adds subscripts using single tildes: <code>CH~3~CH~2~OH</code> &rarr; CH<sub>3</sub>CH<sub>2</sub>OH.  It uses Pandoc style logic, so if your subscript needs to have spaces, you must escape the spaces: <code>text~a\ subscript~</code> &rarr; text<sub>a subscript</sub>.</p>
             </div>
           </div>
@@ -325,7 +331,7 @@
 
 <!--
 MkDocs version  : 0.12.2
-Docs Build Date : 2015-04-25 01:57:13.421343
+Docs Build Date : 2015-04-25 05:32:43.904550
 -->
 </body>
 </html>

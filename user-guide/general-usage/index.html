@@ -70,13 +70,61 @@
                     
                         <ul>
                         
+                            <li class="toctree-l3"><a href="#general-usage">General Usage</a></li>
+                            
+                        
                             <li class="toctree-l3"><a href="#using-pymdown">Using PyMdown</a></li>
                             
-                                <li><a class="toctree-l4" href="#command-line-interface">Command Line Interface</a></li>
+                        
+                            <li class="toctree-l3"><a href="#command-line-interface">Command Line Interface</a></li>
                             
-                                <li><a class="toctree-l4" href="#configuration-file">Configuration File</a></li>
+                                <li><a class="toctree-l4" href="#input-files">Input Files</a></li>
                             
-                                <li><a class="toctree-l4" href="#frontmatter">Frontmatter</a></li>
+                                <li><a class="toctree-l4" href="#specifying-output">Specifying Output</a></li>
+                            
+                                <li><a class="toctree-l4" href="#batch-processing">Batch Processing</a></li>
+                            
+                                <li><a class="toctree-l4" href="#previewing-markdown">Previewing Markdown</a></li>
+                            
+                                <li><a class="toctree-l4" href="#basepath">Basepath</a></li>
+                            
+                                <li><a class="toctree-l4" href="#relpath">Relpath</a></li>
+                            
+                                <li><a class="toctree-l4" href="#settings">Settings</a></li>
+                            
+                                <li><a class="toctree-l4" href="#encoding">Encoding</a></li>
+                            
+                                <li><a class="toctree-l4" href="#title">Title</a></li>
+                            
+                                <li><a class="toctree-l4" href="#critic">Critic</a></li>
+                            
+                                <li><a class="toctree-l4" href="#plain-html">Plain HTML</a></li>
+                            
+                                <li><a class="toctree-l4" href="#force-no-template">Force No Template</a></li>
+                            
+                                <li><a class="toctree-l4" href="#force-stdout">Force Stdout</a></li>
+                            
+                                <li><a class="toctree-l4" href="#quiet">Quiet</a></li>
+                            
+                        
+                            <li class="toctree-l3"><a href="#configuration-file">Configuration File</a></li>
+                            
+                                <li><a class="toctree-l4" href="#python-markdown-settings">Python Markdown Settings</a></li>
+                            
+                                <li><a class="toctree-l4" href="#pygment-settings">Pygment Settings</a></li>
+                            
+                                <li><a class="toctree-l4" href="#template">Template</a></li>
+                            
+                                <li><a class="toctree-l4" href="#javascript-and-css">Javascript and CSS</a></li>
+                            
+                                <li><a class="toctree-l4" href="#javascript-and-css-quickload-aliases">JavaScript and CSS Quickload Aliases</a></li>
+                            
+                                <li><a class="toctree-l4" href="#path-conversions">Path Conversions</a></li>
+                            
+                                <li><a class="toctree-l4" href="#python-markdown-extensions">Python Markdown Extensions</a></li>
+                            
+                        
+                            <li class="toctree-l3"><a href="#frontmatter">Frontmatter</a></li>
                             
                         
                         </ul>
@@ -243,11 +291,14 @@
 </div>
           <div role="main">
             <div class="section">
-              <h1 id="using-pymdown"><a name="user-content-using-pymdown" href="#using-pymdown" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Using PyMdown</h1>
-<p>PyMdown was written to aid in batch processing Mardown files with Python Markdown and Pygments (but a Javascript highlighter can just as easily be used).  It also adds a number of optional extensions.</p>
-<p>PyMdown can use an optional template with CSS and Javascript for styling the Markdown outputs.  Templates, CSS, Javascript, and extensions are all setup in a configuration file.  If for certain batches certain settings need to be tweaked, PyMdown can accept paths to specific settings file via the CLI.  The settings files can be in either JSON or YAML.  PyMdown also supports input sources with a JSON or YAML frontmatter were settings can be configured along with general meta data.</p>
-<h2 id="command-line-interface"><a name="user-content-command-line-interface" href="#command-line-interface" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Command Line Interface</h2>
-<h3 id="input-files"><a name="user-content-input-files" href="#input-files" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Input Files</h3>
+              <h1 class="doctitle" id="general-usage"><a name="user-content-general-usage" href="#general-usage" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>General Usage</h1>
+<p class="doctitle-info">Using PyMdown.<br /></p>
+<hr />
+<h1 id="using-pymdown"><a name="user-content-using-pymdown" href="#using-pymdown" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Using PyMdown</h1>
+<p>PyMdown was written to aid in batch processing Markdown files with Python Markdown and Pygments (but a JavaScript highlighter can just as easily be used).  It also adds a number of optional extensions.</p>
+<p>PyMdown can use an optional template with CSS and JavaScript for styling the Markdown outputs.  Templates, CSS, JavaScript, and extensions are all setup in a configuration file.  If for certain batches certain settings need to be tweaked, PyMdown can accept paths to specific settings file via the CLI.  The settings files can be in either JSON or YAML.  PyMdown also supports input sources with a JSON or YAML frontmatter were settings can be configured along with general meta data.</p>
+<h1 id="command-line-interface"><a name="user-content-command-line-interface" href="#command-line-interface" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Command Line Interface</h1>
+<h2 id="input-files"><a name="user-content-input-files" href="#input-files" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Input Files</h2>
 <p>In its most basic usage, PyMdown accepts a markdown file:</p>
 <div class="codehilite"><pre>pymdown file.md
 </pre></div>
@@ -258,7 +309,7 @@
 </pre></div>
 
 
-<h3 id="specifying-output"><a name="user-content-specifying-output" href="#specifying-output" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Specifying Output</h3>
+<h2 id="specifying-output"><a name="user-content-specifying-output" href="#specifying-output" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Specifying Output</h2>
 <p>PyMdown allows the output to be specified with the <code>--output</code> or <code>-o</code> option:</p>
 <div class="codehilite"><pre>pymdown -o file.html file.md
 </pre></div>
@@ -269,38 +320,38 @@
 </pre></div>
 
 
-<h3 id="batch-processing"><a name="user-content-batch-processing" href="#batch-processing" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Batch Processing</h3>
+<h2 id="batch-processing"><a name="user-content-batch-processing" href="#batch-processing" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Batch Processing</h2>
 <p>PyMdown has a batch processing mode (<code>--batch</code> or <code>-b</code>). When the batch flag is set, PyMdown will accept multiple paths and wild-card patterns.</p>
 <div class="codehilite"><pre>pymdown -b *.md documents/*md
 </pre></div>
 
 
 <p>When in batch mode, PyMdown will simply transform the input file name: <code>file.md</code> -&gt; <code>file.html</code>. It will then save the output file in the same location as the input.</p>
-<h3 id="previewing-markdown"><a name="user-content-previewing-markdown" href="#previewing-markdown" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Previewing Markdown</h3>
+<h2 id="previewing-markdown"><a name="user-content-previewing-markdown" href="#previewing-markdown" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Previewing Markdown</h2>
 <p>With the <code>--preview</code> or <code>-p</code> option, PyMdown will generate a temp HTML file and open it in the default web browser.  Preview mode will work in normal and batch mode.</p>
 <div class="codehilite"><pre>pymdown -p file.md
 </pre></div>
 
 
-<h3 id="basepath"><a name="user-content-basepath" href="#basepath" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Basepath</h3>
+<h2 id="basepath"><a name="user-content-basepath" href="#basepath" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Basepath</h2>
 <p>PyMdown in various circumstances will try and resolve image, CSS, and JS asset paths for previews or for base64 encoding etc.  In order for this to work, a basepath may be required and can be specified using the <code>--basepath</code> option.  If no basepath is given, the basepath will be that of the source file or <code>None</code> if the source is a file stream.</p>
 <div class="codehilite"><pre>pymdown --basepath ../assets file.md
 </pre></div>
 
 
-<h3 id="relpath"><a name="user-content-relpath" href="#relpath" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Relpath</h3>
-<p>PyMdown is various circumstances will try to create relative paths to assets or sources such as images, CSS, and JS.  In order for this to work, a relative path is needed.  the <code>--relpath</code> option is used to set this.  If <code>--relpath</code> is not set, it defaults to the output directory.  If the output directory is also not set (when output is dumpped to stdout), the relative path will not be set.</p>
+<h2 id="relpath"><a name="user-content-relpath" href="#relpath" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Relpath</h2>
+<p>PyMdown is various circumstances will try to create relative paths to assets or sources such as images, CSS, and JS.  In order for this to work, a relative path is needed.  the <code>--relpath</code> option is used to set this.  If <code>--relpath</code> is not set, it defaults to the output directory.  If the output directory is also not set (when output is dumped to stdout), the relative path will not be set.</p>
 <div class="codehilite"><pre>pymdown --relpath ../somedirectory file.md
 </pre></div>
 
 
-<h3 id="settings"><a name="user-content-settings" href="#settings" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Settings</h3>
-<p>PyMdown will normally look in the location of the pymdown binary to find the settings file, but the filename and path can be redirected with the <code>--setttings</code> or <code>-s</code> option.</p>
+<h2 id="settings"><a name="user-content-settings" href="#settings" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Settings</h2>
+<p>PyMdown will normally look in the location of the pymdown binary to find the settings file, but the filename and path can be redirected with the <code>--settings</code> or <code>-s</code> option.</p>
 <div class="codehilite"><pre>pymdown -s ../my_settings.cfg file.md
 </pre></div>
 
 
-<h3 id="encoding"><a name="user-content-encoding" href="#encoding" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Encoding</h3>
+<h2 id="encoding"><a name="user-content-encoding" href="#encoding" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Encoding</h2>
 <p>PyMdown can be configured to read the Markdown file(s) with a different encoding than the default <code>UTF-8</code>.  This is done with the <code>--encoding</code> or <code>-e</code> option.</p>
 <div class="codehilite"><pre>pymdown -e utf-8 file.md
 </pre></div>
@@ -311,45 +362,45 @@
 </pre></div>
 
 
-<h3 id="title"><a name="user-content-title" href="#title" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Title</h3>
+<h2 id="title"><a name="user-content-title" href="#title" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Title</h2>
 <p>PyMdown, by default, will use the source file&rsquo;s name as the title, or if the input is a file stream, it will use <strong>Untitled</strong>.  But this can be set overridden with the <code>--title</code> option.  This probably isn&rsquo;t practical for batch processing.  When batch processing, it may make more since to utilize the frontmatter to set the title per file.</p>
 <div class="codehilite"><pre>pymdown --title &quot;My Awesome File&quot; file.md
 </pre></div>
 
 
-<h3 id="critic"><a name="user-content-critic" href="#critic" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Critic</h3>
+<h2 id="critic"><a name="user-content-critic" href="#critic" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Critic</h2>
 <p>PyMdown has a couple options from CriticMarkup.  By using the <code>--accept</code> or <code>-a</code> option, when the Markdown is parsed, the suggested changes will be accepted.</p>
 <p>When using the <code>--reject</code> or <code>-r</code> option when Markdown is parsed, the suggested changes will be rejected and the original content will be used instead.</p>
 <p>If both <code>--accept</code> and <code>--reject</code> are set at the same time, PyMdown will use the view mode and convert the file to HTML and will attempt to highlight the blocks targeted with the CriticMarkup.</p>
 <p>Lastly, the <code>--critic-dump</code> option, when used with either the <code>--accept</code> or <code>--reject</code> option, will take the source and output it accepting or rejecting respectively the CriticMarkup edits that were made (essentially removing the CriticMarkup from the file).</p>
-<h3 id="plain-html"><a name="user-content-plain-html" href="#plain-html" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Plain HTML</h3>
+<h2 id="plain-html"><a name="user-content-plain-html" href="#plain-html" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Plain HTML</h2>
 <p>If a stripped down HTML output is preferred, the <code>--plain-html</code> or <code>-P</code> option will return a stripped down output with no templates, no HTML comments, and no id, style, class, or on* attributes.</p>
 <div class="codehilite"><pre>pymdown -P file.md
 </pre></div>
 
 
-<h3 id="force-no-template"><a name="user-content-force-no-template" href="#force-no-template" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Force No Template</h3>
+<h2 id="force-no-template"><a name="user-content-force-no-template" href="#force-no-template" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Force No Template</h2>
 <p>If by default the configuration file has defined a template, but it is desired to do an output without the template, the <code>--force-no-template</code> option can be used to disable template use.</p>
 <div class="codehilite"><pre>pymdown --force-no-template file.md
 </pre></div>
 
 
-<h3 id="force-stdout"><a name="user-content-force-stdout" href="#force-stdout" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Force Stdout</h3>
+<h2 id="force-stdout"><a name="user-content-force-stdout" href="#force-stdout" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Force Stdout</h2>
 <p>Sometimes a file may have frontmatter that redirects its output to a file, but it may be desirable to send the output to stdout.  In this case, the <code>--force-stdout</code> option can be used to force the output to stdout.</p>
 <div class="codehilite"><pre>pymdown --force-stdout file.md
 </pre></div>
 
 
-<h3 id="quiet"><a name="user-content-quiet" href="#quiet" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Quiet</h3>
+<h2 id="quiet"><a name="user-content-quiet" href="#quiet" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Quiet</h2>
 <p>In some situations it may be desired to hide error messages and general info from the stdout.  In this case, the <code>--quiet</code> or <code>-q</code> option may be used.</p>
 <div class="codehilite"><pre>pymdown -q file.md
 </pre></div>
 
 
-<h2 id="configuration-file"><a name="user-content-configuration-file" href="#configuration-file" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Configuration File</h2>
+<h1 id="configuration-file"><a name="user-content-configuration-file" href="#configuration-file" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Configuration File</h1>
 <p>The configuration file is used to specify general Python Markdown settings, optional template, CSS and JS resources for templates, and extensions that will be used.</p>
-<p>PyMdown on the first run will unpack user files to <code>~\.PyMdown</code> on Windows, <code>~/.PyMdown</code> on OSX and <code>~/.config/PyMdown</code> on Linux.  The global configuration file can found here at the root of the folder along with default CSS, Javascript, and other resources in the which would be under another sub-folder called <code>default</code>.  Files under default will be auto-upgraded when necessary by newer versions of PyMdown and should be left unaltered.  Default files can be copied and altered outside of the <code>default</code> location for personal tweaking and usage.</p>
-<h3 id="python-markdown-settings"><a name="user-content-python-markdown-settings" href="#python-markdown-settings" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Python Markdown Settings</h3>
+<p>PyMdown on the first run will unpack user files to <code>~\.PyMdown</code> on Windows, <code>~/.PyMdown</code> on OSX and <code>~/.config/PyMdown</code> on Linux.  The global configuration file can found here at the root of the folder along with default CSS, JavaScript, and other resources in the which would be under another sub-folder called <code>default</code>.  Files under default will be auto-upgraded when necessary by newer versions of PyMdown and should be left unaltered.  Default files can be copied and altered outside of the <code>default</code> location for personal tweaking and usage.</p>
+<h2 id="python-markdown-settings"><a name="user-content-python-markdown-settings" href="#python-markdown-settings" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Python Markdown Settings</h2>
 <p>Python Markdown has a number of settings that can be configured:</p>
 <div class="codehilite"><pre><span class="c1"># Length of tabs in source files</span>
 <span class="l-Scalar-Plain">tab_length</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">4</span>
@@ -376,15 +427,15 @@
 
 
 <p>Safe mode setting is omitted as it is pending deprecation in Python Markdown.</p>
-<h3 id="pygment-settings"><a name="user-content-pygment-settings" href="#pygment-settings" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Pygment Settings</h3>
+<h2 id="pygment-settings"><a name="user-content-pygment-settings" href="#pygment-settings" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Pygment Settings</h2>
 <p>The following setting is used when it is not desired to have PyMdown inject the Pygments CSS style into the template:</p>
 <div class="codehilite"><pre><span class="c1"># Include the pygments css when using codehilite extension</span>
 <span class="l-Scalar-Plain">use_pygments_css</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true,</span>
 </pre></div>
 
 
-<p>If Pygments is disabled, but the CodeHilite extension is being used, code blocks are converted to a form so that a Javascript library like <a href="https://highlightjs.org/">highlight.js</a> can process them.</p>
-<h3 id="template"><a name="user-content-template" href="#template" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Template</h3>
+<p>If Pygments is disabled, but the CodeHilite extension is being used, code blocks are converted to a form so that a JavaScript library like <a href="https://highlightjs.org/">highlight.js</a> can process them.</p>
+<h2 id="template"><a name="user-content-template" href="#template" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Template</h2>
 <p>PyMdown allows for specifying a simple HTML template that can be used for the output.  Template files can be specified in the settings file via the <code>template</code> keyword.</p>
 <div class="codehilite"><pre><span class="c1"># Your HTML template</span>
 <span class="c1"># PyMdown will look relative to the binary if it can&#39;t find the file.</span>
@@ -411,7 +462,7 @@
 </tr>
 <tr>
 <td><code>{{ js }}</code></td>
-<td>Where user defined Javascript is inserted.</td>
+<td>Where user defined JavaScript is inserted.</td>
 </tr>
 <tr>
 <td><code>{{ title }}</code></td>
@@ -432,7 +483,7 @@
 </tbody>
 </table>
 <p>Template files in the settings or frontmatter can be followed by <code>;encoding</code> to cause the file to be opened and read with the specified encoding.</p>
-<h3 id="javascript-and-css"><a name="user-content-javascript-and-css" href="#javascript-and-css" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Javascript and CSS</h3>
+<h2 id="javascript-and-css"><a name="user-content-javascript-and-css" href="#javascript-and-css" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Javascript and CSS</h2>
 <p>Javascript and CSS can be included in the template by adding them to the following arrays:</p>
 <div class="codehilite"><pre><span class="c1"># Select your CSS for you output html</span>
 <span class="c1"># or you can have it all contained in your HTML template</span>
@@ -486,10 +537,10 @@
 </pre></div>
 
 
-<p>CSS files and Javascript files can be URLs or file paths.  When specifying a file path, a <code>!</code> can be used to precede the path so that PyMdown will just link the file and skip converting the file to an absolute or relative path.  If the file path is preceded by a <code>^</code>, the file content will be embedded in the HTML under a style or script tag depending on the source type.</p>
-<p>CSS and Javascript files can also be followed by <code>;encoding</code> to read in the file with the specified encoding.</p>
-<h3 id="javascript-and-css-quickload-aliases"><a name="user-content-javascript-and-css-quickload-aliases" href="#javascript-and-css-quickload-aliases" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Javascript and CSS Quickload Aliases</h3>
-<p>Sometimes you may have files you occasionally want to include on the fly.  PyMdown allows for defining aliases that can be referenced in a file&rsquo;s frontmatter to include multiple Javascript and/or CSS files.  CSS and Javascript included in the the quick-load aliases follow the same rules as the normal <a href="#javascript-and-css">CSS and Javascript</a> includes.</p>
+<p>CSS files and JavaScript files can be URLs or file paths.  When specifying a file path, a <code>!</code> can be used to precede the path so that PyMdown will just link the file and skip converting the file to an absolute or relative path.  If the file path is preceded by a <code>^</code>, the file content will be embedded in the HTML under a style or script tag depending on the source type.</p>
+<p>CSS and JavaScript files can also be followed by <code>;encoding</code> to read in the file with the specified encoding.</p>
+<h2 id="javascript-and-css-quickload-aliases"><a name="user-content-javascript-and-css-quickload-aliases" href="#javascript-and-css-quickload-aliases" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>JavaScript and CSS Quickload Aliases</h2>
+<p>Sometimes you may have files you occasionally want to include on the fly.  PyMdown allows for defining aliases that can be referenced in a file&rsquo;s frontmatter to include multiple JavaScript and/or CSS files.  CSS and JavaScript included in the the quick-load aliases follow the same rules as the normal <a href="#javascript-and-css">CSS and JavaScript</a> includes.</p>
 <div class="codehilite"><pre><span class="c1"># Quick load aliases</span>
 <span class="c1">#</span>
 <span class="c1"># This is a quick way to optionally load multiple CSS and JS files when converting a specific file.</span>
@@ -525,7 +576,7 @@
 </pre></div>
 
 
-<h3 id="path-conversions"><a name="user-content-path-conversions" href="#path-conversions" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Path Conversions</h3>
+<h2 id="path-conversions"><a name="user-content-path-conversions" href="#path-conversions" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Path Conversions</h2>
 <p>By default, PyMdown converts paths to be relative to the output location.  If desired, this can be changed to an absolute path:</p>
 <div class="codehilite"><pre><span class="c1"># By default resource paths are converted to relative file paths when possible;</span>
 <span class="c1"># this disables conversion.</span>
@@ -545,7 +596,7 @@
 <p>PyMdown utilizes the <a href="../../extensions/pathconverter/">pathconverter</a> extension to convert links and references in the actual markdown content.  If <code>pathconverter</code> is manually configured instead of letting PyMdown handle it, these settings will have no effect.</p>
 <p>The other exception is with previews.  In order for links and references to work in previews, they must be paths that are relative to the preview&rsquo;s temp directory or they must be absolute paths.  For this reason, PyMdown will always enable path conversions for previews.  If you have manually set up the <code>pathconverter</code> extension, preview&rsquo;s will overwrite the <code>relative_path</code> argument to ensure it is set to <code>${OUTPUT}</code> which will allow the preview to display content properly by making asset paths relative to the previews location.  By default, the <code>relative_path</code> is set to <code>${REL_PATH}</code> which is the output path by default, but can be altered via the command line option <code>--relpath</code> or the <code>relpath</code> frontmatter option.</p>
 </div>
-<h3 id="python-markdown-extensions"><a name="user-content-python-markdown-extensions" href="#python-markdown-extensions" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Python Markdown Extensions</h3>
+<h2 id="python-markdown-extensions"><a name="user-content-python-markdown-extensions" href="#python-markdown-extensions" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Python Markdown Extensions</h2>
 <p>Extensions to be used are defined under the <strong>extensions</strong> keyword.  Each entry in the extensions are dictionaries.  They must have the <code>name</code> key which should specify the Python module that is to be loaded, and they can optionally contain <code>config</code> which would be another dictionary setting up the given extension&rsquo;s settings.</p>
 <div class="codehilite"><pre><span class="l-Scalar-Plain">extensions</span><span class="p-Indicator">:</span>
 <span class="p-Indicator">-</span>   <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">markdown.extensions.extra</span>
@@ -568,9 +619,9 @@
 </pre></div>
 
 
-<h2 id="frontmatter"><a name="user-content-frontmatter" href="#frontmatter" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Frontmatter</h2>
+<h1 id="frontmatter"><a name="user-content-frontmatter" href="#frontmatter" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Frontmatter</h1>
 <p>Frontmatter can be used at the very beginning of a Markdown file.  Frontmatter blocks begin with <code>---</code> and end with <code>---</code>.  Frontmatter must be the very beginning of the file and start on the very first line.</p>
-<p>PyMdown front matter content can be either YAML or JSON (JSON is modified to allow Javascript comments).  The frontmatter is a dictionary of key value pairs which are translated into meta data for all keys except for a few <strong>special</strong> keywords.  For meta data, the key will become the content of the <code>meta</code> tag&rsquo;s <code>name</code> attribute, and the value will become the data for the <code>content</code> attribute.  If an array is specified as the value, each member of the array will be converted to a string and all of them will be strung together and separated by commas.  In all other cases, the value will just be converted to a string.</p>
+<p>PyMdown front matter content can be either YAML or JSON (JSON is modified to allow JavaScript comments).  The frontmatter is a dictionary of key value pairs which are translated into meta data for all keys except for a few <strong>special</strong> keywords.  For meta data, the key will become the content of the <code>meta</code> tag&rsquo;s <code>name</code> attribute, and the value will become the data for the <code>content</code> attribute.  If an array is specified as the value, each member of the array will be converted to a string and all of them will be strung together and separated by commas.  In all other cases, the value will just be converted to a string.</p>
 <p>PyMdown has a few keywords that can be defined to alter the output.</p>
 <table>
 <thead>
@@ -610,7 +661,7 @@
 </tr>
 <tr>
 <td>include.js</td>
-<td>This keyword&rsquo;s value is an array of strings denoting additional single Javascript files to include.  They follow the same convention as Javascript defined in the settings file: <code>;encoding</code> at tail will define the encoding used to access the file, paths starting with <code>!</code> will not have their path converted to absolute or relative paths, and <code>^</code> will directly embed the content in the HTML file.</td>
+<td>This keyword&rsquo;s value is an array of strings denoting additional single JavaScript files to include.  They follow the same convention as JavaScript defined in the settings file: <code>;encoding</code> at tail will define the encoding used to access the file, paths starting with <code>!</code> will not have their path converted to absolute or relative paths, and <code>^</code> will directly embed the content in the HTML file.</td>
 </tr>
 <tr>
 <td>settings</td>
@@ -664,7 +715,7 @@
 
 <!--
 MkDocs version  : 0.12.2
-Docs Build Date : 2015-04-25 01:57:12.071132
+Docs Build Date : 2015-04-25 05:32:42.320080
 -->
 </body>
 </html>
