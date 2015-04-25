@@ -37,6 +37,12 @@
   cursor: help;
 }
 
+/* Image */
+.rst-content img.emoji {
+  width: 20px;
+  height: 20px;
+}
+
 /* Mark */
 .rst-content mark {
   background: #fef56f;
