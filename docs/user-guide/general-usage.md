@@ -9,6 +9,8 @@ PyMdown was written to aid in batch processing Markdown files with Python Markdo
 
 PyMdown can use an optional template with CSS and JavaScript for styling the Markdown outputs.  Templates, CSS, JavaScript, and extensions are all setup in a configuration file.  If for certain batches certain settings need to be tweaked, PyMdown can accept paths to specific settings file via the CLI.  The settings files can be in either JSON or YAML.  PyMdown also supports input sources with a JSON or YAML frontmatter were settings can be configured along with general meta data.
 
+Though PyMdown could be used to generate a site, it was mainly designed to generate static documents from Markdown for general use or previewing.  If you are looking to generate document sites, there are plenty of good tools to do such ([mkdocs](http://www.mkdocs.org/) is one suggestion), but you may find additional the [PyMdown extensions](pymdown-extensions.md) useful by themselves.
+
 # Command Line Interface
 
 ## Input Files
@@ -54,21 +56,21 @@ pymdown -p file.md
 ```
 
 ## Basepath
-PyMdown in various circumstances will try and resolve image, CSS, and JS asset paths for previews or for base64 encoding etc.  In order for this to work, a basepath may be required and can be specified using the `--basepath` option.  If no basepath is given, the basepath will be that of the source file or `None` if the source is a file stream.
+PyMdown in various circumstances (particularly in conjunction with specific PyMdown extensions) will try and resolve image, CSS, and JS asset paths for previews or for base64 encoding etc.  In order for this to work, a base path may be required and can be specified using the `--basepath` option.  If no base path is given, the base path will be that of the source file or `None` if the source is a file stream.
 
 ```
 pymdown --basepath ../assets file.md
 ```
 
 ## Relpath
-PyMdown is various circumstances will try to create relative paths to assets or sources such as images, CSS, and JS.  In order for this to work, a relative path is needed.  the `--relpath` option is used to set this.  If `--relpath` is not set, it defaults to the output directory.  If the output directory is also not set (when output is dumped to stdout), the relative path will not be set.
+PyMdown is various circumstances (particularly in conjunction with specific PyMdown extensions) will try to create relative paths to assets or sources such as images, CSS, and JS.  In order for this to work, a relative path is needed.  the `--relpath` option is used to set this.  If `--relpath` is not set, it defaults to the output directory.  If the output directory is also not set (when output is dumped to stdout), the relative path will not be set.
 
 ```
 pymdown --relpath ../somedirectory file.md
 ```
 
 ## Settings
-PyMdown will normally look in the location of the pymdown binary to find the settings file, but the filename and path can be redirected with the `--settings` or `-s` option.
+PyMdown will normally look in the location of the [configuration directory](#configuration-file) to find the settings file, but the filename and path can be redirected with the `--settings` or `-s` option.
 
 ```
 pymdown -s ../my_settings.cfg file.md
@@ -81,14 +83,14 @@ PyMdown can be configured to read the Markdown file(s) with a different encoding
 pymdown -e utf-8 file.md
 ```
 
-By default, the output encoding will be the same as the input, but greater control is needed, the user can set the output encoding via the `--output_encoding` or `-E` option.
+By default, the output encoding will be the same as the input, but if greater control is needed, the user can set the output encoding via the `--output_encoding` or `-E` option.
 
 ```
 pymdown -E utf-8 file.md
 ```
 
 ## Title
-PyMdown, by default, will use the source file's name as the title, or if the input is a file stream, it will use **Untitled**.  But this can be set overridden with the `--title` option.  This probably isn't practical for batch processing.  When batch processing, it may make more since to utilize the frontmatter to set the title per file.
+PyMdown, by default, will use the source file's name as the title, or if the input is a file stream, it will use **Untitled**.  But this can be set/overridden with the `--title` option.  This probably isn't practical for batch processing.  When batch processing, it may make more sense to utilize the [frontmatter](#frontmatter) to set the title per file.
 
 ```
 pymdown --title "My Awesome File" file.md
@@ -134,7 +136,7 @@ pymdown -q file.md
 # Configuration File
 The configuration file is used to specify general Python Markdown settings, optional template, CSS and JS resources for templates, and extensions that will be used.
 
-PyMdown on the first run will unpack user files to `~\.PyMdown` on Windows, `~/.PyMdown` on OSX and `~/.config/PyMdown` on Linux.  The global configuration file can found here at the root of the folder along with default CSS, JavaScript, and other resources in the which would be under another sub-folder called `default`.  Files under default will be auto-upgraded when necessary by newer versions of PyMdown and should be left unaltered.  Default files can be copied and altered outside of the `default` location for personal tweaking and usage.
+PyMdown on the first run will unpack user files to `~\.PyMdown` on Windows, `~/.PyMdown` on OSX and `~/.config/PyMdown` on Linux.  The global configuration file can found here at the root of the folder along with default CSS, JavaScript, and other resources which would be under another sub-folder called `default`.  Files under `default` will be auto-upgraded when necessary by newer versions of PyMdown and should be left unaltered.  Default files can be copied and altered outside of the `default` location for personal tweaking and usage.
 
 ## Python Markdown Settings
 Python Markdown has a number of settings that can be configured:
@@ -188,13 +190,13 @@ In the template file, you can add special markup to insert certain items:
 
 | Markup | Description |
 |--------|-------------|
-| `{{ meta }}` |This is where meta data will be inserted.  Mainly the character encoding, and general user defined meta data from the frontmatter. |
-| `{{ css }}` | Where user defined stylesheets are inserted. |
-| `{{ js }}` | Where user defined JavaScript is inserted. |
-| `{{ title }}` | The page title will be inserted here. |
-| `{{ content }}` | The parsed markdown content gets inserted here. |
-| `{{ getPath(myfile/path/img.png) }}` | CSS and JS paths, if local, under go conversions internally to make the paths relative or absolute as needed.  If in your template you need to point to a reference a file and want the file path to be converted to an absolute path or a relative path, you can use this to convert it in the template; the file can be preceded by a `!` to prevent path conversion to an absolute or relative path; this is mainly useful if you are just looking to escape the path. |
-| `{{ getQuotedPath(myfile/path/img.png) }}` | This is the same as `getPath` above except the output is surrounded in double quotes. |
+| \{\{&nbsp;meta&nbsp;}} |This is where meta data will be inserted.  Mainly the character encoding, and general user defined meta data from the frontmatter. |
+| \{\{&nbsp;css&nbsp;}} | Where user defined stylesheets are inserted. |
+| \{\{&nbsp;js&nbsp;}} | Where user defined JavaScript is inserted. |
+| \{\{&nbsp;title&nbsp;}} | The page title will be inserted here. |
+| \{\{&nbsp;content&nbsp;}} | The parsed markdown content gets inserted here. |
+| \{\{&nbsp;getPath(myfile/path/img.png)&nbsp;}} | CSS and JS paths, if local, under go conversions internally to make the paths relative or absolute as needed.  If in your template you need to point to a reference a file and want the file path to be converted to an absolute path or a relative path, you can use this to convert it in the template; the file can be preceded by a `!` to prevent path conversion to an absolute or relative path; this is mainly useful if you are just looking to escape the path. |
+| \{\{&nbsp;getQuotedPath(myfile/path/img.png)&nbsp;}} | This is the same as `getPath` above except the output is surrounded in double quotes. |
 
 Template files in the settings or frontmatter can be followed by `;encoding` to cause the file to be opened and read with the specified encoding.
 
@@ -354,7 +356,7 @@ PyMdown has a few keywords that can be defined to alter the output.
 | destination | This keyword is the location and file name were the output should be placed. |
 | references | This can specify a separate Markdown file containing footnotes, attributes, etc. This feature could be abused to just insert normal Markdown files into other Markdown files; PyMdown currently does nothing to prevent this, but this is not really advised. References can be followed by `;encoding` to specify the read encoding. By default, the encoding from the command line will be used, but this can override it. |
 | basepath | This is used to specify the path that PyMdown should use to look for reference material like CSS or JS files and even `references` defined in the frontmatter. It is also used in plugins such as `pathconverter` and `b64`.  This can override the `basepath` fed in at the command line. |
-| relpath | This is used ot specify the path that images and paths are relative to. It is used in plugins such as `pathconverter`.  This can override the `relpath` fed in at the command line. |
+| relpath | This is used to specify the path that images and paths are relative to. It is used in plugins such as `pathconverter`.  This can override the `relpath` fed in at the command line. |
 | include | This keyword's value is an array of strings and accepts [quickload aliases](#javascript-and-css-quckload-aliases) (the `@` symbol is omitted from the name). So if a quickload alias named `@alias` is desired, `alias` would be defined under the `include` keyword. |
 | include.css | This keyword's value is an array of strings denoting additional single CSS files to include.  They follow the same convention as CSS defined in the settings file: `;encoding` at tail will define the encoding used to access the file, paths starting with `!` will not have their path converted to absolute or relative paths, and `^` will directly embed the content in the HTML file. |
 | include.js | This keyword's value is an array of strings denoting additional single JavaScript files to include.  They follow the same convention as JavaScript defined in the settings file: `;encoding` at tail will define the encoding used to access the file, paths starting with `!` will not have their path converted to absolute or relative paths, and `^` will directly embed the content in the HTML file. |

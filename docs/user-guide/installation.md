@@ -22,9 +22,10 @@ In order for PyMdown to work, there are a couple of prerequisites.  If installin
 
 # Build
 
-If building, you will need to download the latest PyInstaller from [Github](https://github.com/pyinstaller/pyinstaller).  Just unzip and ensure the main folder is named `pyinstaller`.  Then from PyMdown's root directory, run `python build -c`.  The binary should be created in the `dist` folder.  This is regularly tested on Windows 7 and OSX 10.10.  Linux may require some playing around if it doesn't work out of the box.
+If building, you will need to download the latest PyInstaller from [Github](https://github.com/pyinstaller/pyinstaller).  Just unzip the content into the root of the PyMdown project and ensure the main folder is named `pyinstaller`.  Then, from PyMdown's root directory, run `python build -c`.  The binary should be created in the `dist` folder.  This is regularly tested on Windows 7 and OSX 10.10.  Linux may require some playing around if it doesn't work out of the box.
 
-In the future, I do plan on allowing this run from an installed Pyinstaller opposed to a version copied into the project, but currently I don't support it mainly because on Windows I build with a portable Python (WinPython), and I haven't spent any time yet to get it running proper without having it copied in the project.
+!!! note "Note"
+    In the future, I do plan on allowing this run from an installed Pyinstaller opposed to a version copied into the project, but currently I don't support it mainly because on Windows I build with a portable Python (WinPython), and I haven't spent any time yet to get it running proper without having it copied in the project.
 
 # Installation
 You can download PyMdown and run it as a script bundle, or build and copy the binary in your path.  To install the traditional way, run `python setup.py build` and `python setup.py install`.  You should be able to access PyMdown from the command line via `pymdown` or `pymdownX.X` where `X.X` is your python version.  PyMdown on the first run will unpack user files to `~\.PyMdown` on Windows, `~/.PyMdown` on OSX and `~/.config/PyMdown` on Linux.
