@@ -81,10 +81,7 @@
                             <li class="toctree-l3"><a href="#overview">Overview</a></li>
                             
                         
-                            <li class="toctree-l3"><a href="#adding-to-provided-custom-eggs-or-create-your-own">Adding to Provided Custom Eggs or Create Your Own</a></li>
-                            
-                        
-                            <li class="toctree-l3"><a href="#generate-and-include-eggs">Generate and Include Eggs</a></li>
+                            <li class="toctree-l3"><a href="#create-your-own-pygments-styles-and-lexers">Create Your Own Pygments Styles and Lexers</a></li>
                             
                         
                         </ul>
@@ -250,9 +247,10 @@
 <p class="doctitle-info">Adding Pygments themes.<br /></p>
 <hr />
 <h1 id="overview"><a name="user-content-overview" href="#overview" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Overview</h1>
-<p>Pygments allows for people to write their own lexers and styles, but they need to have an entry point of <code>pymdown.lexers</code> or <code>pymdown.styles</code> for the respective plugin type.  This can only be done by either directly adding your plugin to the Pygments package, or creating and installing your own package that defines the entry points as mentioned.  If you know how to create your own package and install it, PyMdown should able to use it, but you have to play with the pyinstaller hooks if compiling a binary.  Another way is to create an egg that defines the proper entry point, and add the egg to the system path.</p>
-<h1 id="adding-to-provided-custom-eggs-or-create-your-own"><a name="user-content-adding-to-provided-custom-eggs-or-create-your-own" href="#adding-to-provided-custom-eggs-or-create-your-own" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Adding to Provided Custom Eggs or Create Your Own</h1>
-<p>PyMdown comes with a couple of optional eggs that can be included.  One is for <a href="https://github.com/facelessuser/PyMdown/tree/master/pymdown-lexers">lexers</a>, the other is for <a href="https://github.com/facelessuser/PyMdown/tree/master/pymdown-styles">styles</a>.  You can create your own lexer and/or style and drop it in with the others.  Then just edit the <code>__init__.py</code> file and expose your module (style example shown below):</p>
+<p>Pygments allows for people to write their own lexers and styles, but they need to have an entry point of <code>pymdown.lexers</code> or <code>pymdown.styles</code> for the respective plugin type.  This can only be done by either directly adding your plugin to the Pygments package, or creating and installing your own package that defines the entry points as mentioned.  If you know how to create your own package and install it, PyMdown should able to use it.  If you are compiling a binary with pyinstaller, you will have to modify the <code>build.py</code> file.</p>
+<h1 id="create-your-own-pygments-styles-and-lexers"><a name="user-content-create-your-own-pygments-styles-and-lexers" href="#create-your-own-pygments-styles-and-lexers" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Create Your Own Pygments Styles and Lexers</h1>
+<p>PyMdown comes with a couple of optional <a href="https://github.com/facelessuser/PyMdown/tree/master/pymdown-styles">styles</a> and <a href="https://github.com/facelessuser/PyMdown/tree/master/pymdown-lexers">lexers</a> that can be included.  You can use these two repositories as an example.</p>
+<p>Once the lexer or style is written, you have to edit the <code>__init__.py</code> file and expose your module (style example shown below):</p>
 <div class="codehilite"><pre><span class="kn">from</span> <span class="nn">.tomorrow</span> <span class="kn">import</span> <span class="n">TomorrowStyle</span>
 <span class="kn">from</span> <span class="nn">.tomorrownight</span> <span class="kn">import</span> <span class="n">TomorrownightStyle</span>
 <span class="kn">from</span> <span class="nn">.tomorrownightblue</span> <span class="kn">import</span> <span class="n">TomorrownightblueStyle</span>
@@ -285,17 +283,6 @@
     <span class="n">zip_safe</span><span class="o">=</span><span class="bp">True</span>
 <span class="p">)</span>
 </pre></div>
-
-
-<p>Optionally, you can follow the pattern of the provided custom lexers and styles, and have your own egg built along side or in place of the the provided ones.  If you add your own custom egg, its name must start with <code>pymdown_</code> as the egg will not be loaded if its name does not start with <code>pymdown_</code> and end with the appropriate python version.</p>
-<h1 id="generate-and-include-eggs"><a name="user-content-generate-and-include-eggs" href="#generate-and-include-eggs" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Generate and Include Eggs</h1>
-<p>A script is provided for generating custom eggs.  It is called <a href="https://github.com/facelessuser/PyMdown/blob/master/tools/gen_egg.py">gen_egg.py</a>.  It can be run from PyMdown&rsquo;s root directory.  To build the provided custom eggs, do the following from the project&rsquo;s root directory:</p>
-<div class="codehilite"><pre>python tools/gen_egg.py pymdown-styles
-python tools/gen_egg.py pymdown-lexers
-</pre></div>
-
-
-<p>The eggs will be generated and copied to the an <code>eggs</code> folder.  Now when compiling PyMdown, the eggs will be bundled in the application and be usable, and if not compiling, the eggs will be included in the system path and be usable.  In both cases the eggs modules will be accessible as if they were native to Pygments.  As mentioned before, PyMdown will not load the egg if it doesn&rsquo;t start with <code>pymdown_</code>.  The generation script will append the Python version to the end of the egg name, so only when PyMdown is run with or built with the same version of Python that created the egg will it get loaded.</p>
             </div>
           </div>
           <footer>
@@ -342,7 +329,7 @@ python tools/gen_egg.py pymdown-lexers
 
 <!--
 MkDocs version  : 0.12.2
-Docs Build Date : 2015-04-25 05:32:42.481623
+Docs Build Date : 2015-04-26 03:30:37.705814
 -->
 </body>
 </html>

@@ -297,6 +297,7 @@
 <h1 id="using-pymdown"><a name="user-content-using-pymdown" href="#using-pymdown" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Using PyMdown</h1>
 <p>PyMdown was written to aid in batch processing Markdown files with Python Markdown and Pygments (but a JavaScript highlighter can just as easily be used).  It also adds a number of optional extensions.</p>
 <p>PyMdown can use an optional template with CSS and JavaScript for styling the Markdown outputs.  Templates, CSS, JavaScript, and extensions are all setup in a configuration file.  If for certain batches certain settings need to be tweaked, PyMdown can accept paths to specific settings file via the CLI.  The settings files can be in either JSON or YAML.  PyMdown also supports input sources with a JSON or YAML frontmatter were settings can be configured along with general meta data.</p>
+<p>Though PyMdown could be used to generate a site, it was mainly designed to generate static documents from Markdown for general use or previewing.  If you are looking to generate document sites, there are plenty of good tools to do such (<a href="http://www.mkdocs.org/">mkdocs</a> is one suggestion), but you may find additional the <a href="../pymdown-extensions/">PyMdown extensions</a> useful by themselves.</p>
 <h1 id="command-line-interface"><a name="user-content-command-line-interface" href="#command-line-interface" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Command Line Interface</h1>
 <h2 id="input-files"><a name="user-content-input-files" href="#input-files" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Input Files</h2>
 <p>In its most basic usage, PyMdown accepts a markdown file:</p>
@@ -334,19 +335,19 @@
 
 
 <h2 id="basepath"><a name="user-content-basepath" href="#basepath" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Basepath</h2>
-<p>PyMdown in various circumstances will try and resolve image, CSS, and JS asset paths for previews or for base64 encoding etc.  In order for this to work, a basepath may be required and can be specified using the <code>--basepath</code> option.  If no basepath is given, the basepath will be that of the source file or <code>None</code> if the source is a file stream.</p>
+<p>PyMdown in various circumstances (particularly in conjunction with specific PyMdown extensions) will try and resolve image, CSS, and JS asset paths for previews or for base64 encoding etc.  In order for this to work, a base path may be required and can be specified using the <code>--basepath</code> option.  If no base path is given, the base path will be that of the source file or <code>None</code> if the source is a file stream.</p>
 <div class="codehilite"><pre>pymdown --basepath ../assets file.md
 </pre></div>
 
 
 <h2 id="relpath"><a name="user-content-relpath" href="#relpath" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Relpath</h2>
-<p>PyMdown is various circumstances will try to create relative paths to assets or sources such as images, CSS, and JS.  In order for this to work, a relative path is needed.  the <code>--relpath</code> option is used to set this.  If <code>--relpath</code> is not set, it defaults to the output directory.  If the output directory is also not set (when output is dumped to stdout), the relative path will not be set.</p>
+<p>PyMdown is various circumstances (particularly in conjunction with specific PyMdown extensions) will try to create relative paths to assets or sources such as images, CSS, and JS.  In order for this to work, a relative path is needed.  the <code>--relpath</code> option is used to set this.  If <code>--relpath</code> is not set, it defaults to the output directory.  If the output directory is also not set (when output is dumped to stdout), the relative path will not be set.</p>
 <div class="codehilite"><pre>pymdown --relpath ../somedirectory file.md
 </pre></div>
 
 
 <h2 id="settings"><a name="user-content-settings" href="#settings" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Settings</h2>
-<p>PyMdown will normally look in the location of the pymdown binary to find the settings file, but the filename and path can be redirected with the <code>--settings</code> or <code>-s</code> option.</p>
+<p>PyMdown will normally look in the location of the <a href="#configuration-file">configuration directory</a> to find the settings file, but the filename and path can be redirected with the <code>--settings</code> or <code>-s</code> option.</p>
 <div class="codehilite"><pre>pymdown -s ../my_settings.cfg file.md
 </pre></div>
 
@@ -357,13 +358,13 @@
 </pre></div>
 
 
-<p>By default, the output encoding will be the same as the input, but greater control is needed, the user can set the output encoding via the <code>--output_encoding</code> or <code>-E</code> option.</p>
+<p>By default, the output encoding will be the same as the input, but if greater control is needed, the user can set the output encoding via the <code>--output_encoding</code> or <code>-E</code> option.</p>
 <div class="codehilite"><pre>pymdown -E utf-8 file.md
 </pre></div>
 
 
 <h2 id="title"><a name="user-content-title" href="#title" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Title</h2>
-<p>PyMdown, by default, will use the source file&rsquo;s name as the title, or if the input is a file stream, it will use <strong>Untitled</strong>.  But this can be set overridden with the <code>--title</code> option.  This probably isn&rsquo;t practical for batch processing.  When batch processing, it may make more since to utilize the frontmatter to set the title per file.</p>
+<p>PyMdown, by default, will use the source file&rsquo;s name as the title, or if the input is a file stream, it will use <strong>Untitled</strong>.  But this can be set/overridden with the <code>--title</code> option.  This probably isn&rsquo;t practical for batch processing.  When batch processing, it may make more sense to utilize the <a href="#frontmatter">frontmatter</a> to set the title per file.</p>
 <div class="codehilite"><pre>pymdown --title &quot;My Awesome File&quot; file.md
 </pre></div>
 
@@ -399,7 +400,7 @@
 
 <h1 id="configuration-file"><a name="user-content-configuration-file" href="#configuration-file" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Configuration File</h1>
 <p>The configuration file is used to specify general Python Markdown settings, optional template, CSS and JS resources for templates, and extensions that will be used.</p>
-<p>PyMdown on the first run will unpack user files to <code>~\.PyMdown</code> on Windows, <code>~/.PyMdown</code> on OSX and <code>~/.config/PyMdown</code> on Linux.  The global configuration file can found here at the root of the folder along with default CSS, JavaScript, and other resources in the which would be under another sub-folder called <code>default</code>.  Files under default will be auto-upgraded when necessary by newer versions of PyMdown and should be left unaltered.  Default files can be copied and altered outside of the <code>default</code> location for personal tweaking and usage.</p>
+<p>PyMdown on the first run will unpack user files to <code>~\.PyMdown</code> on Windows, <code>~/.PyMdown</code> on OSX and <code>~/.config/PyMdown</code> on Linux.  The global configuration file can found here at the root of the folder along with default CSS, JavaScript, and other resources which would be under another sub-folder called <code>default</code>.  Files under <code>default</code> will be auto-upgraded when necessary by newer versions of PyMdown and should be left unaltered.  Default files can be copied and altered outside of the <code>default</code> location for personal tweaking and usage.</p>
 <h2 id="python-markdown-settings"><a name="user-content-python-markdown-settings" href="#python-markdown-settings" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Python Markdown Settings</h2>
 <p>Python Markdown has a number of settings that can be configured:</p>
 <div class="codehilite"><pre><span class="c1"># Length of tabs in source files</span>
@@ -453,31 +454,31 @@
 </thead>
 <tbody>
 <tr>
-<td><code>{{ meta }}</code></td>
+<td>{{&nbsp;meta&nbsp;}}</td>
 <td>This is where meta data will be inserted.  Mainly the character encoding, and general user defined meta data from the frontmatter.</td>
 </tr>
 <tr>
-<td><code>{{ css }}</code></td>
+<td>{{&nbsp;css&nbsp;}}</td>
 <td>Where user defined stylesheets are inserted.</td>
 </tr>
 <tr>
-<td><code>{{ js }}</code></td>
+<td>{{&nbsp;js&nbsp;}}</td>
 <td>Where user defined JavaScript is inserted.</td>
 </tr>
 <tr>
-<td><code>{{ title }}</code></td>
+<td>{{&nbsp;title&nbsp;}}</td>
 <td>The page title will be inserted here.</td>
 </tr>
 <tr>
-<td><code>{{ content }}</code></td>
+<td>{{&nbsp;content&nbsp;}}</td>
 <td>The parsed markdown content gets inserted here.</td>
 </tr>
 <tr>
-<td><code>{{ getPath(myfile/path/img.png) }}</code></td>
+<td>{{&nbsp;getPath(myfile/path/img.png)&nbsp;}}</td>
 <td>CSS and JS paths, if local, under go conversions internally to make the paths relative or absolute as needed.  If in your template you need to point to a reference a file and want the file path to be converted to an absolute path or a relative path, you can use this to convert it in the template; the file can be preceded by a <code>!</code> to prevent path conversion to an absolute or relative path; this is mainly useful if you are just looking to escape the path.</td>
 </tr>
 <tr>
-<td><code>{{ getQuotedPath(myfile/path/img.png) }}</code></td>
+<td>{{&nbsp;getQuotedPath(myfile/path/img.png)&nbsp;}}</td>
 <td>This is the same as <code>getPath</code> above except the output is surrounded in double quotes.</td>
 </tr>
 </tbody>
@@ -649,7 +650,7 @@
 </tr>
 <tr>
 <td>relpath</td>
-<td>This is used ot specify the path that images and paths are relative to. It is used in plugins such as <code>pathconverter</code>.  This can override the <code>relpath</code> fed in at the command line.</td>
+<td>This is used to specify the path that images and paths are relative to. It is used in plugins such as <code>pathconverter</code>.  This can override the <code>relpath</code> fed in at the command line.</td>
 </tr>
 <tr>
 <td>include</td>
@@ -715,7 +716,7 @@
 
 <!--
 MkDocs version  : 0.12.2
-Docs Build Date : 2015-04-25 05:32:42.320080
+Docs Build Date : 2015-04-26 03:30:37.514575
 -->
 </body>
 </html>
