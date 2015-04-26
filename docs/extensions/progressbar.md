@@ -157,7 +157,7 @@ This is the CSS used to render the progress bars in this document:
 | Option    | Type | Default | Description |
 |-----------|------|---------|-------------|
 |level_class| bool | True | Enables or disables the level class feature.  The level class feature adds level classes in increments of 20. |
-|add_classes| string | This option accepts a string of classes separated by spaces. |
+|add_classes| string | '' | This option accepts a string of classes separated by spaces. |
 
 # Examples
 

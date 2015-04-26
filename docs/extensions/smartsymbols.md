@@ -8,17 +8,17 @@ Auto-convert special symbols.
 SmartSymbols adds syntax for creating special characters such as trademarks, arrows, fractions, etc.  It basically allows for more "smarty-pants" type replacements.  It is meant to be used along side the Python Markdown's `smarty` extension.
 
 # Options
-| Option          |  Description |
-|-----------------|--------------|
-| trademark       | Add syntax for tradmark symbol.   |
-| copyright       | Add syntax for copyright symbol.  |
-| registered      | Add syntax for registered symbol. |
-| care_of         | Add syntax for care / of.         |
-| plusminus       | Add syntax for plus / minus.      |
-| arrows          | Add syntax for creating arrows.   |
-| notequal        | Add syntax for not equal symbol.  |
-| fractions       | Add syntax for common fractions.  |
-| ordinal_numbers | Add syntax for ordinal numbers.   |
+| Option          | Type | Default | Description |
+|-----------------|------|---------|-------------|
+| trademark       | bool | True | Add syntax for tradmark symbol.   |
+| copyright       | bool | True | Add syntax for copyright symbol.  |
+| registered      | bool | True | Add syntax for registered symbol. |
+| care_of         | bool | True | Add syntax for care / of.         |
+| plusminus       | bool | True | Add syntax for plus / minus.      |
+| arrows          | bool | True | Add syntax for creating arrows.   |
+| notequal        | bool | True | Add syntax for not equal symbol.  |
+| fractions       | bool | True | Add syntax for common fractions.  |
+| ordinal_numbers | bool | True | Add syntax for ordinal numbers.   |
 
 # Examples
 
