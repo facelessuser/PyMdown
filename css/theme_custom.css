@@ -373,6 +373,11 @@
   font-size: initial;
 }
 
+.rst-content .block:before,
+.rst-content .block:after {
+  content: '';
+}
+
 .rst-content mark.critic {
   border-color: #ff8600;
   background: #ffddaa;

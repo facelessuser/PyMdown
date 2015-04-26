@@ -157,6 +157,9 @@
                             <li class="toctree-l3"><a href="#overview">Overview</a></li>
                             
                         
+                            <li class="toctree-l3"><a href="#options">Options</a></li>
+                            
+                        
                         </ul>
                     
                 </li>
@@ -244,11 +247,43 @@
 <p class="doctitle-info">Strip down to plain HTML.<br /></p>
 <hr />
 <h1 id="overview"><a name="user-content-overview" href="#overview" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Overview</h1>
-<p>PlainHtml is a simple extension that is run at the end of post-processing.  It searches the final output stripping things like <code>style</code>, <code>id</code>, <code>class</code>, and <code>on&lt;name&gt;</code> attributes from HTML tags.  It also removes HTML comments.  If you have no desire to see these, this can strip them out.  Though it does its best to be loaded at the very end of the process, it helps to include this one last when loading up your extensions.</p>
+<p>PlainHtml is a simple extension that is run at the end of post-processing.  It searches the final output stripping things like <code>style</code>, <code>id</code>, <code>class</code>, and <code>on&lt;name&gt;</code> attributes from HTML tags.  It also removes HTML comments.  If you have no desire to see these, this can strip them out.  Though it does its best to be loaded at the very end of the process, it helps to include this one last when loading up your extensions.  If needed, plain HTML can also be configured to just strip out just comments or just attributes etc.</p>
 <div class="admonition caution">
 <p class="admonition-title">Warning</p>
 <p>This is not meant to be a sanitizer for HTML.  This is just meant to try and strip out style, script, classes, etc. to provide a plain HTML output for the times this is desired; this is not meant as a security extension.  If you want something to secure the output, you should consider running a sanitizer like <a href="https://pypi.python.org/pypi/bleach">bleach</a>.</p>
 </div>
+<h1 id="options"><a name="user-content-options" href="#options" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Options</h1>
+<p>By default, PlainHtml strips the following attributes: <code>style</code>, <code>id</code>, <code>class</code>, and <code>on&lt;name&gt;</code>.  PlainHtml also strips HTML comments. If desired, its behavior can be configured to strip less or even more, but it is limited to attributes and comments.  If you are using the PyMdown app, and you want to control what gets strip, you may want to forgo using the <code>--plain-html</code> option laid out in the <a href="../../user-guide/general-usage/#plain-html">user guide</a> and just configure the plugin manually; the <code>--plain-html</code> option runs with the defaults only.</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>strip_comments</td>
+<td>bool</td>
+<td>True</td>
+<td>Strip HTML comments during post process.</td>
+</tr>
+<tr>
+<td>strip_js_on_attributes</td>
+<td>bool</td>
+<td>True</td>
+<td>Strip JavaScript script attributes with the pattern on* during post process.</td>
+</tr>
+<tr>
+<td>strip_attributes</td>
+<td>string</td>
+<td>&lsquo;id class style&rsquo;</td>
+<td>A string attribute names separated by spaces.</td>
+</tr>
+</tbody>
+</table>
             </div>
           </div>
           <footer>
@@ -295,7 +330,7 @@
 
 <!--
 MkDocs version  : 0.12.2
-Docs Build Date : 2015-04-26 03:30:39.071777
+Docs Build Date : 2015-04-26 22:37:13.937183
 -->
 </body>
 </html>
