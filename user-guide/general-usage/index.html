@@ -598,25 +598,21 @@
 <p>The other exception is with previews.  In order for links and references to work in previews, they must be paths that are relative to the preview&rsquo;s temp directory or they must be absolute paths.  For this reason, PyMdown will always enable path conversions for previews.  If you have manually set up the <code>pathconverter</code> extension, preview&rsquo;s will overwrite the <code>relative_path</code> argument to ensure it is set to <code>${OUTPUT}</code> which will allow the preview to display content properly by making asset paths relative to the previews location.  By default, the <code>relative_path</code> is set to <code>${REL_PATH}</code> which is the output path by default, but can be altered via the command line option <code>--relpath</code> or the <code>relpath</code> frontmatter option.</p>
 </div>
 <h2 id="python-markdown-extensions"><a name="user-content-python-markdown-extensions" href="#python-markdown-extensions" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Python Markdown Extensions</h2>
-<p>Extensions to be used are defined under the <strong>extensions</strong> keyword.  Each entry in the extensions are dictionaries.  They must have the <code>name</code> key which should specify the Python module that is to be loaded, and they can optionally contain <code>config</code> which would be another dictionary setting up the given extension&rsquo;s settings.</p>
+<p>Extensions to be used are defined under the <strong>extensions</strong> keyword.  <strong>extensions</strong> is an ordered key/value pair. An extension has a name followed by <code>:</code> in yaml format.  If you want to include settings parameters, you can include those as the extension value.  All parameters should be done as key/value pairs as shown below.</p>
 <div class="codehilite"><pre><span class="l-Scalar-Plain">extensions</span><span class="p-Indicator">:</span>
-<span class="p-Indicator">-</span>   <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">markdown.extensions.extra</span>
-<span class="p-Indicator">-</span>   <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">markdown.extensions.toc</span>
-    <span class="l-Scalar-Plain">config</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">markdown.extensions.extra</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">markdown.extensions.toc</span><span class="p-Indicator">:</span>
         <span class="l-Scalar-Plain">title</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Table of Contents</span>
-<span class="p-Indicator">-</span>   <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">markdown.extensions.codehilite</span>
-    <span class="l-Scalar-Plain">config</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">markdown.extensions.codehilite</span><span class="p-Indicator">:</span>
         <span class="l-Scalar-Plain">guess_lang</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
-<span class="p-Indicator">-</span>   <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">markdown.extensions.headerid</span>
-<span class="p-Indicator">-</span>   <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">markdown.extensions.smarty</span>
-<span class="p-Indicator">-</span>   <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">markdown.extensions.wikilinks</span>
-<span class="p-Indicator">-</span>   <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">markdown.extensions.admonition</span>
-<span class="p-Indicator">-</span>   <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">markdown.extensions.nl2br</span>
-<span class="p-Indicator">-</span>   <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">pymdown.pymdown</span>
-<span class="p-Indicator">-</span>   <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">pymdown.b64</span>
-    <span class="l-Scalar-Plain">config</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">markdown.extensions.smarty</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">markdown.extensions.wikilinks</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">markdown.extensions.admonition</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">markdown.extensions.nl2br</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">pymdown.pymdown</span><span class="p-Indicator">:</span>
+    <span class="l-Scalar-Plain">pymdown.b64</span><span class="p-Indicator">:</span>
         <span class="l-Scalar-Plain">base_path</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">${BASE_PATH}</span>
-<span class="p-Indicator">-</span>   <span class="l-Scalar-Plain">name</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">pymdown.critic</span>
+    <span class="l-Scalar-Plain">pymdown.critic</span><span class="p-Indicator">:</span>
 </pre></div>
 
 
@@ -716,7 +712,7 @@
 
 <!--
 MkDocs version  : 0.12.2
-Docs Build Date : 2015-04-27 00:06:11.397321
+Docs Build Date : 2015-04-27 22:22:54.394496
 -->
 </body>
 </html>
