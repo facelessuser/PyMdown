@@ -27,6 +27,15 @@ This is the CSS used for rendering the header anchors in this document. While Fo
   outline: none;
 }
 
+.markdown-body h1,
+.markdown-body h2,
+.markdown-body h3,
+.markdown-body h4,
+.markdown-body h5,
+.markdown-body h6 {
+  position: relative;
+}
+
 .markdown-body h1 .headeranchor,
 .markdown-body h2 .headeranchor,
 .markdown-body h3 .headeranchor,

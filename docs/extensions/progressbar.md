@@ -13,7 +13,7 @@ The basic syntax for progress bars is: `[= <percentage or fraction> "optional si
 This is the CSS used to render the progress bars in this document:
 
 ```css
-/* progress bar*/
+/* Progress Bars */
 .markdown-body .progress {
   display: block;
   width: 300px;
@@ -32,7 +32,7 @@ This is the CSS used to render the progress bars in this document:
   text-align: center;
   font-weight: bold;
   width: 100%; margin: 0;
-  line-height: 24px;
+  line-height: 24px !important;
   color: #333;
   text-shadow: 1px 1px 0 #fefefe, -1px -1px 0 #fefefe, -1px 1px 0 #fefefe, 1px -1px 0 #fefefe, 0 1px 0 #fefefe, 0 -1px 0 #fefefe, 1px 0 0 #fefefe, -1px 0 0 #fefefe, 1px 1px 2px #000;
   -webkit-font-smoothing: antialiased !important;
@@ -150,6 +150,24 @@ This is the CSS used to render the progress bars in this document:
   box-shadow:
     inset 0 4px 12px rgba(255, 255, 255, .7),
     inset 0 -12px 0 rgba(0, 0, 0, .05);
+}
+
+@media print {
+  .markdown-body .progress,
+  .markdown-body .progress-bar {
+    -moz-box-shadow: none;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+  }
+
+  .markdown-body .progress {
+    border: 1px solid #ddd;
+  }
+
+  .markdown-body .progress-bar {
+    height: 22px;
+    border-right: 1px solid #ddd;
+  }
 }
 ```
 

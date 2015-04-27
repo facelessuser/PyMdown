@@ -34,17 +34,22 @@ This is the CSS used for this page.
   border-radius: 3px;
   border-style: solid;
   border-width: 1px;
-  padding-top: 0.2em;
-  padding-bottom: 0.2em;
+  padding-top: 0.1em;
+  padding-bottom: 0.1em;
   text-decoration: none;
 }
 
 .markdown-body .critic:before,
 .markdown-body .critic:after {
   content: '\00a0';
-  padding-top: 0.2em;
-  padding-bottom: 0.2em;
+  padding-top: 0.1em;
+  padding-bottom: 0.1em;
   font-size: initial;
+}
+
+.markdown-body .block:before,
+.markdown-body .block:after {
+  content: '';
 }
 
 .markdown-body mark.critic {
@@ -95,18 +100,14 @@ This is the CSS used for this page.
 
 .markdown-body span.critic {
   background: #ddddff;
-  font-size: 0;
   border: 0;
-}
-
-.markdown-body span.critic:hover {
-  font-size: initial;
   border-top: 1px solid #0000bb;
   border-bottom: 1px solid #0000bb;
 }
 
 .markdown-body span.critic:before,
 .markdown-body span.critic:after {
+  font-size: inherit;
   background: #ddddff;
   border: 1px solid #0000bb;
 }
@@ -137,11 +138,6 @@ This is the CSS used for this page.
   display: block;
   padding: .02em;
 }
-
-.markdown-body .block:before,
-.markdown-body .block:after {
-  content: '';
-}
 ```
 
 # Limitations with Previewing Critic Markup
@@ -150,13 +146,13 @@ CriticMarkup, in general works very well.  Parsing the critic marks is very stra
 The critic extension does its best by employing a preprocessor to inject the critic tags before all other parsing and a post-processor to clean up some the weird side effects of the injection (only selected odd cases as others are more difficult to fix).  It injects some classes into the edit region's HTML output to allow for CSS styling to render them as well.  There is probably a lot more post-processing that could be done to fix more issues, but I am not yet sure how much further down that road I am willing to go.
 
 # Examples
-| Option    |  Description |
+| Markup    |  Example |
 |-----------|--------------|
 | `#!critic-markup \{--delete--}` | {--delete--}|
 | `#!critic-markup \{++delete++}` | {++insert++}|
 | `#!critic-markup \{~~delete and replace~>substitutions~~}`| {~~delete and replace~>substitutions~~} |
 | `#!critic-markup \{==highlight==}`| {==highlight==}|
-| `#!critic-markup \{>>comments<<}` | {>>comments<<} |
+| `#!critic-markup \{>>comment<<}` | {==text==}{>>comment<<} |
 
 Here they are in action:
 
