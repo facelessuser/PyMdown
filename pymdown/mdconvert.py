@@ -106,7 +106,7 @@ class MdConvert(object):
         self.relative_path = relative_path if relative_path is not None else ''
         self.output_path = output_path if output_path is not None else ''
         self.encoding = kwargs.get('encoding', 'utf-8')
-        self.check_extensions(kwargs.get('extensions', []))
+        self.check_extensions(kwargs.get('extensions', {}))
         self.tab_length = kwargs.get('tab_length', 4)
         self.smart_emphasis = kwargs.get('smart_emphasis', True)
         self.lazy_ol = kwargs.get('lazy_ol', True)
@@ -117,29 +117,22 @@ class MdConvert(object):
         """ Check the extensions and see if anything needs to be modified """
         self.extensions = []
         self.extension_configs = {}
-        for e in extensions:
-            name = e.get("name", None)
-            config = e.get("config", {})
-            # Account for no config
-            if config is None:
-                config = {}
-            if name is not None:
-                # Use our own slugify
-                if name in SLUGIFY_EXT:
-                    config['slugify'] = slugify
-                # Replace base path keyword
-                for k, v in config.items():
-                    if isinstance(v, string_type):
-                        config[k] = v.replace(
-                            '${BASE_PATH}', self.base_path
-                        ).replace(
-                            '${REL_PATH}', self.relative_path
-                        ).replace(
-                            '${OUTPUT}', self.output_path
-                        )
-                # Add extension
-                self.extensions.append(name)
-                self.extension_configs[name] = config
+        for k in extensions.keys():
+            if extensions[k] is None:
+                extensions[k] = {}
+            if k in SLUGIFY_EXT:
+                extensions[k]['slugify'] = slugify
+            for sub_k, sub_v in extensions[k].items():
+                if isinstance(sub_v, string_type):
+                    extensions[k][sub_k] = sub_v.replace(
+                        '${BASE_PATH}', self.base_path
+                    ).replace(
+                        '${REL_PATH}', self.relative_path
+                    ).replace(
+                        '${OUTPUT}', self.output_path
+                    )
+            self.extensions.append(k)
+            self.extension_configs[k] = extensions[k]
 
     def convert(self):
         """ Convert the file to HTML """

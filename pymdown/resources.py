@@ -18,7 +18,7 @@ from . import logger
 import codecs
 import traceback
 import re
-import yaml
+from . import util
 
 RESOURCE_PATH = path.abspath(path.join(path.dirname(__file__), ".."))
 WIN_DRIVE = re.compile(r"(^[A-Za-z]{1}:(?:\\|/))")
@@ -105,12 +105,12 @@ def update_user_files():
     ver = load_text_resource(USER_VERSION, internal=True)
     if ver is not None:
         try:
-            current_ver = yaml.load(ver).get('version', 0)
+            current_ver = util.yaml_load(ver).get('version', 0)
         except:
             current_ver = 0
     try:
         with codecs.open(user_ver_file, 'r', encoding='utf-8') as f:
-            user_ver = yaml.load(f.read()).get('version', 0)
+            user_ver = util.yaml_load(f.read()).get('version', 0)
     except:
         user_ver = 0
 

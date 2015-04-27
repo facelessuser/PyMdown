@@ -17,8 +17,9 @@ from copy import deepcopy
 import os.path as path
 from . import resources as res
 from . import logger
-import yaml
+from . import util
 from . import file_strip as fstrip
+from collections import OrderedDict
 try:
     from pygments.styles import get_style_by_name
     PYGMENTS_AVAILABLE = True
@@ -104,7 +105,7 @@ class Settings(object):
                 try:
                     settings = json.loads(fstrip.json.sanitize_json(contents))
                 except:
-                    settings = yaml.load(contents)
+                    settings = util.yaml_load(contents)
         except:
             logger.Log.error(traceback.format_exc())
 
@@ -384,49 +385,44 @@ class Settings(object):
         if not PYGMENTS_AVAILABLE:
             settings["settings"]["use_pygments_css"] = False
 
-        for e in extensions:
-            # Search for codehilite to see what style is being set.
-            if e.get('name', '') == "markdown.extensions.codehilite":
-                if 'config' not in e:
-                    e['config'] = {}
-                config = e['config']
+        # Search for codehilite to see what style is being set.
+        if "markdown.extensions.codehilite" in extensions:
+            config = extensions["markdown.extensions.codehilite"]
+            if config is None:
+                config = {}
 
-                if not PYGMENTS_AVAILABLE and bool(config.get('use_pygments', True)):
-                    config['use_pygments'] = False
+            if not PYGMENTS_AVAILABLE and bool(config.get('use_pygments', True)):
+                config['use_pygments'] = False
 
-                if bool(config.get('noclasses', False)) or not bool(config.get('use_pygments', True)):
-                    settings["settings"]["use_pygments_css"] = False
+            if bool(config.get('noclasses', False)) or not bool(config.get('use_pygments', True)):
+                settings["settings"]["use_pygments_css"] = False
 
-                css_class = config.get('css_class', None)
-                if css_class is not None:
-                    settings["settings"]["pygments_class"] = css_class
-                else:
-                    settings["settings"]["pygments_class"] = "codehilite"
+            css_class = config.get('css_class', None)
+            if css_class is not None:
+                settings["settings"]["pygments_class"] = css_class
+            else:
+                settings["settings"]["pygments_class"] = "codehilite"
 
-                style = config.get('pygments_style', None)
-                if style is None:
-                    # Explicitly define a pygment style and store the name
-                    # This is to ensure the "noclasses" option always works
+            style = config.get('pygments_style', None)
+            if style is None:
+                # Explicitly define a pygment style and store the name
+                # This is to ensure the "noclasses" option always works
+                style = "default"
+            else:
+                try:
+                    # Check if the desired style exists internally
+                    get_style_by_name(style)
+                except:
+                    logger.Log.error("Cannot find style: %s! Falling back to 'default' style." % style)
                     style = "default"
-                else:
-                    try:
-                        # Check if the desired style exists internally
-                        get_style_by_name(style)
-                    except:
-                        logger.Log.error("Cannot find style: %s! Falling back to 'default' style." % style)
-                        style = "default"
-                config['pygments_style'] = style
+            config['pygments_style'] = style
 
         settings["settings"]["style"] = style
 
     def post_process_settings(self, settings):
         """ Process the settings files making needed adjustements """
 
-        path_converter = False
-        critic_found = []
-        plain_html = []
-        empty = []
-        extensions = settings["settings"].get("extensions", [])
+        extensions = settings["settings"].get("extensions", OrderedDict())
 
         # See if we need to handle the appropriate critic from CLI
         # Critic will be appended to end of extension list if CLI requested it.
@@ -438,29 +434,12 @@ class Settings(object):
         elif self.critic & CRITIC_VIEW:
             critic_mode = "view"
 
-        # Track whether:
-        #    - module definition name is missing
-        #    - absolute paths is enabled,
-        #    - Where the critic extension is enabled
-        #    - Where the plainhtml plugin is enabled
-        # Only add to list for removal if we are overriding them.
-        for i in range(0, len(extensions)):
-            name = extensions[i].get('name', None)
-            if name is None:
-                empty.append(i)
-            elif name == "pymdownx.pathconverter":
-                path_converter = True
-            elif name == "pymdownx.critic" and critic_mode != 'ignore':
-                critic_found.append(i)
-            elif name == "pymdownx.plainhtml" and self.plain:
-                plain_html.append(i)
-
-        # Remove plainhtml and critic because CLI is overriding them
-        # Also remove empty modules
-        indexes = list(set(critic_found + plain_html + empty))
-        indexes.sort()
-        for index in reversed(indexes):
-            del extensions[index]
+        # Remove critic extension if manually defined
+        # and remove plainhtml if defined and --plain-html is specified on CLI
+        if "pymdownx.critic" in extensions:
+            del extensions["pymdownx.critic"]
+        if "pymdownx.plainhtml" in extensions and self.plain:
+            del extensions["pymdownx.plainhtml"]
 
         disable_path_conversion = settings["settings"].get("disable_path_conversion", False)
         path_conversion_absolute = settings["settings"].get("path_conversion_absolute", False)
@@ -468,40 +447,25 @@ class Settings(object):
         # Ensure previews are using absolute paths or relative paths
         if self.preview or not disable_path_conversion:
             # Add pathconverter extension if not already set.
-            if not path_converter:
-                extensions.append(
-                    {
-                        "name": "pymdownx.pathconverter",
-                        "config": {
-                            "base_path": "${BASE_PATH}",
-                            "relative_path": "${REL_PATH}" if not self.preview else "${OUTPUT}",
-                            "absolute": path_conversion_absolute
-                        }
-                    }
-                )
-            elif self.preview:
-                # Make sure file output location is the relative ouput location for previews
-                for i in range(0, len(extensions)):
-                    name = extensions[i].get('name', None)
-                    if name == 'pymdownx.pathconverter':
-                        if "config" not in extensions[i]:
-                            extensions[i]['config'] = {}
-                        extensions[i]['config']["relative_path"] = "${OUTPUT}"
-                        break
+            if "pymdownx.pathconverter" not in extensions:
+                extensions["pymdownx.pathconverter"] = {
+                    "base_path": "${BASE_PATH}",
+                    "relative_path": "${REL_PATH}" if not self.preview else "${OUTPUT}",
+                    "absolute": path_conversion_absolute
+                }
+            elif self.preview and "pymdownx.pathconverter" in extensions:
+                if extensions["pymdownx.pathconverter"] is None:
+                    extensions["pymdownx.pathconverter"] = {}
+                extensions["pymdownx.pathconverter"]["relative_path"] = "${OUTPUT}"
 
         # Add critic to the end since it is most reliable when applied to the end.
         if critic_mode != "ignore":
-            extensions.append(
-                {
-                    "name": "pymdownx.critic",
-                    "config": {"mode": critic_mode}
-                }
-            )
+            extensions["pymdownx.critic"] = {"mode": critic_mode}
 
         # Append plainhtml.
         # Most reliable when applied to the end. Okay to come after critic.
         if self.plain:
-            extensions.append({"name": "pymdownx.plainhtml"})
+            extensions['pymdownx.plainhtml'] = None
 
         # Set extensions to its own key
         settings["settings"]["extensions"] = extensions

@@ -16,24 +16,21 @@
     settings:
         template: example-template.html
         extensions:
-        - name: markdown.extensions.extra
-        - name: markdown.extensions.toc
-          config:
-            title: Table of Contents
-        - name: markdown.extensions.headerid
-        - name: markdown.extensions.smarty
-        - name: markdown.extensions.meta
-        - name: markdown.extensions.wikilinks
-        - name: markdown.extensions.admonition
-        - name: markdown.extensions.nl2br
-        - name: markdown.extensions.codehilite
-          config:
-            guess_lang: False
-            css_class: highlight
-        - name: pymdownx.pymdown
-        - name: pymdownx.b64
-          config:
-            base_path: ${BASE_PATH}
+            markdown.extensions.extra:
+            markdown.extensions.toc:
+                title: Table of Contents
+            markdown.extensions.headerid:
+            markdown.extensions.smarty:
+            markdown.extensions.meta:
+            markdown.extensions.wikilinks:
+            markdown.extensions.admonition:
+            markdown.extensions.nl2br:
+            markdown.extensions.codehilite:
+                guess_lang: False
+                css_class: highlight
+            pymdownx.pymdown:
+            pymdownx.b64:
+                base_path: ${BASE_PATH}
 ---
 test: This example of normal meta extension
 title: This title will be overridden by YAML
@@ -42,24 +39,21 @@ title: This title will be overridden by YAML
     This is mainly to visually inspect markdown output offered by PyMdown.  This isn't a real test.  Here are the enabled extensions:
 
     ```yaml
-        extensions:
-        - name: markdown.extensions.extra
-        - name: markdown.extensions.toc
-          config:
+    extensions:
+        markdown.extensions.extra:
+        markdown.extensions.toc:
             title: Table of Contents
-        - name: markdown.extensions.headerid
-        - name: markdown.extensions.smarty
-        - name: markdown.extensions.meta
-        - name: markdown.extensions.wikilinks
-        - name: markdown.extensions.admonition
-        - name: markdown.extensions.nl2br
-        - name: markdown.extensions.codehilite
-          config:
+        markdown.extensions.headerid:
+        markdown.extensions.smarty:
+        markdown.extensions.meta:
+        markdown.extensions.wikilinks:
+        markdown.extensions.admonition:
+        markdown.extensions.nl2br:
+        markdown.extensions.codehilite:
             guess_lang: False
             css_class: highlight
-        - name: pymdown.pymdown
-        - name: pymdown.b64
-          config:
+        pymdownx.pymdown:
+        pymdownx.b64:
             base_path: ${BASE_PATH}
     ```
 
