@@ -313,17 +313,22 @@
   <span class="k">border</span><span class="o">-</span><span class="n">radius</span><span class="o">:</span> <span class="m">3px</span><span class="p">;</span>
   <span class="k">border-style</span><span class="o">:</span> <span class="k">solid</span><span class="p">;</span>
   <span class="k">border-width</span><span class="o">:</span> <span class="m">1px</span><span class="p">;</span>
-  <span class="k">padding-top</span><span class="o">:</span> <span class="m">0.2em</span><span class="p">;</span>
-  <span class="k">padding-bottom</span><span class="o">:</span> <span class="m">0.2em</span><span class="p">;</span>
+  <span class="k">padding-top</span><span class="o">:</span> <span class="m">0.1em</span><span class="p">;</span>
+  <span class="k">padding-bottom</span><span class="o">:</span> <span class="m">0.1em</span><span class="p">;</span>
   <span class="k">text-decoration</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="nc">.markdown-body</span> <span class="nc">.critic</span><span class="nd">:before</span><span class="o">,</span>
 <span class="nc">.markdown-body</span> <span class="nc">.critic</span><span class="nd">:after</span> <span class="p">{</span>
   <span class="k">content</span><span class="o">:</span> <span class="s1">&#39;\00a0&#39;</span><span class="p">;</span>
-  <span class="k">padding-top</span><span class="o">:</span> <span class="m">0.2em</span><span class="p">;</span>
-  <span class="k">padding-bottom</span><span class="o">:</span> <span class="m">0.2em</span><span class="p">;</span>
+  <span class="k">padding-top</span><span class="o">:</span> <span class="m">0.1em</span><span class="p">;</span>
+  <span class="k">padding-bottom</span><span class="o">:</span> <span class="m">0.1em</span><span class="p">;</span>
   <span class="k">font-size</span><span class="o">:</span> <span class="n">initial</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="nc">.markdown-body</span> <span class="nc">.block</span><span class="nd">:before</span><span class="o">,</span>
+<span class="nc">.markdown-body</span> <span class="nc">.block</span><span class="nd">:after</span> <span class="p">{</span>
+  <span class="k">content</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="nc">.markdown-body</span> <span class="nt">mark</span><span class="nc">.critic</span> <span class="p">{</span>
@@ -374,18 +379,14 @@
 
 <span class="nc">.markdown-body</span> <span class="nt">span</span><span class="nc">.critic</span> <span class="p">{</span>
   <span class="k">background</span><span class="o">:</span> <span class="m">#ddddff</span><span class="p">;</span>
-  <span class="k">font-size</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
   <span class="k">border</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
-<span class="p">}</span>
-
-<span class="nc">.markdown-body</span> <span class="nt">span</span><span class="nc">.critic</span><span class="nd">:hover</span> <span class="p">{</span>
-  <span class="k">font-size</span><span class="o">:</span> <span class="n">initial</span><span class="p">;</span>
   <span class="k">border-top</span><span class="o">:</span> <span class="m">1px</span> <span class="k">solid</span> <span class="m">#0000bb</span><span class="p">;</span>
   <span class="k">border-bottom</span><span class="o">:</span> <span class="m">1px</span> <span class="k">solid</span> <span class="m">#0000bb</span><span class="p">;</span>
 <span class="p">}</span>
 
 <span class="nc">.markdown-body</span> <span class="nt">span</span><span class="nc">.critic</span><span class="nd">:before</span><span class="o">,</span>
 <span class="nc">.markdown-body</span> <span class="nt">span</span><span class="nc">.critic</span><span class="nd">:after</span> <span class="p">{</span>
+  <span class="k">font-size</span><span class="o">:</span> <span class="k">inherit</span><span class="p">;</span>
   <span class="k">background</span><span class="o">:</span> <span class="m">#ddddff</span><span class="p">;</span>
   <span class="k">border</span><span class="o">:</span> <span class="m">1px</span> <span class="k">solid</span> <span class="m">#0000bb</span><span class="p">;</span>
 <span class="p">}</span>
@@ -416,11 +417,6 @@
   <span class="k">display</span><span class="o">:</span> <span class="k">block</span><span class="p">;</span>
   <span class="k">padding</span><span class="o">:</span> <span class="m">.02em</span><span class="p">;</span>
 <span class="p">}</span>
-
-<span class="nc">.markdown-body</span> <span class="nc">.block</span><span class="nd">:before</span><span class="o">,</span>
-<span class="nc">.markdown-body</span> <span class="nc">.block</span><span class="nd">:after</span> <span class="p">{</span>
-  <span class="k">content</span><span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">;</span>
-<span class="p">}</span>
 </pre></div>
 
 
@@ -431,8 +427,8 @@
 <table>
 <thead>
 <tr>
-<th>Option</th>
-<th>Description</th>
+<th>Markup</th>
+<th>Example</th>
 </tr>
 </thead>
 <tbody>
@@ -453,8 +449,8 @@
 <td><mark class="critic">highlight</mark></td>
 </tr>
 <tr>
-<td><code class="codehilite"><span class="s">{&gt;&gt;comments&lt;&lt;}</span></code></td>
-<td><span class="critic comment">comments</span></td>
+<td><code class="codehilite"><span class="s">{&gt;&gt;comment&lt;&lt;}</span></code></td>
+<td><mark class="critic">text</mark><span class="critic comment">comment</span></td>
 </tr>
 </tbody>
 </table>
@@ -573,7 +569,7 @@ am </ins>adding.<del class="critic break">&nbsp;</del><ins class="critic">  </in
 
 <!--
 MkDocs version  : 0.12.2
-Docs Build Date : 2015-04-26 22:37:12.929493
+Docs Build Date : 2015-04-27 00:06:12.431610
 -->
 </body>
 </html>

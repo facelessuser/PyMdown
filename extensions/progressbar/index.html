@@ -257,7 +257,7 @@
 <p>The basic syntax for progress bars is: <code>[= &lt;percentage or fraction&gt; &quot;optional single or double quoted title&quot;]</code>.  The opening <code>[</code> can be followed by one or more <code>=</code> characters. After the <code>=</code> char(s) the percentage is specified as either a fraction or percentage and can optionally be followed by a title surrounded in either double quotes or single quotes.</p>
 <h1 id="css"><a name="user-content-css" href="#css" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>CSS</h1>
 <p>This is the CSS used to render the progress bars in this document:</p>
-<div class="codehilite"><pre><span class="c">/* progress bar*/</span>
+<div class="codehilite"><pre><span class="c">/* Progress Bars */</span>
 <span class="nc">.markdown-body</span> <span class="nc">.progress</span> <span class="p">{</span>
   <span class="k">display</span><span class="o">:</span> <span class="k">block</span><span class="p">;</span>
   <span class="k">width</span><span class="o">:</span> <span class="m">300px</span><span class="p">;</span>
@@ -276,7 +276,7 @@
   <span class="k">text-align</span><span class="o">:</span> <span class="k">center</span><span class="p">;</span>
   <span class="k">font-weight</span><span class="o">:</span> <span class="k">bold</span><span class="p">;</span>
   <span class="k">width</span><span class="o">:</span> <span class="m">100%</span><span class="p">;</span> <span class="k">margin</span><span class="o">:</span> <span class="m">0</span><span class="p">;</span>
-  <span class="k">line-height</span><span class="o">:</span> <span class="m">24px</span><span class="p">;</span>
+  <span class="k">line-height</span><span class="o">:</span> <span class="m">24px</span> <span class="cp">!important</span><span class="p">;</span>
   <span class="k">color</span><span class="o">:</span> <span class="m">#333</span><span class="p">;</span>
   <span class="k">text-shadow</span><span class="o">:</span> <span class="m">1px</span> <span class="m">1px</span> <span class="m">0</span> <span class="m">#fefefe</span><span class="o">,</span> <span class="m">-1px</span> <span class="m">-1px</span> <span class="m">0</span> <span class="m">#fefefe</span><span class="o">,</span> <span class="m">-1px</span> <span class="m">1px</span> <span class="m">0</span> <span class="m">#fefefe</span><span class="o">,</span> <span class="m">1px</span> <span class="m">-1px</span> <span class="m">0</span> <span class="m">#fefefe</span><span class="o">,</span> <span class="m">0</span> <span class="m">1px</span> <span class="m">0</span> <span class="m">#fefefe</span><span class="o">,</span> <span class="m">0</span> <span class="m">-1px</span> <span class="m">0</span> <span class="m">#fefefe</span><span class="o">,</span> <span class="m">1px</span> <span class="m">0</span> <span class="m">0</span> <span class="m">#fefefe</span><span class="o">,</span> <span class="m">-1px</span> <span class="m">0</span> <span class="m">0</span> <span class="m">#fefefe</span><span class="o">,</span> <span class="m">1px</span> <span class="m">1px</span> <span class="m">2px</span> <span class="m">#000</span><span class="p">;</span>
   <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="k">font</span><span class="o">-</span><span class="n">smoothing</span><span class="o">:</span> <span class="n">antialiased</span> <span class="cp">!important</span><span class="p">;</span>
@@ -394,6 +394,24 @@
   <span class="n">box</span><span class="o">-</span><span class="n">shadow</span><span class="o">:</span>
     <span class="k">inset</span> <span class="m">0</span> <span class="m">4px</span> <span class="m">12px</span> <span class="n">rgba</span><span class="p">(</span><span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="o">.</span><span class="m">7</span><span class="p">)</span><span class="o">,</span>
     <span class="k">inset</span> <span class="m">0</span> <span class="m">-12px</span> <span class="m">0</span> <span class="n">rgba</span><span class="p">(</span><span class="m">0</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="m">0</span><span class="o">,</span> <span class="o">.</span><span class="m">05</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="k">@media</span> <span class="nt">print</span> <span class="p">{</span>
+  <span class="nc">.markdown-body</span> <span class="nc">.progress</span><span class="o">,</span>
+  <span class="nc">.markdown-body</span> <span class="nc">.progress-bar</span> <span class="p">{</span>
+    <span class="o">-</span><span class="n">moz</span><span class="o">-</span><span class="n">box</span><span class="o">-</span><span class="n">shadow</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+    <span class="o">-</span><span class="n">webkit</span><span class="o">-</span><span class="n">box</span><span class="o">-</span><span class="n">shadow</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+    <span class="n">box</span><span class="o">-</span><span class="n">shadow</span><span class="o">:</span> <span class="k">none</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="nc">.markdown-body</span> <span class="nc">.progress</span> <span class="p">{</span>
+    <span class="k">border</span><span class="o">:</span> <span class="m">1px</span> <span class="k">solid</span> <span class="m">#ddd</span><span class="p">;</span>
+  <span class="p">}</span>
+
+  <span class="nc">.markdown-body</span> <span class="nc">.progress-bar</span> <span class="p">{</span>
+    <span class="k">height</span><span class="o">:</span> <span class="m">22px</span><span class="p">;</span>
+    <span class="k">border-right</span><span class="o">:</span> <span class="m">1px</span> <span class="k">solid</span> <span class="m">#ddd</span><span class="p">;</span>
+  <span class="p">}</span>
 <span class="p">}</span>
 </pre></div>
 
@@ -604,7 +622,7 @@
 
 <!--
 MkDocs version  : 0.12.2
-Docs Build Date : 2015-04-26 22:37:13.990491
+Docs Build Date : 2015-04-27 00:06:13.440748
 -->
 </body>
 </html>
