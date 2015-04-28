@@ -303,8 +303,8 @@
 <hr />
 <h1 id="using-pymdown"><a name="user-content-using-pymdown" href="#using-pymdown" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Using PyMdown</h1>
 <p>PyMdown was written to aid in batch processing Markdown files with Python Markdown and Pygments (but a JavaScript highlighter can just as easily be used).  It also adds a number of optional extensions.</p>
-<p>PyMdown can use an optional template with CSS and JavaScript for styling the Markdown outputs.  Templates, CSS, JavaScript, and extensions are all setup in a configuration file.  If for certain batches certain settings need to be tweaked, PyMdown can accept paths to specific settings file via the CLI.  The settings files can be in either JSON or YAML.  PyMdown also supports input sources with a JSON or YAML frontmatter were settings can be configured along with general meta data.</p>
-<p>Though PyMdown could be used to generate a site, it was mainly designed to generate static documents from Markdown for general use or previewing.  If you are looking to generate document sites, there are plenty of good tools to do such (<a href="http://www.mkdocs.org/">mkdocs</a> is one suggestion), but you may find additional the <a href="../pymdown-extensions/">PyMdown extensions</a> useful by themselves.</p>
+<p>PyMdown can also optionally use a template with CSS and JavaScript for styling the Markdown outputs.  Templates, CSS, JavaScript, and extensions are all setup in a configuration file.  If for certain batches specific settings need to be tweaked, PyMdown can accept paths to specific settings file via the CLI.  The settings files can be in either JSON or YAML.  PyMdown also supports input sources with a JSON or YAML frontmatter were settings can be configured along with general meta data.</p>
+<p>Though PyMdown could be used to generate a site, it was mainly designed to generate static documents from Markdown for general use or previewing.  If you are looking to generate document sites, there are plenty of good tools that already do this (<a href="http://www.mkdocs.org/">mkdocs</a> is one suggestion).  But even if you don&rsquo;t directly use PyMdown, you may still find the <a href="../pymdown-extensions/">PyMdown extensions</a> as useful additions in other Python Markdown related projects as they can be installed and used independently.</p>
 <h1 id="command-line-interface"><a name="user-content-command-line-interface" href="#command-line-interface" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Command Line Interface</h1>
 <h2 id="input-files"><a name="user-content-input-files" href="#input-files" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Input Files</h2>
 <p>In its most basic usage, PyMdown accepts a markdown file:</p>
@@ -323,7 +323,7 @@
 </pre></div>
 
 
-<p>Alternatively you can output like this as well:</p>
+<p>Alternatively you can redirect the output:</p>
 <div class="codehilite"><pre>pymdown -o file.md &gt; file.html
 </pre></div>
 
@@ -342,13 +342,13 @@
 
 
 <h2 id="basepath"><a name="user-content-basepath" href="#basepath" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Basepath</h2>
-<p>PyMdown in various circumstances (particularly in conjunction with specific PyMdown extensions) will try and resolve image, CSS, and JS asset paths for previews or for base64 encoding etc.  In order for this to work, a base path may be required and can be specified using the <code>--basepath</code> option.  If no base path is given, the base path will be that of the source file or <code>None</code> if the source is a file stream.</p>
+<p>PyMdown in various circumstances (particularly in conjunction with specific PyMdown extensions) will try and resolve image, CSS, and JS asset paths for previews, base64 encoding, and other scenarios.  In order for this to work, a base path may be required and can be specified using the <code>--basepath</code> option.  If no base path is given, the base path will be that of the source file or <code>None</code> if the source is a file stream.</p>
 <div class="codehilite"><pre>pymdown --basepath ../assets file.md
 </pre></div>
 
 
 <h2 id="relpath"><a name="user-content-relpath" href="#relpath" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Relpath</h2>
-<p>PyMdown is various circumstances (particularly in conjunction with specific PyMdown extensions) will try to create relative paths to assets or sources such as images, CSS, and JS.  In order for this to work, a relative path is needed.  the <code>--relpath</code> option is used to set this.  If <code>--relpath</code> is not set, it defaults to the output directory.  If the output directory is also not set (when output is dumped to stdout), the relative path will not be set.</p>
+<p>PyMdown in various circumstances (particularly in conjunction with specific PyMdown extensions) will try to create relative paths to assets or sources such as images, CSS, and JS.  In order for this to work, a relative path is needed.  The <code>--relpath</code> option is used to set this.  If <code>--relpath</code> is not set, it defaults to the output directory.  If the output directory is also not set (when output is dumped to stdout), the relative path will not be set.</p>
 <div class="codehilite"><pre>pymdown --relpath ../somedirectory file.md
 </pre></div>
 
@@ -394,7 +394,7 @@
 
 
 <h2 id="force-stdout"><a name="user-content-force-stdout" href="#force-stdout" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Force Stdout</h2>
-<p>Sometimes a file may have frontmatter that redirects its output to a file, but it may be desirable to send the output to stdout.  In this case, the <code>--force-stdout</code> option can be used to force the output to stdout.</p>
+<p>Sometimes a file may have frontmatter that redirects its output to a file, but it may be desirable to send the output to stdout.  In this case, the <code>--force-stdout</code> option can be used to force a redirect to stdout.</p>
 <div class="codehilite"><pre>pymdown --force-stdout file.md
 </pre></div>
 
@@ -436,7 +436,7 @@
 
 <p>Safe mode setting is omitted as it is pending deprecation in Python Markdown.</p>
 <h2 id="pygment-settings"><a name="user-content-pygment-settings" href="#pygment-settings" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Pygment Settings</h2>
-<p>The following setting is used when it is not desired to have PyMdown inject the Pygments CSS style into the template:</p>
+<p>The following setting s used when it is not desired to have PyMdown inject the Pygments CSS style into the template:</p>
 <div class="codehilite"><pre><span class="c1"># Include the pygments css when using codehilite extension</span>
 <span class="l-Scalar-Plain">use_pygments_css</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true,</span>
 </pre></div>
@@ -482,7 +482,7 @@
 </tr>
 <tr>
 <td>{{&nbsp;getPath(myfile/path/img.png)&nbsp;}}</td>
-<td>CSS and JS paths, if local, under go conversions internally to make the paths relative or absolute as needed.  If in your template you need to point to a reference a file and want the file path to be converted to an absolute path or a relative path, you can use this to convert it in the template; the file can be preceded by a <code>!</code> to prevent path conversion to an absolute or relative path; this is mainly useful if you are just looking to escape the path.</td>
+<td>Get file paths, if local, under go conversions internally to make the paths relative or absolute as needed.  If in your template you need to point to a reference a file and want the file path to be converted to an absolute path or a relative path, you can use this to convert it in the template; the file can be preceded by a <code>!</code> to prevent path conversion to an absolute or relative path; this is mainly useful if you are just looking to escape the path.</td>
 </tr>
 <tr>
 <td>{{&nbsp;getQuotedPath(myfile/path/img.png)&nbsp;}}</td>
@@ -724,7 +724,7 @@
 
 <!--
 MkDocs version      : 0.13.0.dev
-Docs Build Date UTC : 2015-04-28 03:39:06.611707
+Docs Build Date UTC : 2015-04-28 06:52:44.130962
 -->
 </body>
 </html>
