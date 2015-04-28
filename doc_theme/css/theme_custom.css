@@ -366,11 +366,6 @@
   font-size: initial;
 }
 
-.rst-content .block:before,
-.rst-content .block:after {
-  content: '';
-}
-
 .rst-content mark.critic {
   border-color: #ff8600;
   background: #ffddaa;
@@ -456,6 +451,11 @@
 .rst-content .block {
   display: block;
   padding: .02em;
+}
+
+.rst-content .block:before,
+.rst-content .block:after {
+  content: '';
 }
 
 /* Special Doc Stuff */
