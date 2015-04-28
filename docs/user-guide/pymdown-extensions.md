@@ -5,12 +5,12 @@ PyMdown extensions.
 ---
 
 # Available Extensions
-PyMdown can use any Python Markdown extensions, but the default Python Markdown extensions and [PyMdown extensions](https://github.com/facelessuser/pymdown-extensions) (which were specifically created for PyMdown) are required.  Keep in mind, the PyMdown extensions are designed to work around the default extensions.  And though the PyMdown extensions were created to be used with PyMdown, you can use the freely on their own.  If adding other non-standard extensions to parse your Markdown documents, things may work fine, or the new extensions may introduce unexpected changes which may cause undesirable outcomes; user beware. If using a compiled version of PyMdown, you will have to compile in the additional extensions you want.
+A number of extensions where made specifically for the PyMdown tool.  They are collectively found at the PyMdown extensions [repository](https://github.com/facelessuser/pymdown-extensions).  And though the PyMdown extensions were created to be used with PyMdown, you can use them freely as normal Python Markdown extensions outside of the PyMdown tool.  Keep in mind, the PyMdown extensions were designed to work with the default extensions.  Your mileage may vary when paired with other 3rd party extensions.  If using a compiled version of PyMdown, you will have to ensure they get compiled in.
 
 Check out the individual extension document pages for more info on the available PyMdown extensions.
 
-| Extension                                             | Name   |
-|-------------------------------------------------------|--------|
+| Extension                                                | Name   |
+|----------------------------------------------------------|--------|
 | [pymdown](../extensions/pymdown.md)                      | pymdownx.pymdown |
 | &nbsp;&nbsp;[betterem](../extensions/betterem.md)        | pymdownx.betterem |
 | &nbsp;&nbsp;[caret](../extensions/caret.md)              | pymdownx.caret |

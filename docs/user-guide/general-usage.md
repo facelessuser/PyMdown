@@ -7,9 +7,9 @@ Using PyMdown.
 # Using PyMdown
 PyMdown was written to aid in batch processing Markdown files with Python Markdown and Pygments (but a JavaScript highlighter can just as easily be used).  It also adds a number of optional extensions.
 
-PyMdown can use an optional template with CSS and JavaScript for styling the Markdown outputs.  Templates, CSS, JavaScript, and extensions are all setup in a configuration file.  If for certain batches certain settings need to be tweaked, PyMdown can accept paths to specific settings file via the CLI.  The settings files can be in either JSON or YAML.  PyMdown also supports input sources with a JSON or YAML frontmatter were settings can be configured along with general meta data.
+PyMdown can also optionally use a template with CSS and JavaScript for styling the Markdown outputs.  Templates, CSS, JavaScript, and extensions are all setup in a configuration file.  If for certain batches specific settings need to be tweaked, PyMdown can accept paths to specific settings file via the CLI.  The settings files can be in either JSON or YAML.  PyMdown also supports input sources with a JSON or YAML frontmatter were settings can be configured along with general meta data.
 
-Though PyMdown could be used to generate a site, it was mainly designed to generate static documents from Markdown for general use or previewing.  If you are looking to generate document sites, there are plenty of good tools to do such ([mkdocs](http://www.mkdocs.org/) is one suggestion), but you may find additional the [PyMdown extensions](pymdown-extensions.md) useful by themselves.
+Though PyMdown could be used to generate a site, it was mainly designed to generate static documents from Markdown for general use or previewing.  If you are looking to generate document sites, there are plenty of good tools that already do this ([mkdocs](http://www.mkdocs.org/) is one suggestion).  But even if you don't directly use PyMdown, you may still find the [PyMdown extensions](pymdown-extensions.md) as useful additions in other Python Markdown related projects as they can be installed and used independently.
 
 # Command Line Interface
 
@@ -33,7 +33,7 @@ PyMdown allows the output to be specified with the `--output` or `-o` option:
 pymdown -o file.html file.md
 ```
 
-Alternatively you can output like this as well:
+Alternatively you can redirect the output:
 
 ```
 pymdown -o file.md > file.html
@@ -56,14 +56,14 @@ pymdown -p file.md
 ```
 
 ## Basepath
-PyMdown in various circumstances (particularly in conjunction with specific PyMdown extensions) will try and resolve image, CSS, and JS asset paths for previews or for base64 encoding etc.  In order for this to work, a base path may be required and can be specified using the `--basepath` option.  If no base path is given, the base path will be that of the source file or `None` if the source is a file stream.
+PyMdown in various circumstances (particularly in conjunction with specific PyMdown extensions) will try and resolve image, CSS, and JS asset paths for previews, base64 encoding, and other scenarios.  In order for this to work, a base path may be required and can be specified using the `--basepath` option.  If no base path is given, the base path will be that of the source file or `None` if the source is a file stream.
 
 ```
 pymdown --basepath ../assets file.md
 ```
 
 ## Relpath
-PyMdown is various circumstances (particularly in conjunction with specific PyMdown extensions) will try to create relative paths to assets or sources such as images, CSS, and JS.  In order for this to work, a relative path is needed.  the `--relpath` option is used to set this.  If `--relpath` is not set, it defaults to the output directory.  If the output directory is also not set (when output is dumped to stdout), the relative path will not be set.
+PyMdown in various circumstances (particularly in conjunction with specific PyMdown extensions) will try to create relative paths to assets or sources such as images, CSS, and JS.  In order for this to work, a relative path is needed.  The `--relpath` option is used to set this.  If `--relpath` is not set, it defaults to the output directory.  If the output directory is also not set (when output is dumped to stdout), the relative path will not be set.
 
 ```
 pymdown --relpath ../somedirectory file.md
@@ -120,7 +120,7 @@ pymdown --force-no-template file.md
 ```
 
 ## Force Stdout
-Sometimes a file may have frontmatter that redirects its output to a file, but it may be desirable to send the output to stdout.  In this case, the `--force-stdout` option can be used to force the output to stdout.
+Sometimes a file may have frontmatter that redirects its output to a file, but it may be desirable to send the output to stdout.  In this case, the `--force-stdout` option can be used to force a redirect to stdout.
 
 ```
 pymdown --force-stdout file.md
@@ -168,7 +168,7 @@ output_format: 'xhtml1'
 Safe mode setting is omitted as it is pending deprecation in Python Markdown.
 
 ## Pygment Settings
-The following setting is used when it is not desired to have PyMdown inject the Pygments CSS style into the template:
+The following setting s used when it is not desired to have PyMdown inject the Pygments CSS style into the template:
 
 ```yaml
 # Include the pygments css when using codehilite extension
@@ -195,7 +195,7 @@ In the template file, you can add special markup to insert certain items:
 | \{\{&nbsp;js&nbsp;}} | Where user defined JavaScript is inserted. |
 | \{\{&nbsp;title&nbsp;}} | The page title will be inserted here. |
 | \{\{&nbsp;content&nbsp;}} | The parsed markdown content gets inserted here. |
-| \{\{&nbsp;getPath(myfile/path/img.png)&nbsp;}} | CSS and JS paths, if local, under go conversions internally to make the paths relative or absolute as needed.  If in your template you need to point to a reference a file and want the file path to be converted to an absolute path or a relative path, you can use this to convert it in the template; the file can be preceded by a `!` to prevent path conversion to an absolute or relative path; this is mainly useful if you are just looking to escape the path. |
+| \{\{&nbsp;getPath(myfile/path/img.png)&nbsp;}} | Get file paths, if local, under go conversions internally to make the paths relative or absolute as needed.  If in your template you need to point to a reference a file and want the file path to be converted to an absolute path or a relative path, you can use this to convert it in the template; the file can be preceded by a `!` to prevent path conversion to an absolute or relative path; this is mainly useful if you are just looking to escape the path. |
 | \{\{&nbsp;getQuotedPath(myfile/path/img.png)&nbsp;}} | This is the same as `getPath` above except the output is surrounded in double quotes. |
 
 Template files in the settings or frontmatter can be followed by `;encoding` to cause the file to be opened and read with the specified encoding.
