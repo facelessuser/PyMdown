@@ -1,6 +1,5 @@
 # BetterEm {: .doctitle}
 Better Emphasis.
-{: .doctitle-info}
 
 ---
 

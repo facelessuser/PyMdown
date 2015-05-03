@@ -1,6 +1,5 @@
 # PyMdown {: .doctitle}
 PyMdown extensions.
-{: .doctitle-info}
 
 ---
 

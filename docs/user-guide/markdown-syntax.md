@@ -1,6 +1,5 @@
 # Markdown Syntax {: .doctitle}
 Mark Gruber's Markdown syntax.
-{: .doctitle-info}
 
 ---
 

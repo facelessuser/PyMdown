@@ -1,6 +1,5 @@
 # SuperFences {: .doctitle}
 Better fenced blocks.
-{: .doctitle-info}
 
 ---
 
@@ -13,6 +12,8 @@ SuperFences provides 4 features:
 4. The ability to disable indented code blocks in favor of only using the fenced variant (off by default).
 
 All features can be turned on or off.
+
+SuperFences relies on the [CodeHilite](https://pythonhosted.org/Markdown/extensions/code_hilite.html) extension for syntax highlighting, so CodeHilite is expected to be installed and configured if syntax highlighting desired.  If CodeHilite is not configured or installed, SuperFences will just escape in such a way that a JavaScript highlighter could be used.
 
 ## Nested Fenced Blocks
 Fenced blocks requires all nested fence content to be at least at the indentation levels of the fences (blank lines excluded).  The opening and closing fence markers must be indented at the same level.  If you are using a fenced block inside a blockquote, at least the first line of the fenced block needs to have the appropriate number of `>` characters signifying the quote depth.
@@ -63,7 +64,86 @@ When using the UML diagram features, you must provide the necessary JavaScript f
 - [sequece-diagram.js](http://bramp.github.io/js-sequence-diagrams/)
 
 
-Simply including the libraries above is not enough as these libraries need to be pointed at the elements they need to convert.  If using the PyMdown application, and not just the extension, PyMdown provides a script `uml-loader.py` that can be used to target the HTML elements and execute the appropriate library on their content to create the desired diagrams.  `uml-loader.py` does not have to be used, and you can modify it or write your own to suite your needs; it is provided for convenience.
+Simply including the libraries above is not enough as these libraries need to be pointed at the elements they need to convert.  If using the PyMdown application, and not just the extension, PyMdown provides scripts `uml-converter.js`, `flow-loader.js`, and `sequence-loader.js` that can be used to target the HTML elements and execute the appropriate library on their content to create the desired diagrams.  The scripts do not have to be used, and you can modify them or write your own to suite your needs; it is provided for convenience.
+
+```js
+/* uml-converter.js */
+(function (win, doc) {
+  win.convertUML = function(className, converter, settings) {
+    var charts = doc.querySelectorAll("pre." + className),
+        arr = [],
+        i, j, maxItem, diagaram, text, curNode;
+
+    // Is there a settings object?
+    if (settings === void 0) {
+        settings = {};
+    }
+
+    // Make sure we are dealing with an array
+    for(i = 0, maxItem = charts.length; i < maxItem; i++) arr.push(charts[i])
+
+    // Find the UML source element and get the text
+    for (i = 0, maxItem = arr.length; i < maxItem; i++) {
+        childEl = arr[i].firstChild;
+        parentEl = childEl.parentNode;
+        text = "";
+        for (j = 0; j < childEl.childNodes.length; j++) {
+            curNode = childEl.childNodes[j];
+            whitespace = /^\s*$/;
+            if (curNode.nodeName === "#text" && !(whitespace.test(curNode.nodeValue))) {
+                text = curNode.nodeValue;
+                break;
+            }
+        }
+
+        // Do UML conversion and replace source
+        el = doc.createElement('div');
+        el.className = className;
+        parentEl.parentNode.insertBefore(el, parentEl);
+        parentEl.parentNode.removeChild(parentEl);
+        diagram = converter.parse(text);
+        diagram.drawSVG(el, settings);
+    }
+  }
+})(window, document)
+
+```
+
+```js
+/* flow-loader.js */
+(function (doc) {
+  function onReady(fn) {
+    if (doc.addEventListener) {
+      doc.addEventListener('DOMContentLoaded', fn);
+    } else {
+      doc.attachEvent('onreadystatechange', function() {
+        if (doc.readyState === 'interactive')
+          fn();
+      });
+    }
+  }
+
+  onReady(function(){convertUML('uml-flowchart', flowchart);});
+})(document)
+```
+
+```js
+/* sequence-loader.js */
+(function (doc) {
+  function onReady(fn) {
+    if (doc.addEventListener) {
+      doc.addEventListener('DOMContentLoaded', fn);
+    } else {
+      doc.attachEvent('onreadystatechange', function() {
+        if (doc.readyState === 'interactive')
+          fn();
+      });
+    }
+  }
+
+  onReady(function(){convertUML('uml-sequence-diagram', Diagram, {theme: 'simple'});});
+})(document)
+```
 
 UML flowcharts and sequence diagrams will be rendered as HTML `<pre><code>` tags before the JavaScript libraries are run on them.  They will be assigned CSS classes `uml-flowchart` and `uml-sequence-diagram` respectively for flowcharts and sequence diagrams.
 
@@ -77,6 +157,7 @@ SuperFences works best when following the guidelines.  If the guidelines are not
 For the reasons above, the nested fences feature really is just a workaround.  But for a lot of people (including myself), this functionality is more than sufficient.
 
 # Options
+General syntax highlighting settings are configured via CodeHilite which should be installed and configured.
 
 | Option    | Type | Default | Description |
 |-----------|------|---------|-------------|

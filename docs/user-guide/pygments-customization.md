@@ -1,6 +1,5 @@
 # Pygments Customization {: .doctitle}
 Adding Pygments themes.
-{: .doctitle-info}
 
 ---
 

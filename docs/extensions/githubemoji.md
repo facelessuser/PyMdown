@@ -1,11 +1,10 @@
 # GithubEmoji {: .doctitle}
 Github Emoji syntax.
-{: .doctitle-info}
 
 ---
 
 # Overview
-GithubEmoji adds support for GFM emojis.  Using GFM's emoji syntax, this extension will create image links to Github's emoji assets: `:octocat:` --> :octocat:.  It adds support for all of Github's supported emojis (at the time of writing this).
+GithubEmoji adds support for GFM emojis.  Using GFM&rsquo;s emoji syntax, this extension will create image links to Github's emoji assets: `:octocat:` --> :octocat:.  It adds support for all of Github's supported emojis (at the time of writing this).
 
 # Options
 | Option    | Type | Default |Description |

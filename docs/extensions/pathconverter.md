@@ -1,6 +1,5 @@
 # PathConverter {: .doctitle}
 Relative and absolute path conversion.
-{: .doctitle-info}
 
 ---
 

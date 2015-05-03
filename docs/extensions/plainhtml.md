@@ -1,6 +1,5 @@
 # PlainHtml {: .doctitle}
 Strip down to plain HTML.
-{: .doctitle-info}
 
 ---
 

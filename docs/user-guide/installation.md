@@ -1,6 +1,5 @@
 # Installation {: .doctitle}
 Installation of PyMdown.
-{: .doctitle-info}
 
 ---
 

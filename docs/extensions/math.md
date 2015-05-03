@@ -1,6 +1,5 @@
 # Math {: .doctitle}
 Syntax for MathJax support.
-{: .doctitle-info}
 
 ---
 

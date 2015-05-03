@@ -1,6 +1,5 @@
 # Caret {: .doctitle}
 Additional caret based syntax.
-{: .doctitle-info}
 
 ---
 

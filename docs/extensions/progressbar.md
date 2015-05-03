@@ -1,6 +1,5 @@
 # ProgressBar {: .doctitle}
 Syntax for progress bars.
-{: .doctitle-info}
 
 ---
 

@@ -1,6 +1,5 @@
 # General Usage {: .doctitle}
 Using PyMdown.
-{: .doctitle-info}
 
 ---
 

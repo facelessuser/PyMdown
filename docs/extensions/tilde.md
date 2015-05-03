@@ -1,6 +1,5 @@
 # Extensions {: .doctitle}
 Additional tilde based syntax.
-{: .doctitle-info}
 
 ---
 

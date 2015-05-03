@@ -1,11 +1,10 @@
 # Tasklist {: .doctitle}
 Github style tasklists.
-{: .doctitle-info}
 
 ---
 
 # Overview
-The Tasklist extension adds Github style checkbox lists.  They follow the same syntax as Github.
+The Tasklist extension adds GFM style checkbox lists.  They follow the same syntax as GFM.
 
 # CSS
 CSS used to render the tasklists in this document:
@@ -50,3 +49,5 @@ Task List
     * [X] item C
 - [ ] item 2
 - [ ] item 3
+
+*[GFM]: Github Flavored Markdown

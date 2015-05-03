@@ -1,6 +1,5 @@
 # Mark {: .doctitle}
 Mark syntax.
-{: .doctitle-info}
 
 ---
 

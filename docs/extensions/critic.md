@@ -1,6 +1,5 @@
 # Critic {: .doctitle}
 Process and visualize Critic Markup.
-{: .doctitle-info}
 
 ---
 

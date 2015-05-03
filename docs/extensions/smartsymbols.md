@@ -1,6 +1,5 @@
 # SmartSymbols {: .doctitle}
 Auto-convert special symbols.
-{: .doctitle-info}
 
 ---
 

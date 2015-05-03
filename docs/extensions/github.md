@@ -1,6 +1,5 @@
 # Github {: .doctitle}
 Simulation of Github Flavored Markdown.
-{: .doctitle-info}
 
 ---
 

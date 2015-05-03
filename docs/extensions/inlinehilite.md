@@ -1,11 +1,10 @@
 # InlineHilite {: .doctitle}
 Inline syntax highlighting.
-{: .doctitle-info}
 
 ---
 
 # Overview
-InlineHilite extends CodeHilite to add inline code highlighting.  Borrowing from CodeHilite's existing syntax, InlineHilite utilizes the following syntax to insert inline  highlighted code: `` `:::language mycode` `` or `` `#!language mycode` ``.  We will call these specifiers mock shebangs.
+InlineHilite extends [CodeHilite](https://pythonhosted.org/Markdown/extensions/code_hilite.html) to add inline code highlighting.  Borrowing from CodeHilite's existing syntax, InlineHilite utilizes the following syntax to insert inline  highlighted code: `` `:::language mycode` `` or `` `#!language mycode` ``.  We will call these specifiers mock shebangs.
 
 When using the colon mock shebang, 3 or more colons can be used.  Mock shebangs must come **immediately** after the opening backtick(s) and must be followed by at least one space.  If you need to escape a mock shebang at the start of a code block, just put a space before it and it will be treated as part of the code.
 
