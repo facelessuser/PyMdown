@@ -8,16 +8,18 @@ The PyMdown extension is a convenience extension to load up the following extens
 
 Extensions:
 
-- pymdown.magiclink
-- pymdown.betterem
-- pymdown.tilde
-- pymdown.caret
-- pymdown.mark
-- pymdown.smartsymbols
-- pymdown.githubemoji
-- pymdown.tasklist
-- pymdown.progressbar
-- pymdown.headeranchor
-- pymdown.superfences
-- pymdown.inlinehilite
-- pymdown.math
+| Extension | Options | Name   |
+|-----------|---------|--------|
+| [magiclink](./magiclink.md)      | | pymdownx.magiclink |
+| [betterem](./betterem.md)        | | pymdownx.betterem |
+| [tilde](./tilde.md)              | | pymdownx.tilde |
+| [caret](./caret.md)              | | pymdownx.caret |
+| [mark](./mark.md)                | | pymdownx.mark |
+| [smartsymbols](./smartsymbols.md)| | pymdownx.smartsymbols |
+| [githubemoji](./githubemoji.md)  | | pymdownx.githubemoji |
+| [tasklist](./tasklist.md)        | | pymdownx.tasklist |
+| [progressbar](./progressbar.md)  | | pymdownx.progressbar |
+| [headeranchor](./headeranchor.md)| | pymdownx.headeranchor |
+| [superfences](./superfences.md)  | | pymdownx.superfences |
+| [inlinehilite](./inlinehilite.md)| | pymdownx.inlinehilite |
+| [math](./math.md)                | | pymdownx.math |

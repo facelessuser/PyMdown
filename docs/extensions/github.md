@@ -13,14 +13,16 @@ The Github extension is a convenience extension to load up and configure the min
 
 Extensions that get loaded:
 
-- markdown.extensions.tables
-- markdown.extensions.nl2b
-- pymdown.magiclink
-- pymdown.betterem
-- pymdown.tilde(subscript=False)
-- pymdown.githubemoji
-- pymdown.tasklist
-- pymdown.headeranchor
-- pymdown.superfences
+| Extension | Options | Name   |
+|-----------|---------|--------|
+| [Tables](https://pythonhosted.org/Markdown/extensions/tables.html) | | markdown.extensions.tables |
+| [New&nbsp;Line&nbsp;to&nbsp;Break](https://pythonhosted.org/Markdown/extensions/nl2br.html) | | markdown.extensions.nl2b |
+| [magiclink](./magiclink.md)      | | pymdownx.magiclink |
+| [betterem](./betterem.md)        | | pymdownx.betterem |
+| [tilde](./tilde.md)              | `#!python {"subscript": False}` | pymdownx.tilde |
+| [githubemoji](./githubemoji.md)  | | pymdownx.githubemoji |
+| [tasklist](./tasklist.md) | | pymdownx.tasklist |
+| [headeranchor](./headeranchor.md)| | pymdownx.headeranchor |
+| [superfences](./superfences.md) | | pymdownx.superfences |
 
 *[GFM]:  Github Flavored Markdown

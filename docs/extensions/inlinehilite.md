@@ -8,6 +8,11 @@ InlineHilite extends [CodeHilite](https://pythonhosted.org/Markdown/extensions/c
 
 When using the colon mock shebang, 3 or more colons can be used.  Mock shebangs must come **immediately** after the opening backtick(s) and must be followed by at least one space.  If you need to escape a mock shebang at the start of a code block, just put a space before it and it will be treated as part of the code.
 
+!!! tip "Tip"
+    If using Pygments, the elements should be highlighted just fine, but you may need to adjust CSS to get the general style of the inline block the way you like it.
+
+    If you are using a JavaScript highlighter such as `highlight.js` you will most likely need to construct a JavaScript method to target the inline blocks.  You may also find it useful to tag inline blocks with a different class than the normal highlighted blocks so you can also target and style them with CSS differently.  InlineHilite allows you to have a different `css_class` than what is used by `CodeHilite`.
+
 # Options
 By default, InlineHilite will use CodeHilite's settings if it is being used, but InlineHilite can be run without CodeHilite, and if desired, it can be run along side it and ignore CodeHilite's settings.
 

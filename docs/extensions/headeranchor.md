@@ -18,6 +18,26 @@ By default, HeaderAnchor will use [Toc&rsquo;s](https://pythonhosted.org/Markdow
 # CSS
 This is the CSS used for rendering the header anchors in this document. While Font Awesome is used, you can substitute it with [Octicons](https://octicons.github.com/) for even more of a GFM feel, or use something else entirely.
 
+The HTML tags with classes are set like this:
+
+```html
+<h1 id="css">
+    <a name="user-content-css" href="#css" class="headeranchor-link" aria-hidden="true">
+        <span class="headeranchor"></span>
+    </a>
+    CSS
+</h1>
+```
+
+We have two classes to work with:
+
+| Classes | Description |
+|---------|-------------|
+| headeranchor-link | This is attached to the actual anchor tag that links to the header. |
+| headeranchor | This is the header anchor character you see.  In this case, it is the [link characer from Font Awesome](http://fortawesome.github.io/Font-Awesome/icon/link/). |
+
+The CSS below sets the header tags to be `relative`, and the `headeranchor-link` class to be `absolute`.  We then attach a `:before` pseudo element to the `headeranchor` class with the desired character and position.  We play a little bit with padding and margin so when you hover over the header or where the link is supposed to be, the link appears and is accessible without causing the header position to change.
+
 ```css
 /* Header Anchors */
 .markdown-body .headeranchor-link {

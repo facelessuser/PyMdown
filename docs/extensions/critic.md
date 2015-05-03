@@ -12,6 +12,94 @@ Critic is an extension that adds handling and support of [Critic Markup](http://
 |-----------|------|---------|------------|
 | mode | string | view | `view` just parses the markup and displays it in its HTML equivalent rendering.  `accept` strips out the critic markup and replacing them with the suggested changes.  `reject` rejects all the suggestions and strips the critic markup out replacing it with the original. |
 
+# Limitations with Previewing Critic Markup
+CriticMarkup, in general works very well.  Parsing the critic marks is very straight forward.  If you need to reject critic marks or accept them, the critic extension will work quite well.  But when trying to render the edits visually **and** trying to convert the document to HTML, things can get ugly.  I think this is really a design flaw with CriticMarkup.  The existence of the critic edits can alter the actual source.  Its a fantastic idea, but it should be understood that when using CriticMarkup beyond inline or block paragraphs, there is a possibility that invalid HTML will be created when viewing (especially in relation to lists or if breaking up Markdown syntax).  I think Fletcher said it best here: http://fletcher.github.io/MultiMarkdown-4/criticmarkup.
+
+The critic extension does its best by employing a preprocessor to inject the critic tags before all other parsing and a post-processor to clean up some the weird side effects of the injection (only selected odd cases as others are more difficult to fix).  It injects some classes into the edit region's HTML output to allow for CSS styling to render them as well.  There is probably a lot more post-processing that could be done to fix more issues, but I am not yet sure how much further down that road I am willing to go.
+
+# Examples
+| Markup    |  Example |
+|-----------|--------------|
+| `#!critic-markup \{--delete--}` | {--delete--}|
+| `#!critic-markup \{++delete++}` | {++insert++}|
+| `#!critic-markup \{~~delete and replace~>substitutions~~}`| {~~delete and replace~>substitutions~~} |
+| `#!critic-markup \{==highlight==}`| {==highlight==}|
+| `#!critic-markup \{>>comment<<}` | {==text==}{>>comment<<} |
+
+Here they are in action:
+
+```critic-markup
+Here is some \{--*incorrect*--} Markdown.  I am adding this\{++ here.++}.  Here is some more \{--text
+that I am removing--}text.  And here is even more \{++text that I
+am ++}adding.\{~~
+
+~>  ~~}Paragraph was deleted and replaced with some spaces.\{~~  ~>
+
+~~}Spaces were removed and a paragraph was added.
+
+And here is a comment on \{==some
+==text== ==}\{>>This works quite well. I just wanted to comment on it.<<}. Substitutions \{~~is~>are~~} great!
+
+Escape \\{>>This text is preserved<<}.
+
+General block handling.
+
+\{--
+
+* test
+* test
+* test
+    * test
+* test
+
+--}
+
+\{++
+
+* test
+* test
+* test
+    * test
+* test
+
+++}
+```
+
+Here is some {--*incorrect*--} Markdown.  I am adding this{++ here.++}.  Here is some more {--text
+that I am removing--}text.  And here is even more {++text that I
+am ++}adding.{~~
+
+~>  ~~}Paragraph was deleted and replaced with some spaces.{~~  ~>
+
+~~}Spaces were removed and a paragraph was added.
+
+And here is a comment on {==some
+==text== ==}{>>This works quite well. I just wanted to comment on it.<<}. Substitutions {~~is~>are~~} great!
+
+Escape \{>>This text is preserved<<}.
+
+General block handling.
+
+{--
+
+* test
+* test
+* test
+    * test
+* test
+
+--}
+
+{++
+
+* test
+* test
+* test
+    * test
+* test
+
+++}
+
 # CSS
 Critic renders the CriticMarkup with the following classes.
 
@@ -138,91 +226,3 @@ This is the CSS used for this page.
   padding: .02em;
 }
 ```
-
-# Limitations with Previewing Critic Markup
-CriticMarkup, in general works very well.  Parsing the critic marks is very straight forward.  If you need to reject critic marks or accept them, the critic extension will work quite well.  But when trying to render the edits visually **and** trying to convert the document to HTML, things can get ugly.  I think this is really a design flaw with CriticMarkup.  The existence of the critic edits can alter the actual source.  Its a fantastic idea, but it should be understood that when using CriticMarkup beyond inline or block paragraphs, there is a possibility that invalid HTML will be created when viewing (especially in relation to lists or if breaking up Markdown syntax).  I think Fletcher said it best here: http://fletcher.github.io/MultiMarkdown-4/criticmarkup.
-
-The critic extension does its best by employing a preprocessor to inject the critic tags before all other parsing and a post-processor to clean up some the weird side effects of the injection (only selected odd cases as others are more difficult to fix).  It injects some classes into the edit region's HTML output to allow for CSS styling to render them as well.  There is probably a lot more post-processing that could be done to fix more issues, but I am not yet sure how much further down that road I am willing to go.
-
-# Examples
-| Markup    |  Example |
-|-----------|--------------|
-| `#!critic-markup \{--delete--}` | {--delete--}|
-| `#!critic-markup \{++delete++}` | {++insert++}|
-| `#!critic-markup \{~~delete and replace~>substitutions~~}`| {~~delete and replace~>substitutions~~} |
-| `#!critic-markup \{==highlight==}`| {==highlight==}|
-| `#!critic-markup \{>>comment<<}` | {==text==}{>>comment<<} |
-
-Here they are in action:
-
-```critic-markup
-Here is some \{--*incorrect*--} Markdown.  I am adding this\{++ here.++}.  Here is some more \{--text
-that I am removing--}text.  And here is even more \{++text that I
-am ++}adding.\{~~
-
-~>  ~~}Paragraph was deleted and replaced with some spaces.\{~~  ~>
-
-~~}Spaces were removed and a paragraph was added.
-
-And here is a comment on \{==some
-==text== ==}\{>>This works quite well. I just wanted to comment on it.<<}. Substitutions \{~~is~>are~~} great!
-
-Escape \\{>>This text is preserved<<}.
-
-General block handling.
-
-\{--
-
-* test
-* test
-* test
-    * test
-* test
-
---}
-
-\{++
-
-* test
-* test
-* test
-    * test
-* test
-
-++}
-```
-
-Here is some {--*incorrect*--} Markdown.  I am adding this{++ here.++}.  Here is some more {--text
-that I am removing--}text.  And here is even more {++text that I
-am ++}adding.{~~
-
-~>  ~~}Paragraph was deleted and replaced with some spaces.{~~  ~>
-
-~~}Spaces were removed and a paragraph was added.
-
-And here is a comment on {==some
-==text== ==}{>>This works quite well. I just wanted to comment on it.<<}. Substitutions {~~is~>are~~} great!
-
-Escape \{>>This text is preserved<<}.
-
-General block handling.
-
-{--
-
-* test
-* test
-* test
-    * test
-* test
-
---}
-
-{++
-
-* test
-* test
-* test
-    * test
-* test
-
-++}
