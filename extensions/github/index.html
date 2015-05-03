@@ -258,17 +258,62 @@
 <p>You will also need to load the <code>markdown.extensions.codehilite</code> extension yourself as well with <code>guess_lang=False</code> and your preferred Pygments style (if available) or use some other JavaScript highlighter.  Though there is no Github style included with the extension, the PyModwn tool comes with the original Pygments Github style (github) and the Github 2014 style (github2014) which they Github used before they ditched Pygments for their own in-house highlighter.</p>
 </div>
 <p>Extensions that get loaded:</p>
-<ul>
-<li>markdown.extensions.tables</li>
-<li>markdown.extensions.nl2b</li>
-<li>pymdown.magiclink</li>
-<li>pymdown.betterem</li>
-<li>pymdown.tilde(subscript=False)</li>
-<li>pymdown.githubemoji</li>
-<li>pymdown.tasklist</li>
-<li>pymdown.headeranchor</li>
-<li>pymdown.superfences</li>
-</ul>
+<table>
+<thead>
+<tr>
+<th>Extension</th>
+<th>Options</th>
+<th>Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://pythonhosted.org/Markdown/extensions/tables.html">Tables</a></td>
+<td></td>
+<td>markdown.extensions.tables</td>
+</tr>
+<tr>
+<td><a href="https://pythonhosted.org/Markdown/extensions/nl2br.html">New&nbsp;Line&nbsp;to&nbsp;Break</a></td>
+<td></td>
+<td>markdown.extensions.nl2b</td>
+</tr>
+<tr>
+<td><a href="../magiclink/">magiclink</a></td>
+<td></td>
+<td>pymdownx.magiclink</td>
+</tr>
+<tr>
+<td><a href="../betterem/">betterem</a></td>
+<td></td>
+<td>pymdownx.betterem</td>
+</tr>
+<tr>
+<td><a href="../tilde/">tilde</a></td>
+<td><code class="codehilite"><span class="p">{</span><span class="s">&quot;subscript&quot;</span><span class="p">:</span> <span class="bp">False</span><span class="p">}</span></code></td>
+<td>pymdownx.tilde</td>
+</tr>
+<tr>
+<td><a href="../githubemoji/">githubemoji</a></td>
+<td></td>
+<td>pymdownx.githubemoji</td>
+</tr>
+<tr>
+<td><a href="../tasklist/">tasklist</a></td>
+<td></td>
+<td>pymdownx.tasklist</td>
+</tr>
+<tr>
+<td><a href="../headeranchor/">headeranchor</a></td>
+<td></td>
+<td>pymdownx.headeranchor</td>
+</tr>
+<tr>
+<td><a href="../superfences/">superfences</a></td>
+<td></td>
+<td>pymdownx.superfences</td>
+</tr>
+</tbody>
+</table>
               
             </div>
           </div>
@@ -320,7 +365,7 @@
 
 <!--
 MkDocs version      : 0.13.0.dev
-Docs Build Date UTC : 2015-05-03 02:54:02.323937
+Docs Build Date UTC : 2015-05-03 15:49:39.789948
 -->
 </body>
 </html>
