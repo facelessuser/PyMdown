@@ -131,6 +131,9 @@
                             <li class="toctree-l3"><a href="#overview">Overview</a></li>
                             
                         
+                            <li class="toctree-l3"><a href="#options">Options</a></li>
+                            
+                        
                             <li class="toctree-l3"><a href="#css">CSS</a></li>
                             
                         
@@ -251,12 +254,44 @@
             <div class="section">
               
                 <h1 class="doctitle" id="headeranchor"><a name="user-content-headeranchor" href="#headeranchor" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>HeaderAnchor</h1>
-<p class="doctitle-info">Github style header anchors.<br /></p>
+<p>Github style header anchors.</p>
 <hr />
 <h1 id="overview"><a name="user-content-overview" href="#overview" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Overview</h1>
-<p>HeaderAnchor adds anchors to headers in the style of <abbr title="Github Flavored Markdown">GFM</abbr>&lsquo;s header anchors. The header anchors in this document were all generated with this extension.</p>
+<p>HeaderAnchor adds anchors to headers in the style of <abbr title="Github Flavored Markdown">GFM</abbr>&rsquo;s header anchors. The header anchors in this document were all generated with this extension.</p>
+<h1 id="options"><a name="user-content-options" href="#options" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Options</h1>
+<p>By default, HeaderAnchor will use <a href="https://pythonhosted.org/Markdown/extensions/toc.html"><abbr title="Table of Contents">Toc</abbr>&rsquo;s</a> settings (if <abbr title="Table of Contents">Toc</abbr> is being used), but HeaderAnchor can be run without <abbr title="Table of Contents">Toc</abbr>.  HeaderAnchor can also be run along side <abbr title="Table of Contents">Toc</abbr> and ignore <abbr title="Table of Contents">Toc</abbr>&rsquo;s settings; though it is advised to keep <abbr title="Table of Contents">Toc</abbr> and HeaderAnchor&rsquo;s settings in sync to ensure header links properly link.</p>
+<table>
+<thead>
+<tr>
+<th>Option</th>
+<th>Type</th>
+<th>Default</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>separator</td>
+<td>string</td>
+<td>&rsquo;-&lsquo;</td>
+<td>If ignoring <abbr title="Table of Contents">Toc</abbr>&rsquo;s settings, this will specify the word separator used.</td>
+</tr>
+<tr>
+<td>slugify</td>
+<td>function</td>
+<td>Default method</td>
+<td>If ignoring <abbr title="Table of Contents">Toc</abbr>&rsquo;s settings, this will specify the function to generate anchors based on header text.  By Default, this will use <abbr title="Table of Contents">Toc</abbr>&rsquo;s default, fallback slugify method, but if for any reason <abbr title="Table of Contents">Toc</abbr> is not installed, HeaderAnchor will fall back to an equivalent method.</td>
+</tr>
+<tr>
+<td>use_toc_settings</td>
+<td>bool</td>
+<td>True</td>
+<td>This specifies whether HeaderAnchor should get its settings from <abbr title="Table of Contents">Toc</abbr>.  This affects <code>slugify</code> and <code>separator</code>.</td>
+</tr>
+</tbody>
+</table>
 <h1 id="css"><a name="user-content-css" href="#css" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>CSS</h1>
-<p>This is the CSS used for rendering the header anchors in this document. While Font Awesome is used, you can substitute it with <a href="https://octicons.github.com/">Octicons</a> for even more of a Github feel, or use something else entirely.</p>
+<p>This is the CSS used for rendering the header anchors in this document. While Font Awesome is used, you can substitute it with <a href="https://octicons.github.com/">Octicons</a> for even more of a <abbr title="Github Flavored Markdown">GFM</abbr> feel, or use something else entirely.</p>
 <div class="codehilite"><pre><span class="c">/* Header Anchors */</span>
 <span class="nc">.markdown-body</span> <span class="nc">.headeranchor-link</span> <span class="p">{</span>
   <span class="k">position</span><span class="o">:</span> <span class="k">absolute</span><span class="p">;</span>
@@ -383,7 +418,7 @@
 
 <!--
 MkDocs version      : 0.13.0.dev
-Docs Build Date UTC : 2015-04-28 06:52:45.305043
+Docs Build Date UTC : 2015-05-03 02:54:02.489458
 -->
 </body>
 </html>

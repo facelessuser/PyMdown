@@ -267,7 +267,7 @@
             <div class="section">
               
                 <h1 class="doctitle" id="superfences"><a name="user-content-superfences" href="#superfences" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>SuperFences</h1>
-<p class="doctitle-info">Better fenced blocks.<br /></p>
+<p>Better fenced blocks.</p>
 <hr />
 <h1 id="overview"><a name="user-content-overview" href="#overview" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Overview</h1>
 <p>SuperFences provides 4 features:</p>
@@ -278,6 +278,7 @@
 <li>The ability to disable indented code blocks in favor of only using the fenced variant (off by default).</li>
 </ol>
 <p>All features can be turned on or off.</p>
+<p>SuperFences relies on the <a href="https://pythonhosted.org/Markdown/extensions/code_hilite.html">CodeHilite</a> extension for syntax highlighting, so CodeHilite is expected to be installed and configured if syntax highlighting desired.  If CodeHilite is not configured or installed, SuperFences will just escape in such a way that a JavaScript highlighter could be used.</p>
 <h2 id="nested-fenced-blocks"><a name="user-content-nested-fenced-blocks" href="#nested-fenced-blocks" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Nested Fenced Blocks</h2>
 <p>Fenced blocks requires all nested fence content to be at least at the indentation levels of the fences (blank lines excluded).  The opening and closing fence markers must be indented at the same level.  If you are using a fenced block inside a blockquote, at least the first line of the fenced block needs to have the appropriate number of <code>&gt;</code> characters signifying the quote depth.</p>
 <div class="codehilite"><pre>&gt; ```
@@ -322,7 +323,85 @@ Definition
 <li><a href="http://underscorejs.org/">underscore.js</a></li>
 <li><a href="http://bramp.github.io/js-sequence-diagrams/">sequece-diagram.js</a></li>
 </ul>
-<p>Simply including the libraries above is not enough as these libraries need to be pointed at the elements they need to convert.  If using the PyMdown application, and not just the extension, PyMdown provides a script <code>uml-loader.py</code> that can be used to target the HTML elements and execute the appropriate library on their content to create the desired diagrams.  <code>uml-loader.py</code> does not have to be used, and you can modify it or write your own to suite your needs; it is provided for convenience.</p>
+<p>Simply including the libraries above is not enough as these libraries need to be pointed at the elements they need to convert.  If using the PyMdown application, and not just the extension, PyMdown provides scripts <code>uml-converter.js</code>, <code>flow-loader.js</code>, and <code>sequence-loader.js</code> that can be used to target the HTML elements and execute the appropriate library on their content to create the desired diagrams.  The scripts do not have to be used, and you can modify them or write your own to suite your needs; it is provided for convenience.</p>
+<div class="codehilite"><pre><span class="cm">/* uml-converter.js */</span>
+<span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">win</span><span class="p">,</span> <span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nx">win</span><span class="p">.</span><span class="nx">convertUML</span> <span class="o">=</span> <span class="kd">function</span><span class="p">(</span><span class="nx">className</span><span class="p">,</span> <span class="nx">converter</span><span class="p">,</span> <span class="nx">settings</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">charts</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">querySelectorAll</span><span class="p">(</span><span class="s2">&quot;pre.&quot;</span> <span class="o">+</span> <span class="nx">className</span><span class="p">),</span>
+        <span class="nx">arr</span> <span class="o">=</span> <span class="p">[],</span>
+        <span class="nx">i</span><span class="p">,</span> <span class="nx">j</span><span class="p">,</span> <span class="nx">maxItem</span><span class="p">,</span> <span class="nx">diagaram</span><span class="p">,</span> <span class="nx">text</span><span class="p">,</span> <span class="nx">curNode</span><span class="p">;</span>
+
+    <span class="c1">// Is there a settings object?</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">settings</span> <span class="o">===</span> <span class="k">void</span> <span class="mi">0</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">settings</span> <span class="o">=</span> <span class="p">{};</span>
+    <span class="p">}</span>
+
+    <span class="c1">// Make sure we are dealing with an array</span>
+    <span class="k">for</span><span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">maxItem</span> <span class="o">=</span> <span class="nx">charts</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">maxItem</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">push</span><span class="p">(</span><span class="nx">charts</span><span class="p">[</span><span class="nx">i</span><span class="p">])</span>
+
+    <span class="c1">// Find the UML source element and get the text</span>
+    <span class="k">for</span> <span class="p">(</span><span class="nx">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span> <span class="nx">maxItem</span> <span class="o">=</span> <span class="nx">arr</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;</span> <span class="nx">maxItem</span><span class="p">;</span> <span class="nx">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="nx">childEl</span> <span class="o">=</span> <span class="nx">arr</span><span class="p">[</span><span class="nx">i</span><span class="p">].</span><span class="nx">firstChild</span><span class="p">;</span>
+        <span class="nx">parentEl</span> <span class="o">=</span> <span class="nx">childEl</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">;</span>
+        <span class="nx">text</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nx">j</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="nx">j</span> <span class="o">&lt;</span> <span class="nx">childEl</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">.</span><span class="nx">length</span><span class="p">;</span> <span class="nx">j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nx">curNode</span> <span class="o">=</span> <span class="nx">childEl</span><span class="p">.</span><span class="nx">childNodes</span><span class="p">[</span><span class="nx">j</span><span class="p">];</span>
+            <span class="nx">whitespace</span> <span class="o">=</span> <span class="sr">/^\s*$/</span><span class="p">;</span>
+            <span class="k">if</span> <span class="p">(</span><span class="nx">curNode</span><span class="p">.</span><span class="nx">nodeName</span> <span class="o">===</span> <span class="s2">&quot;#text&quot;</span> <span class="o">&amp;&amp;</span> <span class="o">!</span><span class="p">(</span><span class="nx">whitespace</span><span class="p">.</span><span class="nx">test</span><span class="p">(</span><span class="nx">curNode</span><span class="p">.</span><span class="nx">nodeValue</span><span class="p">)))</span> <span class="p">{</span>
+                <span class="nx">text</span> <span class="o">=</span> <span class="nx">curNode</span><span class="p">.</span><span class="nx">nodeValue</span><span class="p">;</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="p">}</span>
+        <span class="p">}</span>
+
+        <span class="c1">// Do UML conversion and replace source</span>
+        <span class="nx">el</span> <span class="o">=</span> <span class="nx">doc</span><span class="p">.</span><span class="nx">createElement</span><span class="p">(</span><span class="s1">&#39;div&#39;</span><span class="p">);</span>
+        <span class="nx">el</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="nx">className</span><span class="p">;</span>
+        <span class="nx">parentEl</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">insertBefore</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">parentEl</span><span class="p">);</span>
+        <span class="nx">parentEl</span><span class="p">.</span><span class="nx">parentNode</span><span class="p">.</span><span class="nx">removeChild</span><span class="p">(</span><span class="nx">parentEl</span><span class="p">);</span>
+        <span class="nx">diagram</span> <span class="o">=</span> <span class="nx">converter</span><span class="p">.</span><span class="nx">parse</span><span class="p">(</span><span class="nx">text</span><span class="p">);</span>
+        <span class="nx">diagram</span><span class="p">.</span><span class="nx">drawSVG</span><span class="p">(</span><span class="nx">el</span><span class="p">,</span> <span class="nx">settings</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">})(</span><span class="nb">window</span><span class="p">,</span> <span class="nb">document</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="codehilite"><pre><span class="cm">/* flow-loader.js */</span>
+<span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">function</span> <span class="nx">onReady</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">doc</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;DOMContentLoaded&#39;</span><span class="p">,</span> <span class="nx">fn</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">doc</span><span class="p">.</span><span class="nx">attachEvent</span><span class="p">(</span><span class="s1">&#39;onreadystatechange&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">readyState</span> <span class="o">===</span> <span class="s1">&#39;interactive&#39;</span><span class="p">)</span>
+          <span class="nx">fn</span><span class="p">();</span>
+      <span class="p">});</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="nx">onReady</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span><span class="nx">convertUML</span><span class="p">(</span><span class="s1">&#39;uml-flowchart&#39;</span><span class="p">,</span> <span class="nx">flowchart</span><span class="p">);});</span>
+<span class="p">})(</span><span class="nb">document</span><span class="p">)</span>
+</pre></div>
+
+
+<div class="codehilite"><pre><span class="cm">/* sequence-loader.js */</span>
+<span class="p">(</span><span class="kd">function</span> <span class="p">(</span><span class="nx">doc</span><span class="p">)</span> <span class="p">{</span>
+  <span class="kd">function</span> <span class="nx">onReady</span><span class="p">(</span><span class="nx">fn</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nx">doc</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;DOMContentLoaded&#39;</span><span class="p">,</span> <span class="nx">fn</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">doc</span><span class="p">.</span><span class="nx">attachEvent</span><span class="p">(</span><span class="s1">&#39;onreadystatechange&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nx">doc</span><span class="p">.</span><span class="nx">readyState</span> <span class="o">===</span> <span class="s1">&#39;interactive&#39;</span><span class="p">)</span>
+          <span class="nx">fn</span><span class="p">();</span>
+      <span class="p">});</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+
+  <span class="nx">onReady</span><span class="p">(</span><span class="kd">function</span><span class="p">(){</span><span class="nx">convertUML</span><span class="p">(</span><span class="s1">&#39;uml-sequence-diagram&#39;</span><span class="p">,</span> <span class="nx">Diagram</span><span class="p">,</span> <span class="p">{</span><span class="nx">theme</span><span class="o">:</span> <span class="s1">&#39;simple&#39;</span><span class="p">});});</span>
+<span class="p">})(</span><span class="nb">document</span><span class="p">)</span>
+</pre></div>
+
+
 <p>UML flowcharts and sequence diagrams will be rendered as HTML <code>&lt;pre&gt;&lt;code&gt;</code> tags before the JavaScript libraries are run on them.  They will be assigned CSS classes <code>uml-flowchart</code> and <code>uml-sequence-diagram</code> respectively for flowcharts and sequence diagrams.</p>
 <h1 id="limitations"><a name="user-content-limitations" href="#limitations" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Limitations</h1>
 <p>This extension suffers from the same issues that the original fenced block extension suffers from.  Normally Python Markdown does not parse content inside HTML tags unless they are marked with the attribute <code>markdown='1'</code> etc.  But since this is run as a preprocessor, it is not aware of the HTML blocks.  So be aware of this.</p>
@@ -330,6 +409,7 @@ Definition
 <p>SuperFences works best when following the guidelines.  If the guidelines are not followed, odd results may be encountered.</p>
 <p>For the reasons above, the nested fences feature really is just a workaround.  But for a lot of people (including myself), this functionality is more than sufficient.</p>
 <h1 id="options"><a name="user-content-options" href="#options" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Options</h1>
+<p>General syntax highlighting settings are configured via CodeHilite which should be installed and configured.</p>
 <table>
 <thead>
 <tr>
@@ -544,7 +624,7 @@ D--&gt;&gt;A: Dashed open arrow
 
 <!--
 MkDocs version      : 0.13.0.dev
-Docs Build Date UTC : 2015-04-28 06:52:46.546094
+Docs Build Date UTC : 2015-05-03 02:54:03.456828
 -->
 </body>
 </html>
