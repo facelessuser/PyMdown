@@ -503,3 +503,13 @@
 .rst-content .doctitle+p {
   text-align: center;
 }
+
+li.toctree-l3:first-child {
+    display: none;
+}
+
+.rst-content .uml-sequence-diagram,
+.rst-content .uml-flowchart {
+  width: 100%;
+  overflow: auto;
+}
