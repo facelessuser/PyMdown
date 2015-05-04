@@ -592,7 +592,7 @@
 </pre></div>
 
 
-<p>If path conversion are not wanted, and disabling them inline with the <code>!</code> token is not acceptable, path conversion can be completely disabled with the following setting:</p>
+<p>If path conversion is not wanted, and disabling the conversion inline with the <code>!</code> token is not acceptable, path conversion can be completely disabled with the following setting:</p>
 <div class="codehilite"><pre><span class="c1"># By default resource paths are converted to relative file paths when possible;</span>
 <span class="c1"># this disables conversion.  Previews will still convert paths to render preview proper.</span>
 <span class="l-Scalar-Plain">disable_path_conversion</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
@@ -610,6 +610,7 @@
     <span class="l-Scalar-Plain">markdown.extensions.extra</span><span class="p-Indicator">:</span>
     <span class="l-Scalar-Plain">markdown.extensions.toc</span><span class="p-Indicator">:</span>
         <span class="l-Scalar-Plain">title</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Table of Contents</span>
+        <span class="l-Scalar-Plain">slugify</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">${SLUGIFY}</span>
     <span class="l-Scalar-Plain">markdown.extensions.codehilite</span><span class="p-Indicator">:</span>
         <span class="l-Scalar-Plain">guess_lang</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
     <span class="l-Scalar-Plain">markdown.extensions.smarty</span><span class="p-Indicator">:</span>
@@ -623,6 +624,33 @@
 </pre></div>
 
 
+<p>There are a couple of special variables you can use in extension settings:</p>
+<table>
+<thead>
+<tr>
+<th>Name</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>${BASE_PATH}</td>
+<td>Insert the base path from command line or frontmatter.</td>
+</tr>
+<tr>
+<td>${REL_PATH}</td>
+<td>Insert the relative path from command line or frontmatter.</td>
+</tr>
+<tr>
+<td>${OUTPUT}</td>
+<td>Insert the output path (or destination) from command line or frontmatter.</td>
+</tr>
+<tr>
+<td>${SLUGIFY}</td>
+<td>Use PyMdown&rsquo;s internal slugify method which provides a more unique header id for headers that have Unicode characters.  Python Markdown&rsquo;s internal slugify just strips them out, while PyMdown will give a percent encoding of the Unicode characters.</td>
+</tr>
+</tbody>
+</table>
 <h1 id="frontmatter"><a name="user-content-frontmatter" href="#frontmatter" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Frontmatter</h1>
 <p>Frontmatter can be used at the very beginning of a Markdown file.  Frontmatter blocks begin with <code>---</code> and end with <code>---</code>.  Frontmatter must be the very beginning of the file and start on the very first line.</p>
 <p>PyMdown front matter content can be either YAML or JSON (JSON is modified to allow JavaScript comments).  The frontmatter is a dictionary of key value pairs which are translated into meta data for all keys except for a few <strong>special</strong> keywords.  For meta data, the key will become the content of the <code>meta</code> tag&rsquo;s <code>name</code> attribute, and the value will become the data for the <code>content</code> attribute.  If an array is specified as the value, each member of the array will be converted to a string and all of them will be strung together and separated by commas.  In all other cases, the value will just be converted to a string.</p>
@@ -724,7 +752,7 @@
 
 <!--
 MkDocs version      : 0.13.0.dev
-Docs Build Date UTC : 2015-05-03 15:49:38.907052
+Docs Build Date UTC : 2015-05-04 03:35:20.495850
 -->
 </body>
 </html>
