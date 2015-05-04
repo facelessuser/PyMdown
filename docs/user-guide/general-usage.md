@@ -305,7 +305,7 @@ By default, PyMdown converts paths to be relative to the output location.  If de
 path_conversion_absolute: false
 ```
 
-If path conversion are not wanted, and disabling them inline with the `!` token is not acceptable, path conversion can be completely disabled with the following setting:
+If path conversion is not wanted, and disabling the conversion inline with the `!` token is not acceptable, path conversion can be completely disabled with the following setting:
 
 ```yaml
 # By default resource paths are converted to relative file paths when possible;
@@ -326,6 +326,7 @@ extensions:
     markdown.extensions.extra:
     markdown.extensions.toc:
         title: Table of Contents
+        slugify: ${SLUGIFY}
     markdown.extensions.codehilite:
         guess_lang: false
     markdown.extensions.smarty:
@@ -337,6 +338,15 @@ extensions:
         base_path: ${BASE_PATH}
     pymdown.critic:
 ```
+
+There are a couple of special variables you can use in extension settings:
+
+| Name | Description |
+|------|-------------|
+| $\{BASE_PATH} | Insert the base path from command line or frontmatter. |
+| $\{REL_PATH} | Insert the relative path from command line or frontmatter. |
+| $\{OUTPUT} | Insert the output path (or destination) from command line or frontmatter. |
+| $\{SLUGIFY} | Use PyMdown's internal slugify method which provides a more unique header id for headers that have Unicode characters.  Python Markdown's internal slugify just strips them out, while PyMdown will give a percent encoding of the Unicode characters. |
 
 # Frontmatter
 Frontmatter can be used at the very beginning of a Markdown file.  Frontmatter blocks begin with `---` and end with `---`.  Frontmatter must be the very beginning of the file and start on the very first line.

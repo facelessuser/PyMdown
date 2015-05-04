@@ -12,7 +12,6 @@ from __future__ import absolute_import
 import json
 import codecs
 import traceback
-import sys
 from copy import deepcopy
 import os.path as path
 from . import resources as res
@@ -20,20 +19,12 @@ from . import logger
 from . import util
 from . import file_strip as fstrip
 from collections import OrderedDict
+from .compat import unicode_string, string_type
 try:
     from pygments.styles import get_style_by_name
     PYGMENTS_AVAILABLE = True
 except:
     PYGMENTS_AVAILABLE = False
-
-PY3 = sys.version_info >= (3, 0)
-
-if PY3:
-    unicode_string = str
-    string_type = str
-else:
-    unicode_string = unicode  # noqa
-    string_type = basestring  # noqa
 
 CRITIC_IGNORE = 0
 CRITIC_ACCEPT = 1

@@ -19,6 +19,7 @@ import codecs
 import traceback
 import re
 from . import util
+from .compat import PLATFORM
 
 RESOURCE_PATH = path.abspath(path.join(path.dirname(__file__), ".."))
 WIN_DRIVE = re.compile(r"(^[A-Za-z]{1}:(?:\\|/))")
@@ -30,13 +31,6 @@ USER_VERSION = "pymdown/data/version.txt"
 NO_COPY = ('licenses.txt',)
 NO_UPDATE = (path.basename(DEFAULT_SETTINGS),)
 NOT_DEFAULT = (path.basename(DEFAULT_SETTINGS), 'version.txt')
-
-if sys.platform.startswith('win'):
-    _PLATFORM = "windows"
-elif sys.platform == "darwin":
-    _PLATFORM = "osx"
-else:
-    _PLATFORM = "linux"
 
 
 def _get_encoding(enc):
@@ -76,11 +70,11 @@ def get_user_path():
     Get user data path
     """
 
-    if _PLATFORM == "windows":
+    if PLATFORM == "windows":
         folder = path.expanduser("~\\.PyMdown")
-    elif _PLATFORM == "osx":
+    elif PLATFORM == "osx":
         folder = path.expanduser("~/.PyMdown")
-    elif _PLATFORM == "linux":
+    elif PLATFORM == "linux":
         folder = path.expanduser("~/.config/PyMdown")
 
     if not path.exists(folder):

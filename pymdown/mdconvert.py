@@ -10,26 +10,13 @@ from __future__ import print_function
 from __future__ import absolute_import
 from markdown import Markdown
 import codecs
-import sys
 import traceback
 import re
 from . import logger
+from .compat import string_type, quote
 
-PY3 = sys.version_info >= (3, 0)
 RE_TAGS = re.compile(r'''</?[^>]*>''', re.UNICODE)
 RE_WORD = re.compile(r'''[^\w\- ]''', re.UNICODE)
-SLUGIFY_EXT = (
-    'markdown.extensions.headerid',
-    'markdown.extensions.toc',
-    'pymdownx.headeranchor'
-)
-
-if PY3:
-    from urllib.parse import quote
-    string_type = str
-else:
-    from urllib import quote
-    string_type = basestring  # noqa
 
 
 def slugify(text, sep):
@@ -120,17 +107,18 @@ class MdConvert(object):
         for k in extensions.keys():
             if extensions[k] is None:
                 extensions[k] = {}
-            if k in SLUGIFY_EXT:
-                extensions[k]['slugify'] = slugify
             for sub_k, sub_v in extensions[k].items():
                 if isinstance(sub_v, string_type):
-                    extensions[k][sub_k] = sub_v.replace(
-                        '${BASE_PATH}', self.base_path
-                    ).replace(
-                        '${REL_PATH}', self.relative_path
-                    ).replace(
-                        '${OUTPUT}', self.output_path
-                    )
+                    if sub_v == '${SLUGIFY}':
+                        extensions[k] = slugify
+                    else:
+                        extensions[k][sub_k] = sub_v.replace(
+                            '${BASE_PATH}', self.base_path
+                        ).replace(
+                            '${REL_PATH}', self.relative_path
+                        ).replace(
+                            '${OUTPUT}', self.output_path
+                        )
             self.extensions.append(k)
             self.extension_configs[k] = extensions[k]
 

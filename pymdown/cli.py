@@ -20,10 +20,9 @@ from . import pymdown
 from . import resources as res
 from . import logger
 from . import settings
+from .compat import stdout_write, to_unicode
 
 __version__ = '.'.join(map(str, pymdown.version_info))
-
-PY3 = sys.version_info >= (3, 0)
 
 
 def get_files(file_patterns):
@@ -49,7 +48,7 @@ def get_file_stream(encoding):
     text = []
     try:
         for line in fileinput.input():
-            text.append(line if PY3 else line.decode(encoding))
+            text.append(to_unicode(line, encoding))
         stream = ''.join(text)
     except:
         logger.Log.error(traceback.format_exc())
@@ -90,10 +89,7 @@ def display_licenses():
     status = pymdown.PASS
     text = res.load_text_resource(path.join('pymdown', 'data', 'licenses.txt'), internal=True)
     if text is not None:
-        if PY3:
-            sys.stdout.buffer.write(text.encode('utf-8'))
-        else:
-            sys.stdout.write(text.encode('utf-8'))
+        stdout_write(text.encode('utf-8'))
     else:
         status = pymdown.FAIL
     return status
@@ -167,7 +163,7 @@ def main():
         plain=args.plain_html,
         force_stdout=args.force_stdout,
         force_no_template=args.force_no_template,
-        clean=(args.clean if pymdown.scrublib else False)
+        clean=args.clean
     )
     config.read_settings()
 

@@ -1,7 +1,12 @@
 import yaml
+import json
+import webbrowser
+import subprocess
 from collections import OrderedDict
+from .compat import PLATFORM, to_unicode
+from os import path
 
-__all__ = ["reduce_list", "yaml_load"]
+__all__ = ["reduce_list", "yaml_load", "open_in_browser"]
 
 
 def yaml_load(stream, Loader=yaml.Loader, object_pairs_hook=OrderedDict):
@@ -30,21 +35,42 @@ def reduce_list(data_set):
     return [item for item in data_set if item not in seen and not seen.add(item)]
 
 
-if __name__ == "__main__":
-    text = '''
-test:
-    key1: 1
-    key2: 2
-    key3: 3
-    key4: 4
-    key5: 5
-    key5: 6
-    key3: 7
-'''
+def open_in_browser(name):
+    """ Auto open HTML """
 
-    obj = yaml_load(text)
-
-    print('Dict is ordered')
-    print(obj)
-    print('List is reduced with order')
-    print(reduce_list([1, 2, 3, 4, 5, 5, 2, 4, 6, 7, 8]))
+    # Here is an attempt to load the HTML in the
+    # the default browser.  I guess if this doesn't work
+    # I could always just inlcude the desktop lib.
+    if PLATFORM == "osx":
+        web_handler = None
+        try:
+            launch_services = path.expanduser('~/Library/Preferences/com.apple.LaunchServices/com.apple.launchservices.secure.plist')
+            if not path.exists(launch_services):
+                launch_services = path.expanduser('~/Library/Preferences/com.apple.LaunchServices.plist')
+            with open(launch_services, "rb") as f:
+                content = f.read()
+            args = ["plutil", "-convert", "json", "-o", "-", "--", "-"]
+            p = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+            p.stdin.write(content)
+            out, err = p.communicate()
+            plist = json.loads(to_unicode(out))
+            for handler in plist['LSHandlers']:
+                print('found')
+                if handler.get('LSHandlerURLScheme', '') == "http":
+                    web_handler = handler.get('LSHandlerRoleAll', None)
+                    break
+        except:
+            pass
+        if web_handler is not None:
+            subprocess.Popen(['open', '-b', web_handler, name])
+        else:
+            subprocess.Popen(['open', name])
+    elif PLATFORM == "windows":
+        webbrowser.open(name, new=2)
+    else:
+        try:
+            # Maybe...?
+            subprocess.Popen(['xdg-open', name])
+        except OSError:
+            webbrowser.open(name, new=2)
+            # Well we gave it our best...

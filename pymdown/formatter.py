@@ -11,7 +11,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
 import cgi
-import sys
 import codecs
 import traceback
 import re
@@ -20,20 +19,12 @@ import base64
 from os import path
 from . import resources as res
 from . import logger
+from .compat import pathname2url, unicode_string, stdout_write
 try:
     from pygments.formatters import get_formatter_by_name
-    pygments = True
+    PYGMENTS_AVAILABLE = True
 except:
-    pygments = False
-
-PY3 = sys.version_info >= (3, 0)
-
-if PY3:
-    from urllib.request import pathname2url
-    unicode_string = str
-else:
-    from urllib import pathname2url
-    unicode_string = unicode  # noqa
+    PYGMENTS_AVAILABLE = False
 
 RE_URL_START = re.compile(r"^(http|ftp)s?://|tel:|mailto:|data:|news:|#")
 RE_TEMPLATE_FILE = re.compile(r"(\{*?)\{{2}\s*(getQuotedPath|getPath|embedImage|embedFile)\s*\((.*?)\)\s*\}{2}(\}*)")
@@ -83,10 +74,7 @@ class Terminal(object):
 
     def write(self, text):
         """ Dump texst to screen """
-        if PY3:
-            sys.stdout.buffer.write(text)
-        else:
-            sys.stdout.write(text)
+        stdout_write(text)
 
     def close(self):
         """ There is nothing to close """
@@ -314,7 +302,11 @@ class Html(object):
             self.file.name = self.relative_output
         try:
             if not self.preview and output is not None:
-                self.file = codecs.open(output, "w", encoding=self.encoding, errors="xmlcharrefreplace")
+                self.file = codecs.open(
+                    output, "w",
+                    encoding=self.encoding,
+                    errors="xmlcharrefreplace"
+                )
                 self.encode_file = False
             elif self.preview:
                 self.file = tempfile.NamedTemporaryFile(delete=False, suffix=".html")
@@ -353,9 +345,13 @@ class Html(object):
     def load_highlight(self, highlight_style):
         """ Load Syntax highlighter CSS """
         style = None
-        if pygments and highlight_style is not None and bool(self.settings.get("use_pygments_css", True)):
+        use_pygments_css = bool(self.settings.get("use_pygments_css", True))
+        if PYGMENTS_AVAILABLE and highlight_style is not None and use_pygments_css:
             # Ensure pygments is enabled in the highlighter
-            style = get_pygment_style(highlight_style, self.settings.get("pygments_class", "codehilite"))
+            style = get_pygment_style(
+                highlight_style,
+                self.settings.get("pygments_class", "codehilite")
+            )
 
         css = []
         if style is not None:
@@ -445,7 +441,8 @@ class Html(object):
                         elif absolute_conversion:
                             res_path = abs_path
 
-                    # We check the absolute path against the current list and add the respath if not present
+                    # We check the absolute path against the current list
+                    # and add the respath if not present
                     if abs_path not in self.added_res:
                         if not direct_include:
                             res_path = pathname2url(res_path.replace('\\', '/'))
@@ -458,7 +455,13 @@ class Html(object):
 
                 # Not a known path and not a url, just add as is
                 elif resource not in self.added_res:
-                    resources.append(res_get(pathname2url(resource.replace('\\', '/')), link=True, encoding=encoding))
+                    resources.append(
+                        res_get(
+                            pathname2url(resource.replace('\\', '/')),
+                            link=True,
+                            encoding=encoding
+                        )
+                    )
                     self.added_res.add(resource)
 
     def load_css(self, style):
@@ -467,7 +470,10 @@ class Html(object):
         for alias in self.aliases:
             key = '@' + alias
             if key in self.settings:
-                self.load_resources(self.settings.get(key).get("css"), get_style, self.css)
+                self.load_resources(
+                    self.settings.get(key).get("css"),
+                    get_style, self.css
+                )
         self.css += self.load_highlight(style)
 
     def load_js(self):
@@ -476,7 +482,10 @@ class Html(object):
         for alias in self.aliases:
             key = '@' + alias
             if key in self.settings:
-                self.load_resources(self.settings.get(key).get("js"), get_js, self.scripts)
+                self.load_resources(
+                    self.settings.get(key).get("js"),
+                    get_js, self.scripts
+                )
 
     def load_header(self, style):
         """ Load up header related info """

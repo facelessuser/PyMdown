@@ -7,10 +7,6 @@ from . import resources as res
 res.load_egg_resources()
 
 import codecs
-import json
-import subprocess
-import webbrowser
-import sys
 import os.path as path
 from . import critic_dump
 from . import logger
@@ -18,64 +14,18 @@ from . import formatter
 from . import mdconvert
 from . import settings
 from . frontmatter import get_frontmatter_string
+from .util import open_in_browser
 import traceback
 try:
     from lib import scrub
-    scrublib = True
+    SCRUB_AVAILABLE = True
 except:
-    scrublib = False
+    SCRUB_AVAILABLE = False
 
 version_info = (0, 8, 0)
 
-if sys.platform.startswith('win'):
-    _PLATFORM = "windows"
-elif sys.platform == "darwin":
-    _PLATFORM = "osx"
-else:
-    _PLATFORM = "linux"
-
-PY3 = sys.version_info >= (3, 0)
-
 PASS = 0
 FAIL = 1
-
-
-def auto_open(name):
-    """ Auto open HTML """
-
-    # Here is an attempt to load the HTML in the
-    # the default browser.  I guess if this doesn't work
-    # I could always just inlcude the desktop lib.
-    if _PLATFORM == "osx":
-        web_handler = None
-        try:
-            launch_services = path.expanduser('~/Library/Preferences/com.apple.LaunchServices.plist')
-            with open(launch_services, "rb") as f:
-                content = f.read()
-            args = ["plutil", "-convert", "json", "-o", "-", "--", "-"]
-            p = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-            p.stdin.write(content)
-            out, err = p.communicate()
-            plist = json.loads(out.decode('utf-8') if PY3 else out)
-            for handler in plist['LSHandlers']:
-                if handler.get('LSHandlerURLScheme', '') == "http":
-                    web_handler = handler.get('LSHandlerRoleAll', None)
-                    break
-        except:
-            pass
-        if web_handler is not None:
-            subprocess.Popen(['open', '-b', web_handler, name])
-        else:
-            subprocess.Popen(['open', name])
-    elif _PLATFORM == "windows":
-        webbrowser.open(name, new=2)
-    else:
-        try:
-            # Maybe...?
-            subprocess.Popen(['xdg-open', name])
-        except OSError:
-            webbrowser.open(name, new=2)
-            # Well we gave it our best...
 
 
 def get_references(references, basepath, encoding):
@@ -293,7 +243,8 @@ class Convert(object):
                 )
 
                 # Experimental content scrubbing
-                content = scrub.scrub(converter.markdown) if self.config.clean else converter.markdown
+                can_scrub = self.config.clean and SCRUB_AVAILABLE
+                content = scrub.scrub(converter.markdown) if can_scrub else converter.markdown
 
                 # Write the markdown to the HTML
                 html.write_header()
@@ -308,7 +259,7 @@ class Convert(object):
 
         # Preview the markdown
         if status == PASS and html.file.name is not None and self.config.preview:
-            auto_open(html.file.name)
+            open_in_browser(html.file.name)
         return status
 
     def convert(self, files):
