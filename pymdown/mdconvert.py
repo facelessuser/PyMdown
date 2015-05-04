@@ -110,7 +110,7 @@ class MdConvert(object):
             for sub_k, sub_v in extensions[k].items():
                 if isinstance(sub_v, string_type):
                     if sub_v == '${SLUGIFY}':
-                        extensions[k] = slugify
+                        extensions[k][sub_k] = slugify
                     else:
                         extensions[k][sub_k] = sub_v.replace(
                             '${BASE_PATH}', self.base_path

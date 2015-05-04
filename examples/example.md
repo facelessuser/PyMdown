@@ -19,6 +19,7 @@
             markdown.extensions.extra:
             markdown.extensions.toc:
                 title: Table of Contents
+                slugify: ${SLUGIFY}
             markdown.extensions.headerid:
             markdown.extensions.smarty:
             markdown.extensions.meta:
