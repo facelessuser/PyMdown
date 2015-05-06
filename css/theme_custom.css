@@ -39,6 +39,21 @@
   font-style: italic;
 }
 
+/* Insert */
+.rst-content ins {
+  color: inherit;
+  background: inherit;
+  text-decoration: underline;
+}
+
+/* Mark */
+.rst-content mark {
+  font-style: inherit;
+  font-weight: inherit;
+  color: inherit;
+  background: #ff9;
+}
+
 /* Abbreviations */
 .rst-content abbr {
   cursor: help;
