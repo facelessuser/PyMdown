@@ -17,7 +17,7 @@ import re
 import tempfile
 import base64
 from os import path
-from . import resources as res
+from . import util
 from . import logger
 from .compat import pathname2url, unicode_string, stdout_write
 try:
@@ -132,7 +132,7 @@ class Html(object):
         self.aliases = aliases
         self.template_file = self.settings.get("template", None)
         self.title = "Untitled"
-        self.user_path = res.get_user_path()
+        self.user_path = util.get_user_path()
         self.added_res = set()
 
     def set_meta(self, meta):
@@ -186,10 +186,10 @@ class Html(object):
         quoted = m.group(2) == "getQuotedPath"
         file_name = m.group(3).strip()
         absolute_conversion = self.settings.get("path_conversion_absolute", True)
-        user_path = res.get_user_path()
-        file_name, encoding = res.splitenc(file_name)
+        user_path = util.get_user_path()
+        file_name, encoding = util.splitenc(file_name)
 
-        is_abs = res.is_absolute(file_name)
+        is_abs = util.is_absolute(file_name)
 
         # Find path relative to basepath or global user path
         # If basepath is defined set paths relative to the basepath if possible
@@ -245,7 +245,7 @@ class Html(object):
                     file_name = ''
             elif m.group(2) == "embedFile":
                 # Return the content of the file instead of the file name
-                file_name = res.load_text_resource(abs_path, encoding=encoding)
+                file_name = util.load_text_resource(abs_path, encoding=encoding)
                 if file_name is None:
                     file_name = ''
             else:
@@ -258,9 +258,9 @@ class Html(object):
     def write_html_start(self):
         """ Output the HTML head and body up to the {{ content }} specifier """
         if (self.template_file is not None):
-            template_path, encoding = res.splitenc(self.template_file)
+            template_path, encoding = util.splitenc(self.template_file)
 
-            if not res.is_absolute(template_path) and self.basepath:
+            if not util.is_absolute(template_path) and self.basepath:
                 template_base = path.join(self.basepath, template_path)
             else:
                 template_base = ''
@@ -390,8 +390,8 @@ class Html(object):
                 # Find path relative to basepath or global user path
                 # If basepath is defined set paths relative to the basepath if possible
                 # or just keep the absolute
-                resource, encoding = res.splitenc(resource)
-                is_abs = res.is_absolute(resource)
+                resource, encoding = util.splitenc(resource)
+                is_abs = util.is_absolute(resource)
                 if not is_abs and not is_url:
                     # Is relative path
                     base_temp = path.normpath(path.join(self.basepath, resource)) if self.basepath is not None else None
@@ -448,7 +448,7 @@ class Html(object):
                             res_path = pathname2url(res_path.replace('\\', '/'))
                             link = True
                         else:
-                            res_path = res.load_text_resource(abs_path, encoding=encoding)
+                            res_path = util.load_text_resource(abs_path, encoding=encoding)
                             link = False
                         resources.append(res_get(res_path, link=link, encoding=encoding))
                         self.added_res.add(abs_path)

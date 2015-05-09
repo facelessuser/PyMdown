@@ -17,9 +17,8 @@ import sys
 import traceback
 import os.path as path
 from . import pymdown
-from . import resources as res
+from . import util
 from . import logger
-from . import settings
 from .compat import stdout_write, to_unicode
 
 __version__ = '.'.join(map(str, pymdown.version_info))
@@ -59,15 +58,15 @@ def get_file_stream(encoding):
 
 def get_critic_mode(args):
     """ Setp the critic mode """
-    critic_mode = settings.CRITIC_IGNORE
+    critic_mode = util.CRITIC_IGNORE
     if args.accept and args.reject:
-        critic_mode |= settings.CRITIC_VIEW
+        critic_mode |= util.CRITIC_VIEW
     elif args.accept:
-        critic_mode |= settings.CRITIC_ACCEPT
+        critic_mode |= util.CRITIC_ACCEPT
     elif args.reject:
-        critic_mode |= settings.CRITIC_REJECT
+        critic_mode |= util.CRITIC_REJECT
     if args.critic_dump:
-        critic_mode |= settings.CRITIC_DUMP
+        critic_mode |= util.CRITIC_DUMP
     return critic_mode
 
 
@@ -87,7 +86,7 @@ def get_sources(args):
 def display_licenses():
     """ Display licenses """
     status = pymdown.PASS
-    text = res.load_text_resource(path.join('pymdown', 'data', 'licenses.txt'), internal=True)
+    text = util.load_text_resource(path.join('pymdown', 'data', 'licenses.txt'), internal=True)
     if text is not None:
         stdout_write(text.encode('utf-8'))
     else:
@@ -120,7 +119,7 @@ def main():
     parser.add_argument('--output-encoding', '-E', default=None, help="Output encoding.")
     parser.add_argument('--clean', '-c', action='store_true', default=False, help=argparse.SUPPRESS)
     # Input configuration
-    parser.add_argument('--settings', '-s', default=path.join(res.get_user_path(), "pymdown.cfg"), help="Load the settings file from an alternate location.")
+    parser.add_argument('--settings', '-s', default=path.join(util.get_user_path(), "pymdown.cfg"), help="Load the settings file from an alternate location.")
     parser.add_argument('--encoding', '-e', default="utf-8", help="Encoding for input.")
     parser.add_argument('--basepath', default=None, help="The basepath location pymdown should use.")
     parser.add_argument('--relpath', default=None, help="The path that things will be relative to (default is output).")

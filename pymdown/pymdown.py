@@ -3,8 +3,8 @@ from __future__ import absolute_import
 from __future__ import print_function
 
 # Egg resoures must be loaded before Pygments gets loaded
-from . import resources as res
-res.load_egg_resources()
+from . import util
+util.load_egg_resources()
 
 import codecs
 import os.path as path
@@ -14,7 +14,6 @@ from . import formatter
 from . import mdconvert
 from . import settings
 from . frontmatter import get_frontmatter_string
-from .util import open_in_browser
 import traceback
 try:
     from lib import scrub
@@ -28,69 +27,10 @@ PASS = 0
 FAIL = 1
 
 
-def get_references(references, basepath, encoding):
-    """ Get footnote and general references from outside source """
-
-    text = ''
-    for file_name in references:
-        file_name, encoding = res.splitenc(file_name, default=encoding)
-        user_path = path.join(res.get_user_path(), file_name)
-
-        is_abs = res.is_absolute(file_name)
-
-        # Find path relative to basepath or global user path
-        # If basepath is defined set paths relative to the basepath if possible
-        # or just keep the absolute
-        if not is_abs:
-            # Is relative path
-            base_temp = path.normpath(path.join(basepath, file_name)) if basepath is not None else None
-            user_temp = path.normpath(path.join(user_path, file_name)) if user_path is not None else None
-            if base_temp is not None and path.exists(base_temp) and path.isfile(base_temp):
-                ref_path = base_temp
-            elif user_temp is not None and path.exists(user_temp) and path.isfile(user_temp):
-                ref_path = user_temp
-            else:
-                # Is an unknown path
-                ref_path = None
-        elif is_abs and path.exists(file_name) and path.isfile(file_name):
-            # Is absolute path
-            ref_path = file_name
-        else:
-            # Is an unknown path
-            ref_path = None
-
-        if ref_path is not None:
-            text += res.load_text_resource(ref_path, encoding=encoding)
-        else:
-            logger.Log.error("Could not find reference file %s!" % file_name)
-    return text
-
-
-def get_title(file_name, title_val):
-    """ Get title for HTML """
-    if title_val is not None:
-        title = str(title_val)
-    elif file_name is not None:
-        title = path.splitext(path.basename(path.abspath(file_name)))[0]
-    else:
-        title = None
-    return title
-
-
-def merge_meta(meta1, meta2, title=None):
-    """ Merge meta1 and meta2.  Add title to meta data if needed. """
-    meta = meta1.copy()
-    meta.update(meta2)
-    if "title" not in meta and title is not None:
-        if title is not None:
-            meta["title"] = title
-    return meta
-
-
 class Convert(object):
     def __init__(self, **kwargs):
         """ Unpack user files and then load up settings """
-        res.unpack_user_files()
+        util.unpack_user_files()
         self.config = settings.Settings(**kwargs)
         self.config.read_settings()
         self.output = kwargs.get('output')
@@ -98,6 +38,30 @@ class Convert(object):
         self.relpath = kwargs.get('relpath')
         self.title = kwargs.get('title')
         self.settings_path = kwargs.get('settings_path')
+
+    def merge_meta(self, md_meta, file_name):
+        """
+        Retrieve Markdown meta data if available and merge frontmatter
+        with it:
+            1. Frontmatter will override normal meta data.
+            2. Meta data overrides --title option on command line.
+        """
+
+        # Resolve title for meta
+        if self.title is not None:
+            title = str(self.title)
+        elif file_name is not None:
+            title = path.splitext(path.basename(path.abspath(file_name)))[0]
+        else:
+            title = None
+
+        # Merge the meta data
+        meta = md_meta.copy()
+        meta.update(self.settings["page"]["meta"])
+        if "title" not in meta and title is not None:
+            if title is not None:
+                meta["title"] = title
+        return meta
 
     def strip_frontmatter(self, text):
         """
@@ -142,7 +106,7 @@ class Convert(object):
         status = self.get_file_settings(file_name)
         is_valid_dump = not (
             self.config.critic &
-            (settings.CRITIC_REJECT | settings.CRITIC_ACCEPT)
+            (util.CRITIC_REJECT | util.CRITIC_ACCEPT)
         )
 
         if status == PASS and file_name is not None:
@@ -163,8 +127,8 @@ class Convert(object):
                 # Apply critic stripping
                 text = critic_dump.CriticDump().dump(
                     text,
-                    self.config.critic & settings.CRITIC_ACCEPT,
-                    self.config.critic & settings.CRITIC_VIEW
+                    self.config.critic & util.CRITIC_ACCEPT,
+                    self.config.critic & util.CRITIC_VIEW
                 )
 
                 # Dump the converted text
@@ -193,7 +157,7 @@ class Convert(object):
 
         if status == PASS:
             # Append Markdown reference files to current Markdown content
-            text += get_references(
+            text += util.get_references(
                 self.settings["page"].get("references", []),
                 self.settings["page"]["basepath"],
                 self.config.encoding
@@ -229,17 +193,8 @@ class Convert(object):
                 # Markdown -> HTML
                 converter.convert()
 
-                # Retrieve meta data if available and merge with frontmatter
-                # meta data.
-                #     1. Frontmatter will override normal meta data.
-                #     2. Meta data overrides --title option on command line.
-                html.set_meta(
-                    merge_meta(
-                        converter.meta,
-                        self.settings["page"]["meta"],
-                        title=get_title(file_name, self.title)
-                    )
-                )
+                # Merge meta data
+                html.set_meta(self.merge_meta(converter.meta, file_name))
 
                 # Experimental content scrubbing
                 can_scrub = self.config.clean and SCRUB_AVAILABLE
@@ -258,7 +213,7 @@ class Convert(object):
 
         # Preview the markdown
         if status == PASS and html.file.name is not None and self.config.preview:
-            open_in_browser(html.file.name)
+            util.open_in_browser(html.file.name)
         return status
 
     def convert(self, files):
@@ -285,7 +240,7 @@ class Convert(object):
                     file_name = md_file if not self.config.is_stream else None
                     text = None if not self.config.is_stream else md_file
                     md_file = None
-                    if self.config.critic & settings.CRITIC_DUMP:
+                    if self.config.critic & util.CRITIC_DUMP:
                         status = self.critic_dump(file_name, text)
                     else:
                         status = self.html_dump(file_name, text)

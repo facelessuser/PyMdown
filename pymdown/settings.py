@@ -12,11 +12,10 @@ from __future__ import absolute_import
 import json
 import codecs
 import traceback
-from copy import deepcopy
 import os.path as path
-from . import resources as res
-from . import logger
+from copy import deepcopy
 from . import util
+from . import logger
 from . import file_strip as fstrip
 from collections import OrderedDict
 from .compat import unicode_string, string_type
@@ -26,11 +25,180 @@ try:
 except:
     PYGMENTS_AVAILABLE = False
 
-CRITIC_IGNORE = 0
-CRITIC_ACCEPT = 1
-CRITIC_REJECT = 2
-CRITIC_VIEW = 4
-CRITIC_DUMP = 8
+
+class MergeSettings(object):
+    """
+    Apply front matter to settings object etc.
+    PAGE_KEYS: destination, basepath, references,
+               include.js', include.css', include
+    SETTIGS_KEY: settings
+    META_KEYS: all other keys that aren't handled above
+    """
+
+    def __init__(self, file_name, is_stream):
+        self.file_name = file_name
+        self.is_stream = is_stream
+        self.base = None
+        self.css = []
+        self.js = []
+
+    def process_settings_path(self, pth, base):
+        """ General method to process paths in settings file """
+        target, encoding = util.splitenc(pth)
+
+        file_path = util.resolve_meta_path(
+            pth,
+            base
+        )
+        if file_path is None or not path.isfile(file_path):
+            file_path = None
+        else:
+            file_path = path.normpath(file_path)
+        return file_path + ';' + encoding if file_path is not None else None
+
+    def merge_basepath(self, frontmatter, settings):
+        """ Merge the basepath """
+        if "basepath" in frontmatter:
+            value = frontmatter["basepath"]
+            settings["page"]["basepath"] = util.resolve_base_path(
+                value,
+                self.file_name,
+                is_stream=self.is_stream
+            )
+            del frontmatter["basepath"]
+        self.base = settings["page"]["basepath"]
+
+    def merge_relative_path(self, frontmatter, settings):
+        """ Merge the relative path """
+        if "relpath" in frontmatter:
+            value = frontmatter["relpath"]
+            settings["page"]["relpath"] = util.resolve_relative_path(value)
+            del self.frontmatter["relpath"]
+
+    def merge_destination(self, frontmatter, settings):
+        """ Merge destination """
+        if "destination" in frontmatter:
+            value = frontmatter['destination']
+            file_name = util.resolve_meta_path(
+                path.dirname(unicode_string(value)),
+                self.base
+            )
+            if file_name is not None and path.isdir(file_name):
+                value = path.normpath(
+                    path.join(file_name, path.basename(value))
+                )
+                if path.exists(value) and path.isdir(value):
+                    value = None
+            else:
+                value = None
+            if value is not None:
+                settings["page"]["destination"] = value
+            del frontmatter['destination']
+
+    def merge_includes(self, frontmatter, settings):
+        """
+        Find css and js includes and merge them.
+        """
+        css = []
+        js = []
+
+        if "include" in frontmatter:
+            value = frontmatter['include']
+            if not isinstance(value, list):
+                value = []
+            settings["page"]['include'] = [
+                unicode_string(v) for v in value if isinstance(v, string_type)
+            ]
+            del frontmatter['include']
+
+        # Javascript and CSS include
+        for i in ("css", "js"):
+            key = 'include.%s' % i
+            if key in frontmatter:
+                value = frontmatter[key]
+                items = []
+                for j in value:
+                    pth = unicode_string(j)
+                    items.append(pth)
+                if i == 'css':
+                    css += items
+                else:
+                    js += items
+                del frontmatter[key]
+
+        # Append CSS and JS from built-in keys if any
+        if len(css):
+            settings['settings']['css'] = settings['settings'].get('css', []) + css
+        if len(js):
+            settings['settings']['js'] = settings['settings'].get('js', []) + js
+
+    def merge_references(self, frontmatter, settings):
+        """ Merge references """
+        if 'references' in frontmatter:
+            value = frontmatter['references']
+            if not isinstance(value, list):
+                value = [value]
+            refs = []
+            for v in value:
+                pth = unicode_string(v)
+                refs.append(pth)
+            settings["page"]['references'] = refs
+            del frontmatter['references']
+
+    def merge_settings(self, frontmatter, settings):
+        """ Handle and merge PyMdown settings. """
+        if 'settings' in frontmatter and isinstance(frontmatter['settings'], dict):
+            value = frontmatter['settings']
+            for subkey, subvalue in value.items():
+                # Html template
+                if subkey == "template":
+                    org_pth = unicode_string(subvalue)
+                    new_pth = self.process_settings_path(org_pth, self.base)
+                    settings['settings'][subkey] = new_pth if new_pth is not None else org_pth
+
+                # Handle optional extention assets
+                elif subkey.startswith('@'):
+                    for assetkey, assetvalue in subvalue.items():
+                        if assetkey in ('cs', 'js'):
+                            items = []
+                            for i in assetvalue:
+                                pth = unicode_string(i)
+                                items.append(pth)
+                            settings['settings'][subkey][assetkey] = items
+                        else:
+                            settings['settings'][subkey][assetkey] = assetvalue
+
+                # Javascript and CSS files
+                elif subkey in ("css", "js"):
+                    items = []
+                    for i in subvalue:
+                        pth = unicode_string(i)
+                        items.append(pth)
+                    settings['settings'][subkey] = items
+
+                # All other settings that require no other special handling
+                else:
+                    settings['settings'][subkey] = subvalue
+            del frontmatter['settings']
+
+    def merge_meta(self, frontmatter, settings):
+        """ Resolve all other frontmatter items as meta items. """
+        for key, value in frontmatter.items():
+            if isinstance(value, list):
+                value = [unicode_string(v) for v in value]
+            else:
+                value = unicode_string(value)
+            settings["page"]["meta"][unicode_string(key)] = value
+
+    def merge(self, frontmatter, settings):
+        """ Handle basepath first and then merge all keys. """
+        self.merge_basepath(frontmatter, settings)
+        self.merge_relative_path(frontmatter, settings)
+        self.merge_destination(frontmatter, settings)
+        self.merge_references(frontmatter, settings)
+        self.merge_settings(frontmatter, settings)
+        self.merge_includes(frontmatter, settings)
+        self.merge_meta(frontmatter, settings)
 
 
 class Settings(object):
@@ -47,7 +215,7 @@ class Settings(object):
             },
             "settings": {}
         }
-        self.critic = kwargs.get('critic', CRITIC_IGNORE)
+        self.critic = kwargs.get('critic', util.CRITIC_IGNORE)
         self.plain = kwargs.get('plain', False)
         self.batch = kwargs.get('batch', False)
         self.encoding = kwargs.get('encoding', 'utf-8')
@@ -65,7 +233,7 @@ class Settings(object):
 
     def unpack_settings_file(self):
         """ Unpack default settings file. """
-        text = res.load_text_resource(res.DEFAULT_SETTINGS, internal=True)
+        text = util.load_text_resource(util.DEFAULT_SETTINGS, internal=True)
         try:
             with codecs.open(self.settings_path, "w", encoding="utf-8") as f:
                 f.write(text)
@@ -102,11 +270,22 @@ class Settings(object):
         """ Get the complete settings object for the given file """
         self.file_name = file_name
         settings = deepcopy(self.settings)
-        settings["page"]["destination"] = self.resolve_destination(output)
-        settings["page"]["basepath"] = self.resolve_base_path(basepath)
-        settings["page"]["relpath"] = self.resolve_relative_path(relpath)
+        settings["page"]["destination"] = util.resolve_destination(
+            output,
+            self.file_name,
+            critic_mode=self.critic,
+            batch=self.batch
+        )
+        settings["page"]["basepath"] = util.resolve_base_path(
+            basepath,
+            self.file_name,
+            is_stream=self.is_stream
+        )
+        settings["page"]["relpath"] = util.resolve_relative_path(relpath)
         if frontmatter is not None:
-            self.apply_frontmatter(frontmatter, settings)
+            # Apply frontmatter by merging it to the settings
+            merge = MergeSettings(self.file_name, self.is_stream)
+            merge.merge(frontmatter, settings)
 
         # Store destination as our output reference directory.
         # This is used for things like converting relative paths.
@@ -122,9 +301,13 @@ class Settings(object):
         # Try to come up with a sane relative path since one was not provided
         if settings['page']['relpath'] is None:
             if settings['page']['destination'] is not None:
-                settings['page']['relpath'] = path.dirname(path.abspath(settings['page']['destination']))
+                settings['page']['relpath'] = path.dirname(
+                    path.abspath(settings['page']['destination'])
+                )
             elif file_name:
-                settings['page']['relpath'] = path.dirname(path.abspath(self.file_name))
+                settings['page']['relpath'] = path.dirname(
+                    path.abspath(self.file_name)
+                )
 
         # Process special output flags
         if self.force_stdout:
@@ -135,234 +318,6 @@ class Settings(object):
         # Do some post processing on the settings
         self.post_process_settings(settings)
         return settings
-
-    def resolve_destination(self, out_name):
-        """ Get the path to output the file. """
-
-        critic_enabled = self.critic & (CRITIC_ACCEPT | CRITIC_REJECT | CRITIC_VIEW)
-        output = None
-        if out_name is not None:
-            out_name = path.expanduser(out_name)
-        if not self.batch:
-            if out_name is not None:
-                name = path.abspath(out_name)
-                if path.isdir(out_name):
-                    logger.Log.error("'%s' is a directory!" % name)
-                elif path.exists(path.dirname(name)):
-                    output = name
-                else:
-                    logger.Log.error("'%s' directory does not exist!" % name)
-        else:
-            name = path.abspath(self.file_name)
-            if self.critic & CRITIC_DUMP and critic_enabled:
-                if self.critic & CRITIC_REJECT:
-                    label = ".rejected"
-                elif self.critic & CRITIC_ACCEPT:
-                    label = ".accepted"
-                else:
-                    label = '.view'
-                base, ext = path.splitext(path.abspath(self.file_name))
-                output = path.join(name, "%s%s%s" % (base, label, ext))
-            else:
-                output = path.join(name, "%s.html" % path.splitext(path.abspath(self.file_name))[0])
-
-        return output
-
-    def resolve_relative_path(self, relpath):
-        """ Get the base path to use when resolving basepath paths if possible """
-        if relpath is not None:
-            relpath = path.expanduser(relpath)
-        if relpath is not None and path.exists(relpath):
-            # A valid path was fed in
-            pth = relpath
-            relpath = path.dirname(path.abspath(pth)) if path.isfile(pth) else path.abspath(pth)
-        else:
-            # Okay, there is no way to tell the orign.
-            # We are probably a stream that has no specified
-            # physical location.
-            relpath = None
-
-        return relpath
-
-    def resolve_base_path(self, basepath):
-        """ Get the relative path to use when resolving relative paths if possible """
-        if basepath is not None:
-            basepath = path.expanduser(basepath)
-        if basepath is not None and path.exists(basepath):
-            # A valid path was fed in
-            pth = basepath
-            basepath = path.dirname(path.abspath(pth)) if path.isfile(pth) else path.abspath(pth)
-        elif not self.is_stream:
-            # Use the current file path
-            basepath = path.dirname(path.abspath(self.file_name))
-        else:
-            # Okay, there is no way to tell the orign.
-            # We are probably a stream that has no specified
-            # physical location.
-            basepath = None
-
-        return basepath
-
-    def resolve_meta_path(self, target, basepath):
-        """
-        Resolve the path returned in the meta data.
-        1. See if path is defined as absolute and if so see
-           if it exists
-        2. If relative, use the file's basepath (default its physical directory
-           if available) if the file
-           can be found
-        """
-        if target is not None:
-            target = path.expanduser(target)
-            if not res.is_absolute(target):
-                new_target = None
-                if basepath is not None:
-                    temp = path.join(basepath, target)
-                    if path.exists(temp):
-                        new_target = temp
-                target = new_target
-            elif not path.exists(target):
-                target = None
-        return target
-
-    def process_settings_path(self, pth, base):
-        """ General method to process paths in settings file """
-        target, encoding = res.splitenc(pth)
-
-        file_path = self.resolve_meta_path(
-            pth,
-            base
-        )
-        if file_path is None or not path.isfile(file_path):
-            file_path = None
-        else:
-            file_path = path.normpath(file_path)
-        return file_path + ';' + encoding if file_path is not None else None
-
-    def apply_frontmatter(self, frontmatter, settings):
-        """
-        Apply front matter to settings object etc.
-        PAGE_KEYS: destination, basepath, references,
-                   include.js', include.css', include
-        SETTIGS_KEY: settings
-        META_KEYS: all other keys that aren't handled above
-        """
-        css = []
-        js = []
-
-        # Handle basepath first
-        if "basepath" in frontmatter:
-            value = frontmatter["basepath"]
-            settings["page"]["basepath"] = self.resolve_base_path(value)
-            del frontmatter["basepath"]
-        base = settings["page"]["basepath"]
-
-        # Handle relative path
-        if "relpath" in frontmatter:
-            value = frontmatter["relpath"]
-            settings["page"]["relpath"] = self.resolve_relative_path(value)
-            del frontmatter["relpath"]
-
-        # The destination/output location and name
-        if "destination" in frontmatter:
-            value = frontmatter['destination']
-            file_name = self.resolve_meta_path(path.dirname(unicode_string(value)), base)
-            if file_name is not None and path.isdir(file_name):
-                value = path.normpath(path.join(file_name, path.basename(value)))
-                if path.exists(value) and path.isdir(value):
-                    value = None
-            else:
-                value = None
-            if value is not None:
-                settings["page"]["destination"] = value
-            del frontmatter['destination']
-
-        # Javascript and CSS includes quick load aliases
-        if "include" in frontmatter:
-            value = frontmatter['include']
-            if not isinstance(value, list):
-                value = []
-            settings["page"]['include'] = [
-                unicode_string(v) for v in value if isinstance(v, string_type)
-            ]
-            del frontmatter['include']
-
-        # Javascript and CSS include
-        for i in ("css", "js"):
-            key = 'include.%s' % i
-            if key in frontmatter:
-                value = frontmatter[key]
-                items = []
-                for j in value:
-                    pth = unicode_string(j)
-                    items.append(pth)
-                if i == 'css':
-                    css += items
-                else:
-                    js += items
-                del frontmatter[key]
-
-        if 'references' in frontmatter:
-            value = frontmatter['references']
-            if not isinstance(value, list):
-                value = [value]
-            refs = []
-            for v in value:
-                pth = unicode_string(v)
-                refs.append(pth)
-            settings["page"]['references'] = refs
-            del frontmatter['references']
-
-        # Handle PyMdown settings
-        if 'settings' in frontmatter and isinstance(frontmatter['settings'], dict):
-            value = frontmatter['settings']
-            for subkey, subvalue in value.items():
-                # Html template
-                if subkey == "template":
-                    org_pth = unicode_string(subvalue)
-                    new_pth = self.process_settings_path(org_pth, base)
-                    settings['settings'][subkey] = new_pth if new_pth is not None else org_pth
-
-                # Handle optional extention assets
-                elif subkey.startswith('@'):
-                    for assetkey, assetvalue in subvalue.items():
-                        if assetkey in ('cs', 'js'):
-                            items = []
-                            for i in assetvalue:
-                                pth = unicode_string(i)
-                                items.append(pth)
-                            settings['settings'][subkey][assetkey] = items
-                        else:
-                            settings['settings'][subkey][assetkey] = assetvalue
-
-                # Javascript and CSS files
-                elif subkey in ("css", "js"):
-                    items = []
-                    for i in subvalue:
-                        pth = unicode_string(i)
-                        items.append(pth)
-                    settings['settings'][subkey] = items
-
-                # All other settings that require no other special handling
-                else:
-                    settings['settings'][subkey] = subvalue
-            del frontmatter['settings']
-
-        # Resolve all other frontmatter items
-        for key, value in frontmatter.items():
-            if isinstance(value, list):
-                value = [unicode_string(v) for v in value]
-            else:
-                value = unicode_string(value)
-            settings["page"]["meta"][unicode_string(key)] = value
-
-        # Append CSS and JS from built-in keys if any
-        if len(css):
-            css = settings['settings'].get('css', []) + css
-            settings['settings']['css'] = css
-        if len(js):
-            js = settings['settings'].get('js', []) + js
-            settings['settings']['js'] = js
 
     def set_style(self, extensions, settings):
         """
@@ -437,11 +392,11 @@ class Settings(object):
 
         # Add critic to the end since it is most reliable when applied to the end.
         critic_mode = "ignore"
-        if self.critic & CRITIC_ACCEPT:
+        if self.critic & util.CRITIC_ACCEPT:
             critic_mode = "accept"
-        elif self.critic & CRITIC_REJECT:
+        elif self.critic & util.CRITIC_REJECT:
             critic_mode = "reject"
-        elif self.critic & CRITIC_VIEW:
+        elif self.critic & util.CRITIC_VIEW:
             critic_mode = "view"
         if critic_mode != "ignore":
             extensions["pymdownx.critic"] = {"mode": critic_mode}
