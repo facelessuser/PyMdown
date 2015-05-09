@@ -1,23 +1,18 @@
 ---
 settings:
     extensions:
-        - name: markdown.extensions.codehilite
-          config:
+        markdown.extensions.codehilite:
             guess_lang: False
             pygments_style: github2014
-        - name: markdown.extensions.toc
-          config:
+        markdown.extensions.toc:
             title: Table of Contents
-        - name: markdown.extensions.headerid
-          config:
-            level: 2
-        - name: markdown.extensions.smarty
-        - name: markdown.extensions.attr_list
-        - name: markdown.extensions.admonition
-        - name: pymdownx.betterem
-          config:
+            baselevel: 2
+        markdown.extensions.smarty:
+        markdown.extensions.attr_list:
+        markdown.extensions.admonition:
+        pymdownx.betterem:
             smart_enable: none
-        - name: pymdownx.headeranchor
+        pymdownx.headeranchor:
 ---
 [TOC]
 
