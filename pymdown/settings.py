@@ -369,9 +369,17 @@ class Settings(object):
 
         extensions = settings["settings"].get("extensions", OrderedDict())
 
+        critic_mode = "ignore"
+        if self.critic & util.CRITIC_ACCEPT:
+            critic_mode = "accept"
+        elif self.critic & util.CRITIC_REJECT:
+            critic_mode = "reject"
+        elif self.critic & util.CRITIC_VIEW:
+            critic_mode = "view"
+
         # Remove critic extension if manually defined
         # and remove plainhtml if defined and --plain-html is specified on CLI
-        if "pymdownx.critic" in extensions:
+        if "pymdownx.critic" in extensions and critic_mode != 'ignore':
             del extensions["pymdownx.critic"]
         if "pymdownx.plainhtml" in extensions and self.plain:
             del extensions["pymdownx.plainhtml"]
@@ -391,13 +399,6 @@ class Settings(object):
                 extensions["pymdownx.pathconverter"]["relative_path"] = "${OUTPUT}"
 
         # Add critic to the end since it is most reliable when applied to the end.
-        critic_mode = "ignore"
-        if self.critic & util.CRITIC_ACCEPT:
-            critic_mode = "accept"
-        elif self.critic & util.CRITIC_REJECT:
-            critic_mode = "reject"
-        elif self.critic & util.CRITIC_VIEW:
-            critic_mode = "view"
         if critic_mode != "ignore":
             extensions["pymdownx.critic"] = {"mode": critic_mode}
 
