@@ -268,6 +268,7 @@
   margin-bottom: 16px;
 }
 
+/* Tables */
 .markdown-body table {
   display: block;
   width: 100%;
@@ -594,6 +595,12 @@
 
 .markdown-body .highlight .hll {
   padding: .3em 0;
+}
+
+.markdown-body .uml-sequence-diagram,
+.markdown-body .uml-flowchart {
+  width: 100%;
+  overflow: auto;
 }
 
 /* Header Anchors */
@@ -1015,18 +1022,14 @@
 
 .markdown-body span.critic {
   background: #ddddff;
-  font-size: 0;
   border: 0;
-}
-
-.markdown-body span.critic:hover {
-  font-size: initial;
   border-top: 1px solid #0000bb;
   border-bottom: 1px solid #0000bb;
 }
 
 .markdown-body span.critic:before,
 .markdown-body span.critic:after {
+  font-size: inherit;
   background: #ddddff;
   border: 1px solid #0000bb;
 }
@@ -1085,19 +1088,6 @@
   margin-bottom: 0 !important;
 }
 
-/* Media */
-@media only screen and (min-width: 480px) {
-  .markdown-body {
-    font-size:14px;
-  }
-}
-
-@media only screen and (min-width: 768px) {
-  .markdown-body {
-    font-size:16px;
-  }
-}
-
 @media print {
   .markdown-body * {
     background: transparent !important;
@@ -1106,7 +1096,6 @@
   }
 
   .markdown-body {
-    font-size:12pt;
     max-width:100%;
     outline:none;
     border: 0;

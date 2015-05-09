@@ -88,17 +88,16 @@ def merge_meta(meta1, meta2, title=None):
 
 
 class Convert(object):
-    def __init__(
-        self, config,
-        output=None, basepath=None, relpath=None,
-        title=None, settings_path=None
-    ):
-        self.config = config
-        self.output = output
-        self.basepath = basepath
-        self.relpath = relpath
-        self.title = title
-        self.settings_path = settings_path
+    def __init__(self, **kwargs):
+        """ Unpack user files and then load up settings """
+        res.unpack_user_files()
+        self.config = settings.Settings(**kwargs)
+        self.config.read_settings()
+        self.output = kwargs.get('output')
+        self.basepath = kwargs.get('basepath')
+        self.relpath = kwargs.get('relpath')
+        self.title = kwargs.get('title')
+        self.settings_path = kwargs.get('settings_path')
 
     def strip_frontmatter(self, text):
         """

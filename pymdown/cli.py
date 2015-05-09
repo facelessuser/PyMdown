@@ -151,22 +151,6 @@ def main():
     if args.output_encoding is None:
         args.output_encoding = args.encoding
 
-    # Setup config class
-    config = settings.Settings(
-        encoding=args.encoding,
-        output_encoding=args.output_encoding,
-        critic=get_critic_mode(args),
-        batch=batch,
-        stream=stream,
-        preview=args.preview,
-        settings_path=args.settings,
-        plain=args.plain_html,
-        force_stdout=args.force_stdout,
-        force_no_template=args.force_no_template,
-        clean=args.clean
-    )
-    config.read_settings()
-
     # Convert
     sys.exit(
         pymdown.Convert(
@@ -174,7 +158,17 @@ def main():
             relpath=args.relpath,
             title=args.title,
             output=args.output,
-            config=config
+            encoding=args.encoding,
+            output_encoding=args.output_encoding,
+            critic=get_critic_mode(args),
+            batch=batch,
+            stream=stream,
+            preview=args.preview,
+            settings_path=args.settings,
+            plain=args.plain_html,
+            force_stdout=args.force_stdout,
+            force_no_template=args.force_no_template,
+            clean=args.clean
         ).convert(files)
     )
 

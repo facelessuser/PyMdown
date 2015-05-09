@@ -34,25 +34,8 @@ CRITIC_DUMP = 8
 
 
 class Settings(object):
-    def __init__(
-        self, settings_path=None, stream=False,
-        batch=False, critic=CRITIC_IGNORE,
-        plain=False, preview=False, encoding='utf-8', output_encoding='utf-8',
-        force_stdout=False, force_no_template=False,
-        clean=False
-    ):
+    def __init__(self, **kwargs):
         """ Initialize """
-        self.critic = critic
-        self.plain = plain
-        self.batch = batch
-        self.encoding = encoding
-        self.output_encoding = output_encoding
-        self.preview = preview
-        self.is_stream = stream
-        self.pygments_noclasses = False
-        self.force_stdout = force_stdout
-        self.clean = clean
-        self.force_no_template = force_no_template
         self.settings = {
             "page": {
                 "destination": None,
@@ -64,9 +47,30 @@ class Settings(object):
             },
             "settings": {}
         }
+        self.critic = kwargs.get('critic', CRITIC_IGNORE)
+        self.plain = kwargs.get('plain', False)
+        self.batch = kwargs.get('batch', False)
+        self.encoding = kwargs.get('encoding', 'utf-8')
+        self.output_encoding = kwargs.get('output_encoding', 'utf-8')
+        self.preview = kwargs.get('preview', False)
+        self.is_stream = kwargs.get('stream', False)
+        self.force_stdout = kwargs.get('force_stdout', False)
+        self.clean = kwargs.get('clean', False)
+        self.force_no_template = kwargs.get('force_no_template', False)
+        self.pygments_noclasses = False
 
-        # Use default file if one was not provided
+        # Use default settings file if one was not provided
+        settings_path = kwargs.get('settings_path', None)
         self.settings_path = settings_path if settings_path is not None else 'pymdown.cfg'
+
+    def unpack_settings_file(self):
+        """ Unpack default settings file. """
+        text = res.load_text_resource(res.DEFAULT_SETTINGS, internal=True)
+        try:
+            with codecs.open(self.settings_path, "w", encoding="utf-8") as f:
+                f.write(text)
+        except:
+            logger.Log.error(traceback.format_exc())
 
     def read_settings(self):
         """
@@ -75,19 +79,11 @@ class Settings(object):
         Unpack the settings file if needed.
         """
 
-        # Unpack user files if needed
-        res.unpack_user_files()
-
         settings = None
 
-        # Unpack default settings file if needed
+        # Unpack settings file if needed
         if not path.exists(self.settings_path):
-            text = res.load_text_resource(res.DEFAULT_SETTINGS, internal=True)
-            try:
-                with codecs.open(self.settings_path, "w", encoding="utf-8") as f:
-                    f.write(text)
-            except:
-                logger.Log.error(traceback.format_exc())
+            self.unpack_settings_file()
 
         # Try and read settings file
         try:
@@ -100,20 +96,18 @@ class Settings(object):
         except:
             logger.Log.error(traceback.format_exc())
 
-        if settings is None:
-            settings = {}
-
-        self.settings["settings"] = settings
+        self.settings["settings"] = settings if settings is not None else {}
 
     def get(self, file_name, output=None, basepath=None, relpath=None, frontmatter=None):
         """ Get the complete settings object for the given file """
         self.file_name = file_name
         settings = deepcopy(self.settings)
-        settings["page"]["destination"] = self.resolve_output(output)
+        settings["page"]["destination"] = self.resolve_destination(output)
         settings["page"]["basepath"] = self.resolve_base_path(basepath)
-        settings["page"]["relpath"] = self.resolve_rel_path(relpath)
+        settings["page"]["relpath"] = self.resolve_relative_path(relpath)
         if frontmatter is not None:
             self.apply_frontmatter(frontmatter, settings)
+
         # Store destination as our output reference directory.
         # This is used for things like converting relative paths.
         # If there is no output location, try to come up with a rational
@@ -122,24 +116,27 @@ class Settings(object):
             self.out = path.dirname(path.abspath(settings['page']['destination']))
         elif file_name:
             self.out = path.dirname(path.abspath(self.file_name))
-        # elif settings["page"]["basepath"] is not None:
-        #     self.out = settings["page"]["basepath"]
         else:
             self.out = None
+
         # Try to come up with a sane relative path since one was not provided
         if settings['page']['relpath'] is None:
             if settings['page']['destination'] is not None:
                 settings['page']['relpath'] = path.dirname(path.abspath(settings['page']['destination']))
             elif file_name:
                 settings['page']['relpath'] = path.dirname(path.abspath(self.file_name))
+
+        # Process special output flags
         if self.force_stdout:
             settings["page"]["destination"] = None
         if self.force_no_template:
             settings['settings']['template'] = None
+
+        # Do some post processing on the settings
         self.post_process_settings(settings)
         return settings
 
-    def resolve_output(self, out_name):
+    def resolve_destination(self, out_name):
         """ Get the path to output the file. """
 
         critic_enabled = self.critic & (CRITIC_ACCEPT | CRITIC_REJECT | CRITIC_VIEW)
@@ -171,7 +168,7 @@ class Settings(object):
 
         return output
 
-    def resolve_rel_path(self, relpath):
+    def resolve_relative_path(self, relpath):
         """ Get the base path to use when resolving basepath paths if possible """
         if relpath is not None:
             relpath = path.expanduser(relpath)
@@ -263,7 +260,7 @@ class Settings(object):
         # Handle relative path
         if "relpath" in frontmatter:
             value = frontmatter["relpath"]
-            settings["page"]["relpath"] = self.resolve_rel_path(value)
+            settings["page"]["relpath"] = self.resolve_relative_path(value)
             del frontmatter["relpath"]
 
         # The destination/output location and name
@@ -285,7 +282,9 @@ class Settings(object):
             value = frontmatter['include']
             if not isinstance(value, list):
                 value = []
-            settings["page"]['include'] = [unicode_string(v) for v in value if isinstance(v, string_type)]
+            settings["page"]['include'] = [
+                unicode_string(v) for v in value if isinstance(v, string_type)
+            ]
             del frontmatter['include']
 
         # Javascript and CSS include
@@ -415,16 +414,6 @@ class Settings(object):
 
         extensions = settings["settings"].get("extensions", OrderedDict())
 
-        # See if we need to handle the appropriate critic from CLI
-        # Critic will be appended to end of extension list if CLI requested it.
-        critic_mode = "ignore"
-        if self.critic & CRITIC_ACCEPT:
-            critic_mode = "accept"
-        elif self.critic & CRITIC_REJECT:
-            critic_mode = "reject"
-        elif self.critic & CRITIC_VIEW:
-            critic_mode = "view"
-
         # Remove critic extension if manually defined
         # and remove plainhtml if defined and --plain-html is specified on CLI
         if "pymdownx.critic" in extensions:
@@ -432,17 +421,14 @@ class Settings(object):
         if "pymdownx.plainhtml" in extensions and self.plain:
             del extensions["pymdownx.plainhtml"]
 
-        disable_path_conversion = settings["settings"].get("disable_path_conversion", False)
-        path_conversion_absolute = settings["settings"].get("path_conversion_absolute", False)
-
         # Ensure previews are using absolute paths or relative paths
-        if self.preview or not disable_path_conversion:
+        if self.preview or not settings["settings"].get("disable_path_conversion", False):
             # Add pathconverter extension if not already set.
             if "pymdownx.pathconverter" not in extensions:
                 extensions["pymdownx.pathconverter"] = {
                     "base_path": "${BASE_PATH}",
                     "relative_path": "${REL_PATH}" if not self.preview else "${OUTPUT}",
-                    "absolute": path_conversion_absolute
+                    "absolute": settings["settings"].get("path_conversion_absolute", False)
                 }
             elif self.preview and "pymdownx.pathconverter" in extensions:
                 if extensions["pymdownx.pathconverter"] is None:
@@ -450,6 +436,13 @@ class Settings(object):
                 extensions["pymdownx.pathconverter"]["relative_path"] = "${OUTPUT}"
 
         # Add critic to the end since it is most reliable when applied to the end.
+        critic_mode = "ignore"
+        if self.critic & CRITIC_ACCEPT:
+            critic_mode = "accept"
+        elif self.critic & CRITIC_REJECT:
+            critic_mode = "reject"
+        elif self.critic & CRITIC_VIEW:
+            critic_mode = "view"
         if critic_mode != "ignore":
             extensions["pymdownx.critic"] = {"mode": critic_mode}
 
