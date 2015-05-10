@@ -1,7 +1,6 @@
 import unittest
 from collections import OrderedDict
 from pymdown import util
-from . import common
 from pymdown import settings
 import os
 
