@@ -9,14 +9,12 @@ Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
 """
 from __future__ import unicode_literals
 from __future__ import absolute_import
-import json
 import codecs
 import traceback
 import os.path as path
 from copy import deepcopy
 from . import util
 from . import logger
-from . import file_strip as fstrip
 from collections import OrderedDict
 from .compat import unicode_string, string_type
 try:
@@ -257,10 +255,7 @@ class Settings(object):
         try:
             with codecs.open(self.settings_path, "r", encoding='utf-8') as f:
                 contents = f.read()
-                try:
-                    settings = json.loads(fstrip.json.sanitize_json(contents))
-                except:
-                    settings = util.yaml_load(contents)
+                settings = util.yaml_load(contents)
         except:
             logger.Log.error(traceback.format_exc())
 

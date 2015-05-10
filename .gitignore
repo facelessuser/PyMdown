@@ -11,3 +11,6 @@ markdown/*
 pygments/*
 *egg-info/*
 site/*
+.tox/*
+coverage/*
+.coverage

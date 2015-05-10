@@ -13,7 +13,6 @@ from . import logger
 from . import formatter
 from . import mdconvert
 from . import settings
-from . frontmatter import get_frontmatter_string
 import traceback
 try:
     from lib import scrub
@@ -69,7 +68,7 @@ class Convert(object):
         Fronmatter options will overwrite config file options.
         """
 
-        frontmatter, text = get_frontmatter_string(text)
+        frontmatter, text = util.get_frontmatter(text)
         return frontmatter, text
 
     def get_file_settings(self, file_name, frontmatter={}):

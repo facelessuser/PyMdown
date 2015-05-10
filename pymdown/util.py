@@ -62,6 +62,23 @@ def yaml_load(stream, Loader=yaml.Loader, object_pairs_hook=OrderedDict):
     return yaml.load(stream, OrderedLoader)
 
 
+def get_frontmatter(string):
+    """ Get frontmatter from string """
+    frontmatter = {}
+
+    if string.startswith("---"):
+        m = re.search(r'^(---(.*?)---\r?\n)', string, re.DOTALL)
+        if m:
+            try:
+                frontmatter = yaml_load(m.group(2))
+            except:
+                logger.Log.error(traceback.format_exc())
+                pass
+            string = string[m.end(1):]
+
+    return frontmatter, string
+
+
 def _get_encoding(enc):
     """ Check if encoding exists else return utf-8 """
     try:

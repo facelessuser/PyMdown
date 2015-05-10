@@ -16,7 +16,11 @@ if PY3:
     unicode_string = str
     string_type = str
     byte_string = bytes
-    stdout_write = sys.stdout.buffer.write
+    try:
+        stdout_write = sys.stdout.buffer.write
+    except AttributeError:
+        # TODO: Tox redirects this. Will have to fix this proper.
+        stdout_write = sys.stdout.write
 else:
     from urllib import quote  # noqa
     from urllib import pathname2url  # noqa
