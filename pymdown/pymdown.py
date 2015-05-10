@@ -14,10 +14,10 @@ from . import formatter
 from . import mdconvert
 from . import settings
 import traceback
-try:
+try:  # pragma: no cover
     from lib import scrub
     SCRUB_AVAILABLE = True
-except:
+except:  # pragma: no cover
     SCRUB_AVAILABLE = False
 
 version_info = (0, 8, 0)
