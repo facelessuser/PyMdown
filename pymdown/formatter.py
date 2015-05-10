@@ -19,7 +19,7 @@ import base64
 from os import path
 from . import util
 from . import logger
-from .compat import pathname2url, unicode_string, stdout_write
+from .compat import pathname2url, unicode_string, print_stdout
 try:
     from pygments.formatters import get_formatter_by_name
     PYGMENTS_AVAILABLE = True
@@ -72,9 +72,12 @@ class Terminal(object):
     """ Have console output mimic the file output calls """
     name = None
 
+    def __init__(self, encoding):
+        self.encoding = encoding
+
     def write(self, text):
         """ Dump texst to screen """
-        stdout_write(text)
+        print_stdout(text, self.encoding)
 
     def close(self):
         """ There is nothing to close """
@@ -91,7 +94,7 @@ class Text(object):
     def open(self, output):
         # Set the correct output target and create the file if necessary
         if output is None:
-            self.file = Terminal()
+            self.file = Terminal(self.encoding)
         else:
             try:
                 self.file = codecs.open(output, "w", encoding=self.encoding)

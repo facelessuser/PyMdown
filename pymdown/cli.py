@@ -19,7 +19,7 @@ import os.path as path
 from . import pymdown
 from . import util
 from . import logger
-from .compat import stdout_write, to_unicode
+from .compat import print_stdout, to_unicode
 
 __version__ = '.'.join(map(str, pymdown.version_info))
 
@@ -88,7 +88,7 @@ def display_licenses():
     status = pymdown.PASS
     text = util.load_text_resource(path.join('pymdown', 'data', 'licenses.txt'), internal=True)
     if text is not None:
-        stdout_write(text.encode('utf-8'))
+        print_stdout(text.encode('utf-8'))
     else:
         status = pymdown.FAIL
     return status

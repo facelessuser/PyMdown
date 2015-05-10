@@ -4,6 +4,7 @@ Strips and returns the the markdown with critic marks removed
 Licensed under MIT
 Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
 """
+from __future__ import unicode_literals
 from __future__ import absolute_import
 from pymdownx.critic import CriticViewPreprocessor, CriticsPostprocessor, CriticStash, CRITIC_KEY
 

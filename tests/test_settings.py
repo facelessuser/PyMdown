@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import unittest
 from collections import OrderedDict
 from pymdown import util

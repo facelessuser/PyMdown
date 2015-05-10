@@ -1,3 +1,4 @@
+from __future__ import unicode_literals
 import unittest
 from . import common
 from pymdown import critic_dump
