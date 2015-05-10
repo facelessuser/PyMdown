@@ -3,6 +3,7 @@ from collections import OrderedDict
 from pymdown import util
 from . import common
 import os
+import codecs
 
 
 class TestFrontmatter(unittest.TestCase):
@@ -40,7 +41,7 @@ class TestResources(unittest.TestCase):
             internal=True
         )
 
-        with open(os.path.join('pymdown', 'data', 'licenses.txt'), 'rb') as f:
+        with codecs.open(os.path.join('pymdown', 'data', 'licenses.txt'), encoding='utf-8') as f:
             text3 = f.read()
 
         text4 = util.load_text_resource(
