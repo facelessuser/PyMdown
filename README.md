@@ -1,3 +1,7 @@
+[![Build Status][travis-image]][travis-link]
+[![Coverage Status][coveralls-image]][coveralls-link]
+![License][license-image]
+
 # PyMdown
 PyMdown is a CLI tool to convert or even batch convert markdown files to HTML.  PyMdown has a number of extensions written specifically for it found at this separate repository: [pymdown-extensions](https://github.com/facelessuser/pymdown-extensions).  PyMdown can also generate HTML previews of markdown and auto-open them in a webbrowser.
 
@@ -27,3 +31,9 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 #3rd Party Licenses
 See [licenses](https://github.com/facelessuser/PyMdown/blob/master/data/licenses.txt).
+
+[coveralls-image]: https://img.shields.io/coveralls/facelessuser/PyMdown.png
+[coveralls-link]: https://coveralls.io/r/facelessuser/PyMdown
+[travis-image]: https://img.shields.io/travis/facelessuser/PyMdown.svg
+[travis-link]: https://travis-ci.org/facelessuser/PyMdown
+[license-image]: https://img.shields.io/badge/license-MIT-blue.svg
