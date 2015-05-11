@@ -1,9 +1,7 @@
 [run]
 omit=
-    pymdown/scrub.py
     pymdown/logger.py
 
 [report]
 omit=
-    pymdown/scrub.py
     pymdown/logger.py

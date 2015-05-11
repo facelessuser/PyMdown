@@ -117,7 +117,6 @@ def main():
     parser.add_argument('--force-stdout', action='store_true', default=False, help="Force output to stdout.")
     parser.add_argument('--force-no-template', action='store_true', default=False, help="Force using no template.")
     parser.add_argument('--output-encoding', '-E', default=None, help="Output encoding.")
-    parser.add_argument('--clean', '-c', action='store_true', default=False, help=argparse.SUPPRESS)
     # Input configuration
     parser.add_argument('--settings', '-s', default=path.join(util.get_user_path(), "pymdown.cfg"), help="Load the settings file from an alternate location.")
     parser.add_argument('--encoding', '-e', default="utf-8", help="Encoding for input.")
@@ -166,8 +165,7 @@ def main():
             settings_path=args.settings,
             plain=args.plain_html,
             force_stdout=args.force_stdout,
-            force_no_template=args.force_no_template,
-            clean=args.clean
+            force_no_template=args.force_no_template
         ).convert(files)
     )
 

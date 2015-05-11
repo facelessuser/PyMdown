@@ -221,7 +221,6 @@ class Settings(object):
         self.preview = kwargs.get('preview', False)
         self.is_stream = kwargs.get('stream', False)
         self.force_stdout = kwargs.get('force_stdout', False)
-        self.clean = kwargs.get('clean', False)
         self.force_no_template = kwargs.get('force_no_template', False)
         self.pygments_noclasses = False
 

@@ -14,11 +14,6 @@ from . import formatter
 from . import mdconvert
 from . import settings
 import traceback
-try:  # pragma: no cover
-    from lib import scrub
-    SCRUB_AVAILABLE = True
-except:  # pragma: no cover
-    SCRUB_AVAILABLE = False
 
 version_info = (0, 8, 0)
 
@@ -195,13 +190,9 @@ class Convert(object):
                 # Merge meta data
                 html.set_meta(self.merge_meta(converter.meta, file_name))
 
-                # Experimental content scrubbing
-                can_scrub = self.config.clean and SCRUB_AVAILABLE
-                content = scrub.scrub(converter.markdown) if can_scrub else converter.markdown
-
                 # Write the markdown to the HTML
                 html.write_header()
-                html.write(content)
+                html.write(converter.markdown)
                 html.write_footer()
             except:
                 logger.Log.error(str(traceback.format_exc()))
