@@ -2,11 +2,11 @@ build: false
 environment:
   matrix:
     - PYTHON: "C:/Python27"
-      TOXENV: "py27-unittest"
+      TOXENV: "py27-unittests"
     - PYTHON: "C:/Python33"
-      TOXENV: "py33-unittest"
+      TOXENV: "py33-unittests"
     - PYTHON: "C:/Python34"
-      TOXENV: "py34-unittest"
+      TOXENV: "py34-unittests"
     - PYTHON: "C:/Python27"
       TOXENV: "flake8"
 init:
