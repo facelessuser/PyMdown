@@ -2,15 +2,24 @@ build: false
 environment:
   matrix:
     - PYTHON: "C:/Python27"
+      TOXENV: "py27-unittest"
     - PYTHON: "C:/Python33"
+      TOXENV: "py33-unittest"
     - PYTHON: "C:/Python34"
+      TOXENV: "py34-unittest"
+    - PYTHON: "C:/Python27"
+      TOXENV: "flake8"
 init:
+  - "ECHO %TOXENV%"
   - "ECHO %PYTHON%"
   - ps: "ls C:/Python*"
 install:
   - ps: (new-object net.webclient).DownloadFile('https://raw.github.com/pypa/pip/master/contrib/get-pip.py', 'C:/get-pip.py')
   - "%PYTHON%/python.exe C:/get-pip.py"
+  - "%PYTHON%/Scripts/pip.exe install virtualenv"
   - "%PYTHON%/Scripts/pip.exe install tox"
 test_script:
+  - "%PYTHON%/Scripts/pip --version"
+  - "%PYTHON%/Scripts/virtualenv.exe --version"
   - "%PYTHON%/Scripts/tox --version"
   - "%PYTHON%/Scripts/tox"
