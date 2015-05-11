@@ -3,38 +3,40 @@ import unittest
 from collections import OrderedDict
 from pymdown import util
 from pymdown import settings
+from pymdown import logger
 import os
 
 
 class TestSettings(unittest.TestCase):
-    def test_critic_prevent_override(self):
-        s = settings.Settings(
-            critic=util.CRITIC_ACCEPT,
-            settings_path=os.path.join('tests', 'settings', 'critic.cfg')
-        )
+    def _get_settings(self, settings_file, **kwargs):
+        kwargs['settings_path'] = os.path.join('tests', 'settings', settings_file)
+        s = settings.Settings(**kwargs)
         s.read_settings()
-        new_s = s.get('Untitled')
+        return s
 
-        option = new_s.get('settings').get('extensions').get('pymdownx.critic').get('mode')
+    def test_critic_prevent_override(self):
+        s = self._get_settings(
+            'critic.cfg',
+            stream=True,
+            critic=util.CRITIC_ACCEPT,
+        ).get(None)
+        option = s.get('settings').get('extensions').get('pymdownx.critic').get('mode')
         self.assertEqual(option, 'accept')
 
     def test_critic_allow_override(self):
-        s = settings.Settings(
-            settings_path=os.path.join('tests', 'settings', 'critic.cfg')
-        )
-        s.read_settings()
-        new_s = s.get('Untitled')
-
-        option = new_s.get('settings').get('extensions').get('pymdownx.critic').get('mode')
+        s = self._get_settings(
+            'critic.cfg',
+            stream=True
+        ).get(None)
+        option = s.get('settings').get('extensions').get('pymdownx.critic').get('mode')
         self.assertEqual(option, 'reject')
 
     def test_critic_frontmatter_override(self):
-        s = settings.Settings(
-            settings_path=os.path.join('tests', 'settings', 'critic.cfg')
-        )
-        s.read_settings()
-        new_s = s.get(
-            'Untitled',
+        s = self._get_settings(
+            'critic.cfg',
+            stream=True
+        ).get(
+            None,
             frontmatter=OrderedDict(
                 [('settings', OrderedDict(
                     [('extensions', OrderedDict(
@@ -45,79 +47,103 @@ class TestSettings(unittest.TestCase):
                 ))]
             )
         )
-
-        option = new_s.get('settings').get('extensions').get('pymdownx.critic').get('mode')
+        option = s.get('settings').get('extensions').get('pymdownx.critic').get('mode')
         self.assertEqual(option, 'accept')
 
-    def test_plain_prevent_override(self):
-        s = settings.Settings(
-            plain=True,
-            settings_path=os.path.join('tests', 'settings', 'plain.cfg')
-        )
-        s.read_settings()
-        new_s = s.get('Untitled')
+    def test_critic_reject(self):
+        s = self._get_settings(
+            'critic.cfg',
+            stream=True,
+            critic=util.CRITIC_REJECT
+        ).get(None)
+        option = s.get('settings').get('extensions').get('pymdownx.critic').get('mode')
+        self.assertEqual(option, 'reject')
 
-        options = new_s.get('settings').get('extensions').get('pymdownx.plainhtml')
+    def test_critic_view(self):
+        s = self._get_settings(
+            'critic.cfg',
+            stream=True,
+            critic=util.CRITIC_VIEW
+        ).get(None)
+        options = s.get('settings').get('extensions').get('pymdownx.critic')
+        self.assertEqual(options.get('mode'), 'view')
+
+    def test_plain_prevent_override(self):
+        s = self._get_settings(
+            'plain.cfg',
+            plain=True,
+            stream=True
+        ).get(None)
+        options = s.get('settings').get('extensions').get('pymdownx.plainhtml')
         self.assertEqual(options, None)
 
     def test_plain_allow_override(self):
-        s = settings.Settings(
-            settings_path=os.path.join('tests', 'settings', 'plain.cfg')
-        )
-        s.read_settings()
-        new_s = s.get('Untitled')
-
-        option = new_s.get('settings').get('extensions').get('pymdownx.plainhtml').get('strip_comments', None)
-        self.assertEqual(option, False)
+        s = self._get_settings(
+            'plain.cfg',
+            stream=True
+        ).get(None)
+        options = s.get('settings').get('extensions').get('pymdownx.plainhtml')
+        self.assertEqual(options.get('strip_comments'), False)
 
     def test_pygments_no_style(self):
-        s = settings.Settings(
-            settings_path=os.path.join('tests', 'settings', 'pygments_no_style.cfg')
-        )
-        s.read_settings()
-        new_s = s.get('Untitled')
-
-        style = new_s.get('settings').get('style')
+        s = self._get_settings(
+            'pygments_no_style.cfg',
+            stream=True
+        ).get(None)
+        style = s.get('settings').get('style')
         self.assertEqual(style, 'default')
-        pygments_css = new_s.get('settings').get('pygments_class')
+        pygments_css = s.get('settings').get('pygments_class')
         self.assertEqual(pygments_css, 'codehilite')
 
     def test_pygments_bad_style(self):
-        s = settings.Settings(
-            settings_path=os.path.join('tests', 'settings', 'pygments_bad_style.cfg')
-        )
-        s.read_settings()
-        new_s = s.get('Untitled')
-
-        style = new_s.get('settings').get('style')
+        logger.Log.set_level(logger.CRITICAL)
+        s = self._get_settings(
+            'pygments_bad_style.cfg',
+            stream=True
+        ).get(None)
+        style = s.get('settings').get('style')
+        logger.Log.set_level(logger.INFO)
         self.assertEqual(style, 'default')
 
     def test_no_pygments(self):
-        s = settings.Settings(
-            settings_path=os.path.join('tests', 'settings', 'no_pygments.cfg')
-        )
-        s.read_settings()
-        new_s = s.get('Untitled')
-
-        use_pygments_css = new_s.get('settings').get('use_pygments_css')
+        s = self._get_settings(
+            'no_pygments.cfg',
+            stream=True
+        ).get(None)
+        use_pygments_css = s.get('settings').get('use_pygments_css')
         self.assertEqual(use_pygments_css, False)
 
     def test_pygments_noclasses(self):
-        s = settings.Settings(
-            settings_path=os.path.join('tests', 'settings', 'pygments_noclasses.cfg')
-        )
-        s.read_settings()
-        new_s = s.get('Untitled')
-
-        use_pygments_css = new_s.get('settings').get('use_pygments_css')
+        s = self._get_settings(
+            'pygments_noclasses.cfg',
+            stream=True
+        ).get(None)
+        use_pygments_css = s.get('settings').get('use_pygments_css')
         self.assertEqual(use_pygments_css, False)
 
     def test_pygments_class(self):
-        s = settings.Settings(
-            settings_path=os.path.join('tests', 'settings', 'pygments_class.cfg')
-        )
-        s.read_settings()
-        new_s = s.get('Untitled')
-
-        pygments_css = new_s.get('settings').get('pygments_class')
+        s = self._get_settings(
+            'pygments_class.cfg',
+            stream=True
+        ).get(None)
+        pygments_css = s.get('settings').get('pygments_class')
         self.assertEqual(pygments_css, 'highlight')
+
+    def test_preview(self):
+        s = self._get_settings(
+            'preview_with_pathconverter.cfg',
+            preview=True,
+            stream=True
+        ).get(None)
+        options = s.get('settings').get('extensions').get('pymdownx.pathconverter')
+        self.assertEqual(options.get('relative_path'), '${OUTPUT}')
+
+    def test_preview_pathconverter(self):
+        s = self._get_settings(
+            'empty.cfg',
+            preview=True,
+            stream=True
+        ).get(None)
+        options = s.get('settings').get('extensions').get('pymdownx.pathconverter')
+        self.assertEqual(options.get('relative_path'), '${OUTPUT}')
+        self.assertEqual(options.get('base_path'), '${BASE_PATH}')
