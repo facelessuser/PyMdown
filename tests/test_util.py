@@ -43,7 +43,7 @@ class TestResources(unittest.TestCase):
         )
 
         with codecs.open(os.path.join('pymdown', 'data', 'licenses.txt'), encoding='utf-8') as f:
-            text3 = f.read()
+            text3 = f.read().replace('\r', '')
 
         text4 = util.load_text_resource(
             os.path.join('pymdown', 'data', 'not-exist.txt')
