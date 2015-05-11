@@ -1,4 +1,5 @@
-[![Build Status][travis-image]][travis-link]
+[![Unix Build Status][travis-image]][travis-link]
+[![Windows Build Status][appveyor-image]][appveyor-link]
 [![Coverage Status][coveralls-image]][coveralls-link]
 ![License][license-image]
 
@@ -34,6 +35,8 @@ See [licenses](https://github.com/facelessuser/PyMdown/blob/master/data/licenses
 
 [coveralls-image]: https://img.shields.io/coveralls/facelessuser/PyMdown.png
 [coveralls-link]: https://coveralls.io/r/facelessuser/PyMdown
-[travis-image]: https://img.shields.io/travis/facelessuser/PyMdown.svg
+[travis-image]: https://img.shields.io/travis/facelessuser/PyMdown.svg?label=Unix%20Build
 [travis-link]: https://travis-ci.org/facelessuser/PyMdown
+[appveyor-image]: https://img.shields.io/appveyor/ci/facelessuser/PyMdown.svg?label=Windows%20Build
+[appveyor-link]: https://ci.appveyor.com/project/facelessuser/pymdown
 [license-image]: https://img.shields.io/badge/license-MIT-blue.svg
