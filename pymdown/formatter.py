@@ -23,7 +23,7 @@ from .compat import pathname2url, unicode_string, print_stdout
 try:
     from pygments.formatters import get_formatter_by_name
     PYGMENTS_AVAILABLE = True
-except:
+except:  # pragma: no cover
     PYGMENTS_AVAILABLE = False
 
 RE_URL_START = re.compile(r"^(http|ftp)s?://|tel:|mailto:|data:|news:|#")

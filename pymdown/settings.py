@@ -20,7 +20,7 @@ from .compat import unicode_string, string_type
 try:
     from pygments.styles import get_style_by_name
     PYGMENTS_AVAILABLE = True
-except:
+except:  # pragma: no cover
     PYGMENTS_AVAILABLE = False
 
 
@@ -229,7 +229,7 @@ class Settings(object):
         settings_path = kwargs.get('settings_path', None)
         self.settings_path = settings_path if settings_path is not None else 'pymdown.cfg'
 
-    def unpack_settings_file(self):
+    def unpack_settings_file(self):  # pragma: no cover
         """ Unpack default settings file. """
         text = util.load_text_resource(util.DEFAULT_SETTINGS, internal=True)
         try:
@@ -249,14 +249,14 @@ class Settings(object):
 
         # Unpack settings file if needed
         if not path.exists(self.settings_path):
-            self.unpack_settings_file()
+            self.unpack_settings_file()  # pragma: no cover
 
         # Try and read settings file
         try:
             with codecs.open(self.settings_path, "r", encoding='utf-8') as f:
                 contents = f.read()
                 settings = util.yaml_load(contents)
-        except:
+        except:  # pragma: no cover
             logger.Log.error(traceback.format_exc())
 
         self.settings["settings"] = settings if settings is not None else {}
@@ -322,7 +322,7 @@ class Settings(object):
         """
         style = None
 
-        if not PYGMENTS_AVAILABLE:
+        if not PYGMENTS_AVAILABLE:  # pragma: no cover
             settings["settings"]["use_pygments_css"] = False
 
         # Search for codehilite to see what style is being set.
@@ -331,7 +331,7 @@ class Settings(object):
             if config is None:
                 config = {}
 
-            if not PYGMENTS_AVAILABLE and bool(config.get('use_pygments', True)):
+            if not PYGMENTS_AVAILABLE and bool(config.get('use_pygments', True)):  # pragma: no cover
                 config['use_pygments'] = False
 
             if bool(config.get('noclasses', False)) or not bool(config.get('use_pygments', True)):
