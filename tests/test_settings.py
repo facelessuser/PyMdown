@@ -178,7 +178,7 @@ class TestSettings(unittest.TestCase):
 
     def test_special_flags(self):
         dest = os.path.join(os.path.abspath('.'), 'tests', 'file.html')
-        template = os.path.join('pymdown', 'data', 'template.html')
+        template = '/'.join('pymdown', 'data', 'template.html')
         s = self._get_settings(
             'template.cfg'
         ).get('test.md', frontmatter={"destination": dest})
