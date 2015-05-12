@@ -147,3 +147,48 @@ class TestSettings(unittest.TestCase):
         options = s.get('settings').get('extensions').get('pymdownx.pathconverter')
         self.assertEqual(options.get('relative_path'), '${OUTPUT}')
         self.assertEqual(options.get('base_path'), '${BASE_PATH}')
+
+    def test_output_path(self):
+        base = os.path.abspath('.')
+        rel = os.path.join(os.path.abspath('.'), 'tests')
+        sobj = self._get_settings(
+            'empty.cfg'
+        )
+        s = sobj.get('test.md')
+        self.assertEqual(sobj.out, base)
+        self.assertEqual(s.get('page').get('relpath'), base)
+
+        s = sobj.get('test.md', relpath=rel)
+        self.assertEqual(sobj.out, base)
+        self.assertEqual(s.get('page').get('relpath'), rel)
+
+    def test_output_input_path(self):
+        dest = os.path.join(os.path.abspath('.'), 'tests', 'file.html')
+        rel = os.path.abspath('.')
+        sobj = self._get_settings(
+            'empty.cfg'
+        )
+        s = sobj.get('test.md', frontmatter={"destination": dest})
+        self.assertEqual(sobj.out, os.path.dirname(dest))
+        self.assertEqual(s.get('page').get('relpath'), os.path.dirname(dest))
+
+        s = sobj.get('test.md', relpath=rel, frontmatter={"destination": dest})
+        self.assertEqual(sobj.out, os.path.dirname(dest))
+        self.assertEqual(s.get('page').get('relpath'), rel)
+
+    def test_special_flags(self):
+        dest = os.path.join(os.path.abspath('.'), 'tests', 'file.html')
+        template = os.path.join('pymdown', 'data', 'template.html')
+        s = self._get_settings(
+            'template.cfg'
+        ).get('test.md', frontmatter={"destination": dest})
+        self.assertEqual(s.get('page').get('destination'), dest)
+        self.assertEqual(s.get('settings').get('template'), template)
+
+        s = self._get_settings(
+            'template.cfg',
+            force_stdout=True,
+            force_no_template=True
+        ).get('test.md', frontmatter={"destination": dest})
+        self.assertEqual(s.get('page').get('destination'), None)
+        self.assertEqual(s.get('settings').get('template'), None)
