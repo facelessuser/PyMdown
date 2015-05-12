@@ -33,7 +33,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 #3rd Party Licenses
 See [licenses](https://github.com/facelessuser/PyMdown/blob/master/data/licenses.txt).
 
-[coveralls-image]: https://img.shields.io/coveralls/facelessuser/PyMdown.png
+[coveralls-image]: https://img.shields.io/coveralls/facelessuser/PyMdown.svg
 [coveralls-link]: https://coveralls.io/r/facelessuser/PyMdown
 [travis-image]: https://img.shields.io/travis/facelessuser/PyMdown.svg?label=Unix%20Build
 [travis-link]: https://travis-ci.org/facelessuser/PyMdown
