@@ -1,3 +1,6 @@
+"""
+Create eggs for the given folders.
+"""
 import os
 import subprocess
 import sys
@@ -6,9 +9,7 @@ PY3 = sys.version_info >= (3, 0)
 
 
 def create_egg(directory):
-    """
-    Launch the build process
-    """
+    """ Launch the build process to create an egg. """
 
     okay = True
 
@@ -44,6 +45,7 @@ def create_egg(directory):
 
 
 def crawl_eggs(src):
+    """ Crawl the paths and create the egg for each source. """
     for directory in src:
         setup = os.path.join(directory, "setup.py")
         if os.path.exists(setup):

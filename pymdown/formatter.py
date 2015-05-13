@@ -397,8 +397,14 @@ class Html(object):
                 is_abs = util.is_absolute(resource)
                 if not is_abs and not is_url:
                     # Is relative path
-                    base_temp = path.normpath(path.join(self.basepath, resource)) if self.basepath is not None else None
-                    user_temp = path.normpath(path.join(self.user_path, resource)) if self.user_path is not None else None
+                    if self.basepath is not None:
+                        base_temp = path.normpath(path.join(self.basepath, resource))
+                    else:
+                        base_temp = None
+                    if self.user_path is not None:
+                        user_temp = path.normpath(path.join(self.user_path, resource))
+                    else:
+                        user_temp = None
                     if base_temp is not None and path.exists(base_temp) and path.isfile(base_temp):
                         res_path = resource
                     elif user_temp is not None and path.exists(user_temp) and path.isfile(user_temp):

@@ -289,7 +289,9 @@ def open_in_browser(name):
     if PLATFORM == "osx":
         web_handler = None
         try:
-            launch_services = path.expanduser('~/Library/Preferences/com.apple.LaunchServices/com.apple.launchservices.secure.plist')
+            launch_services = path.expanduser(
+                '~/Library/Preferences/com.apple.LaunchServices/com.apple.launchservices.secure.plist'
+            )
             if not path.exists(launch_services):
                 launch_services = path.expanduser('~/Library/Preferences/com.apple.LaunchServices.plist')
             with open(launch_services, "rb") as f:

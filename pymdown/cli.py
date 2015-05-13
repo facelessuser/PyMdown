@@ -97,6 +97,7 @@ def display_licenses():
 def main():
     """ Go! """
 
+    default_settings = path.join(util.get_user_path(), "pymdown.cfg")
     parser = argparse.ArgumentParser(prog='pymdown', description='Markdown generator')
     # Flag arguments
     parser.add_argument('--version', action='version', version="%(prog)s " + __version__)
@@ -104,13 +105,16 @@ def main():
     parser.add_argument('--licenses', action='store_true', default=False, help="Display licenses.")
     parser.add_argument('--quiet', '-q', action='store_true', default=False, help="No messages on stdout.")
     # Format and Viewing
-    parser.add_argument('--preview', '-p', action='store_true', default=False, help="Output to preview (temp file). --output will be ignored.")
-    parser.add_argument('--plain-html', '-P', action='store_true', default=False, help="Strip out CSS, style, ids, etc.  Just show tags.")
+    parser.add_argument('--preview', '-p', action='store_true', default=False, help="Output to preview (temp file). "
+                                                                                    "--output will be ignored.")
+    parser.add_argument('--plain-html', '-P', action='store_true', default=False, help="Strip out CSS, style, ids, etc."
+                                                                                       "  Just show tags.")
     parser.add_argument('--title', default=None, help="Title for HTML.")
     # Critic features
-    parser.add_argument('--accept', '-a', action='store_true', default=False, help="Accept propossed critic marks when using in normal processing and --critic-dump processing")
-    parser.add_argument('--reject', '-r', action='store_true', default=False, help="Reject propossed critic marks when using in normal processing and --critic-dump processing")
-    parser.add_argument('--critic-dump', action='store_true', default=False, help="Process critic marks, dumps file(s), and exits.")
+    parser.add_argument('--accept', '-a', action='store_true', default=False, help="Accept propossed critic marks.")
+    parser.add_argument('--reject', '-r', action='store_true', default=False, help="Reject propossed critic marks.")
+    parser.add_argument('--critic-dump', action='store_true', default=False, help="Process critic marks, "
+                                                                                  "dumps file(s), and exit.")
     # Output
     parser.add_argument('--output', '-o', default=None, help="Output file. Ignored in batch mode.")
     parser.add_argument('--batch', '-b', action='store_true', default=False, help="Batch mode output.")
@@ -118,7 +122,8 @@ def main():
     parser.add_argument('--force-no-template', action='store_true', default=False, help="Force using no template.")
     parser.add_argument('--output-encoding', '-E', default=None, help="Output encoding.")
     # Input configuration
-    parser.add_argument('--settings', '-s', default=path.join(util.get_user_path(), "pymdown.cfg"), help="Load the settings file from an alternate location.")
+    parser.add_argument('--settings', '-s', default=default_settings, help="Load the settings file from an alternate "
+                                                                           "location.")
     parser.add_argument('--encoding', '-e', default="utf-8", help="Encoding for input.")
     parser.add_argument('--basepath', default=None, help="The basepath location pymdown should use.")
     parser.add_argument('--relpath', default=None, help="The path that things will be relative to (default is output).")

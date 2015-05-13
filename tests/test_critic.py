@@ -54,7 +54,7 @@ class TestCritic(unittest.TestCase):
             This is a <ins class="critic">CritcMarkup </ins><del class="critic">test to </del>test<del class="critic"> CriticMarkup</del>.
 
             <mark class="critic">This is a good test.</mark><span class="critic comment">This probably isn't needed.</span>
-            '''
+            '''  # noqa
         )
 
         self.assertEqual(result, expected)
