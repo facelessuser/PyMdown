@@ -21,5 +21,4 @@ Extensions:
 | [progressbar](./progressbar.md)  | | pymdownx.progressbar |
 | [headeranchor](./headeranchor.md)| | pymdownx.headeranchor |
 | [superfences](./superfences.md)  | | pymdownx.superfences |
-| [inlinehilite](./inlinehilite.md)| | pymdownx.inlinehilite |
 | [math](./math.md)                | | pymdownx.math |

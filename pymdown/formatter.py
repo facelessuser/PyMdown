@@ -301,7 +301,7 @@ class Html(object):
     def open(self, output):
         """ Set and create the output target and target related flags """
         if output is None:
-            self.file = Terminal()
+            self.file = Terminal(self.encoding)
             self.file.name = self.relative_output
         try:
             if not self.preview and output is not None:
@@ -327,7 +327,7 @@ class Html(object):
         if not self.plain:
             # If we haven't already, print the file head
             self.load_header(
-                self.settings.get("style", None)
+                self.settings.get("pygments_style", None)
             )
             self.write_html_start()
 

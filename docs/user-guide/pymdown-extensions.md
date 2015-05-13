@@ -15,7 +15,6 @@ Check out the individual extension document pages for more info on the available
 | &nbsp;&nbsp;[caret](../extensions/caret.md)              | pymdownx.caret |
 | &nbsp;&nbsp;[githubemoji](../extensions/githubemoji.md)  | pymdownx.githubemoji |
 | &nbsp;&nbsp;[headeranchor](../extensions/headeranchor.md)| pymdownx.headeranchor |
-| &nbsp;&nbsp;[inlinehilite](../extensions/inlinehilite.md)| pymdownx.inlinehilite |
 | &nbsp;&nbsp;[magiclink](../extensions/magiclink.md)      | pymdownx.magiclink |
 | &nbsp;&nbsp;[mark](../extensions/mark.md)                | pymdownx.mark |
 | &nbsp;&nbsp;[math](../extensions/math.md)                | pymdownx.math |
@@ -24,6 +23,7 @@ Check out the individual extension document pages for more info on the available
 | &nbsp;&nbsp;[superfences](../extensions/superfences.md)  | pymdownx.superfences |
 | &nbsp;&nbsp;[tasklist](../extensions/tasklist.md)        | pymdownx.tasklist |
 | &nbsp;&nbsp;[tilde](../extensions/tilde.md)              | pymdownx.tilde |
+| [inlinehilite](../extensions/inlinehilite.md)            | pymdownx.inlinehilite |
 | [pathconverter](../extensions/pathconverter.md)          | pymdownx.pathconverter |
 | [b64](../extensions/b64.md)                              | pymdownx.b64 |
 | [critic](../extensions/critic.md)                        | pymdownx.critic |

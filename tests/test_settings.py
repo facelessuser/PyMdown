@@ -90,10 +90,8 @@ class TestSettings(unittest.TestCase):
             'pygments_no_style.cfg',
             stream=True
         ).get(None)
-        style = s.get('settings').get('style')
+        style = s.get('settings').get('pygments_style')
         self.assertEqual(style, 'default')
-        pygments_css = s.get('settings').get('pygments_class')
-        self.assertEqual(pygments_css, 'codehilite')
 
     def test_pygments_bad_style(self):
         logger.Log.set_level(logger.CRITICAL)
@@ -101,7 +99,7 @@ class TestSettings(unittest.TestCase):
             'pygments_bad_style.cfg',
             stream=True
         ).get(None)
-        style = s.get('settings').get('style')
+        style = s.get('settings').get('pygments_style')
         logger.Log.set_level(logger.INFO)
         self.assertEqual(style, 'default')
 

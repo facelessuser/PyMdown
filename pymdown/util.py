@@ -32,8 +32,8 @@ DEFAULT_TEMPLATE = "pymdown/data/default-template.html"
 DEFAULT_SETTINGS = "pymdown/data/pymdown.cfg"
 USER_VERSION = "pymdown/data/version.txt"
 NO_COPY = ('licenses.txt',)
-NO_UPDATE = (path.basename(DEFAULT_SETTINGS),)
-NOT_DEFAULT = (path.basename(DEFAULT_SETTINGS), 'version.txt')
+NO_UPDATE = ('__init__.py',)
+NOT_DEFAULT = ('version.txt',)
 
 CRITIC_IGNORE = 0
 CRITIC_ACCEPT = 1

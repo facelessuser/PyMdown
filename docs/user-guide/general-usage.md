@@ -167,14 +167,39 @@ output_format: 'xhtml1'
 Safe mode setting is omitted as it is pending deprecation in Python Markdown.
 
 ## Pygment Settings
-The following setting s used when it is not desired to have PyMdown inject the Pygments CSS style into the template:
+The following setting determines if a one of the installed Pygments CSS themes will be injected into your template.  This can be turned off if you are applying your own, or you are configured to use a JavaScript syntax highlighter.
 
 ```yaml
 # Include the pygments css when using codehilite extension
 use_pygments_css: true,
 ```
 
-If Pygments is disabled, but the CodeHilite extension is being used, code blocks are converted to a form so that a JavaScript library like [highlight.js](https://highlightjs.org/) can process them.
+!!! note "Note"
+    If any of the following reasons are true, Pygments CSS will not be injected regardless of whether `use_pygments_css` is enabled or not:
+
+        - CodeHilite and/or InlineHilite extension are not being used.
+        - CodeHilite and/or InlineHilite have `use_pygments` set to `False` or `noclasses` set to `True`.
+        - Pygments is not installed on the system.
+
+This setting is used to configure which installed Pygments theme PyMdown should insert into your HTML template.
+
+```yaml
+# Name of installed Pygments style to use.
+pygments_style: default
+```
+
+This determines what class will be prepended to all of the Pygment's CSS theme.
+
+```yaml
+# Pygments class to use.  This applies a class to the Pygments CSS
+# so that only elements with the class below will be syntax highlighted.
+# If using this, make sure you've configured CodeHilite and/or InlineHilite
+# to use the same name.
+pygments_class: highlight
+```
+
+!!! tip "Tip"
+    If you want to use a JavaScript highlighter such as [highlight.js](https://highlightjs.org/), you should disable `use_pygments_css`, and set `use_pygments` to `False` in CodeHilite and/or InlineHilite.
 
 ## Template
 PyMdown allows for specifying a simple HTML template that can be used for the output.  Template files can be specified in the settings file via the `template` keyword.

@@ -319,30 +319,35 @@ class Settings(object):
         If it is not explicitly set, go ahead and insert the default
         style (github).
         """
-        style = None
+        style = 'default'
 
         if not PYGMENTS_AVAILABLE:  # pragma: no cover
             settings["settings"]["use_pygments_css"] = False
 
-        # Search for codehilite to see what style is being set.
-        if "markdown.extensions.codehilite" in extensions:
-            config = extensions["markdown.extensions.codehilite"]
+        global_use_pygments_css = settings["settings"].get("use_pygments_css", True)
+        use_pygments_css = False
+        for hilite_ext in ('markdown.extensions.codehilite', 'pymdownx.inlinehilite'):
+            if hilite_ext not in extensions:
+                continue
+            # Search for codehilite to see what style is being set.
+            config = extensions[hilite_ext]
             if config is None:
                 config = {}
 
-            if not PYGMENTS_AVAILABLE and bool(config.get('use_pygments', True)):  # pragma: no cover
-                config['use_pygments'] = False
+            use_pygments_css = use_pygments_css or (
+                not config.get('noclasses', False) and
+                config.get('use_pygments', True) and
+                config.get('use_codehilite_settings', True) and
+                PYGMENTS_AVAILABLE and
+                global_use_pygments_css
+            )
 
-            if bool(config.get('noclasses', False)) or not bool(config.get('use_pygments', True)):
-                settings["settings"]["use_pygments_css"] = False
+        if global_use_pygments_css and not use_pygments_css:
+            settings["settings"]["use_pygments_css"] = False
 
-            css_class = config.get('css_class', None)
-            if css_class is not None:
-                settings["settings"]["pygments_class"] = css_class
-            else:
-                settings["settings"]["pygments_class"] = "codehilite"
-
-            style = config.get('pygments_style', None)
+        if use_pygments_css:
+            # Ensure a working style is set
+            style = settings["settings"].get('pygments_style', None)
             if style is None:
                 # Explicitly define a pygment style and store the name
                 # This is to ensure the "noclasses" option always works
@@ -354,9 +359,7 @@ class Settings(object):
                 except:
                     logger.Log.error("Cannot find style: %s! Falling back to 'default' style." % style)
                     style = "default"
-            config['pygments_style'] = style
-
-        settings["settings"]["style"] = style
+        settings["settings"]["pygments_style"] = style
 
     def post_process_settings(self, settings):
         """ Process the settings files making needed adjustements """

@@ -30,6 +30,7 @@
                 guess_lang: False
                 css_class: highlight
             pymdownx.pymdown:
+            pymdownx.inlinehilite:
             pymdownx.b64:
                 base_path: ${BASE_PATH}
 ---
@@ -40,23 +41,24 @@ title: This title will be overridden by YAML
     This is mainly to visually inspect markdown output offered by PyMdown.  This isn't a real test.  Here are the enabled extensions:
 
     ```yaml
-    extensions:
-        markdown.extensions.extra:
-        markdown.extensions.toc:
-            title: Table of Contents
-            slugify: ${SLUGIFY}
-        markdown.extensions.headerid:
-        markdown.extensions.smarty:
-        markdown.extensions.meta:
-        markdown.extensions.wikilinks:
-        markdown.extensions.admonition:
-        markdown.extensions.nl2br:
-        markdown.extensions.codehilite:
-            guess_lang: False
-            css_class: highlight
-        pymdownx.pymdown:
-        pymdownx.b64:
-            base_path: ${BASE_PATH}
+        extensions:
+            markdown.extensions.extra:
+            markdown.extensions.toc:
+                title: Table of Contents
+                slugify: ${SLUGIFY}
+            markdown.extensions.headerid:
+            markdown.extensions.smarty:
+            markdown.extensions.meta:
+            markdown.extensions.wikilinks:
+            markdown.extensions.admonition:
+            markdown.extensions.nl2br:
+            markdown.extensions.codehilite:
+                guess_lang: False
+                css_class: highlight
+            pymdownx.pymdown:
+            pymdownx.inlinehilite:
+            pymdownx.b64:
+                base_path: ${BASE_PATH}
     ```
 
     !!! Caution "Notes"
