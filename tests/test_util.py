@@ -1,3 +1,4 @@
+"""Test formatter lib."""
 from __future__ import unicode_literals
 import unittest
 from collections import OrderedDict
@@ -8,7 +9,12 @@ import codecs
 
 
 class TestFrontmatter(unittest.TestCase):
+
+    """TestFrontmatter."""
+
     def test_yaml_load(self):
+        """Test that yaml can load ordered dictionaries."""
+
         yaml_text = common.dedent('''
             test:
                 key1: 1
@@ -27,12 +33,14 @@ class TestFrontmatter(unittest.TestCase):
                                                ('key5', 6)]))])
         )
 
-    def test_whatever(self):
-        pass
-
 
 class TestResources(unittest.TestCase):
+
+    """ TestResources."""
+
     def test_text_resource(self):
+        """Test that we can load file resoures properly."""
+
         text1 = util.load_text_resource(
             os.path.join('pymdown', 'data', 'licenses.txt')
         )

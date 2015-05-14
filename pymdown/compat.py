@@ -1,3 +1,9 @@
+"""
+Module to provide compatibility between Py2 and Py3.
+
+Licensed under MIT
+Copyright (c) 2014 - 2015 Isaac Muse <isaacmuse@gmail.com>
+"""
 from __future__ import unicode_literals
 import sys
 NOSETESTS = sys.argv[0].endswith('nosetests')
@@ -36,16 +42,20 @@ else:  # pragma: no cover
 
 def print_stdout(text, encoding='utf-8'):
     """
-    Write text out as bytes where possible.  If someone overrides
-    stdout, this may prove difficult.  Nose for instance, will overrite
-    stdout to capture it.  This can be disabled by usint "nosetests -s",
-    but it is also useful to allow nose to do this.  So we take the encoding
-    and during "nosetests" we just convert it back to unicode as we will
-    only work with stdout internally.
+    Write text out as bytes where possible.
+
+    If someone overrides stdout, this may prove difficult.
+    Nose for instance, will overrite stdout to capture it.
+    This can be disabled by usint "nosetests -s", but it is also
+    useful to allow nose to do this.  So we take the encoding
+    and during "nosetests" we just convert it back to unicode
+    as we will only work with stdout internally.
     """
+
     stdout_write(text, encoding)
 
 
 def to_unicode(string, encoding='utf-8'):
-    """ Convert byte string to unicode """
+    """Convert byte string to unicode."""
+
     return string.decode(encoding) if isinstance(string, byte_string) else string

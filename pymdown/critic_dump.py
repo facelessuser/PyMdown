@@ -1,5 +1,5 @@
 """
-Strips and returns the the markdown with critic marks removed
+Strips and returns the the markdown with critic marks removed.
 
 Licensed under MIT
 Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
@@ -10,7 +10,16 @@ from pymdownx.critic import CriticViewPreprocessor, CriticsPostprocessor, Critic
 
 
 class CriticDump(object):
+
+    """
+    Critic Dumper.
+
+    Dumps out content with critic marks processed or,
+    in the case of 'view' mode, converts them to tags.
+    """
+
     def dump(self, source, accept, view=False):
+        """Process critic marks and return the file."""
         text = ''
         if view:
             mode = 'view'

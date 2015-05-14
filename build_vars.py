@@ -1,10 +1,8 @@
-#####################################
-# To ensure all modules are found
-# for Pyinstaller builds. Due to
-# dynamic importing of the modules,
-# not all modules are found by
-# Pyinstaller.
-#####################################
+"""
+Ensure all modules are found for Pyinstaller builds.
+
+Due to dynamic importing of the modules, not all modules are found by Pyinstaller.
+"""
 import os
 import sys
 import zipfile
@@ -38,6 +36,7 @@ hidden_imports_to_crawl = [
 # Crawl Functions
 #####################################
 def crawl_data(src, dest):
+    """Crawl data."""
     for target in src:
         if os.path.isfile(target):
             dest.append((target, "./%s" % target, "DATA"))
@@ -50,6 +49,7 @@ def crawl_data(src, dest):
 
 
 def crawl_hidden_imports(src, dest, paths):
+    """Crawl hidden imports."""
     import pkgutil
     for mod in src:
         pkg = pkgutil.get_loader(mod)
@@ -64,7 +64,15 @@ def crawl_hidden_imports(src, dest, paths):
 
 
 def handle_egg(archive, dest, egg_modules):
+    """Handle an egg import."""
+
     def is_egg(archive):
+        """
+        Check if is an egg that we will accept.
+
+        Egg must start with 'pymdown'.
+        """
+
         egg_extension = "py%d.%d.egg" % (sys.version_info.major, sys.version_info.minor)
         egg_start = "pymdown"
         return (
@@ -74,6 +82,8 @@ def handle_egg(archive, dest, egg_modules):
         )
 
     def hidden_egg_modules(archive, dest):
+        """Add egg modules to hidden imports."""
+
         with zipfile.ZipFile(archive, 'r') as z:
             text = z.read(z.getinfo('EGG-INFO/SOURCES.txt'))
             if PY3:
@@ -88,6 +98,8 @@ def handle_egg(archive, dest, egg_modules):
                     dest.append(line.replace('/', '.')[:-3])
 
     if is_egg(archive):
+        """Check if is an egg."""
+
         dest.append(archive)
         hidden_egg_modules(archive, egg_modules)
 
@@ -99,6 +111,8 @@ crawl_hidden_imports(hidden_imports_to_crawl, hidden_imports, paths)
 # Print Results
 #####################################
 def print_vars(label, src):
+    """Print specified variable."""
+
     print("--- %s ---" % label)
     for s in src:
         print(s)
@@ -106,6 +120,8 @@ def print_vars(label, src):
 
 
 def print_all_vars():
+    """Print all the variables."""
+
     print('====== Processed Spec Variables =====')
     print_vars('Data', data)
     print_vars('Hidden Imports', hidden_imports)

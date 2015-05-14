@@ -1,3 +1,11 @@
+"""
+PyMdown Settings.
+
+Manage Settings
+
+Licensed under MIT
+Copyright (c) 2014 - 2015 Isaac Muse <isaacmuse@gmail.com>
+"""
 from __future__ import unicode_literals
 from __future__ import absolute_import
 from __future__ import print_function
@@ -22,8 +30,12 @@ FAIL = 1
 
 
 class Convert(object):
+
+    """Converts markdown files."""
+
     def __init__(self, **kwargs):
-        """ Unpack user files and then load up settings """
+        """Unpack user files and then load up settings."""
+
         util.unpack_user_files()
         self.config = settings.Settings(**kwargs)
         self.config.read_settings()
@@ -35,8 +47,8 @@ class Convert(object):
 
     def merge_meta(self, md_meta, file_name):
         """
-        Retrieve Markdown meta data if available and merge frontmatter
-        with it:
+        Retrieve Markdown meta data if available and merge frontmatter with it.
+
             1. Frontmatter will override normal meta data.
             2. Meta data overrides --title option on command line.
         """
@@ -59,7 +71,8 @@ class Convert(object):
 
     def strip_frontmatter(self, text):
         """
-        Extract settings from file frontmatter and config file
+        Extract settings from file frontmatter and config file.
+
         Fronmatter options will overwrite config file options.
         """
 
@@ -68,6 +81,8 @@ class Convert(object):
 
     def get_file_settings(self, file_name, frontmatter={}):
         """
+        Get the file settings merged with the file's frontmatter.
+
         Using the filename and/or frontmatter, this retrieves
         the full set of settings for this specific file.
         """
@@ -84,7 +99,8 @@ class Convert(object):
         return status
 
     def read_file(self, file_name):
-        """ Read the source file """
+        """Read the source file."""
+
         try:
             with codecs.open(file_name, "r", encoding=self.config.encoding) as f:
                 text = f.read()
@@ -94,7 +110,8 @@ class Convert(object):
         return text
 
     def critic_dump(self, file_name, text):
-        """ Dump the markdown back out after stripping critic marks """
+        """Dump the markdown back out after stripping critic marks."""
+
         status = PASS
 
         status = self.get_file_settings(file_name)
@@ -137,7 +154,8 @@ class Convert(object):
         return status
 
     def html_dump(self, file_name, text):
-        """ Convet markdown to HTML """
+        """Convet markdown to HTML."""
+
         status = PASS
 
         if status == PASS and file_name is not None:
@@ -207,7 +225,8 @@ class Convert(object):
         return status
 
     def convert(self, files):
-        """ Convert markdown file(s) """
+        """Convert markdown file(s)."""
+
         status = PASS
 
         # Make sure we have something we can process

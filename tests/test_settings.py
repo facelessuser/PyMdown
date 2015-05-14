@@ -1,3 +1,4 @@
+"""Test the settings lib."""
 from __future__ import unicode_literals
 import unittest
 from collections import OrderedDict
@@ -8,13 +9,20 @@ import os
 
 
 class TestSettings(unittest.TestCase):
+
+    """TestSettings."""
+
     def _get_settings(self, settings_file, **kwargs):
+        """Retrieve the desired test config file."""
+
         kwargs['settings_path'] = os.path.join('tests', 'settings', settings_file)
         s = settings.Settings(**kwargs)
         s.read_settings()
         return s
 
     def test_critic_prevent_override(self):
+        """Test that we prevent critic override if critic is specified from command line."""
+
         s = self._get_settings(
             'critic.cfg',
             stream=True,
@@ -24,6 +32,8 @@ class TestSettings(unittest.TestCase):
         self.assertEqual(option, 'accept')
 
     def test_critic_allow_override(self):
+        """Test that we can override critic option if not already specified."""
+
         s = self._get_settings(
             'critic.cfg',
             stream=True
@@ -32,6 +42,8 @@ class TestSettings(unittest.TestCase):
         self.assertEqual(option, 'reject')
 
     def test_critic_frontmatter_override(self):
+        """Test that the frontmatter can override the critic option."""
+
         s = self._get_settings(
             'critic.cfg',
             stream=True
@@ -51,6 +63,8 @@ class TestSettings(unittest.TestCase):
         self.assertEqual(option, 'accept')
 
     def test_critic_reject(self):
+        """Test that we can set the critic reject option."""
+
         s = self._get_settings(
             'critic.cfg',
             stream=True,
@@ -60,6 +74,8 @@ class TestSettings(unittest.TestCase):
         self.assertEqual(option, 'reject')
 
     def test_critic_view(self):
+        """Test that we can set the critic view option."""
+
         s = self._get_settings(
             'critic.cfg',
             stream=True,
@@ -69,6 +85,8 @@ class TestSettings(unittest.TestCase):
         self.assertEqual(options.get('mode'), 'view')
 
     def test_plain_prevent_override(self):
+        """Test that we can prevent the plain override if plain is set from command line."""
+
         s = self._get_settings(
             'plain.cfg',
             plain=True,
@@ -78,6 +96,8 @@ class TestSettings(unittest.TestCase):
         self.assertEqual(options, None)
 
     def test_plain_allow_override(self):
+        """ Test that we can override the plain setting if not already set."""
+
         s = self._get_settings(
             'plain.cfg',
             stream=True
@@ -86,6 +106,8 @@ class TestSettings(unittest.TestCase):
         self.assertEqual(options.get('strip_comments'), False)
 
     def test_pygments_no_style(self):
+        """Ensure we get default style if none is specified."""
+
         s = self._get_settings(
             'pygments_no_style.cfg',
             stream=True
@@ -94,6 +116,8 @@ class TestSettings(unittest.TestCase):
         self.assertEqual(style, 'default')
 
     def test_pygments_bad_style(self):
+        """Ensure we fallback to default style if a bad style is specified."""
+
         logger.Log.set_level(logger.CRITICAL)
         s = self._get_settings(
             'pygments_bad_style.cfg',
@@ -104,6 +128,8 @@ class TestSettings(unittest.TestCase):
         self.assertEqual(style, 'default')
 
     def test_no_pygments(self):
+        """Ensure we internally know when hilite extensions specify to not use Pygments."""
+
         s = self._get_settings(
             'no_pygments.cfg',
             stream=True
@@ -112,6 +138,8 @@ class TestSettings(unittest.TestCase):
         self.assertEqual(use_pygments_css, False)
 
     def test_pygments_noclasses(self):
+        """Ensure 'use_pygments_css' not set internally if hilite extension uses 'noclasses'."""
+
         s = self._get_settings(
             'pygments_noclasses.cfg',
             stream=True
@@ -120,6 +148,8 @@ class TestSettings(unittest.TestCase):
         self.assertEqual(use_pygments_css, False)
 
     def test_pygments_class(self):
+        """Ensure we can set the Pygments css class internally."""
+
         s = self._get_settings(
             'pygments_class.cfg',
             stream=True
@@ -128,6 +158,8 @@ class TestSettings(unittest.TestCase):
         self.assertEqual(pygments_css, 'highlight')
 
     def test_preview(self):
+        """Test that we set relative path proper when preview mode is true with pathconverter."""
+
         s = self._get_settings(
             'preview_with_pathconverter.cfg',
             preview=True,
@@ -137,6 +169,8 @@ class TestSettings(unittest.TestCase):
         self.assertEqual(options.get('relative_path'), '${OUTPUT}')
 
     def test_preview_pathconverter(self):
+        """Ensure we configure pathconverter when not already configured when preview is enabled."""
+
         s = self._get_settings(
             'empty.cfg',
             preview=True,
@@ -147,6 +181,13 @@ class TestSettings(unittest.TestCase):
         self.assertEqual(options.get('base_path'), '${BASE_PATH}')
 
     def test_output_path(self):
+        """
+        Test that relative path based on output path.
+
+            - relpath should == base when relpath is not set.
+            - If relpath is provided, it should get set proper.
+        """
+
         base = os.path.abspath('.')
         rel = os.path.join(os.path.abspath('.'), 'tests')
         sobj = self._get_settings(
@@ -160,7 +201,14 @@ class TestSettings(unittest.TestCase):
         self.assertEqual(sobj.out, base)
         self.assertEqual(s.get('page').get('relpath'), rel)
 
-    def test_output_input_path(self):
+    def test_output_frontmatter_path(self):
+        """
+        Ensure paths make sense when frontmatter overrides output path.
+
+            - relpath should == frontmatter destination dir when relpath is not set.
+            - If relpath is provided, it should get set proper.
+        """
+
         dest = os.path.join(os.path.abspath('.'), 'tests', 'file.html')
         rel = os.path.abspath('.')
         sobj = self._get_settings(
@@ -175,6 +223,8 @@ class TestSettings(unittest.TestCase):
         self.assertEqual(s.get('page').get('relpath'), rel)
 
     def test_special_flags(self):
+        """Ensure that the --force_stdout and --force-no-template switches are respected."""
+
         dest = os.path.join(os.path.abspath('.'), 'tests', 'file.html')
         template = '/'.join(['pymdown', 'data', 'template.html'])
         s = self._get_settings(

@@ -1,11 +1,10 @@
-#!/usr/bin/env python
 """
-Formatter
+Formatter.
 
 Places markdown in HTML with the specified CSS and JS etc.
 
 Licensed under MIT
-Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
+Copyright (c) 2014 - 2015 Isaac Muse <isaacmuse@gmail.com>
 """
 from __future__ import absolute_import
 from __future__ import unicode_literals
@@ -38,11 +37,15 @@ image_types = {
 
 
 class PyMdownFormatterException(Exception):
+
+    """PyMdown formatter exception."""
+
     pass
 
 
 def get_js(js, link=False, encoding='utf-8'):
-    """ Get the specified JS code """
+    """Get the specified JS code."""
+
     if link:
         return '<script type="text/javascript" charset="%s" src="%s"></script>\n' % (encoding, js)
     else:
@@ -50,7 +53,8 @@ def get_js(js, link=False, encoding='utf-8'):
 
 
 def get_style(style, link=False, encoding=None):
-    """ Get the specified CSS code """
+    """Get the specified CSS code."""
+
     if link:
         return '<link href="%s" rel="stylesheet" type="text/css">\n' % style
     else:
@@ -58,7 +62,8 @@ def get_style(style, link=False, encoding=None):
 
 
 def get_pygment_style(style, css_class='codehilite'):
-    """ Get the specified pygments sytle CSS """
+    """Get the specified pygments sytle CSS."""
+
     try:
         # Try and request pygments to generate it
         text = get_formatter_by_name('html', style=style).get_style_defs('.' + css_class)
@@ -69,30 +74,45 @@ def get_pygment_style(style, css_class='codehilite'):
 
 
 class Terminal(object):
-    """ Have console output mimic the file output calls """
+
+    """Have console output mimic the file output calls."""
+
     name = None
 
     def __init__(self, encoding):
+        """Initialize."""
+
         self.encoding = encoding
 
     def write(self, text):
-        """ Dump texst to screen """
+        """Dump texst to screen."""
+
         print_stdout(text, self.encoding)
 
     def close(self):
-        """ There is nothing to close """
+        """There is nothing to close."""
+
         pass
 
 
 class Text(object):
+
+    """Text output object."""
+
     def __init__(self, output, encoding):
-        """ Initialize Text object """
+        """Initialize Text object."""
+
         self.encode_file = True
         self.file = None
         self.encoding = encoding
 
     def open(self, output):
-        # Set the correct output target and create the file if necessary
+        """
+        Open output stream.
+
+        Set the correct output target and create the file if necessary.
+        """
+
         if output is None:
             self.file = Terminal(self.encoding)
         else:
@@ -104,22 +124,29 @@ class Text(object):
                 raise PyMdownFormatterException("Could not open output file!")
 
     def write(self, text):
-        """ Write the content """
+        """Write the content."""
+
         self.file.write(
             text.encode(self.encoding, errors="xmlcharrefreplace") if self.encode_file else text
         )
 
     def close(self):
-        """ Close the file """
+        """Close the file."""
+
         if self.file:
             self.file.close()
 
 
 class Html(object):
+
+    """HTML output object."""
+
     def __init__(
         self, preview=False, title=None, encoding='utf-8',
         basepath=None, relative=None, plain=False, aliases=[], settings={}
     ):
+        """Initialize."""
+
         self.settings = settings
         self.encode_file = True
         self.body_end = None
@@ -139,7 +166,8 @@ class Html(object):
         self.added_res = set()
 
     def set_meta(self, meta):
-        """ Create meta data tags """
+        """Create meta data tags."""
+
         self.meta = ['<meta charset="%s">' % self.encoding]
         if "title" in meta:
             value = meta["title"]
@@ -163,7 +191,8 @@ class Html(object):
                 )
 
     def repl_vars(self, m):
-        """ Replace template variables """
+        """Replace template variables."""
+
         if m.group(0).startswith('{{{') and m.group(0).endswith('}}}'):
             return m.group(0)[1:-1]
         open = m.group(1) if m.group(1) else ''
@@ -181,7 +210,8 @@ class Html(object):
         return open + var + close
 
     def repl_file(self, m):
-        """ Replace file paths in template """
+        """Replace file paths in template."""
+
         if m.group(0).startswith('{{{') and m.group(0).endswith('}}}'):
             return m.group(0)[1:-1]
         m_open = m.group(1) if m.group(1) else ''
@@ -259,7 +289,8 @@ class Html(object):
         return m_open + file_name + m_close
 
     def write_html_start(self):
-        """ Output the HTML head and body up to the {{ content }} specifier """
+        """Output the HTML head and body up to the {{ content }} specifier."""
+
         if (self.template_file is not None):
             template_path, encoding = util.splitenc(self.template_file)
 
@@ -299,7 +330,8 @@ class Html(object):
                 self.body_end = m.end(0)
 
     def open(self, output):
-        """ Set and create the output target and target related flags """
+        """Set and create the output target and target related flags."""
+
         if output is None:
             self.file = Terminal(self.encoding)
             self.file.name = self.relative_output
@@ -318,12 +350,14 @@ class Html(object):
             raise PyMdownFormatterException("Could not open output file!")
 
     def close(self):
-        """ Close the output file """
+        """Close the output file."""
+
         if self.file:
             self.file.close()
 
     def write_header(self):
-        """ Write HTML header and body up to Markdown content """
+        """Write HTML header and body up to Markdown content."""
+
         if not self.plain:
             # If we haven't already, print the file head
             self.load_header(
@@ -332,7 +366,7 @@ class Html(object):
             self.write_html_start()
 
     def write(self, text):
-        """ Write the given text to the output file """
+        """Write the given text to the output file."""
 
         if not self.no_body:
             self.file.write(
@@ -340,13 +374,14 @@ class Html(object):
             )
 
     def write_footer(self):
-        """ Write HTML body and footer starting at Markdown content end """
+        """Write HTML body and footer starting at Markdown content end."""
 
         if self.body_end is not None and not self.plain:
             self.write(self.template[self.body_end:])
 
     def load_highlight(self, highlight_style):
-        """ Load Syntax highlighter CSS """
+        """Load Syntax highlighter CSS."""
+
         style = None
         use_pygments_css = bool(self.settings.get("use_pygments_css", True))
         if PYGMENTS_AVAILABLE and highlight_style is not None and use_pygments_css:
@@ -364,12 +399,14 @@ class Html(object):
 
     def load_resources(self, template_resources, res_get, resources):
         """
-        Load the resource (js or css)
-        - Resolve whether the path needs to be converted to
-          absolute or relative path.
-        - See whether we should embed the file's content or
-          just add a link to the file.
+        Load the resource (js or css).
+
+            - Resolve whether the path needs to be converted to
+              absolute or relative path.
+            - See whether we should embed the file's content or
+              just add a link to the file.
         """
+
         if isinstance(template_resources, list) and len(template_resources):
             for pth in template_resources:
                 resource = unicode_string(pth)
@@ -474,7 +511,8 @@ class Html(object):
                     self.added_res.add(resource)
 
     def load_css(self, style):
-        """ Load specified CSS sources """
+        """Load specified CSS sources."""
+
         self.load_resources(self.settings.get("css", []), get_style, self.css)
         for alias in self.aliases:
             key = '@' + alias
@@ -486,7 +524,8 @@ class Html(object):
         self.css += self.load_highlight(style)
 
     def load_js(self):
-        """ Load specified JS sources """
+        """Load specified JS sources."""
+
         self.load_resources(self.settings.get("js", []), get_js, self.scripts)
         for alias in self.aliases:
             key = '@' + alias
@@ -497,7 +536,8 @@ class Html(object):
                 )
 
     def load_header(self, style):
-        """ Load up header related info """
+        """Load up header related info."""
+
         self.css = []
         self.scripts = []
         self.load_css(style)

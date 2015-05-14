@@ -1,3 +1,4 @@
+"""Test critic lib."""
 from __future__ import unicode_literals
 import unittest
 from . import common
@@ -5,6 +6,9 @@ from pymdown import critic_dump
 
 
 class TestCritic(unittest.TestCase):
+
+    """ TestCritic. """
+
     text = common.dedent(
         '''
         # This is a {~~test~>Unit Test~~}
@@ -15,6 +19,8 @@ class TestCritic(unittest.TestCase):
     )
 
     def test_accept(self):
+        """Test accepting critic marks."""
+
         cd = critic_dump.CriticDump()
         result = cd.dump(self.text, True)
 
@@ -30,6 +36,8 @@ class TestCritic(unittest.TestCase):
         self.assertEqual(result, expected)
 
     def test_reject(self):
+        """Test rejecting critic marks."""
+
         cd = critic_dump.CriticDump()
         result = cd.dump(self.text, False)
 
@@ -45,6 +53,7 @@ class TestCritic(unittest.TestCase):
         self.assertEqual(result, expected)
 
     def test_view(self):
+        """Test viewing critic marks."""
         cd = critic_dump.CriticDump()
         result = cd.dump(self.text, False, True)
 

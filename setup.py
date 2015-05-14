@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-
+"""Setup package."""
 from setuptools import setup, find_packages
 import sys
 

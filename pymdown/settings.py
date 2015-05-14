@@ -1,11 +1,10 @@
-#!/usr/bin/env python
 """
-PyMdown Settings
+PyMdown Settings.
 
 Manage Settings
 
 Licensed under MIT
-Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
+Copyright (c) 2014 - 2015 Isaac Muse <isaacmuse@gmail.com>
 """
 from __future__ import unicode_literals
 from __future__ import absolute_import
@@ -25,8 +24,10 @@ except:  # pragma: no cover
 
 
 class MergeSettings(object):
+
     """
     Apply front matter to settings object etc.
+
     PAGE_KEYS: destination, basepath, references,
                include.js', include.css', include
     SETTIGS_KEY: settings
@@ -34,6 +35,8 @@ class MergeSettings(object):
     """
 
     def __init__(self, file_name, is_stream):
+        """Initialize."""
+
         self.file_name = file_name
         self.is_stream = is_stream
         self.base = None
@@ -41,7 +44,8 @@ class MergeSettings(object):
         self.js = []
 
     def process_settings_path(self, pth, base):
-        """ General method to process paths in settings file """
+        """General method to process paths in settings file."""
+
         target, encoding = util.splitenc(pth)
 
         file_path = util.resolve_meta_path(
@@ -55,7 +59,8 @@ class MergeSettings(object):
         return file_path + ';' + encoding if file_path is not None else None
 
     def merge_basepath(self, frontmatter, settings):
-        """ Merge the basepath """
+        """Merge the basepath."""
+
         if "basepath" in frontmatter:
             value = frontmatter["basepath"]
             settings["page"]["basepath"] = util.resolve_base_path(
@@ -67,14 +72,15 @@ class MergeSettings(object):
         self.base = settings["page"]["basepath"]
 
     def merge_relative_path(self, frontmatter, settings):
-        """ Merge the relative path """
+        """Merge the relative path."""
+
         if "relpath" in frontmatter:
             value = frontmatter["relpath"]
             settings["page"]["relpath"] = util.resolve_relative_path(value)
             del self.frontmatter["relpath"]
 
     def merge_destination(self, frontmatter, settings):
-        """ Merge destination """
+        """Merge destinatio."""
         if "destination" in frontmatter:
             value = frontmatter['destination']
             file_name = util.resolve_meta_path(
@@ -94,9 +100,7 @@ class MergeSettings(object):
             del frontmatter['destination']
 
     def merge_includes(self, frontmatter, settings):
-        """
-        Find css and js includes and merge them.
-        """
+        """Find css and js includes and merge them."""
         css = []
         js = []
 
@@ -131,7 +135,7 @@ class MergeSettings(object):
             settings['settings']['js'] = settings['settings'].get('js', []) + js
 
     def merge_references(self, frontmatter, settings):
-        """ Merge references """
+        """Merge reference."""
         if 'references' in frontmatter:
             value = frontmatter['references']
             if not isinstance(value, list):
@@ -144,7 +148,8 @@ class MergeSettings(object):
             del frontmatter['references']
 
     def merge_settings(self, frontmatter, settings):
-        """ Handle and merge PyMdown settings. """
+        """Handle and merge PyMdown settings."""
+
         if 'settings' in frontmatter and isinstance(frontmatter['settings'], dict):
             value = frontmatter['settings']
             for subkey, subvalue in value.items():
@@ -180,7 +185,8 @@ class MergeSettings(object):
             del frontmatter['settings']
 
     def merge_meta(self, frontmatter, settings):
-        """ Resolve all other frontmatter items as meta items. """
+        """Resolve all other frontmatter items as meta items."""
+
         for key, value in frontmatter.items():
             if isinstance(value, list):
                 value = [unicode_string(v) for v in value]
@@ -189,7 +195,8 @@ class MergeSettings(object):
             settings["page"]["meta"][unicode_string(key)] = value
 
     def merge(self, frontmatter, settings):
-        """ Handle basepath first and then merge all keys. """
+        """Handle basepath first and then merge all keys."""
+
         self.merge_basepath(frontmatter, settings)
         self.merge_relative_path(frontmatter, settings)
         self.merge_destination(frontmatter, settings)
@@ -200,8 +207,17 @@ class MergeSettings(object):
 
 
 class Settings(object):
+
+    """
+    Settings object for merging global settings with frontmatter.
+
+    Contains global settings, and a user can
+    retrieve a settings dict merged with a file's frontmatter.
+    """
+
     def __init__(self, **kwargs):
-        """ Initialize """
+        """Initialize."""
+
         self.settings = {
             "page": {
                 "destination": None,
@@ -229,7 +245,8 @@ class Settings(object):
         self.settings_path = settings_path if settings_path is not None else 'pymdown.cfg'
 
     def unpack_settings_file(self):  # pragma: no cover
-        """ Unpack default settings file. """
+        """Unpack default settings file."""
+
         text = util.load_text_resource(util.DEFAULT_SETTINGS, internal=True)
         try:
             with codecs.open(self.settings_path, "w", encoding="utf-8") as f:
@@ -239,8 +256,8 @@ class Settings(object):
 
     def read_settings(self):
         """
-        Get the settings and add absolutepath
-        extention if a preview is planned.
+        Get and read the settings.
+
         Unpack the settings file if needed.
         """
 
@@ -261,7 +278,8 @@ class Settings(object):
         self.settings["settings"] = settings if settings is not None else {}
 
     def get(self, file_name, output=None, basepath=None, relpath=None, frontmatter=None):
-        """ Get the complete settings object for the given file """
+        """Get the complete settings object for the given file."""
+
         self.file_name = file_name
         settings = deepcopy(self.settings)
         settings["page"]["destination"] = util.resolve_destination(
@@ -316,6 +334,7 @@ class Settings(object):
     def set_style(self, extensions, settings):
         """
         Search the extensions for the style to be used and return it.
+
         If it is not explicitly set, go ahead and insert the default
         style (github).
         """
@@ -362,7 +381,7 @@ class Settings(object):
         settings["settings"]["pygments_style"] = style
 
     def post_process_settings(self, settings):
-        """ Process the settings files making needed adjustements """
+        """Process the settings files making needed adjustement."""
 
         extensions = settings["settings"].get("extensions", OrderedDict())
 

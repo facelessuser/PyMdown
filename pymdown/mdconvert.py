@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 """
-mdconverter
+Markdown Converter.
 
 Licensed under MIT
-Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
+Copyright (c) 2014 - 2015 Isaac Muse <isaacmuse@gmail.com>
 """
 from __future__ import unicode_literals
 from __future__ import print_function
@@ -20,7 +20,8 @@ RE_WORD = re.compile(r'''[^\w\- ]''', re.UNICODE)
 
 
 def slugify(text, sep):
-    """ Custom slugify """
+    """Custom slugify."""
+
     if text is None:
         return ''
     # Strip html tags and lower
@@ -33,13 +34,25 @@ def slugify(text, sep):
 
 
 class MdConvertException(Exception):
+
+    """MdConvert Exception."""
+
     pass
 
 
 class MdWrapper(Markdown):
+
+    """
+    Wrapper around Python Markdown's class.
+
+    This allows us to gracefully continue when a module doesn't load.
+    """
+
     Meta = {}
 
     def __init__(self, *args, **kwargs):
+        """Call original init."""
+
         super(MdWrapper, self).__init__(*args, **kwargs)
 
     def registerExtensions(self, extensions, configs):
@@ -53,6 +66,7 @@ class MdWrapper(Markdown):
         * configs: A dictionary mapping module names to config options.
 
         """
+
         from markdown import util
         from markdown.extensions import Extension
 
@@ -80,8 +94,11 @@ class MdWrapper(Markdown):
 
 
 class MdConvert(object):
+
+    """Markdown converter."""
+
     def __init__(self, source, **kwargs):
-        """ Initialize """
+        """Initialize."""
 
         base_path = kwargs.get('base_path')
         relative_path = kwargs.get('relative_path')
@@ -101,7 +118,8 @@ class MdConvert(object):
         self.output_format = kwargs.get('output_format', 'xhtml1')
 
     def check_extensions(self, extensions):
-        """ Check the extensions and see if anything needs to be modified """
+        """Check the extensions and see if anything needs to be modified."""
+
         self.extensions = []
         self.extension_configs = {}
         for k in extensions.keys():
@@ -123,7 +141,8 @@ class MdConvert(object):
             self.extension_configs[k] = extensions[k]
 
     def convert(self):
-        """ Convert the file to HTML """
+        """Convert the file to HTML."""
+
         self.markdown = ""
         try:
             with codecs.open(self.source, "r", encoding=self.encoding) as f:
@@ -146,8 +165,12 @@ class MdConvert(object):
 
 
 class MdConverts(MdConvert):
+
+    """Markdown converter for strings."""
+
     def convert(self):
-        """ Convert the given string to HTML """
+        """Convert the given string to HTML."""
+
         self.markdown = ""
         try:
             md = MdWrapper(

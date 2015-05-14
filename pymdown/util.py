@@ -1,6 +1,5 @@
-#!/usr/bin/env python
 """
-Uitl
+Uitl.
 
 PyMdown file utillity library.
 
@@ -45,6 +44,7 @@ CRITIC_DUMP = 8
 def yaml_load(stream, Loader=yaml.Loader, object_pairs_hook=OrderedDict):
     """
     Make all YAML dictionaries load as ordered Dicts.
+
     http://stackoverflow.com/a/21912744/3609487
     """
     class OrderedLoader(Loader):
@@ -63,7 +63,8 @@ def yaml_load(stream, Loader=yaml.Loader, object_pairs_hook=OrderedDict):
 
 
 def get_frontmatter(string):
-    """ Get frontmatter from string """
+    """Get frontmatter from string."""
+
     frontmatter = {}
 
     if string.startswith("---"):
@@ -80,7 +81,8 @@ def get_frontmatter(string):
 
 
 def _get_encoding(enc):
-    """ Check if encoding exists else return utf-8 """
+    """Check if encoding exists else return utf-8."""
+
     try:
         codecs.lookup(enc)
     except LookupError:
@@ -89,7 +91,8 @@ def _get_encoding(enc):
 
 
 def splitenc(entry, default='utf-8'):
-    """ Split encoding from file name """
+    """Split encoding from file name."""
+
     parts = entry.split(';')
     if len(parts) > 1:
         entry = ';'.join(parts[:-1])
@@ -100,7 +103,8 @@ def splitenc(entry, default='utf-8'):
 
 
 def is_absolute(pth):
-    """ Check if path is an absolute path. """
+    """Check if path is an absolute path."""
+
     absolute = False
     if pth is not None:
         if sys.platform.startswith('win'):
@@ -112,9 +116,7 @@ def is_absolute(pth):
 
 
 def get_user_path():
-    """
-    Get user data path
-    """
+    """Get user data path."""
 
     if PLATFORM == "windows":
         folder = path.expanduser("~\\.PyMdown")
@@ -140,7 +142,8 @@ def get_user_path():
 
 
 def update_user_files():
-    """ See if user data files should be updated """
+    """See if user data files should be updated."""
+
     user_ver_file = path.join(get_user_path(), 'version.txt')
     ver = load_text_resource(USER_VERSION, internal=True)
     if ver is not None:
@@ -158,7 +161,8 @@ def update_user_files():
 
 
 def unpack_user_files():
-    """ Unpack user data files """
+    """Unpack user data files."""
+
     user_path = get_user_path()
     folder = resource_exists(DATA_FOLDER, internal=True, dir=True)
     should_update = update_user_files()
@@ -182,6 +186,8 @@ def unpack_user_files():
 
 def load_egg_resources():
     """
+    Load egg resource.
+
     Add egg to system path if the name indicates it
     is for the current python version and for pymdown.
     This only runs if we are not in a pyinstaller environment.
@@ -204,7 +210,7 @@ def load_egg_resources():
 
 
 def resource_exists(*args, **kwargs):
-    """ If resource could be found return path else None """
+    """If resource could be found return path else None."""
 
     if kwargs.get('internal', False):
         base = None
@@ -226,7 +232,8 @@ def resource_exists(*args, **kwargs):
 
 
 def load_text_resource(*args, **kwargs):
-    """ Load text resource from either the package source location """
+    """Load text resource from either the package source location."""
+
     pth = resource_exists(*args, **kwargs)
 
     encoding = _get_encoding(kwargs.get('encoding', 'utf-8'))
@@ -243,7 +250,7 @@ def load_text_resource(*args, **kwargs):
 
 
 def get_references(references, basepath, encoding):
-    """ Get footnote and general references from outside source """
+    """Get footnote and general references from outside source."""
 
     text = ''
     for file_name in references:
@@ -281,11 +288,8 @@ def get_references(references, basepath, encoding):
 
 
 def open_in_browser(name):
-    """ Auto open HTML """
+    """Auto open HTML."""
 
-    # Here is an attempt to load the HTML in the
-    # the default browser.  I guess if this doesn't work
-    # I could always just inlcude the desktop lib.
     if PLATFORM == "osx":
         web_handler = None
         try:
@@ -324,7 +328,7 @@ def open_in_browser(name):
 
 
 def resolve_destination(out_name, file_name, critic_mode=0, batch=False):
-    """ Get the path to output the file. """
+    """Get the path to output the file."""
 
     critic_enabled = critic_mode & (CRITIC_ACCEPT | CRITIC_REJECT | CRITIC_VIEW)
     output = None
@@ -357,7 +361,8 @@ def resolve_destination(out_name, file_name, critic_mode=0, batch=False):
 
 
 def resolve_base_path(basepath, file_name, is_stream=False):
-    """ Get the relative path to use when resolving relative paths if possible """
+    """Get the relative path to use when resolving relative paths if possible."""
+
     if basepath is not None:
         basepath = path.expanduser(basepath)
     if basepath is not None and path.exists(basepath):
@@ -377,7 +382,8 @@ def resolve_base_path(basepath, file_name, is_stream=False):
 
 
 def resolve_relative_path(relpath):
-    """ Get the relative path to use when resolving relpath paths if possible. """
+    """Get the relative path to use when resolving relpath paths if possible."""
+
     if relpath is not None:
         relpath = path.expanduser(relpath)
     if relpath is not None and path.exists(relpath):
@@ -396,12 +402,14 @@ def resolve_relative_path(relpath):
 def resolve_meta_path(target, basepath):
     """
     Resolve the path returned in the meta data.
+
     1. See if path is defined as absolute and if so see
        if it exists
     2. If relative, use the file's basepath (default its physical directory
        if available) if the file
        can be found
     """
+
     if target is not None:
         target = path.expanduser(target)
         if not is_absolute(target):

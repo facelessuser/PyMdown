@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """
-PyMdown  CLI
+PyMdown  CLI.
 
 Front end CLI that allows the batch conversion of
 markdown files to HTML.  Also accepts an input stream
@@ -25,7 +25,7 @@ __version__ = '.'.join(map(str, pymdown.version_info))
 
 
 def get_files(file_patterns):
-    """ Find and return files matching the given patterns """
+    """Find and return files matching the given patterns."""
 
     import glob
     files = []
@@ -40,7 +40,7 @@ def get_files(file_patterns):
 
 
 def get_file_stream(encoding):
-    """ Get the file stream """
+    """Get the file stream."""
 
     import fileinput
     sys.argv = []
@@ -57,7 +57,8 @@ def get_file_stream(encoding):
 
 
 def get_critic_mode(args):
-    """ Setp the critic mode """
+    """Setp the critic mode."""
+
     critic_mode = util.CRITIC_IGNORE
     if args.accept and args.reject:
         critic_mode |= util.CRITIC_VIEW
@@ -71,7 +72,8 @@ def get_critic_mode(args):
 
 
 def get_sources(args):
-    """ Get file(s) or stream """
+    """Get file(s) or stream."""
+
     files = None
     stream = False
 
@@ -84,7 +86,8 @@ def get_sources(args):
 
 
 def display_licenses():
-    """ Display licenses """
+    """Display licenses."""
+
     status = pymdown.PASS
     text = util.load_text_resource(path.join('pymdown', 'data', 'licenses.txt'), internal=True)
     if text is not None:
@@ -95,7 +98,7 @@ def display_licenses():
 
 
 def main():
-    """ Go! """
+    """Main function."""
 
     default_settings = path.join(util.get_user_path(), "pymdown.cfg")
     parser = argparse.ArgumentParser(prog='pymdown', description='Markdown generator')

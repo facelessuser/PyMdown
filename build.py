@@ -1,4 +1,5 @@
 #!/usr/bin/python
+"""Build an executable with PyInstaller."""
 from __future__ import print_function
 import sys
 from os.path import dirname, abspath, join
@@ -46,6 +47,7 @@ exe = EXE(pyz,
 
 
 def build_spec_file(obj):
+    """Build the spec file."""
     proj_path = path.dirname(obj.script)
     sys.path.append(proj_path)
     try:
@@ -82,13 +84,14 @@ def build_spec_file(obj):
 
 
 class Args(object):
+
+    """Argument object."""
+
     def __init__(
         self, script, name, gui, clean, ext,
         icon=None, portable=False
     ):
-        """
-        Build arguments
-        """
+        """Build arguments."""
 
         self.gui = bool(gui)
         self.name = name
@@ -100,9 +103,8 @@ class Args(object):
 
 
 class BuildParams(object):
-    """
-    Build parametes
-    """
+
+    """Build parametes."""
 
     python_bin_path = None
     python_executable = None
@@ -119,9 +121,7 @@ class BuildParams(object):
 
 
 def parse_settings(args, obj):
-    """
-    Configure build parameters based on arguments
-    """
+    """Configure build parameters based on arguments."""
 
     err = False
 
@@ -162,9 +162,7 @@ def parse_settings(args, obj):
 
 
 def create_dir(directory):
-    """
-    Create build directory
-    """
+    """Create build directory."""
 
     err = False
     try:
@@ -177,9 +175,7 @@ def create_dir(directory):
 
 
 def clean_build(build_dir):
-    """
-    Clean the build directory
-    """
+    """Clean the build directory."""
 
     err = False
     try:
@@ -192,9 +188,7 @@ def clean_build(build_dir):
 
 
 def parse_options(args, obj):
-    """
-    Parse the build parameters and build the pyinstaller build command
-    """
+    """Parse the build parameters and build the pyinstaller build command."""
 
     err = False
 
@@ -223,9 +217,7 @@ def parse_options(args, obj):
 
 
 def build(obj):
-    """
-    Launch the build process
-    """
+    """Launch the build process."""
 
     err = False
 
@@ -253,9 +245,7 @@ def build(obj):
 
 
 def main():
-    """
-    Setup the build process and initiate it
-    """
+    """Setup the build process and initiate it."""
 
     parser = argparse.ArgumentParser(prog='Build', description='Python script for building apps for Pyinstaller')
     # Flag arguments
