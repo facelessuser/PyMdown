@@ -303,7 +303,7 @@
 <hr />
 <h1 id="using-pymdown"><a name="user-content-using-pymdown" href="#using-pymdown" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Using PyMdown</h1>
 <p>PyMdown was written to aid in batch processing Markdown files with Python Markdown and Pygments (but a JavaScript highlighter can just as easily be used).  It also adds a number of optional extensions.</p>
-<p>PyMdown can also optionally use a template with CSS and JavaScript for styling the Markdown outputs.  Templates, CSS, JavaScript, and extensions are all setup in a configuration file.  If for certain batches specific settings need to be tweaked, PyMdown can accept paths to specific settings file via the CLI.  The settings files can be in either JSON or YAML.  PyMdown also supports input sources with a JSON or YAML frontmatter were settings can be configured along with general meta data.</p>
+<p>PyMdown can also optionally use a template with CSS and JavaScript for styling the Markdown outputs.  Templates, CSS, JavaScript, and extensions are all setup in a configuration file.  If for certain batches specific settings need to be tweaked, PyMdown can accept paths to specific settings file via the CLI.  The settings files is in the YAML format.  PyMdown also supports input sources with a YAML frontmatter where settings can be configured along with general meta data.</p>
 <p>Though PyMdown could be used to generate a site, it was mainly designed to generate static documents from Markdown for general use or previewing.  If you are looking to generate document sites, there are plenty of good tools that already do this (<a href="http://www.mkdocs.org/">mkdocs</a> is one suggestion).  But even if you don&rsquo;t directly use PyMdown, you may still find the <a href="../pymdown-extensions/">PyMdown extensions</a> as useful additions in other Python Markdown related projects as they can be installed and used independently.</p>
 <h1 id="command-line-interface"><a name="user-content-command-line-interface" href="#command-line-interface" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Command Line Interface</h1>
 <h2 id="input-files"><a name="user-content-input-files" href="#input-files" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Input Files</h2>
@@ -436,13 +436,41 @@
 
 <p>Safe mode setting is omitted as it is pending deprecation in Python Markdown.</p>
 <h2 id="pygment-settings"><a name="user-content-pygment-settings" href="#pygment-settings" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Pygment Settings</h2>
-<p>The following setting s used when it is not desired to have PyMdown inject the Pygments CSS style into the template:</p>
+<p>The following setting determines if a one of the installed Pygments CSS themes will be injected into your template.  This can be turned off if you are applying your own, or you are configured to use a JavaScript syntax highlighter.</p>
 <div class="codehilite"><pre><span class="c1"># Include the pygments css when using codehilite extension</span>
 <span class="l-Scalar-Plain">use_pygments_css</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">true,</span>
 </pre></div>
 
 
-<p>If Pygments is disabled, but the CodeHilite extension is being used, code blocks are converted to a form so that a JavaScript library like <a href="https://highlightjs.org/">highlight.js</a> can process them.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If any of the following reasons are true, Pygments CSS will not be injected regardless of whether <code>use_pygments_css</code> is enabled or not:</p>
+<div class="codehilite"><pre>- CodeHilite and/or InlineHilite extension are not being used.
+- CodeHilite and/or InlineHilite have `use_pygments` set to `False` or `noclasses` set to `True`.
+- Pygments is not installed on the system.
+</pre></div>
+
+
+</div>
+<p>This setting is used to configure which installed Pygments theme PyMdown should insert into your HTML template.</p>
+<div class="codehilite"><pre><span class="c1"># Name of installed Pygments style to use.</span>
+<span class="l-Scalar-Plain">pygments_style</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">default</span>
+</pre></div>
+
+
+<p>This determines what class will be prepended to all of the Pygment&rsquo;s CSS theme.</p>
+<div class="codehilite"><pre><span class="c1"># Pygments class to use.  This applies a class to the Pygments CSS</span>
+<span class="c1"># so that only elements with the class below will be syntax highlighted.</span>
+<span class="c1"># If using this, make sure you&#39;ve configured CodeHilite and/or InlineHilite</span>
+<span class="c1"># to use the same name.</span>
+<span class="l-Scalar-Plain">pygments_class</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">highlight</span>
+</pre></div>
+
+
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If you want to use a JavaScript highlighter such as <a href="https://highlightjs.org/">highlight.js</a>, you should disable <code>use_pygments_css</code>, and set <code>use_pygments</code> to <code>False</code> in CodeHilite and/or InlineHilite.</p>
+</div>
 <h2 id="template"><a name="user-content-template" href="#template" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Template</h2>
 <p>PyMdown allows for specifying a simple HTML template that can be used for the output.  Template files can be specified in the settings file via the <code>template</code> keyword.</p>
 <div class="codehilite"><pre><span class="c1"># Your HTML template</span>
@@ -653,7 +681,7 @@
 </table>
 <h1 id="frontmatter"><a name="user-content-frontmatter" href="#frontmatter" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Frontmatter</h1>
 <p>Frontmatter can be used at the very beginning of a Markdown file.  Frontmatter blocks begin with <code>---</code> and end with <code>---</code>.  Frontmatter must be the very beginning of the file and start on the very first line.</p>
-<p>PyMdown front matter content can be either YAML or JSON (JSON is modified to allow JavaScript comments).  The frontmatter is a dictionary of key value pairs which are translated into meta data for all keys except for a few <strong>special</strong> keywords.  For meta data, the key will become the content of the <code>meta</code> tag&rsquo;s <code>name</code> attribute, and the value will become the data for the <code>content</code> attribute.  If an array is specified as the value, each member of the array will be converted to a string and all of them will be strung together and separated by commas.  In all other cases, the value will just be converted to a string.</p>
+<p>PyMdown frontmatter content must be in the YAML format.  The frontmatter is a dictionary of key value pairs which are translated into meta data for all keys except for a few <strong>special</strong> keywords.  For meta data, the key will become the content of the <code>meta</code> tag&rsquo;s <code>name</code> attribute, and the value will become the data for the <code>content</code> attribute.  If an array is specified as the value, each member of the array will be converted to a string and all of them will be strung together and separated by commas.  In all other cases, the value will just be converted to a string.</p>
 <p>PyMdown has a few keywords that can be defined to alter the output.</p>
 <table>
 <thead>
@@ -752,7 +780,7 @@
 
 <!--
 MkDocs version      : 0.13.0.dev
-Docs Build Date UTC : 2015-05-06 00:52:50.380813
+Docs Build Date UTC : 2015-05-14 04:26:32.197514
 -->
 </body>
 </html>

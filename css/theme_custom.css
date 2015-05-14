@@ -32,6 +32,12 @@
   margin-bottom: 24px;
 }
 
+.rst-content .uml-sequence-diagram,
+.rst-content .uml-flowchart {
+  width: 100%;
+  overflow: auto;
+}
+
 /* Block Quotes */
 .rst-content cite.quote {
   display: block;
@@ -521,10 +527,4 @@
 
 li.toctree-l3:first-child {
     display: none;
-}
-
-.rst-content .uml-sequence-diagram,
-.rst-content .uml-flowchart {
-  width: 100%;
-  overflow: auto;
 }
