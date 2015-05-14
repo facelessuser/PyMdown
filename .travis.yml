@@ -3,7 +3,7 @@ env:
   - TOXENV=py27-unittests
   - TOXENV=py33-unittests
   - TOXENV=py34-unittests
-  - TOXENV=flake8
+  - TOXENV=lint
 install:
   - pip install tox
   - pip install coveralls
