@@ -17,10 +17,10 @@ init:
 install:
   - ps: (new-object net.webclient).DownloadFile('https://raw.github.com/pypa/pip/master/contrib/get-pip.py', 'C:/get-pip.py')
   - ps: |
-    if($env:TOXENV -eq "lint")
-    {
-      Install-Product node $env:NODEJS
-    }
+  if($env:TOXENV -eq "lint")
+  {
+    Install-Product node $env:NODEJS
+  }
   - if "%TOXENV%" == "lint" npm install -g jshint
   - "%PYTHON%/python.exe C:/get-pip.py"
   - "%PYTHON%/Scripts/pip.exe install virtualenv"
