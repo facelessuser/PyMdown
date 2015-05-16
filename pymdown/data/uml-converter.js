@@ -10,7 +10,7 @@
     }
 
     // Make sure we are dealing with an array
-    for(i = 0, maxItem = charts.length; i < maxItem; i++) arr.push(charts[i])
+    for(i = 0, maxItem = charts.length; i < maxItem; i++) arr.push(charts[i]);
 
     // Find the UML source element and get the text
     for (i = 0, maxItem = arr.length; i < maxItem; i++) {
@@ -34,5 +34,5 @@
         diagram = converter.parse(text);
         diagram.drawSVG(el, settings);
     }
-  }
-})(window, document)
+  };
+})(window, document);

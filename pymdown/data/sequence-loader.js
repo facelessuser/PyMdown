@@ -11,4 +11,4 @@
   }
 
   onReady(function(){convertUML('uml-sequence-diagram', Diagram, {theme: 'simple'});});
-})(document)
+})(document);

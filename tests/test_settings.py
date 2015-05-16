@@ -96,7 +96,7 @@ class TestSettings(unittest.TestCase):
         self.assertEqual(options, None)
 
     def test_plain_allow_override(self):
-        """ Test that we can override the plain setting if not already set."""
+        """Test that we can override the plain setting if not already set."""
 
         s = self._get_settings(
             'plain.cfg',

@@ -8,7 +8,7 @@ from . import common
 
 class TestCompat(unittest.TestCase):
 
-    """ TestCompat. """
+    """TestCompat."""
 
     def test_unicode(self):
         """Test converting from bytes to unicode."""

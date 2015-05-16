@@ -7,7 +7,7 @@ from pymdown import critic_dump
 
 class TestCritic(unittest.TestCase):
 
-    """ TestCritic. """
+    """TestCritic."""
 
     text = common.dedent(
         '''
@@ -54,6 +54,7 @@ class TestCritic(unittest.TestCase):
 
     def test_view(self):
         """Test viewing critic marks."""
+
         cd = critic_dump.CriticDump()
         result = cd.dump(self.text, False, True)
 

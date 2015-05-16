@@ -36,7 +36,7 @@ class TestFrontmatter(unittest.TestCase):
 
 class TestResources(unittest.TestCase):
 
-    """ TestResources."""
+    """TestResources."""
 
     def test_text_resource(self):
         """Test that we can load file resoures properly."""

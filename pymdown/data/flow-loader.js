@@ -11,4 +11,4 @@
   }
 
   onReady(function(){convertUML('uml-flowchart', flowchart);});
-})(document)
+})(document);
