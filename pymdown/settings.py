@@ -19,7 +19,7 @@ from .compat import unicode_string, string_type
 try:
     from pygments.styles import get_style_by_name
     PYGMENTS_AVAILABLE = True
-except:  # pragma: no cover
+except Exception:  # pragma: no cover
     PYGMENTS_AVAILABLE = False
 
 
@@ -46,7 +46,7 @@ class MergeSettings(object):
     def process_settings_path(self, pth, base):
         """General method to process paths in settings file."""
 
-        target, encoding = util.splitenc(pth)
+        encoding = util.splitenc(pth)[1]
 
         file_path = util.resolve_meta_path(
             pth,
@@ -251,7 +251,7 @@ class Settings(object):
         try:
             with codecs.open(self.settings_path, "w", encoding="utf-8") as f:
                 f.write(text)
-        except:
+        except Exception:
             logger.Log.error(traceback.format_exc())
 
     def read_settings(self):
@@ -272,13 +272,18 @@ class Settings(object):
             with codecs.open(self.settings_path, "r", encoding='utf-8') as f:
                 contents = f.read()
                 settings = util.yaml_load(contents)
-        except:  # pragma: no cover
+        except Exception:  # pragma: no cover
             logger.Log.error(traceback.format_exc())
 
         self.settings["settings"] = settings if settings is not None else {}
 
-    def get(self, file_name, output=None, basepath=None, relpath=None, frontmatter=None):
+    def get(self, file_name, **kwargs):
         """Get the complete settings object for the given file."""
+
+        output = kwargs.get('output', None)
+        basepath = kwargs.get('basepath', None)
+        relpath = kwargs.get('relpath', None)
+        frontmatter = kwargs.get('frontmatter', None)
 
         self.file_name = file_name
         settings = deepcopy(self.settings)
@@ -375,7 +380,7 @@ class Settings(object):
                 try:
                     # Check if the desired style exists internally
                     get_style_by_name(style)
-                except:
+                except Exception:
                     logger.Log.error("Cannot find style: %s! Falling back to 'default' style." % style)
                     style = "default"
         settings["settings"]["pygments_style"] = style

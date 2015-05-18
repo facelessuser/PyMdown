@@ -49,7 +49,7 @@ def get_file_stream(encoding):
         for line in fileinput.input():
             text.append(to_unicode(line, encoding))
         stream = ''.join(text)
-    except:
+    except Exception:
         logger.Log.error(traceback.format_exc())
         stream = None
     text = None
@@ -79,7 +79,7 @@ def get_sources(args):
 
     try:
         files = get_files(args.markdown)
-    except:
+    except Exception:
         files = [get_file_stream(args.encoding)]
         stream = True
     return files, stream

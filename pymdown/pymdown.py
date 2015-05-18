@@ -79,7 +79,7 @@ class Convert(object):
         frontmatter, text = util.get_frontmatter(text)
         return frontmatter, text
 
-    def get_file_settings(self, file_name, frontmatter={}):
+    def get_file_settings(self, file_name, frontmatter=None):
         """
         Get the file settings merged with the file's frontmatter.
 
@@ -88,12 +88,16 @@ class Convert(object):
         """
 
         status = PASS
+
+        if frontmatter is None:
+            frontmatter = {}
+
         try:
             self.settings = self.config.get(
                 file_name, output=self.output, basepath=self.basepath,
                 relpath=self.relpath, frontmatter=frontmatter
             )
-        except:
+        except Exception:
             logger.Log.error(traceback.format_exc())
             status = FAIL
         return status
@@ -104,7 +108,7 @@ class Convert(object):
         try:
             with codecs.open(file_name, "r", encoding=self.config.encoding) as f:
                 text = f.read()
-        except:
+        except Exception:
             logger.Log.error("Failed to open %s!" % file_name)
             text = None
         return text
@@ -144,7 +148,7 @@ class Convert(object):
 
                 # Dump the converted text
                 txt.write(text)
-            except:
+            except Exception:
                 logger.Log.error(str(traceback.format_exc()))
                 status = FAIL
 
@@ -212,7 +216,7 @@ class Convert(object):
                 html.write_header()
                 html.write(converter.markdown)
                 html.write_footer()
-            except:
+            except Exception:
                 logger.Log.error(str(traceback.format_exc()))
                 status = FAIL
 

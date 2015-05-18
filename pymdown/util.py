@@ -72,9 +72,9 @@ def get_frontmatter(string):
         if m:
             try:
                 frontmatter = yaml_load(m.group(2))
-            except:
+            except Exception:
                 logger.Log.error(traceback.format_exc())
-                pass
+
             string = string[m.end(1):]
 
     return frontmatter, string
@@ -128,14 +128,14 @@ def get_user_path():
     if not path.exists(folder):
         try:
             os.mkdir(folder)
-        except:
+        except Exception:
             pass
 
     defaults = path.join(folder, 'default')
     if not path.exists(defaults):
         try:
             os.mkdir(defaults)
-        except:
+        except Exception:
             pass
 
     return folder
@@ -149,12 +149,12 @@ def update_user_files():
     if ver is not None:
         try:
             current_ver = yaml_load(ver).get('version', 0)
-        except:
+        except Exception:
             current_ver = 0
     try:
         with codecs.open(user_ver_file, 'r', encoding='utf-8') as f:
             user_ver = yaml_load(f.read()).get('version', 0)
-    except:
+    except Exception:
         user_ver = 0
 
     return current_ver != user_ver
@@ -180,7 +180,7 @@ def unpack_user_files():
                         try:
                             with codecs.open(dest, "w", encoding='utf-8') as f:
                                 f.write(text)
-                        except:
+                        except Exception:
                             pass
 
 
@@ -215,7 +215,7 @@ def resource_exists(*args, **kwargs):
     if kwargs.get('internal', False):
         base = None
         if getattr(sys, "frozen", 0):
-            base = sys._MEIPASS
+            base = sys._MEIPASS  # pylint: disable=protected-access
         else:
             base = RESOURCE_PATH
 
@@ -243,9 +243,9 @@ def load_text_resource(*args, **kwargs):
         try:
             with codecs.open(pth, "rb") as f:
                 data = f.read().decode(encoding).replace('\r', '')
-        except:
+        except Exception:
             logger.Log.debug(traceback.format_exc())
-            pass
+
     return data
 
 
@@ -303,14 +303,14 @@ def open_in_browser(name):
             args = ["plutil", "-convert", "json", "-o", "-", "--", "-"]
             p = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
             p.stdin.write(content)
-            out, err = p.communicate()
+            out = p.communicate()[0]
             plist = json.loads(to_unicode(out))
             for handler in plist['LSHandlers']:
                 print('found')
                 if handler.get('LSHandlerURLScheme', '') == "http":
                     web_handler = handler.get('LSHandlerRoleAll', None)
                     break
-        except:
+        except Exception:
             pass
         if web_handler is not None:
             subprocess.Popen(['open', '-b', web_handler, name])

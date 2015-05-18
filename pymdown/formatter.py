@@ -22,7 +22,7 @@ from .compat import pathname2url, unicode_string, print_stdout
 try:
     from pygments.formatters import get_formatter_by_name
     PYGMENTS_AVAILABLE = True
-except:  # pragma: no cover
+except Exception:  # pragma: no cover
     PYGMENTS_AVAILABLE = False
 
 RE_URL_START = re.compile(r"^(http|ftp)s?://|tel:|mailto:|data:|news:|#")
@@ -52,7 +52,7 @@ def get_js(js, link=False, encoding='utf-8'):
         return '<script type="text/javascript">\n%s\n</script>\n' % js if js is not None else ""
 
 
-def get_style(style, link=False, encoding=None):
+def get_style(style, link=False):
     """Get the specified CSS code."""
 
     if link:
@@ -61,13 +61,16 @@ def get_style(style, link=False, encoding=None):
         return '<style>\n%s\n</style>\n' % style if style is not None else ""
 
 
+get_css = lambda style, link=False, encoding=None: get_style(style, link)
+
+
 def get_pygment_style(style, css_class='codehilite'):
     """Get the specified pygments sytle CSS."""
 
     try:
         # Try and request pygments to generate it
         text = get_formatter_by_name('html', style=style).get_style_defs('.' + css_class)
-    except:
+    except Exception:
         # Try and request pygments to generate default
         text = get_formatter_by_name('html', style="default").get_style_defs('.' + css_class)
     return '<style>\n%s\n</style>\n' % text if text is not None else ""
@@ -99,7 +102,7 @@ class Text(object):
 
     """Text output object."""
 
-    def __init__(self, output, encoding):
+    def __init__(self, encoding='utf-8'):
         """Initialize Text object."""
 
         self.encode_file = True
@@ -119,7 +122,7 @@ class Text(object):
             try:
                 self.file = codecs.open(output, "w", encoding=self.encoding)
                 self.encode_file = False
-            except:
+            except Exception:
                 logger.Log.error(str(traceback.format_exc()))
                 raise PyMdownFormatterException("Could not open output file!")
 
@@ -141,25 +144,22 @@ class Html(object):
 
     """HTML output object."""
 
-    def __init__(
-        self, preview=False, title=None, encoding='utf-8',
-        basepath=None, relative=None, plain=False, aliases=[], settings={}
-    ):
+    def __init__(self, **kwargs):
         """Initialize."""
 
-        self.settings = settings
+        self.settings = kwargs.get("settings", {})
         self.encode_file = True
         self.body_end = None
         self.no_body = False
-        self.plain = plain
+        self.plain = kwargs.get("plain", False)
         self.template = None
         self.file = None
         self.meta = []
-        self.encoding = encoding
-        self.basepath = basepath
-        self.relative_output = relative
-        self.preview = preview
-        self.aliases = aliases
+        self.encoding = kwargs.get("encoding", "utf-8")
+        self.basepath = kwargs.get("basepath", None)
+        self.relative_output = kwargs.get("relative", None)
+        self.preview = kwargs.get("preview", False)
+        self.aliases = kwargs.get("aliases", [])
         self.template_file = self.settings.get("template", None)
         self.title = "Untitled"
         self.user_path = util.get_user_path()
@@ -195,8 +195,8 @@ class Html(object):
 
         if m.group(0).startswith('{{{') and m.group(0).endswith('}}}'):
             return m.group(0)[1:-1]
-        open = m.group(1) if m.group(1) else ''
-        close = m.group(3) if m.group(3) else ''
+        opening = m.group(1) if m.group(1) else ''
+        closing = m.group(3) if m.group(3) else ''
 
         var = m.group(2)
         if var == "meta":
@@ -207,7 +207,7 @@ class Html(object):
             var = ''.join(self.scripts)
         elif var == "title":
             var = cgi.escape(self.title)
-        return open + var + close
+        return opening + var + closing
 
     def repl_file(self, m):
         """Replace file paths in template."""
@@ -271,7 +271,7 @@ class Html(object):
                                     base64.b64encode(f.read()).decode('ascii')
                                 )
                                 embedded = True
-                        except:
+                        except Exception:
                             pass
                         break
                 if not embedded:
@@ -310,7 +310,7 @@ class Html(object):
             try:
                 with codecs.open(template_path, "r", encoding=encoding) as f:
                     self.template = f.read()
-            except:
+            except Exception:
                 logger.Log.error(str(traceback.format_exc()))
 
         # If template isn't found, we will still output markdown html
@@ -345,7 +345,7 @@ class Html(object):
                 self.encode_file = False
             elif self.preview:
                 self.file = tempfile.NamedTemporaryFile(delete=False, suffix=".html")
-        except:
+        except Exception:
             logger.Log.error(str(traceback.format_exc()))
             raise PyMdownFormatterException("Could not open output file!")
 
@@ -447,7 +447,7 @@ class Html(object):
                     elif user_temp is not None and path.exists(user_temp) and path.isfile(user_temp):
                         try:
                             res_path = path.relpath(user_temp, self.basepath) if self.basepath else user_temp
-                        except:
+                        except Exception:
                             # No choice but to use absolute path
                             res_path = user_temp
                             is_abs = True
@@ -481,7 +481,7 @@ class Html(object):
                         if not absolute_conversion and self.relative_output:
                             try:
                                 res_path = path.relpath(abs_path, self.relative_output)
-                            except:
+                            except Exception:
                                 # No choice put to use absolute path
                                 res_path = abs_path
                         elif absolute_conversion:
@@ -513,13 +513,13 @@ class Html(object):
     def load_css(self, style):
         """Load specified CSS sources."""
 
-        self.load_resources(self.settings.get("css", []), get_style, self.css)
+        self.load_resources(self.settings.get("css", []), get_css, self.css)
         for alias in self.aliases:
             key = '@' + alias
             if key in self.settings:
                 self.load_resources(
                     self.settings.get(key).get("css"),
-                    get_style, self.css
+                    get_css, self.css
                 )
         self.css += self.load_highlight(style)
 

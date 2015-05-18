@@ -25,12 +25,12 @@ def slugify(text, sep):
     if text is None:
         return ''
     # Strip html tags and lower
-    id = RE_TAGS.sub('', text).lower()
+    tag_id = RE_TAGS.sub('', text).lower()
     # Remove non word characters or non spaces and dashes
     # Then convert spaces to dashes
-    id = RE_WORD.sub('', id).replace(' ', sep)
+    tag_id = RE_WORD.sub('', tag_id).replace(' ', sep)
     # Encode anything that needs to be
-    return quote(id.encode('utf-8'))
+    return quote(tag_id.encode('utf-8'))
 
 
 class MdConvertException(Exception):
@@ -85,7 +85,7 @@ class MdWrapper(Markdown):
                         'Extension "%s.%s" must be of type: "markdown.Extension"'
                         % (ext.__class__.__module__, ext.__class__.__name__)
                     )
-            except:
+            except Exception:
                 # We want to gracefully continue even if an extension fails.
                 logger.Log.debug(str(traceback.format_exc()))
                 continue
@@ -158,9 +158,9 @@ class MdConvert(object):
                 self.markdown = md.convert(f.read())
                 try:
                     self.meta = md.Meta
-                except:
+                except Exception:
                     pass
-        except:
+        except Exception:
             raise MdConvertException(str(traceback.format_exc()))
 
 
@@ -185,7 +185,7 @@ class MdConverts(MdConvert):
             self.markdown = md.convert(self.source)
             try:
                 self.meta = md.Meta
-            except:
+            except Exception:
                 pass
-        except:
+        except Exception:
             raise MdConvertException(str(traceback.format_exc()))
