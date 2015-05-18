@@ -98,8 +98,6 @@ def handle_egg(archive, dest, egg_modules):
                     dest.append(line.replace('/', '.')[:-3])
 
     if is_egg(archive):
-        """Check if is an egg."""
-
         dest.append(archive)
         hidden_egg_modules(archive, egg_modules)
 

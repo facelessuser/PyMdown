@@ -1,0 +1,8 @@
+strictness: medium
+doc-warnings: false
+test-warnings: false
+ignore-patterns:
+  - docs
+  - docs_theme
+  - pyinstaller
+  - pyinstaller_hooks
