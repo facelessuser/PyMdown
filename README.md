@@ -1,6 +1,7 @@
 [![Unix Build Status][travis-image]][travis-link]
 [![Windows Build Status][appveyor-image]][appveyor-link]
 [![Coverage Status][coveralls-image]][coveralls-link]
+[![Code Health][landscape-image]][landscape-link]
 ![License][license-image]
 
 # PyMdown
@@ -40,3 +41,5 @@ See [licenses](https://github.com/facelessuser/PyMdown/blob/master/data/licenses
 [appveyor-image]: https://img.shields.io/appveyor/ci/facelessuser/PyMdown.svg?label=Windows%20Build
 [appveyor-link]: https://ci.appveyor.com/project/facelessuser/pymdown
 [license-image]: https://img.shields.io/badge/license-MIT-blue.svg
+[landscape-image]: https://landscape.io/github/facelessuser/PyMdown/master/landscape.svg?style=flat
+[landscape-link]: https://landscape.io/github/facelessuser/PyMdown/master

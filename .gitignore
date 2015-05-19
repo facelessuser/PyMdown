@@ -14,3 +14,4 @@ site/*
 .tox/*
 coverage/*
 .coverage
+*.log

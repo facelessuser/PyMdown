@@ -41,16 +41,21 @@ CRITIC_VIEW = 4
 CRITIC_DUMP = 8
 
 
-def yaml_load(stream, Loader=yaml.Loader, object_pairs_hook=OrderedDict):
+def yaml_load(stream, loader=yaml.Loader, object_pairs_hook=OrderedDict):
     """
     Make all YAML dictionaries load as ordered Dicts.
 
     http://stackoverflow.com/a/21912744/3609487
     """
-    class OrderedLoader(Loader):
+    class OrderedLoader(loader):
+
+        """Ordered loader."""
+
         pass
 
     def construct_mapping(loader, node):
+        """Convert to ordered dict."""
+
         loader.flatten_mapping(node)
         return object_pairs_hook(loader.construct_pairs(node))
 
@@ -182,31 +187,6 @@ def unpack_user_files():
                                 f.write(text)
                         except Exception:
                             pass
-
-
-def load_egg_resources():
-    """
-    Load egg resource.
-
-    Add egg to system path if the name indicates it
-    is for the current python version and for pymdown.
-    This only runs if we are not in a pyinstaller environment.
-    """
-    if (
-        not bool(getattr(sys, "frozen", 0)) and
-        path.exists('eggs') and not path.isfile('eggs')
-    ):
-        egg_extension = "py%d.%d.egg" % (
-            sys.version_info.major, sys.version_info.minor
-        )
-        egg_start = "pymdown"
-        for f in os.listdir("eggs"):
-            target = path.abspath(path.join('eggs', f))
-            if (
-                path.isfile(target) and f.endswith(egg_extension) and
-                f.startswith(egg_start)
-            ):
-                sys.path.append(target)
 
 
 def resource_exists(*args, **kwargs):

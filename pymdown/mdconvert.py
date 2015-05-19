@@ -55,7 +55,7 @@ class MdWrapper(Markdown):
 
         super(MdWrapper, self).__init__(*args, **kwargs)
 
-    def registerExtensions(self, extensions, configs):
+    def registerExtensions(self, extensions, configs):  # noqa
         """
         Register extensions with this instance of Markdown.
 

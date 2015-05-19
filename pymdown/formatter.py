@@ -52,16 +52,13 @@ def get_js(js, link=False, encoding='utf-8'):
         return '<script type="text/javascript">\n%s\n</script>\n' % js if js is not None else ""
 
 
-def get_style(style, link=False):
+def get_style(style, link=False, **kwargs):
     """Get the specified CSS code."""
 
     if link:
         return '<link href="%s" rel="stylesheet" type="text/css">\n' % style
     else:
         return '<style>\n%s\n</style>\n' % style if style is not None else ""
-
-
-get_css = lambda style, link=False, encoding=None: get_style(style, link)
 
 
 def get_pygment_style(style, css_class='codehilite'):
@@ -513,13 +510,13 @@ class Html(object):
     def load_css(self, style):
         """Load specified CSS sources."""
 
-        self.load_resources(self.settings.get("css", []), get_css, self.css)
+        self.load_resources(self.settings.get("css", []), get_style, self.css)
         for alias in self.aliases:
             key = '@' + alias
             if key in self.settings:
                 self.load_resources(
                     self.settings.get(key).get("css"),
-                    get_css, self.css
+                    get_style, self.css
                 )
         self.css += self.load_highlight(style)
 

@@ -11,9 +11,8 @@ from __future__ import absolute_import
 from __future__ import print_function
 
 # Egg resoures must be loaded before Pygments gets loaded
+from . import eggs  # noqa
 from . import util
-util.load_egg_resources()
-
 import codecs
 import os.path as path
 from . import critic_dump

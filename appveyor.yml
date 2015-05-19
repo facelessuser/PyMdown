@@ -20,7 +20,6 @@ install:
   - "%PYTHON%/python.exe C:/get-pip.py"
   - "%PYTHON%/Scripts/pip.exe install virtualenv"
   - "%PYTHON%/Scripts/pip.exe install tox"
-  - "%PYTHON%/Scripts/pip.exe install pep257"
 test_script:
   - "%PYTHON%/Scripts/pip --version"
   - "%PYTHON%/Scripts/virtualenv.exe --version"

@@ -19,25 +19,36 @@ else:  # pragma: no cover
     PLATFORM = "linux"
 
 if PY3:  # pragma: no cover
+    # pylint: disable=import-error
     from urllib.parse import quote
     from urllib.request import pathname2url
     unicode_string = str
     string_type = str
     byte_string = bytes
-    if not NOSETESTS:
-        stdout_write = lambda text, encoding: sys.stdout.buffer.write(text)
-    else:
-        stdout_write = lambda text, encoding: sys.stdout.write(text.decode(encoding))
+
+    def stdout_write(text, encoding):
+        """Write to stdout."""
+
+        if not NOSETESTS:
+            sys.stdout.buffer.write(text)
+        else:
+            sys.stdout.write(text.decode(encoding))
+
 else:  # pragma: no cover
+    # pylint: disable=import-error
     from urllib import quote  # noqa
     from urllib import pathname2url  # noqa
     unicode_string = unicode  # noqa
     string_type = basestring  # noqa
     byte_string = str
-    if not NOSETESTS:
-        stdout_write = lambda text, encoding: sys.stdout.write(text)
-    else:
-        stdout_write = lambda text, encoding: sys.stdout.write(text.decode(encoding))
+
+    def stdout_write(text, encoding):
+        """Write to stdout."""
+
+        if not NOSETESTS:
+            sys.stdout.write(text)
+        else:
+            sys.stdout.write(text.decode(encoding))
 
 
 def print_stdout(text, encoding='utf-8'):
