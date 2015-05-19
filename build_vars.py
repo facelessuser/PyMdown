@@ -6,6 +6,11 @@ Due to dynamic importing of the modules, not all modules are found by Pyinstalle
 import os
 import sys
 import zipfile
+import yaml
+import codecs
+import traceback
+
+BUILD_EXTRAS = 'buildextras.yml'
 
 PY3 = sys.version_info >= (3, 0)
 
@@ -30,6 +35,28 @@ hidden_imports_to_crawl = [
     'pymdown_styles',
     'pymdown_lexers'
 ]
+
+
+def read_build_extras():
+    """Read extra user defined variables."""
+
+    config = None
+    if os.path.exists(BUILD_EXTRAS):
+        try:
+            with codecs.open(BUILD_EXTRAS, 'r', encoding='utf-8') as f:
+                config = yaml.load(f.read())
+        except Exception:
+            print(traceback.format_exc())
+            config = None
+
+    if config is not None:
+        print(config)
+        data_to_crawl.extend(config.get('data_to_crawl', []))
+        hidden_imports_to_crawl.extend(config.get('hidden_imports_to_crawl', []))
+        data.extend(config.get('data', []))
+        hidden_imports.extend(config.get('hidden_imports', []))
+        paths.extend(config.get('paths', []))
+        hookpaths.extend(config.get('hookpaths', []))
 
 
 #####################################
@@ -101,6 +128,7 @@ def handle_egg(archive, dest, egg_modules):
         dest.append(archive)
         hidden_egg_modules(archive, egg_modules)
 
+read_build_extras()
 crawl_data(data_to_crawl, data)
 crawl_hidden_imports(hidden_imports_to_crawl, hidden_imports, paths)
 

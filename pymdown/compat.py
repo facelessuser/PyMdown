@@ -19,9 +19,8 @@ else:  # pragma: no cover
     PLATFORM = "linux"
 
 if PY3:  # pragma: no cover
-    # pylint: disable=import-error
-    from urllib.parse import quote
-    from urllib.request import pathname2url
+    from urllib.parse import quote  # noqa
+    from urllib.request import pathname2url  # noqa
     unicode_string = str
     string_type = str
     byte_string = bytes
@@ -35,7 +34,6 @@ if PY3:  # pragma: no cover
             sys.stdout.write(text.decode(encoding))
 
 else:  # pragma: no cover
-    # pylint: disable=import-error
     from urllib import quote  # noqa
     from urllib import pathname2url  # noqa
     unicode_string = unicode  # noqa

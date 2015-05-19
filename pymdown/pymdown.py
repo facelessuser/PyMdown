@@ -10,8 +10,6 @@ from __future__ import unicode_literals
 from __future__ import absolute_import
 from __future__ import print_function
 
-# Egg resoures must be loaded before Pygments gets loaded
-from . import eggs  # noqa
 from . import util
 import codecs
 import os.path as path
