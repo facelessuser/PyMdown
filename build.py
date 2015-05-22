@@ -3,10 +3,14 @@
 from __future__ import print_function
 import sys
 from os.path import dirname, abspath, join
-from os import path, mkdir, chdir
+from os import path, mkdir, chdir, listdir
 import shutil
 import argparse
 import subprocess
+import zipfile
+import yaml
+import codecs
+import traceback
 
 PY3 = sys.version_info >= (3, 0)
 if PY3:
@@ -46,26 +50,135 @@ exe = EXE(pyz,
 '''
 
 
+class BuildVars(object):
+
+    """Build variables."""
+
+    extras = 'buildextras.yml'
+    hidden_imports_to_crawl = [
+        'pymdown_styles',
+        'pymdown_lexers'
+    ]
+    data_to_crawl = [
+        "pymdown/data"
+    ]
+    hidden_imports = []
+    data = []
+    hookpaths = [
+        'pyinstaller_hooks'
+    ]
+    paths = []
+
+    def crawl_data(self):
+        """Crawl data."""
+
+        for target in self.data_to_crawl:
+            if path.isfile(target):
+                self.data.append((target, "./%s" % target, "DATA"))
+            else:
+                for f in listdir(target):
+                    file_path = path.join(target, f)
+                    if path.isfile(file_path) and not f.startswith((".", "~")) and not f.endswith('.py'):
+                        name = '/'.join([target, f])
+                        self.data.append((name, "./%s" % name, "DATA"))
+
+    def crawl_hidden_imports(self):
+        """Crawl hidden imports."""
+
+        import pkgutil
+        for mod in self.hidden_imports_to_crawl:
+            pkg = pkgutil.get_loader(mod)
+            if getattr(pkg, 'archive', None) is None:
+                folder = pkg.filename
+                self.hidden_imports.append(pkg.fullname)
+                for f in listdir(folder):
+                    if f != "__init__.py" and f.endswith('.py'):
+                        self.hidden_imports.append('.'.join([pkg.fullname, f]))
+            else:
+                handle_egg(pkg.archive)
+
+    def handle_egg(archive):
+        """Handle an egg import."""
+
+        def is_egg(archive):
+            """Check if is an egg that we will accept."""
+
+            egg_extension = "py%d.%d.egg" % (sys.version_info.major, sys.version_info.minor)
+            return (
+                path.isfile(archive) and
+                path.basename(archive).endswith(egg_extension)
+            )
+
+        def hidden_egg_modules(archive):
+            """Add egg modules to hidden imports."""
+
+            with zipfile.ZipFile(archive, 'r') as z:
+                text = z.read(z.getinfo('EGG-INFO/SOURCES.txt'))
+                if PY3:
+                    text = text.decode('utf-8')
+                for line in text.split('\n'):
+                    line = line.replace('\r', '')
+                    if (
+                        line.endswith('.py') and
+                        not line.endswith('/__init__.py') and
+                        line != 'setup.py'
+                    ):
+                        self.hidden_imports.append(line.replace('/', '.')[:-3])
+
+        if is_egg(archive):
+            self.paths.append(archive)
+            hidden_egg_modules(archive)
+
+    def print_vars(self, label, src):
+        """Print specified variable."""
+
+        print("--- %s ---" % label)
+        for s in src:
+            print(s)
+        print('')
+
+
+    def print_all_vars(self):
+        """Print all the variables."""
+
+        print('====== Processed Spec Variables =====')
+        self.print_vars('Data', self.data)
+        self.print_vars('Hidden Imports', self.hidden_imports)
+        self.print_vars("Paths", self.paths)
+        self.print_vars("Hooks", self.hookpaths)
+
+    def read(self):
+        """Read the build vars."""
+
+        config = None
+        if path.exists(self.extras):
+            try:
+                with codecs.open(self.extras, 'r', encoding='utf-8') as f:
+                    config = yaml.load(f.read())
+            except Exception:
+                print(traceback.format_exc())
+                config = None
+
+        if config is not None:
+            print(config)
+            self.data_to_crawl.extend(config.get('data_to_crawl', []))
+            self.hidden_imports_to_crawl.extend(config.get('hidden_imports_to_crawl', []))
+            self.data.extend(config.get('data', []))
+            self.hidden_imports.extend(config.get('hidden_imports', []))
+            self.paths.extend(config.get('paths', []))
+            self.hookpaths.extend(config.get('hookpaths', []))
+
+        self.crawl_data()
+        self.crawl_hidden_imports()
+
+
 def build_spec_file(obj):
     """Build the spec file."""
     proj_path = path.dirname(obj.script)
     sys.path.append(proj_path)
-    try:
-        import build_vars
-    except:
-        class build_vars(object):
-            hidden_imports = []
-            data = []
-            hookpaths = []
-            paths = []
 
-            @staticmethod
-            def print_vars(label, src):
-                pass
-
-            @staticmethod
-            def print_all_vars():
-                pass
+    build_vars = BuildVars()
+    build_vars.read()
 
     build_vars.print_all_vars()
 
