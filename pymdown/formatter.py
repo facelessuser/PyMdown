@@ -43,8 +43,11 @@ class PyMdownFormatterException(Exception):
     pass
 
 
-def get_js(js, link=False, encoding='utf-8'):
+def get_js(js, **kwargs):
     """Get the specified JS code."""
+
+    link = kwargs.get('link', False)
+    encoding = kwargs.get('encoding', 'utf-8')
 
     if link:
         return '<script type="text/javascript" charset="%s" src="%s"></script>\n' % (encoding, js)
@@ -52,8 +55,10 @@ def get_js(js, link=False, encoding='utf-8'):
         return '<script type="text/javascript">\n%s\n</script>\n' % js if js is not None else ""
 
 
-def get_style(style, link=False, **kwargs):
+def get_style(style, **kwargs):
     """Get the specified CSS code."""
+
+    link = kwargs.get('link', False)
 
     if link:
         return '<link href="%s" rel="stylesheet" type="text/css">\n' % style
@@ -187,7 +192,7 @@ class Html(object):
                     )
                 )
 
-    def repl_vars(self, m):
+    def repl_template_vars(self, m):
         """Replace template variables."""
 
         if m.group(0).startswith('{{{') and m.group(0).endswith('}}}'):
@@ -206,18 +211,12 @@ class Html(object):
             var = cgi.escape(self.title)
         return opening + var + closing
 
-    def repl_file(self, m):
-        """Replace file paths in template."""
+    def get_template_res_path(self, file_name):
+        """Get the filepath and absolute filepath of the resource."""
 
-        if m.group(0).startswith('{{{') and m.group(0).endswith('}}}'):
-            return m.group(0)[1:-1]
-        m_open = m.group(1) if m.group(1) else ''
-        m_close = m.group(4) if m.group(4) else ''
-        quoted = m.group(2) == "getQuotedPath"
-        file_name = m.group(3).strip()
-        absolute_conversion = self.settings.get("path_conversion_absolute", True)
+        abs_path = None
+        file_path = None
         user_path = util.get_user_path()
-        file_name, encoding = util.splitenc(file_name)
 
         is_abs = util.is_absolute(file_name)
 
@@ -226,20 +225,18 @@ class Html(object):
         # or just keep the absolute
         if not is_abs:
             # Is relative path
-            base_temp = path.normpath(path.join(self.basepath, file_name)) if self.basepath is not None else None
-            user_temp = path.normpath(path.join(user_path, file_name)) if user_path is not None else None
-            if path.exists(base_temp) and path.isfile(base_temp):
-                file_path = base_temp
-            elif path.exists(user_temp) and path.isfile(user_temp):
-                file_path = user_temp
-            else:
-                file_path = None
+            if self.basepath is not None:
+                base_temp = path.normpath(path.join(self.basepath, file_name))
+                if path.exists(base_temp) and path.isfile(base_temp):
+                    file_path = base_temp
+            if file_path is None and user_path is not None:
+                user_temp = path.normpath(path.join(user_path, file_name))
+                if path.exists(user_temp) and path.isfile(user_temp):
+                    file_path = user_temp
+
         elif is_abs and path.exists(file_name) and path.isfile(file_name):
             # Is absolute path
             file_path = file_name
-        else:
-            # Is an unknown path
-            file_path = None
 
         if file_path is not None:
             # Calculate the absolute path
@@ -250,11 +247,26 @@ class Html(object):
 
             # Adjust path depending on whether we are desiring
             # absolute output or relative output
-            if not absolute_conversion and self.relative_output:
-                file_path = path.relpath(abs_path, self.relative_output)
-            elif absolute_conversion:
+            if self.settings.get("path_conversion_absolute", True):
                 file_path = abs_path
+            elif self.relative_output:
+                file_path = path.relpath(abs_path, self.relative_output)
+        return file_path, abs_path
 
+    def repl_template_file(self, m):
+        """Replace file paths in template."""
+
+        if m.group(0).startswith('{{{') and m.group(0).endswith('}}}'):
+            return m.group(0)[1:-1]
+        m_open = m.group(1) if m.group(1) else ''
+        m_close = m.group(4) if m.group(4) else ''
+        quoted = m.group(2) == "getQuotedPath"
+        file_name = m.group(3).strip()
+        file_name, encoding = util.splitenc(file_name)
+
+        file_path, abs_path = self.get_template_res_path(file_name)
+
+        if file_path is not None:
             if m.group(2) == "embedImage":
                 # If embedding an image, get base64 image type or return path
                 ext = path.splitext(file_name)[1]
@@ -318,8 +330,8 @@ class Html(object):
             # so we know where to insert the markdown.
             # If we can't find an insertion point, the html
             # will have no markdown content.
-            self.template = RE_TEMPLATE_FILE.sub(self.repl_file, self.template)
-            self.template = RE_TEMPLATE_VARS.sub(self.repl_vars, self.template)
+            self.template = RE_TEMPLATE_FILE.sub(self.repl_template_file, self.template)
+            self.template = RE_TEMPLATE_VARS.sub(self.repl_template_vars, self.template)
             m = re.search(r"\{\{\s*content\s*\}\}", self.template)
             if m:
                 self.no_body = False
@@ -394,6 +406,56 @@ class Html(object):
 
         return css
 
+    def get_res_path(self, resource, absolute_conversion, omit_conversion):
+        """Get file path and absolute file path of the file if possible."""
+
+        abs_path = None
+        res_path = None
+
+        is_abs = util.is_absolute(resource)
+        if not is_abs:
+            # Is relative path
+            if self.basepath is not None:
+                base_temp = path.normpath(path.join(self.basepath, resource))
+                if path.exists(base_temp) and path.isfile(base_temp):
+                    res_path = resource
+
+            if res_path is None and self.user_path is not None:
+                user_temp = path.normpath(path.join(self.user_path, resource))
+                if path.exists(user_temp) and path.isfile(user_temp):
+                    try:
+                        res_path = path.relpath(user_temp, self.basepath) if self.basepath else user_temp
+                    except Exception:
+                        # No choice but to use absolute path
+                        res_path = user_temp
+                        is_abs = True
+
+        elif is_abs and path.exists(resource) and path.isfile(resource):
+            # Is absolute path
+            res_path = path.relpath(resource, self.basepath) if self.basepath else resource
+
+        # Is an existing path.  Make path absolute, relative to output, or leave as is
+        # If direct include is not desired, add resource as link.
+        if res_path is not None:
+            # Calculate the absolute path
+            if is_abs or not self.basepath:
+                abs_path = res_path
+            else:
+                abs_path = path.abspath(path.join(self.basepath, res_path))
+
+            # Adjust path depending on whether we are desiring
+            # absolute output or relative output
+            if (self.preview or not omit_conversion):
+                if not absolute_conversion and self.relative_output:
+                    try:
+                        res_path = path.relpath(abs_path, self.relative_output)
+                    except Exception:
+                        # No choice put to use absolute path
+                        res_path = abs_path
+                elif absolute_conversion:
+                    res_path = abs_path
+        return res_path, abs_path
+
     def load_resources(self, template_resources, res_get, resources):
         """
         Load the resource (js or css).
@@ -409,80 +471,34 @@ class Html(object):
                 resource = unicode_string(pth)
                 is_url = RE_URL_START.match(resource)
 
-                # Check for markers
-                direct_include = True
-                omit_conversion = resource.startswith('!')
-                direct_include = resource.startswith('^')
-
-                if omit_conversion:
-                    resource = resource.replace('!', '', 1)
-                elif direct_include:
-                    resource = resource.replace('^', '', 1)
-
-                if not omit_conversion:
-                    omit_conversion = self.settings.get("disable_path_conversion", False)
-
-                absolute_conversion = self.settings.get("path_conversion_absolute", False)
-
-                # Find path relative to basepath or global user path
-                # If basepath is defined set paths relative to the basepath if possible
-                # or just keep the absolute
-                resource, encoding = util.splitenc(resource)
-                is_abs = util.is_absolute(resource)
-                if not is_abs and not is_url:
-                    # Is relative path
-                    if self.basepath is not None:
-                        base_temp = path.normpath(path.join(self.basepath, resource))
-                    else:
-                        base_temp = None
-                    if self.user_path is not None:
-                        user_temp = path.normpath(path.join(self.user_path, resource))
-                    else:
-                        user_temp = None
-                    if base_temp is not None and path.exists(base_temp) and path.isfile(base_temp):
-                        res_path = resource
-                    elif user_temp is not None and path.exists(user_temp) and path.isfile(user_temp):
-                        try:
-                            res_path = path.relpath(user_temp, self.basepath) if self.basepath else user_temp
-                        except Exception:
-                            # No choice but to use absolute path
-                            res_path = user_temp
-                            is_abs = True
-                    else:
-                        res_path = None
-                elif is_abs and path.exists(resource) and path.isfile(resource):
-                    # Is absolute path
-                    res_path = path.relpath(resource, self.basepath) if self.basepath else resource
-                else:
-                    # Is a url or an unknown path
-                    res_path = None
-
                 # This is a URL, don't include content
                 if is_url:
+                    resource, encoding = util.splitenc(resource)
                     if resource not in self.added_res:
                         resources.append(res_get(resource, link=True, encoding=encoding))
                         self.added_res.add(resource)
+                else:
+                    # Find path relative to basepath or global user path
+                    # If basepath is defined set paths relative to the basepath if possible
+                    # or just keep the absolute
 
-                # Is an existing path.  Make path absolute, relative to output, or leave as is
-                # If direct include is not desired, add resource as link.
-                elif res_path is not None:
-                    # Calculate the absolute path
-                    if is_abs or not self.basepath:
-                        abs_path = res_path
-                    else:
-                        abs_path = path.abspath(path.join(self.basepath, res_path))
+                    # Check for markers
+                    direct_include = True
+                    omit_conversion = resource.startswith('!')
+                    direct_include = resource.startswith('^')
 
-                    # Adjust path depending on whehter we are desiring
-                    # absolute output or relative output
-                    if (self.preview or not omit_conversion):
-                        if not absolute_conversion and self.relative_output:
-                            try:
-                                res_path = path.relpath(abs_path, self.relative_output)
-                            except Exception:
-                                # No choice put to use absolute path
-                                res_path = abs_path
-                        elif absolute_conversion:
-                            res_path = abs_path
+                    if omit_conversion:
+                        resource = resource.replace('!', '', 1)
+                    elif direct_include:
+                        resource = resource.replace('^', '', 1)
+
+                    if not omit_conversion:
+                        omit_conversion = self.settings.get("disable_path_conversion", False)
+
+                    absolute_conversion = self.settings.get("path_conversion_absolute", False)
+
+                    resource, encoding = util.splitenc(resource)
+                    res_path, abs_path = self.get_res_path(resource, absolute_conversion, omit_conversion)
 
                     # We check the absolute path against the current list
                     # and add the respath if not present
@@ -496,16 +512,16 @@ class Html(object):
                         resources.append(res_get(res_path, link=link, encoding=encoding))
                         self.added_res.add(abs_path)
 
-                # Not a known path and not a url, just add as is
-                elif resource not in self.added_res:
-                    resources.append(
-                        res_get(
-                            pathname2url(resource.replace('\\', '/')),
-                            link=True,
-                            encoding=encoding
+                    # Not a known path and not a url, just add as is
+                    elif resource not in self.added_res:
+                        resources.append(
+                            res_get(
+                                pathname2url(resource.replace('\\', '/')),
+                                link=True,
+                                encoding=encoding
+                            )
                         )
-                    )
-                    self.added_res.add(resource)
+                        self.added_res.add(resource)
 
     def load_css(self, style):
         """Load specified CSS sources."""
