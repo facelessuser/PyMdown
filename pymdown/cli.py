@@ -19,7 +19,7 @@ import os.path as path
 from . import pymdown
 from . import util
 from . import logger
-from .compat import print_stdout, to_unicode
+from . import compat
 
 __version__ = '.'.join(map(str, pymdown.version_info))
 
@@ -47,7 +47,7 @@ def get_file_stream(encoding):
     text = []
     try:
         for line in fileinput.input():
-            text.append(to_unicode(line, encoding))
+            text.append(compat.to_unicode(line, encoding))
         stream = ''.join(text)
     except Exception:
         logger.Log.error(traceback.format_exc())
@@ -91,7 +91,7 @@ def display_licenses():
     status = pymdown.PASS
     text = util.load_text_resource(path.join('pymdown', 'data', 'licenses.txt'), internal=True)
     if text is not None:
-        print_stdout(text.encode('utf-8'))
+        compat.print_stdout(text.encode('utf-8'))
     else:
         status = pymdown.FAIL
     return status

@@ -2,14 +2,7 @@
 import textwrap
 import sys
 from contextlib import contextmanager
-
-PY2 = sys.version_info >= (2, 0) and sys.version_info < (3, 0)
-PY3 = sys.version_info >= (3, 0) and sys.version_info < (4, 0)
-
-if PY3:
-    from io import StringIO
-else:
-    from StringIO import StringIO
+from pymdown import compat
 
 
 @contextmanager
@@ -21,7 +14,7 @@ def capture(command, *args, **kwargs):
     we will redirect stdout so we can capture it.
     """
 
-    out, sys.stdout = sys.stdout, StringIO()
+    out, sys.stdout = sys.stdout, compat.StringIO()
     command(*args, **kwargs)
     sys.stdout.seek(0)
     yield sys.stdout.read()

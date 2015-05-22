@@ -13,7 +13,7 @@ import codecs
 import traceback
 import re
 from . import logger
-from .compat import string_type, quote
+from . import compat
 
 RE_TAGS = re.compile(r'''</?[^>]*>''', re.UNICODE)
 RE_WORD = re.compile(r'''[^\w\- ]''', re.UNICODE)
@@ -30,7 +30,7 @@ def slugify(text, sep):
     # Then convert spaces to dashes
     tag_id = RE_WORD.sub('', tag_id).replace(' ', sep)
     # Encode anything that needs to be
-    return quote(tag_id.encode('utf-8'))
+    return compat.quote(tag_id.encode('utf-8'))
 
 
 class MdConvertException(Exception):
@@ -126,7 +126,7 @@ class MdConvert(object):
             if extensions[k] is None:
                 extensions[k] = {}
             for sub_k, sub_v in extensions[k].items():
-                if isinstance(sub_v, string_type):
+                if isinstance(sub_v, compat.string_type):
                     if sub_v == '${SLUGIFY}':
                         extensions[k][sub_k] = slugify
                     else:

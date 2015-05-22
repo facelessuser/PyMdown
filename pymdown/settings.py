@@ -11,11 +11,11 @@ from __future__ import absolute_import
 import codecs
 import traceback
 import os.path as path
+from collections import OrderedDict
 from copy import deepcopy
 from . import util
 from . import logger
-from collections import OrderedDict
-from .compat import unicode_string, string_type
+from . import compat
 try:
     from pygments.styles import get_style_by_name
     PYGMENTS_AVAILABLE = True
@@ -63,11 +63,12 @@ class MergeSettings(object):
 
         if "basepath" in frontmatter:
             value = frontmatter["basepath"]
-            settings["page"]["basepath"] = util.resolve_base_path(
-                value,
-                self.file_name,
-                is_stream=self.is_stream
-            )
+            if isinstance(value, compat.unicode_type):
+                settings["page"]["basepath"] = util.resolve_base_path(
+                    value,
+                    self.file_name,
+                    is_stream=self.is_stream
+                )
             del frontmatter["basepath"]
         self.base = settings["page"]["basepath"]
 
@@ -76,27 +77,29 @@ class MergeSettings(object):
 
         if "relpath" in frontmatter:
             value = frontmatter["relpath"]
-            settings["page"]["relpath"] = util.resolve_relative_path(value)
+            if isinstance(value, compat.unicode_type):
+                settings["page"]["relpath"] = util.resolve_relative_path(value)
             del self.frontmatter["relpath"]
 
     def merge_destination(self, frontmatter, settings):
         """Merge destinatio."""
         if "destination" in frontmatter:
             value = frontmatter['destination']
-            file_name = util.resolve_meta_path(
-                path.dirname(unicode_string(value)),
-                self.base
-            )
-            if file_name is not None and path.isdir(file_name):
-                value = path.normpath(
-                    path.join(file_name, path.basename(value))
+            if isinstance(value, compat.unicode_type):
+                file_name = util.resolve_meta_path(
+                    path.dirname(value),
+                    self.base
                 )
-                if path.exists(value) and path.isdir(value):
+                if file_name is not None and path.isdir(file_name):
+                    value = path.normpath(
+                        path.join(file_name, path.basename(value))
+                    )
+                    if path.exists(value) and path.isdir(value):
+                        value = None
+                else:
                     value = None
-            else:
-                value = None
-            if value is not None:
-                settings["page"]["destination"] = value
+                if value is not None:
+                    settings["page"]["destination"] = value
             del frontmatter['destination']
 
     def merge_includes(self, frontmatter, settings):
@@ -106,26 +109,20 @@ class MergeSettings(object):
 
         if "include" in frontmatter:
             value = frontmatter['include']
-            if not isinstance(value, list):
-                value = []
-            settings["page"]['include'] = [
-                unicode_string(v) for v in value if isinstance(v, string_type)
-            ]
-            del frontmatter['include']
+            if isinstance(value, list):
+                settings["page"]['include'] = [v for v in value if isinstance(v, compat.unicode_type)]
+                del frontmatter['include']
 
         # Javascript and CSS include
         for i in ("css", "js"):
             key = 'include.%s' % i
             if key in frontmatter:
                 value = frontmatter[key]
-                items = []
-                for j in value:
-                    pth = unicode_string(j)
-                    items.append(pth)
-                if i == 'css':
-                    css += items
-                else:
-                    js += items
+                if isinstance(value, list):
+                    if i == 'css':
+                        css += [v for v in value if isinstance(v, compat.unicode_type)]
+                    else:
+                        js += [v for v in value if isinstance(v, compat.unicode_type)]
                 del frontmatter[key]
 
         # Append CSS and JS from built-in keys if any
@@ -138,13 +135,8 @@ class MergeSettings(object):
         """Merge reference."""
         if 'references' in frontmatter:
             value = frontmatter['references']
-            if not isinstance(value, list):
-                value = [value]
-            refs = []
-            for v in value:
-                pth = unicode_string(v)
-                refs.append(pth)
-            settings["page"]['references'] = refs
+            if isinstance(value, list):
+                settings["page"]['references'] = [v for v in value if isinstance(v, compat.unicode_type)]
             del frontmatter['references']
 
     def merge_settings(self, frontmatter, settings):
@@ -154,30 +146,24 @@ class MergeSettings(object):
             value = frontmatter['settings']
             for subkey, subvalue in value.items():
                 # Html template
-                if subkey == "template":
-                    org_pth = unicode_string(subvalue)
+                if subkey == "template" and isinstance(subvalue, compat.unicode_type):
+                    org_pth = subvalue
                     new_pth = self.process_settings_path(org_pth, self.base)
                     settings['settings'][subkey] = new_pth if new_pth is not None else org_pth
 
                 # Handle optional extention assets
-                elif subkey.startswith('@'):
+                elif subkey.startswith('@') and isinstance(subvalue, OrderedDict):
                     for assetkey, assetvalue in subvalue.items():
-                        if assetkey in ('cs', 'js'):
-                            items = []
-                            for i in assetvalue:
-                                pth = unicode_string(i)
-                                items.append(pth)
-                            settings['settings'][subkey][assetkey] = items
-                        else:
-                            settings['settings'][subkey][assetkey] = assetvalue
+                        if assetkey in ('css', 'js'):
+                            settings['settings'][subkey][assetkey] = [
+                                v for v in assetvalue if isinstance(v, compat.unicode_type)
+                            ]
 
                 # Javascript and CSS files
-                elif subkey in ("css", "js"):
-                    items = []
-                    for i in subvalue:
-                        pth = unicode_string(i)
-                        items.append(pth)
-                    settings['settings'][subkey] = items
+                elif subkey in ("css", "js") and isinstance(subvalue, compat.unicode_type):
+                    settings['settings'][subkey] = [
+                        v for v in subvalue if isinstance(v, compat.unicode_type)
+                    ]
 
                 # All other settings that require no other special handling
                 else:
@@ -189,10 +175,10 @@ class MergeSettings(object):
 
         for key, value in frontmatter.items():
             if isinstance(value, list):
-                value = [unicode_string(v) for v in value]
+                value = [compat.unicode_type(v) for v in value]
             else:
-                value = unicode_string(value)
-            settings["page"]["meta"][unicode_string(key)] = value
+                value = compat.unicode_type(value)
+            settings["page"]["meta"][key] = value
 
     def merge(self, frontmatter, settings):
         """Handle basepath first and then merge all keys."""

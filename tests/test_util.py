@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """Test formatter lib."""
 from __future__ import unicode_literals
 import unittest
@@ -6,13 +7,14 @@ from pymdown import util
 from . import common
 import os
 import codecs
+from pymdown import compat
 
 
 class TestFrontmatter(unittest.TestCase):
 
     """TestFrontmatter."""
 
-    def test_yaml_load(self):
+    def test_yaml_ordered_load(self):
         """Test that yaml can load ordered dictionaries."""
 
         yaml_text = common.dedent('''
@@ -32,6 +34,20 @@ class TestFrontmatter(unittest.TestCase):
                                                ('key3', 7), ('key4', 4),
                                                ('key5', 6)]))])
         )
+
+    def test_yaml_unicode_load(self):
+        """Ensure strings in yaml are all unicode."""
+
+        yaml_text = common.dedent('''
+            test:
+                key1: test
+                key2: Ā ā Ă ă Ą ą
+        ''')
+
+        result = util.yaml_load(yaml_text)
+
+        self.assertTrue(isinstance(result["test"]["key1"], compat.unicode_type))
+        self.assertTrue(isinstance(result["test"]["key2"], compat.unicode_type))
 
 
 class TestResources(unittest.TestCase):

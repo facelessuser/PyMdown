@@ -19,9 +19,9 @@ import subprocess
 import webbrowser
 import json
 import os.path as path
-from . import logger
-from .compat import PLATFORM, to_unicode
 from collections import OrderedDict
+from . import logger
+from . import compat
 
 RESOURCE_PATH = path.abspath(path.join(path.dirname(__file__), ".."))
 WIN_DRIVE = re.compile(r"(^[A-Za-z]{1}:(?:\\|/))")
@@ -43,13 +43,18 @@ CRITIC_DUMP = 8
 
 def yaml_load(stream, loader=yaml.Loader, object_pairs_hook=OrderedDict):
     """
+    Custom yaml loader.
+
     Make all YAML dictionaries load as ordered Dicts.
-
     http://stackoverflow.com/a/21912744/3609487
-    """
-    class OrderedLoader(loader):
 
-        """Ordered loader."""
+    Load all strings as unicode.
+    http://stackoverflow.com/a/2967461/3609487
+    """
+
+    class Loader(loader):
+
+        """Custom Loader."""
 
         pass
 
@@ -59,12 +64,22 @@ def yaml_load(stream, loader=yaml.Loader, object_pairs_hook=OrderedDict):
         loader.flatten_mapping(node)
         return object_pairs_hook(loader.construct_pairs(node))
 
-    OrderedLoader.add_constructor(
+    def construct_yaml_str(self, node):
+        """Override the default string handling function to always return unicode objects."""
+
+        return self.construct_scalar(node)
+
+    Loader.add_constructor(
         yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,
         construct_mapping
     )
 
-    return yaml.load(stream, OrderedLoader)
+    Loader.add_constructor(
+        'tag:yaml.org,2002:str',
+        construct_yaml_str
+    )
+
+    return yaml.load(stream, Loader)
 
 
 def get_frontmatter(string):
@@ -112,7 +127,7 @@ def is_absolute(pth):
 
     absolute = False
     if pth is not None:
-        if sys.platform.startswith('win'):
+        if compat.PLATFORM == "windows":
             if WIN_DRIVE.match(pth) is not None or pth.startswith("//"):
                 absolute = True
         elif pth.startswith('/'):
@@ -123,11 +138,11 @@ def is_absolute(pth):
 def get_user_path():
     """Get user data path."""
 
-    if PLATFORM == "windows":
+    if compat.PLATFORM == "windows":
         folder = path.expanduser("~\\.PyMdown")
-    elif PLATFORM == "osx":
+    elif compat.PLATFORM == "osx":
         folder = path.expanduser("~/.PyMdown")
-    elif PLATFORM == "linux":
+    elif compat.PLATFORM == "linux":
         folder = path.expanduser("~/.config/PyMdown")
 
     if not path.exists(folder):
@@ -270,7 +285,7 @@ def get_references(references, basepath, encoding):
 def open_in_browser(name):
     """Auto open HTML."""
 
-    if PLATFORM == "osx":
+    if compat.PLATFORM == "osx":
         web_handler = None
         try:
             launch_services = path.expanduser(
@@ -284,7 +299,7 @@ def open_in_browser(name):
             p = subprocess.Popen(args, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
             p.stdin.write(content)
             out = p.communicate()[0]
-            plist = json.loads(to_unicode(out))
+            plist = json.loads(compat.to_unicode(out))
             for handler in plist['LSHandlers']:
                 print('found')
                 if handler.get('LSHandlerURLScheme', '') == "http":
@@ -296,7 +311,7 @@ def open_in_browser(name):
             subprocess.Popen(['open', '-b', web_handler, name])
         else:
             subprocess.Popen(['open', name])
-    elif PLATFORM == "windows":
+    elif compat.PLATFORM == "windows":
         webbrowser.open(name, new=2)
     else:
         try:

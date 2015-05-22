@@ -18,7 +18,7 @@ import base64
 from os import path
 from . import util
 from . import logger
-from .compat import pathname2url, unicode_string, print_stdout
+from . import compat
 try:
     from pygments.formatters import get_formatter_by_name
     PYGMENTS_AVAILABLE = True
@@ -92,7 +92,7 @@ class Terminal(object):
     def write(self, text):
         """Dump texst to screen."""
 
-        print_stdout(text, self.encoding)
+        compat.print_stdout(text, self.encoding)
 
     def close(self):
         """There is nothing to close."""
@@ -178,7 +178,7 @@ class Html(object):
                     value = ""
                 else:
                     value = value[0]
-            self.title = unicode_string(value)
+            self.title = compat.unicode_type(value)
             del meta["title"]
 
         for k, v in meta.items():
@@ -187,8 +187,8 @@ class Html(object):
             if v is not None:
                 self.meta.append(
                     '<meta name="%s" content="%s">' % (
-                        cgi.escape(unicode_string(k), True),
-                        cgi.escape(unicode_string(v), True)
+                        cgi.escape(compat.unicode_type(k), True),
+                        cgi.escape(compat.unicode_type(v), True)
                     )
                 )
 
@@ -293,7 +293,7 @@ class Html(object):
             else:
                 file_name = file_path.replace('\\', '/')
                 if quoted:
-                    file_name = pathname2url(file_name)
+                    file_name = compat.pathname2url(file_name)
 
         return m_open + file_name + m_close
 
@@ -406,7 +406,7 @@ class Html(object):
 
         return css
 
-    def get_res_path(self, resource, absolute_conversion, omit_conversion):
+    def get_res_path(self, resource):
         """Get file path and absolute file path of the file if possible."""
 
         abs_path = None
@@ -443,18 +443,21 @@ class Html(object):
             else:
                 abs_path = path.abspath(path.join(self.basepath, res_path))
 
-            # Adjust path depending on whether we are desiring
-            # absolute output or relative output
-            if (self.preview or not omit_conversion):
-                if not absolute_conversion and self.relative_output:
-                    try:
-                        res_path = path.relpath(abs_path, self.relative_output)
-                    except Exception:
-                        # No choice put to use absolute path
-                        res_path = abs_path
-                elif absolute_conversion:
-                    res_path = abs_path
         return res_path, abs_path
+
+    def convert_path(self, res_path, abs_path, absolute_conversion, omit_conversion):
+        """Adjust path depending on whether we are desiring absolute output or relative output."""
+
+        if (self.preview or not omit_conversion):
+            if not absolute_conversion and self.relative_output:
+                try:
+                    res_path = path.relpath(abs_path, self.relative_output)
+                except Exception:
+                    # No choice put to use absolute path
+                    res_path = abs_path
+            elif absolute_conversion:
+                res_path = abs_path
+        return res_path
 
     def load_resources(self, template_resources, res_get, resources):
         """
@@ -468,7 +471,7 @@ class Html(object):
 
         if isinstance(template_resources, list) and len(template_resources):
             for pth in template_resources:
-                resource = unicode_string(pth)
+                resource = pth
                 is_url = RE_URL_START.match(resource)
 
                 # This is a URL, don't include content
@@ -498,13 +501,16 @@ class Html(object):
                     absolute_conversion = self.settings.get("path_conversion_absolute", False)
 
                     resource, encoding = util.splitenc(resource)
-                    res_path, abs_path = self.get_res_path(resource, absolute_conversion, omit_conversion)
+                    res_path, abs_path = self.get_res_path(resource)
+
+                    if res_path is not None:
+                        res_path = self.convert_path(res_path, abs_path, absolute_conversion, omit_conversion)
 
                     # We check the absolute path against the current list
                     # and add the respath if not present
                     if abs_path not in self.added_res:
                         if not direct_include:
-                            res_path = pathname2url(res_path.replace('\\', '/'))
+                            res_path = compat.pathname2url(res_path.replace('\\', '/'))
                             link = True
                         else:
                             res_path = util.load_text_resource(abs_path, encoding=encoding)
@@ -516,7 +522,7 @@ class Html(object):
                     elif resource not in self.added_res:
                         resources.append(
                             res_get(
-                                pathname2url(resource.replace('\\', '/')),
+                                compat.pathname2url(resource.replace('\\', '/')),
                                 link=True,
                                 encoding=encoding
                             )
