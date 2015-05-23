@@ -16,7 +16,7 @@ PY3 = sys.version_info >= (3, 0)
 if PY3:
     unicode_str = str
 else:
-    unicode_str = unicode  # flake8: noqa
+    unicode_str = unicode  # noqa
 
 if sys.platform.startswith('win'):
     _PLATFORM = "windows"
@@ -26,10 +26,6 @@ else:
     _PLATFORM = "linux"
 
 SPEC = '''# -*- mode: python -*-
-
-block_cipher = None
-
-
 a = Analysis(%(main)s,
              pathex=%(directory)s,
              hiddenimports=%(hidden)s,
@@ -46,7 +42,13 @@ exe = EXE(pyz,
           debug=False,
           strip=None,
           icon=%(icon)s,
-          console=True )
+          console=%(gui)s)
+'''
+
+OSX_GUI_SPEC = '''
+app = BUNDLE(exe,
+             name=%(exe)s,
+             icon=%(icon)s)
 '''
 
 
@@ -95,9 +97,9 @@ class BuildVars(object):
                     if f != "__init__.py" and f.endswith('.py'):
                         self.hidden_imports.append('.'.join([pkg.fullname, f]))
             else:
-                handle_egg(pkg.archive)
+                self.handle_egg(pkg.archive)
 
-    def handle_egg(archive):
+    def handle_egg(self, archive):
         """Handle an egg import."""
 
         def is_egg(archive):
@@ -137,7 +139,6 @@ class BuildVars(object):
             print(s)
         print('')
 
-
     def print_all_vars(self):
         """Print all the variables."""
 
@@ -172,7 +173,7 @@ class BuildVars(object):
         self.crawl_hidden_imports()
 
 
-def build_spec_file(obj):
+def build_spec_file(obj, gui):
     """Build the spec file."""
     proj_path = path.dirname(obj.script)
     sys.path.append(proj_path)
@@ -181,38 +182,43 @@ def build_spec_file(obj):
     build_vars.read()
 
     build_vars.print_all_vars()
+    spec = SPEC % {
+        "main": repr([obj.script]),
+        "directory": repr([path.dirname(obj.script)] + build_vars.paths),
+        "hidden": repr(build_vars.hidden_imports),
+        "hook": repr(build_vars.hookpaths),
+        "data": repr(build_vars.data),
+        "exe": repr(path.basename(obj.app)),
+        "icon": repr(obj.icon),
+        "gui": repr(not gui)
+    }
+
+    if gui and _PLATFORM == "osx":
+        spec += OSX_GUI_SPEC % {
+            "icon": repr(obj.icon),
+            "exe": repr(path.basename(obj.app) + '.app')
+        }
 
     with open("%s.spec" % obj.name, "w") as f:
-        f.write(
-            SPEC % {
-                "main": repr([obj.script]),
-                "directory": repr([path.dirname(obj.script)] + build_vars.paths),
-                "hidden": repr(build_vars.hidden_imports),
-                "hook": repr(build_vars.hookpaths),
-                "data": repr(build_vars.data),
-                "exe": repr(path.basename(obj.app)),
-                "icon": repr(obj.icon)
-            }
-        )
+        f.write(spec)
 
 
 class Args(object):
 
     """Argument object."""
 
-    def __init__(
-        self, script, name, gui, clean, ext,
-        icon=None, portable=False
-    ):
+    def __init__(self, script, name, **kwargs):
         """Build arguments."""
 
-        self.gui = bool(gui)
+        icon = kwargs.get('icon', None)
+
+        self.gui = bool(kwargs.get('gui', False))
         self.name = name
-        self.clean = bool(clean)
+        self.clean = bool(kwargs.get('clean', False))
         self.icon = abspath(icon) if icon is not None else icon
         self.script = script
-        self.extension = ext
-        self.portable = portable
+        self.extension = kwargs.get('ext', '')
+        self.portable = kwargs.get('portable', False)
 
 
 class BuildParams(object):
@@ -281,7 +287,7 @@ def create_dir(directory):
     try:
         print("Creating %s..." % directory)
         mkdir(directory)
-    except:
+    except Exception:
         print("Could not create %s!" % directory)
         err = True
     return err
@@ -294,7 +300,7 @@ def clean_build(build_dir):
     try:
         print("Cleaning %s..." % build_dir)
         shutil.rmtree(build_dir)
-    except:
+    except Exception:
         print("Failed to clean %s!" % build_dir)
         err = True
     return err
@@ -314,7 +320,7 @@ def parse_options(args, obj):
         err = clean_build(obj.out_dir)
 
     if not err:
-        build_spec_file(obj)
+        build_spec_file(obj, args.gui)
 
     # Construct build params for build processs
     if not err:
@@ -365,22 +371,29 @@ def main():
     parser.add_argument('--version', action='version', version='%(prog)s 1.0.0')
     parser.add_argument('--clean', '-c', action='store_true', default=False, help='Clean build before re-building.')
     parser.add_argument('--gui', '-g', action='store_true', default=False, help='GUI app')
-    parser.add_argument('--portable', '-p', action='store_true', default=False, help='Build with portable python (windows)')
+    parser.add_argument(
+        '--portable', '-p',
+        action='store_true', default=False,
+        help='Build with portable python (windows)'
+    )
     parser.add_argument('--icon', '-i', default=None, nargs="?", help='App icon')
-    # parser.add_argument('script', default=None, help='Main script')
-    # parser.add_argument('name', default=None, help='Name of app')
+    parser.add_argument('--script', default="cli.py", help='Main script')
+    parser.add_argument('--name', default="pymdown", help='Name of app')
     inputs = parser.parse_args()
     if _PLATFORM == "windows":
         args = Args(
-            "cli.py", "pymdown", inputs.gui, inputs.clean, ".exe", inputs.icon, inputs.portable
+            inputs.script, inputs.name, gui=inputs.gui, clean=inputs.clean,
+            ext=".exe", icon=inputs.icon, portable=inputs.portable
         )
     elif _PLATFORM == "osx":
         args = Args(
-            "cli.py", "pymdown", inputs.gui, inputs.clean, ".app" if inputs.gui else '', inputs.icon
+            inputs.script, inputs.name, gui=inputs.gui, clean=inputs.clean,
+            ext='', icon=inputs.icon
         )
     else:
         args = Args(
-            "cli.py", "pymdown", inputs.gui, inputs.clean, '', inputs.icon
+            inputs.script, inputs.name, gui=inputs.gui, clean=inputs.clean,
+            ext='', icon=inputs.icon
         )
 
     # Parse options
