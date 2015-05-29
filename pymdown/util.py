@@ -276,7 +276,7 @@ def get_references(references, basepath, encoding):
             ref_path = None
 
         if ref_path is not None:
-            text += '\n'+ load_text_resource(ref_path, encoding=encoding)
+            text += '\n' + load_text_resource(ref_path, encoding=encoding)
         else:
             logger.Log.error("Could not find reference file %s!" % file_name)
     return text
