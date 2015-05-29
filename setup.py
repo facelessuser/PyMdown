@@ -29,6 +29,7 @@ setup(
         'Markdown>=2.6.0',
         'Pygments>=2.0.1',
         'PyYAML>=3.10',
+        'Jinja2>=2.7.3',
         'pymdown-extensions>=1.0.0',
         'pymdown-lexers>=1.0.0',
         'pymdown-styles>=1.0.0'

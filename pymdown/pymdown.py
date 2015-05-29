@@ -210,9 +210,7 @@ class Convert(object):
                 html.set_meta(self.merge_meta(converter.meta, file_name))
 
                 # Write the markdown to the HTML
-                html.write_header()
                 html.write(converter.markdown)
-                html.write_footer()
             except Exception:
                 logger.Log.error(str(traceback.format_exc()))
                 status = FAIL

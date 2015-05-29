@@ -19,6 +19,7 @@ from os import path
 from . import util
 from . import logger
 from . import compat
+from jinja2 import Environment
 try:
     from pygments.formatters import get_formatter_by_name
     PYGMENTS_AVAILABLE = True
@@ -26,8 +27,6 @@ except Exception:  # pragma: no cover
     PYGMENTS_AVAILABLE = False
 
 RE_URL_START = re.compile(r"^(http|ftp)s?://|tel:|mailto:|data:|news:|#")
-RE_TEMPLATE_FILE = re.compile(r"(\{*?)\{{2}\s*(getQuotedPath|getPath|embedImage|embedFile)\s*\((.*?)\)\s*\}{2}(\}*)")
-RE_TEMPLATE_VARS = re.compile(r"(\{*?)\{{2}\s*(title|css|js|meta)\s*\}{2}(\}*)")
 
 image_types = {
     (".png",): "image/png",
@@ -151,8 +150,6 @@ class Html(object):
 
         self.settings = kwargs.get("settings", {})
         self.encode_file = True
-        self.body_end = None
-        self.no_body = False
         self.plain = kwargs.get("plain", False)
         self.template = None
         self.file = None
@@ -191,25 +188,6 @@ class Html(object):
                         cgi.escape(compat.unicode_type(v), True)
                     )
                 )
-
-    def repl_template_vars(self, m):
-        """Replace template variables."""
-
-        if m.group(0).startswith('{{{') and m.group(0).endswith('}}}'):
-            return m.group(0)[1:-1]
-        opening = m.group(1) if m.group(1) else ''
-        closing = m.group(3) if m.group(3) else ''
-
-        var = m.group(2)
-        if var == "meta":
-            var = '\n'.join(self.meta) + '\n'
-        elif var == "css":
-            var = ''.join(self.css)
-        elif var == "js":
-            var = ''.join(self.scripts)
-        elif var == "title":
-            var = cgi.escape(self.title)
-        return opening + var + closing
 
     def get_template_res_path(self, file_name):
         """Get the filepath and absolute filepath of the resource."""
@@ -253,54 +231,65 @@ class Html(object):
                 file_path = path.relpath(abs_path, self.relative_output)
         return file_path, abs_path
 
-    def repl_template_file(self, m):
-        """Replace file paths in template."""
+    def template_embed_image(self, name):
+        """Embed an image with base64 encoding."""
 
-        if m.group(0).startswith('{{{') and m.group(0).endswith('}}}'):
-            return m.group(0)[1:-1]
-        m_open = m.group(1) if m.group(1) else ''
-        m_close = m.group(4) if m.group(4) else ''
-        quoted = m.group(2) == "getQuotedPath"
-        file_name = m.group(3).strip()
-        file_name, encoding = util.splitenc(file_name)
-
+        file_name = name.strip()
         file_path, abs_path = self.get_template_res_path(file_name)
-
         if file_path is not None:
-            if m.group(2) == "embedImage":
-                # If embedding an image, get base64 image type or return path
-                ext = path.splitext(file_name)[1]
-                embedded = False
-                for b64_ext in image_types:
-                    if ext in b64_ext:
-                        try:
-                            with open(abs_path, "rb") as f:
-                                file_name = "data:%s;base64,%s" % (
-                                    image_types[b64_ext],
-                                    base64.b64encode(f.read()).decode('ascii')
-                                )
-                                embedded = True
-                        except Exception:
-                            pass
-                        break
-                if not embedded:
-                    file_name = ''
-            elif m.group(2) == "embedFile":
-                # Return the content of the file instead of the file name
-                file_name = util.load_text_resource(abs_path, encoding=encoding)
-                if file_name is None:
-                    file_name = ''
-            else:
-                file_name = file_path.replace('\\', '/')
-                if quoted:
-                    file_name = compat.pathname2url(file_name)
+            # If embedding an image, get base64 image type or return path
+            ext = path.splitext(file_name)[1]
+            embedded = False
+            for b64_ext in image_types:
+                if ext in b64_ext:
+                    try:
+                        with open(abs_path, "rb") as f:
+                            file_name = "data:%s;base64,%s" % (
+                                image_types[b64_ext],
+                                base64.b64encode(f.read()).decode('ascii')
+                            )
+                            embedded = True
+                    except Exception:
+                        pass
+                    break
+            if not embedded:
+                file_name = ''
+        return file_name
 
-        return m_open + file_name + m_close
+    def template_embed_file(self, name):
+        """Return the content of the file instead of the file name."""
 
-    def write_html_start(self):
+        file_name = name.strip()
+        file_name, encoding = util.splitenc(file_name)
+        file_path, abs_path = self.get_template_res_path(file_name)
+        if file_path is not None:
+            file_name = util.load_text_resource(abs_path, encoding=encoding)
+            if file_name is None:
+                file_name = ''
+        return file_name
+
+    def template_path(self, name):
+        """Get path in a template."""
+
+        file_name = name.strip()
+        file_path = self.get_template_res_path(file_name)[0]
+        if file_path is not None:
+            file_name = file_path.replace('\\', '/')
+        return file_name
+
+    def template_quoted_path(self, name):
+        """Get quoted path in a template."""
+
+        file_name = name.strip()
+        file_path = self.get_template_res_path(file_name)[0]
+        if file_path is not None:
+            compat.pathname2url(file_path.replace('\\', '/'))
+        return file_name
+
+    def get_template(self):
         """Output the HTML head and body up to the {{ content }} specifier."""
-
-        if (self.template_file is not None):
+        template = None
+        if self.template_file is not None and not self.plain:
             template_path, encoding = util.splitenc(self.template_file)
 
             if not util.is_absolute(template_path) and self.basepath:
@@ -318,25 +307,18 @@ class Html(object):
 
             try:
                 with codecs.open(template_path, "r", encoding=encoding) as f:
-                    self.template = f.read()
+                    template = f.read()
             except Exception:
                 logger.Log.error(str(traceback.format_exc()))
 
-        # If template isn't found, we will still output markdown html
-        if self.template is not None:
-            self.no_body = True
-
-            # We have a template.  Look for {{ content }}
-            # so we know where to insert the markdown.
-            # If we can't find an insertion point, the html
-            # will have no markdown content.
-            self.template = RE_TEMPLATE_FILE.sub(self.repl_template_file, self.template)
-            self.template = RE_TEMPLATE_VARS.sub(self.repl_template_vars, self.template)
-            m = re.search(r"\{\{\s*content\s*\}\}", self.template)
-            if m:
-                self.no_body = False
-                self.write(self.template[0:m.start(0)])
-                self.body_end = m.end(0)
+        if template is None:
+            template = "{{ content }}"
+        env = Environment()
+        env.filters['embedImage'] = self.template_embed_image
+        env.filters['embedFile'] = self.template_embed_file
+        env.filters['getQuotedPath'] = self.template_quoted_path
+        env.filters['getPath'] = self.template_path
+        self.template = env.from_string(template)
 
     def open(self, output):
         """Set and create the output target and target related flags."""
@@ -364,29 +346,27 @@ class Html(object):
         if self.file:
             self.file.close()
 
-    def write_header(self):
-        """Write HTML header and body up to Markdown content."""
-
-        if not self.plain:
-            # If we haven't already, print the file head
-            self.load_header(
-                self.settings.get("pygments_style", None)
-            )
-            self.write_html_start()
-
     def write(self, text):
         """Write the given text to the output file."""
 
-        if not self.no_body:
-            self.file.write(
-                text.encode(self.encoding, errors="xmlcharrefreplace") if self.encode_file else text
+        if not self.plain:
+            self.load_header(
+                self.settings.get("pygments_style", None)
             )
 
-    def write_footer(self):
-        """Write HTML body and footer starting at Markdown content end."""
+        self.get_template()
 
-        if self.body_end is not None and not self.plain:
-            self.write(self.template[self.body_end:])
+        html = self.template.render(
+            content=text,
+            meta='\n'.join(self.meta) + '\n',
+            css=''.join(self.css),
+            js=''.join(self.scripts),
+            title=cgi.escape(self.title)
+        )
+
+        self.file.write(
+            html.encode(self.encoding, errors="xmlcharrefreplace") if self.encode_file else html
+        )
 
     def load_highlight(self, highlight_style):
         """Load Syntax highlighter CSS."""
