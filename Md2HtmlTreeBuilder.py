@@ -1,31 +1,35 @@
 """
-Md2HtmlTreeBuilder
+Md2HtmlTreeBuilder.
 
-Requirements:
-  - pymdown must be found in your path
-  - Must have a folder structure with markdown files.
-  - Expects to find a pymdown.json in the root folder.
-    pydown.json must be configured to so that pymdown
-    can find templates etc.
-  - index.md are converted to index.html, but if they are not found,
-    one will be generated.
+    Quick and dirty conversion of the tree to a site.
 
-Usage:
-Md2HtmlTreeBuilder /Some/path/to/folder
-
-Licensed under MIT
-Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
+    - If not "force update", update all files whose corresponding HTML file
+      is older than the their Markdown source.  Otherwise, update all.
+    - If encoutering a folder with just HTML, mark the folder as HTML, it will be
+      included in the sitemap, but no further processing is necessary.  All subfolders
+      will be excluded.  If the top level HTML folder is missing an 'index' file, one
+      will be generated, but none further down.
+    - Allow HTML files with no source in Markdown folders.
+    - Insert directory list into {{ index }} of HTML index files with no markdown source.
+    - Insert navigation elements into {{ nav }} in the template.
+    - Title will be obtained from "<title></title>" tags in HTML with no Markdown source.
+      Title will be obtained fron "title: " attribute in the frontmatter of Markdown source.
+      Title will revert to file name if none of the above can be found.
 """
 from __future__ import unicode_literals
 from __future__ import print_function
-from os.path import exists, basename, abspath, isdir, isfile, join, splitext
-from os import listdir, chdir
+import os
+import yaml
 import codecs
-import subprocess
-import sys
-import traceback
 import re
+import subprocess
+import traceback
+import sys
 PY3 = sys.version_info >= (3, 0)
+
+__version__ = '0.0.1'
+
+DEBUG = False
 
 if PY3:
     from urllib.request import pathname2url
@@ -34,19 +38,7 @@ if PY3:
 else:
     from urllib import pathname2url
     from pipes import quote
-    from os import getcwdu as getcwd
-
-if sys.platform.startswith('win'):
-    _PLATFORM = "windows"
-elif sys.platform == "darwin":
-    _PLATFORM = "osx"
-else:
-    _PLATFORM = "linux"
-
-DEBUG = False
-
-__version__ = '0.0.1'
-
+    from os import getcwdu as getcwd  # noqa
 
 CRUMB = '<li class="crumb"><a href="%s">%s</a></li>'
 BREAD_CRUMBS = '<ul class="bread-crumbs">%s</ul>'
@@ -54,8 +46,6 @@ BREAD_CRUMBS = '<ul class="bread-crumbs">%s</ul>'
 RE_TEMPLATE_NAV = re.compile(r"(\{*?)\{{2}\s*(nav)\s*\}{2}(\}*)")
 RE_TEMPLATE_INDEX = re.compile(r"(\{*?)\{{2}\s*(index)\s*\}{2}(\}*)")
 
-from os.path import getmtime as get_modified_time
-
 if sys.platform.startswith('win'):
     _PLATFORM = "windows"
 elif sys.platform == "darwin":
@@ -64,95 +54,35 @@ else:
     _PLATFORM = "linux"
 
 
-if _PLATFORM == "osx":
-    from ctypes import *
-
-    # http://stackoverflow.com/questions/946967/get-file-creation-time-with-python-on-mac
-    class struct_timespec(Structure):
-        _fields_ = [('tv_sec', c_long), ('tv_nsec', c_long)]
-
-    class struct_stat64(Structure):
-        _fields_ = [
-            ('st_dev', c_int32),
-            ('st_mode', c_uint16),
-            ('st_nlink', c_uint16),
-            ('st_ino', c_uint64),
-            ('st_uid', c_uint32),
-            ('st_gid', c_uint32),
-            ('st_rdev', c_int32),
-            ('st_atimespec', struct_timespec),
-            ('st_mtimespec', struct_timespec),
-            ('st_ctimespec', struct_timespec),
-            ('st_birthtimespec', struct_timespec),
-            ('dont_care', c_uint64 * 8)
-        ]
-
-    libc = CDLL('libc.dylib')
-    stat64 = libc.stat64
-    stat64.argtypes = [c_char_p, POINTER(struct_stat64)]
-
-    def getctime(pth):
-        """
-        Get the appropriate creation time on OSX
-        """
-
-        buf = struct_stat64()
-        rv = stat64(pth.encode("utf-8"), pointer(buf))
-        if rv != 0:
-            raise OSError("Couldn't stat file %r" % pth)
-        return buf.st_birthtimespec.tv_sec
-
-else:
-    from os.path import getctime as get_creation_time
-
-    def getctime(pth):
-        """
-        Get the creation time for everyone else
-        """
-
-        return get_creation_time(pth)
-
-
-def getmtime(pth):
-    """
-    Get modified time for everyone
-    """
-
-    return get_modified_time(pth)
-
-
-def relative_root(pth):
-    return '/'.join((['..'] * len(pth.replace('\\', '/').split('/')))) + '/index.html'
-
-
 class Md2HtmlTreeBuilder(object):
-    def __init__(self, settings=None, tab_size=4, force_update=False):
-        self.tab_size = 4
-        self.clear()
+
+    """Build a simple static site using PyMdown."""
+
+    def __init__(self, tab_size=4, settings='pymdown.cfg', force_update=False):
+        """Initialize."""
+
         self.force_update = force_update
-        if settings is not None and exists(settings) and isfile(settings):
-            self.settings = settings
-        else:
-            self.settings = None
+        self.quiet = False
+        self.level = 0
+        self.tab_size = tab_size
+        self.settings = settings
 
-    def clear(self):
-        self.base = '.'
-        self.level = -1
-        self.processed = 0
-        self.folder_depth = -1
-        self.levels_deep = 0
-        self.total_nodes = 0
-        self.is_empty = True
-        self.errors = False
-        self.updated = False
-
+    ###########################
+    # Logging
+    ###########################
     def log(self, *args):
+        """Log messages."""
+
         if not self.quiet:
             for arg in args:
-                print(' ' * (4 * self.level), arg)
+                print(arg)
 
+    ###########################
+    # Conversion
+    ###########################
     def get_process(self, cmd):
-        """ Get the prepared subprocess object """
+        """Get the prepared subprocess object."""
+
         if _PLATFORM == "windows":
             startupinfo = subprocess.STARTUPINFO()
             startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
@@ -169,7 +99,8 @@ class Md2HtmlTreeBuilder(object):
         return p
 
     def batch_convert(self, pattern):
-        """ Convert file pattern(s) to HTML """
+        """Convert file pattern(s) to HTML."""
+
         try:
             cmd = ['pymdown', '-b', '--basepath', '.']
             if DEBUG:
@@ -184,15 +115,16 @@ class Md2HtmlTreeBuilder(object):
             self.log(*(results + errors))
             if p.returncode:
                 self.errors = True
-        except:
+        except Exception:
             self.log(traceback.format_exc())
             self.log("ERROR: Either pymdown wasn't found, or there was a problem parsing a file!")
 
-    def stream_convert(self, text, relpath=None, no_template=False):
-        """ Convert a text object to HTML """
+    def stream_convert(self, text, relpath=None, no_template=False, title='Untitled'):
+        """Convert a text object to HTML."""
+
         results = None
         try:
-            cmd = ['pymdown', '-q', '--basepath', '.', '--relpath', relpath]
+            cmd = ['pymdown', '-q', '--basepath', '.', '--relpath', relpath, '--title', title]
             if no_template:
                 cmd.append('--force-no-template')
             if DEBUG:
@@ -208,120 +140,119 @@ class Md2HtmlTreeBuilder(object):
                 results = None
                 self.errors = True
                 self.log("ERROR: Issue occured parsing markdown stream!")
-        except:
+        except Exception:
             trace = str(traceback.format_exc()).split('\n')
             self.log(*trace)
             self.log("ERROR: Either pymdown wasn't found, or there was a problem parsing a file!")
         return results
 
-    def repl_index(self, m, index):
-        """ Replace instances of {{ index }} with folder index """
-        if m.group(0).startswith('{{{') and m.group(0).endswith('}}}'):
-            return m.group(0)[1:-1]
-        open = m.group(1) if m.group(1) else ''
-        close = m.group(3) if m.group(3) else ''
-        return open + index + close
+    def is_archive(self, path):
+        """Check if file is the archive/sitemap file."""
 
-    def convert_markdown(self, items, pth, index_exists, updated):
-        # Process markdown files if we found some
-        if len(updated):
-            self.updated = True
-            self.log('***valid node (%s)***\n' % pth)
+        return (
+            self.sitemap and
+            self.sitemap == os.path.basename(os.path.splitext(path)[0]) and
+            os.path.dirname(path) == '.'
+        )
 
-        if len(items) or len(updated):
-            if self.site_map and pth == '.':
-                site_map = '%s.md' % self.site_map
-                items.append(site_map)
-            else:
-                site_map = None
+    def process_dir(self, folder):
+        """Process the directory find updates and preparing a folder map and site map."""
 
-            if self.site_map is not None and pth != '.':
-                self.site += ' ' * (self.tab_size * self.level) + '- [%s](%s)\n' % (
-                    basename(pth),
-                    pathname2url('/'.join(self.navbar) + '/index.html')
+        folder_map = ''
+        updates = []
+        for name, path, obj in folder['files']:
+            folder_map += '- [%s](%s)\n' % (
+                name,
+                pathname2url(
+                    os.path.join(
+                        path, 'index.html'
+                    ) if 'files' in obj else os.path.join(path)[:-(4 if obj['html'] else 2)] + 'html'
                 )
+            )
+            if 'files' in obj:
+                self.archive += ' ' * ((self.tab_size * self.level) + self.tab_size) + '- [%s](%s)\n' % (
+                    name,
+                    pathname2url(os.path.join(path, 'index.html'))
+                )
+                self.convert(obj, path)
+                continue
+            if self.sitemap:
+                self.archive += ' ' * ((self.tab_size * self.level) + self.tab_size) + '- [%s](%s)\n' % (
+                    name,
+                    pathname2url(os.path.join(path)[:-(4 if obj['html'] else 2)] + 'html')
+                )
+            if self.is_archive(path):
+                continue
+            if obj['update'] and not obj['html']:
+                updates.append(path)
+        return updates, folder_map
 
-        # Create markdown content for index file
-        if len(updated):
-            if not index_exists:
-                text = '---\ntitle: %s\n---\n[TOC]\n# Index\n\n' % (basename(abspath(pth)) if pth != '.' else self.root)
+    def convert(self, folder, folder_path):
+        """Initiate convert files in site map."""
+
+        self.level += 1
+        self.navbar.append(os.path.basename(folder_path))
+        updates, folder_map = self.process_dir(folder)
+        update = updates or folder['update']
+
+        self.log("\n==== %s (%s) ====" % (folder_path, 'HTML' if folder['html'] else 'Markdown'))
+        self.log(folder_map)
+        self.log('--- Updates ---')
+        if update:
+            self.log(folder_path)
+        self.log(*updates)
+
+        if update and not folder['html']:
+            if not os.path.exists(os.path.join(folder_path, 'index.md')):
+                self.log("Generating %s..." % os.path.join(folder_path, 'index.html'))
+                folder_map = self.stream_convert(folder_map, relpath=folder_path, title=folder['index']['name'])
+                if folder_map is not None:
+                    with codecs.open(os.path.join(folder_path, 'index.html'), 'w', encoding='utf-8') as f:
+                        f.write(folder_map)
             else:
-                text = ''
+                folder_map = self.stream_convert(
+                    folder_map, relpath=folder_path, no_template=True,
+                    title=folder['index']['name']
+                )
+                updates.append(os.path.join(folder_path, 'index.md'))
 
-        if len(items):
-            for d in sorted(items, key=lambda s: s.lower()):
-                if d[:-3] == 'index':
-                    continue
-                if (site_map is not None and d == site_map) or isfile(join(pth, d)):
-                    if len(updated):
-                        text += '- [%s](%s)\n' % (d[:-3], pathname2url((d[:-2] + 'html').replace('\\', '/')))
-                    if self.site_map is not None:
-                        self.site += ' ' * ((self.tab_size * self.level) + self.tab_size) + '- [%s](%s)\n' % (
-                            d[:-3],
-                            pathname2url('/'.join(self.navbar) + ('/%s' % d[:-2] + 'html'))
-                        )
-                elif len(updated):
-                    text += '- [%s](%s)\n' % (basename(d), pathname2url((join(d, 'index.html')).replace('\\', '/')))
+            if updates:
+                patterns = [os.path.join(folder_path, '*.md')] if self.force_update else updates
+                if len(patterns):
+                    self.batch_convert(patterns)
 
-        # Convert the markdown to HTML and write it out
-        if len(updated):
-            if not index_exists:
-                self.log("Generating %s..." % join(pth, 'index.html'))
-                text = self.stream_convert(text, relpath=pth)
-                if text is not None:
-                    with codecs.open(join(pth, 'index.html'), 'w', encoding='utf-8') as f:
-                        f.write(text)
-            else:
-                text = self.stream_convert(text, relpath=pth, no_template=True)
+            self.add_breadcrumbs(folder_path)
 
-            # Convert all 'md' files.
-            if not self.force_update:
-                patterns = [join(pth, md) for md in updated if isfile(join(pth, md))]
-                if index_exists:
-                    patterns.append(join(pth, 'index.md'))
-            else:
-                patterns = [join(pth, '*.md')]
-            if len(patterns):
-                self.batch_convert(patterns)
-
-            if index_exists:
+            if os.path.exists(os.path.join(folder_path, 'index.md')):
                 try:
-                    with codecs.open(join(pth, 'index.html'), 'r', encoding='utf-8') as f:
+                    index_file = os.path.join(folder_path, 'index.html')
+                    with codecs.open(index_file, 'r', encoding='utf-8') as f:
                         html_text = f.read()
                     html_text = RE_TEMPLATE_INDEX.sub(
-                        lambda m, txt=text: self.repl_index(m, index=txt),
+                        lambda m, txt=folder_map: self.repl_index(m, index=txt),
                         html_text
                     )
-                    with codecs.open(join(pth, 'index.html'), 'w', encoding='utf-8', errors="xmlcharrefreplace") as f:
+                    with codecs.open(index_file, 'w', encoding='utf-8', errors="xmlcharrefreplace") as f:
                         f.write(html_text)
-                except:
+                except Exception:
                     print(traceback.format_exc())
                     pass
 
-        elif len(items):
-            self.log("***node up to date (%s)***\n" % pth)
-        else:
-            self.log('***empty node (%s)***\n' % pth)
+        self.navbar.pop(-1)
+        self.level -= 1
 
-    def repl_nav(self, m, bread_crumbs):
-        """ Replace instances of {{ nav }} with breadcrumbs """
-        if m.group(0).startswith('{{{') and m.group(0).endswith('}}}'):
-            return m.group(0)[1:-1]
-        open = m.group(1) if m.group(1) else ''
-        close = m.group(3) if m.group(3) else ''
-        return open + (BREAD_CRUMBS % '\n'.join(bread_crumbs)) + close
+    ###########################
+    # Templating
+    ###########################
+    def add_breadcrumbs(self, path):
+        """Add Nav {{ nav }}."""
 
-    def add_breadcrumbs(self, pth, parent):
-        """
-        Add Nav {{ nav }}
-        """
-
-        for f in listdir(pth)[:]:
-            item = join(pth, f)
+        for f in os.listdir(path)[:]:
+            item = os.path.join(path, f)
             text = ''
-            ishtml = isfile(item) and item.lower().endswith('.html')
-            issitemap = self.site_map is not None and f == self.site_map + '.html' and pth == '.'
-            if issitemap or (ishtml and (exists(item[:-4] + 'md') or f == 'index.html')):
+            ishtml = os.path.isfile(item) and item.lower().endswith('.html')
+            issitemap = self.sitemap is not None and f == self.sitemap + '.html' and path == '.'
+            if issitemap or (ishtml and (os.path.exists(item[:-4] + 'md') or f == 'index.html')):
                 bread_crumbs = []
                 count = 0
                 last = len(self.navbar) - 1
@@ -332,7 +263,7 @@ class Md2HtmlTreeBuilder(object):
                     count += 1
 
                 if f != 'index.html':
-                    bread_crumbs.append(CRUMB % (pathname2url("./%s" % f), splitext(f)[0]))
+                    bread_crumbs.append(CRUMB % (pathname2url("./%s" % f), os.path.splitext(f)[0]))
 
                 with codecs.open(item, 'r+', encoding='utf-8') as html:
                     text = html.read()
@@ -344,126 +275,286 @@ class Md2HtmlTreeBuilder(object):
                     html.write(text)
                     html.truncate()
 
-    def build_node(self, pth='.', parent=None):
-        """ Recursively build this node """
-        self.level += 1
-        docs = []
+    def repl_nav(self, m, bread_crumbs):
+        """Replace instances of {{ nav }} with breadcrumbs."""
+
+        if m.group(0).startswith('{{{') and m.group(0).endswith('}}}'):
+            return m.group(0)[1:-1]
+        open = m.group(1) if m.group(1) else ''
+        close = m.group(3) if m.group(3) else ''
+        return open + (BREAD_CRUMBS % '\n'.join(bread_crumbs)) + close
+
+    def repl_index(self, m, index):
+        """Replace instances of {{ index }} with folder index."""
+
+        if m.group(0).startswith('{{{') and m.group(0).endswith('}}}'):
+            return m.group(0)[1:-1]
+        open = m.group(1) if m.group(1) else ''
+        close = m.group(3) if m.group(3) else ''
+        return open + index + close
+
+    ###########################
+    # Site Crawling
+    ###########################
+    def needs_update(self, path):
+        """Check if HTML file needs to be generated from source."""
+
+        update = self.force_update
+        if not update:
+            html = path[:-2] + 'html'
+            update = not os.path.exists(html)
+            if not update:
+                ts_html = os.path.getmtime(html)
+                ts_md = os.path.getmtime(path)
+                update = ts_md > ts_html
+        return update
+
+    def handle_folders(self, filename, path):
+        """Handle folder crawl."""
+
         folders = []
-        levels_deep = 1
-        nodes = 1
-        empty_node = True
-        index_exists = False
-        updated = []
-        self.navbar.append(basename(pth))
-        self.log(
-            "Processing Node (%s)" % pth,
-            "--------------------------------"
-        )
+        has_md = False
+        folder_update = False
+        node = {
+            "html": False,
+            "index": None,
+            "update": False,
+            "files": []
+        }
+        folder = os.path.join(path, filename)
+        self.crawl(node, folder)
+        if node['html'] or len(node['files']) or node['index']:
+            if not node['html']:
+                has_md = True
+            if has_md and node['index'] and not os.path.exists(os.path.join(folder, 'index.md')):
+                node['index']['name'] = os.path.basename(folder)
+            elif node['index'] is None:
+                node['index'] = {"name": os.path.basename(folder), "update": True, "html": False}
+            if node['update']:
+                folder_update = True
+            folders.append([node['index']['name'], folder, node])
+        return has_md, folder_update, folders
 
-        # Crawl tree looking for markdown files
-        # Track the markdown files and the folders that contain
-        # the Markdown files.  Also, flag if the folder already
-        # contains an 'index.md' file.
-        if not exists(join(pth, '.md-ignore')):
-            for f in sorted(listdir(pth), key=lambda s: s.lower()):
-                if f in ('.svn', '.git'):
+    def handle_files(self, site, filename, path):
+        """Handle process the file."""
+
+        has_md = False
+        has_index = False
+        files = []
+        full_path = os.path.join(path, filename)
+        if filename.endswith('.md'):
+            if path == '.' and self.sitemap is not None and filename[:-3] == self.sitemap:
+                return has_md, has_index, files
+            has_md = True
+            index = filename == 'index.md'
+            needs_update = self.needs_update(full_path)
+            if index:
+                has_index = True
+                site['index'] = {
+                    "name": self.get_md_title(
+                        full_path, os.path.basename(path)
+                    ) if path != '.' else self.root,
+                    "update": needs_update,
+                    "html": False
+                }
+            else:
+                title = self.get_md_title(full_path, os.path.basename(filename)[:-3])
+                files.append([title, full_path, {"name": title, "update": needs_update, "html": False}])
+            if needs_update:
+                site["update"] = True
+        elif filename.endswith('.html'):
+            if path == '.' and self.sitemap is not None and filename[:-5] == self.sitemap:
+                return has_md, has_index, files
+            if not os.path.exists(full_path[:-4] + 'md'):
+                index = filename == 'index.html'
+                if index:
+                    has_index = True
+                    site['index'] = {
+                        "name": self.get_html_title(full_path, os.path.basename(path)),
+                        "update": True,
+                        "html": False
+                    }
+                else:
+                    title = self.get_html_title(full_path, os.path.basename(filename)[:-5])
+                    files.append([title, full_path, {"name": title, "update": True, "html": True}])
+                site["update"] = True
+        return has_md, has_index, files
+
+    def crawl(self, site, path='.'):
+        """Crawl the directory gathering all relevant files and folders."""
+
+        has_md = False
+        has_index = False
+        folder_update = False
+        folders = []
+        files = []
+        if not os.path.exists(os.path.join(path, '.md-ignore')):
+            for f in sorted(os.listdir(path), key=lambda s: s.lower()):
+                if f in ('.svn', '.git') or f.startswith('_'):
                     continue
-                item = join(pth, f)
-                if isdir(item):
-                    levels, sub_nodes, is_empty = self.build_node(item, pth)
-                    if not is_empty:
-                        nodes += sub_nodes
-                        folders.append(f)
-                        if levels + 1 > levels_deep:
-                            levels_deep = levels
-                        updated.append(f)
-                elif item.lower().endswith('.md'):
-                    if not self.force_update:
-                        converted = item[:-2] + 'html'
-                        if not exists(converted):
-                            updated.append(f)
-                        else:
-                            ts_html = getmtime(converted)
-                            ts_md = getmtime(item)
-                            if ts_md > ts_html:
-                                updated.append(f)
-                                self.log("Markdown Found: %s" % f)
-                    else:
-                        updated.append(f)
-                        self.log("Markdown Found: %s" % f)
-                    if index_exists is False:
-                        index_exists = f == 'index.md'
-                    empty_node = False
-                    self.processed += 1
-                    docs.append(f)
 
-            # Convert Markdown
-            self.convert_markdown(folders + docs, pth, index_exists, updated)
+                if os.path.isfile(os.path.join(path, f)):
+                    md_files, is_index, subfile = self.handle_files(site, f, path)
+                    has_md = has_md or md_files
+                    has_index = has_index or is_index
+                    files.extend(subfile)
+                else:
+                    md_files, subfolder_update, sub_folders = self.handle_folders(f, path)
+                    has_md = has_md or md_files
+                    folder_update = folder_update or subfolder_update
+                    folders.extend(sub_folders)
 
-            if pth == '.' and self.site_map and len(folders + docs) and self.updated:
-                text = self.stream_convert(self.site, relpath=pth)
-                self.log('Generating the site map...')
-                if text is not None:
-                    with codecs.open(join(pth, '%s.html' % self.site_map), 'w', encoding='utf-8') as f:
-                        f.write(text)
+        html_folder = not has_md and has_index
 
-            # Add bread crumb bar
-            self.add_breadcrumbs(pth, parent)
-        else:
-            self.log('***ignored node***\n')
+        if path == '.' and self.sitemap is not None:
+            archive = os.path.join(path, self.sitemap + '.html')
+            files.append(
+                [
+                    self.sitemap, archive,
+                    {
+                        "name": self.sitemap,
+                        "update": site['update'] or (not html_folder and folder_update),
+                        "html": True
+                    }
+                ]
+            )
 
-        # Report how many levels deep the tree is,
-        # number of valid nodes, and if this node was empty
-        self.navbar.pop(-1)
-        self.level -= 1
-        return levels_deep, nodes, empty_node
+        if html_folder:
+            site['html'] = True
+            site['files'] = sorted(files)
+        elif len(files) or len(folders) or has_index:
+            site['files'] = sorted(files + folders)
 
-    def run(self, treepath, root='root', site_map=None, quiet=False):
-        cwd = getcwd()
-        self.quiet = quiet
-        self.root = root
-        if site_map is not None and not exists(join(treepath, site_map + '.md')):
-            self.site_map = site_map
-            self.site = '---\ntitle: %s\n---\n[TOC]\n# Index\n\n' % self.site_map
-            self.site += '- [%s](./index.html)\n' % self.root
-        else:
-            self.site_map = None
-            self.site = ''
-        self.treepath = abspath(treepath)
-        self.navbar = []
-        chdir(treepath)
-        self.log(
-            "Building Documents...",
-            "================================"
-        )
+    def get_html_title(self, html, fallback):
+        """Get title from HTML file."""
+
+        title = fallback
         try:
-            self.clear()
-            levels_deep, total_nodes, self.is_empty = self.build_node()
-            if not self.is_empty:
-                self.levels_deep = levels_deep
-                self.total_nodes = total_nodes
-        except:
-            trace = str(traceback.format_exc()).split('\n')
-            self.log(*trace)
-            self.errors = True
-        chdir(cwd)
-        return self.errors
+            with codecs.open(html, 'r', encoding='utf-8') as f:
+                m = re.search(r'<title>(.*?)</title>', f.read())
+                if m:
+                    title = m.group(1)
+        except Exception:
+            pass
+        return title
+
+    def get_md_title(self, md, fallback):
+        """Get title from Markdown file."""
+
+        title = fallback
+        try:
+            with codecs.open(md, 'r', encoding='utf-8') as f:
+                frontmatter = {}
+                bfr = f.read()
+
+                if bfr.startswith("---"):
+                    m = re.search(r'^(---(.*?)---\r?\n)', bfr, re.DOTALL)
+                    if m:
+                        try:
+                            frontmatter = yaml.load(m.group(2))
+                        except Exception:
+                            pass
+                title = frontmatter.get('title', fallback)
+        except Exception:
+            pass
+        return title
+
+    ###########################
+    # Go!!!
+    ###########################
+    def run(self, treepath, root='root', sitemap=None, quiet=False):
+        """Walk the path converting Markdown source to HTML."""
+
+        cwd = os.getcwd()
+        self.quiet = quiet
+        self.treepath = os.path.abspath(treepath)
+        self.root = root
+        self.sitemap = sitemap
+        self.archive = ''
+        self.navbar = []
+        site = {
+            "index": None,
+            "html": False,
+            "update": False,
+            "files": []
+        }
+
+        os.chdir(treepath)
+
+        self.crawl(site)
+        if not site['files'] and site['index'] is None:
+            site = {}
+
+        if site:
+            if self.sitemap:
+                self.archive += '---\ntitle: %s\n---\n[TOC]\n# Index\n\n' % self.sitemap
+                self.archive += '- [%s](./index.html)\n' % self.root
+            self.level = -1
+            self.convert(site, '.')
+
+            if self.sitemap:
+                archive = self.stream_convert(self.archive, relpath='.')
+                self.log('Generating the site map...')
+                if archive is not None:
+                    with codecs.open(os.path.join('.', '%s.html' % self.sitemap), 'w', encoding='utf-8') as f:
+                        f.write(archive)
+
+                # Add bread crumb bar
+                self.navbar.append('.')
+                self.add_breadcrumbs('.')
+                self.navbar.pop(-1)
+
+        os.chdir(cwd)
+
 
 if __name__ == "__main__":
-    import argparse
 
     def main():
+        """Main function."""
 
-        parser = argparse.ArgumentParser(prog='Md2HtmlTreeBuilder', description='Build a simple static website from a markdown tree.')
+        import argparse
+
+        parser = argparse.ArgumentParser(
+            prog='Md2HtmlTreeBuilder',
+            description='Build a simple static website from a markdown tree using PyMdown.'
+        )
         # Flag arguments
-        parser.add_argument('--version', action='version', version="%(prog)s " + __version__)
-        parser.add_argument('--debug', action='store_true', default=False, help=argparse.SUPPRESS)
+        parser.add_argument(
+            '--version',
+            action='version',
+            version="%(prog)s " + __version__
+        )
+        parser.add_argument(
+            '--debug',
+            action='store_true',
+            default=False, help=argparse.SUPPRESS
+        )
         # Input configuration
-        parser.add_argument('--settings', '-s', default=None, help="Specify settings file.")
-        parser.add_argument('--root', '-r', default='root', help="Name of root folder.")
-        parser.add_argument('--force-update', '-f', action='store_true', default=False, help='Force an update of all files even if the file appears to not need updating.')
-        parser.add_argument('--site-map', '-S', default=None, help="Generate a site-map in root with the given name.")
-        parser.add_argument('--tab-size', '-t', default=4, type=int, help="Tab size for internal generated markdown. Must match PyMdown settings.")
+        parser.add_argument(
+            '--settings', '-s',
+            default=None,
+            help="Specify settings file."
+        )
+        parser.add_argument(
+            '--root', '-r',
+            default='root',
+            help="Name of root folder."
+        )
+        parser.add_argument(
+            '--force-update', '-f',
+            action='store_true', default=False,
+            help='Force an update of all files even if the file appears to not need updating.'
+        )
+        parser.add_argument(
+            '--site-map', '-S',
+            default=None,
+            help="Generate a site-map in root with the given name."
+        )
+        parser.add_argument(
+            '--tab-size', '-t',
+            default=4, type=int,
+            help="Tab size for internal generated markdown. Must match PyMdown settings."
+        )
         parser.add_argument('tree', default=None, help="Tree to build")
 
         args = parser.parse_args()
@@ -476,7 +567,7 @@ if __name__ == "__main__":
             tabsize = int(args.tab_size)
             if tabsize <= 0:
                 tabsize = 4
-        except:
+        except Exception:
             tabsize = 4
 
         tree_builder = Md2HtmlTreeBuilder(
@@ -484,20 +575,8 @@ if __name__ == "__main__":
             settings=args.settings,
             force_update=args.force_update
         )
-        errors = tree_builder.run(
+        tree_builder.run(
             args.tree, args.root,
-            site_map=args.site_map
+            sitemap=args.site_map
         )
-        print('\n\n============ Results ============')
-        print("Documents Found: %d" % tree_builder.processed)
-        print("Tree Depth: %d" % tree_builder.levels_deep)
-        print("Total Nodes: %d" % tree_builder.total_nodes)
-        print('=================================\n')
-
-        if errors:
-            print("***Finished with errors.  See output for more info.***")
-        else:
-            print("***Finished successfully.  See output for more info.***")
-        return errors
-
     sys.exit(main())

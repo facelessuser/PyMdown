@@ -1,5 +1,6 @@
 ---
-references: _references/references.md
+references:
+  - _references/references.md
 ---
 [TOC]
 # Overview

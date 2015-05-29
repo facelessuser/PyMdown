@@ -1,8 +1,9 @@
 ---
 title: PyMdown
-references: _references/references.md
+references:
+  - _references/references.md
 include.css:
-- css/site-content.css
+  - css/site-content.css
 ---
 [TOC]
 
