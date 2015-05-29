@@ -276,7 +276,7 @@ def get_references(references, basepath, encoding):
             ref_path = None
 
         if ref_path is not None:
-            text += load_text_resource(ref_path, encoding=encoding)
+            text += '\n'+ load_text_resource(ref_path, encoding=encoding)
         else:
             logger.Log.error("Could not find reference file %s!" % file_name)
     return text
@@ -301,7 +301,6 @@ def open_in_browser(name):
             out = p.communicate()[0]
             plist = json.loads(compat.to_unicode(out))
             for handler in plist['LSHandlers']:
-                print('found')
                 if handler.get('LSHandlerURLScheme', '') == "http":
                     web_handler = handler.get('LSHandlerRoleAll', None)
                     break
