@@ -210,7 +210,7 @@ PyMdown allows for specifying a simple HTML template that can be used for the ou
 template: default/template.html
 ```
 
-In the template file, you can add special markup to insert certain items:
+The template file uses Jinja2 to handle template variables.  Supported variables are currently limited:
 
 | Markup | Description |
 |--------|-------------|
@@ -219,8 +219,8 @@ In the template file, you can add special markup to insert certain items:
 | \{\{&nbsp;js&nbsp;}} | Where user defined JavaScript is inserted. |
 | \{\{&nbsp;title&nbsp;}} | The page title will be inserted here. |
 | \{\{&nbsp;content&nbsp;}} | The parsed markdown content gets inserted here. |
-| \{\{&nbsp;getPath(myfile/path/img.png)&nbsp;}} | Get file paths, if local, under go conversions internally to make the paths relative or absolute as needed.  If in your template you need to point to a reference a file and want the file path to be converted to an absolute path or a relative path, you can use this to convert it in the template; the file can be preceded by a `!` to prevent path conversion to an absolute or relative path; this is mainly useful if you are just looking to escape the path. |
-| \{\{&nbsp;getQuotedPath(myfile/path/img.png)&nbsp;}} | This is the same as `getPath` above except the output is surrounded in double quotes. |
+| \{\{&nbsp;'myfile/path/img.png'|getPath(quoted=True)&nbsp;}} | Get file paths, if local, under go conversions internally to make the paths relative or absolute as needed.  If in your template you need to point to a reference a file and want the file path to be converted to an absolute path or a relative path, you can use this to convert it in the template; the file can be preceded by a `!` to prevent path conversion to an absolute or relative path; this is mainly useful if you are just looking to escape the path.  The optional `quoted` parameter specifies if the output is surrounded in quotes like in an HTML attribute, and will format the value accordingly. |
+| \{\{&nbsp;'myfile/path/img.png'|embed(image=True)&nbsp;}} | This will embed a file into the template.  It assumes the file has been properly escaped for HTML.  Optionally, you can specify `image` to base 64 encode the content and insert as an image. |
 
 Template files in the settings or frontmatter can be followed by `;encoding` to cause the file to be opened and read with the specified encoding.
 

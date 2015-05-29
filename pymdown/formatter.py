@@ -15,11 +15,11 @@ import traceback
 import re
 import tempfile
 import base64
+import jinja2
 from os import path
 from . import util
 from . import logger
 from . import compat
-from jinja2 import Environment
 try:
     from pygments.formatters import get_formatter_by_name
     PYGMENTS_AVAILABLE = True
@@ -256,34 +256,50 @@ class Html(object):
                 file_name = ''
         return file_name
 
-    def template_embed_file(self, name):
-        """Return the content of the file instead of the file name."""
+    def template_embed_file(self, name, image=False):
+        """
+        Return the content of the file instead of the file name.
+
+        If "image" is "True", base64 encode the content.
+        """
 
         file_name = name.strip()
         file_name, encoding = util.splitenc(file_name)
         file_path, abs_path = self.get_template_res_path(file_name)
         if file_path is not None:
-            file_name = util.load_text_resource(abs_path, encoding=encoding)
-            if file_name is None:
-                file_name = ''
+            if image:
+                # If embedding an image, get base64 image type or return path
+                ext = path.splitext(file_name)[1]
+                embedded = False
+                for b64_ext in image_types:
+                    if ext in b64_ext:
+                        try:
+                            with open(abs_path, "rb") as f:
+                                file_name = "data:%s;base64,%s" % (
+                                    image_types[b64_ext],
+                                    base64.b64encode(f.read()).decode('ascii')
+                                )
+                                embedded = True
+                        except Exception:
+                            pass
+                        break
+                if not embedded:
+                    file_name = ''
+            else:
+                file_name = util.load_text_resource(abs_path, encoding=encoding)
+                if file_name is None:
+                    file_name = ''
         return file_name
 
-    def template_path(self, name):
+    def template_get_path(self, name, quoted=False):
         """Get path in a template."""
 
         file_name = name.strip()
         file_path = self.get_template_res_path(file_name)[0]
         if file_path is not None:
             file_name = file_path.replace('\\', '/')
-        return file_name
-
-    def template_quoted_path(self, name):
-        """Get quoted path in a template."""
-
-        file_name = name.strip()
-        file_path = self.get_template_res_path(file_name)[0]
-        if file_path is not None:
-            compat.pathname2url(file_path.replace('\\', '/'))
+            if quoted:
+                file_name = compat.pathname2url(file_name)
         return file_name
 
     def get_template(self):
@@ -313,11 +329,9 @@ class Html(object):
 
         if template is None:
             template = "{{ content }}"
-        env = Environment()
-        env.filters['embedImage'] = self.template_embed_image
-        env.filters['embedFile'] = self.template_embed_file
-        env.filters['getQuotedPath'] = self.template_quoted_path
-        env.filters['getPath'] = self.template_path
+        env = jinja2.Environment()
+        env.filters['embed'] = self.template_embed_file
+        env.filters['getpath'] = self.template_get_path
         self.template = env.from_string(template)
 
     def open(self, output):
