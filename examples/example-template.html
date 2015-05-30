@@ -91,8 +91,9 @@ body {
   border: 1px solid #ddd;
 }
 </style>
-{% for css in page.includes.css %}{{ css }}{% endfor %}
-{% for js in page.includes.js %}{{ js }}{% endfor %}
+{% for css in page.includes.css %}{{ css|getcss }}{% endfor %}
+{%if page.pygments_style %}{{ page.pygments_style }}{% endif %}
+{% for js in page.includes.js %} %}{{ js|getjs }}{% endfor %}
 <title>{{ page.title }}</title>
 </head>
 <body>

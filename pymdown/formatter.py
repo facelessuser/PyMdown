@@ -319,10 +319,16 @@ class Html(object):
 
         if template is None:
             template = "{{ page.content }}"
-        env = jinja2.Environment()
-        env.filters['embed'] = self.template_embed_file
-        env.filters['getpath'] = self.template_get_path
-        self.template = env.from_string(template)
+        self.template_env = jinja2.Environment()
+        self.template_env.filters['embed'] = self.template_embed_file
+        self.template_env.filters['getpath'] = self.template_get_path
+        self.template_env.filters['gettemplate'] = self.load_html
+        self.template_env.filters['getcss'] = self.load_css
+        self.template_env.filters['getjs'] = self.load_js
+        self.template_env.filters['itertemplate'] = self.load_html_files
+        self.template_env.filters['itercss'] = self.load_css_files
+        self.template_env.filters['iterjs'] = self.load_js_files
+        self.template = self.template_env.from_string(template)
 
     def open(self):
         """Set and create the output target and target related flags."""
@@ -353,14 +359,9 @@ class Html(object):
     def write(self, text):
         """Write the given text to the output file."""
 
-        if not self.plain:
-            self.load_header(
-                self.settings.get("pygments_style", None)
-            )
-
         self.get_template()
 
-        self.page["includes"]["html"] = self.load_html(self.page["includes"]["html"])
+        self.page["pygments_style"] = self.load_highlight(self.settings.get("pygments_style", None))
         self.page["content"] = text
         title = self.page["title"]
         self.page["title"] = cgi.escape(compat.to_unicode(title if title else "Untitled"), True)
@@ -378,19 +379,17 @@ class Html(object):
         """Load Syntax highlighter CSS."""
 
         style = None
-        use_pygments_css = bool(self.settings.get("use_pygments_css", True))
-        if PYGMENTS_AVAILABLE and highlight_style is not None and use_pygments_css:
-            # Ensure pygments is enabled in the highlighter
-            style = get_pygment_style(
-                highlight_style,
-                self.settings.get("pygments_class", "codehilite")
-            )
 
-        css = []
-        if style is not None:
-            css.append(style)
+        if not self.plain:
+            use_pygments_css = bool(self.settings.get("use_pygments_css", True))
+            if PYGMENTS_AVAILABLE and highlight_style is not None and use_pygments_css:
+                # Ensure pygments is enabled in the highlighter
+                style = get_pygment_style(
+                    highlight_style,
+                    self.settings.get("pygments_class", "codehilite")
+                )
 
-        return css
+        return style
 
     def get_res_path(self, resource):
         """Get file path and absolute file path of the file if possible."""
@@ -515,7 +514,7 @@ class Html(object):
                         )
                         self.added_res.add(resource)
 
-    def load_html(self, fragments):
+    def load_html_files(self, fragments):
         """Load HTML fragments."""
 
         def force_insert(frag):
@@ -528,29 +527,40 @@ class Html(object):
             return frag
 
         html = []
-        env = jinja2.Environment()
-        env.filters['embed'] = self.template_embed_file
-        env.filters['getpath'] = self.template_get_path
         self.load_resources([force_insert(f) for f in fragments], lambda html, **kwargs: '', html)
-        html = [env.from_string(h).render(page=self.page, settings=self.settings) for h in html]
+        html = [self.template_env.from_string(h).render(page=self.page, settings=self.settings) for h in html]
         return html
 
-    def load_css(self, styles, style):
+    def load_css_files(self, styles):
         """Load specified CSS sources."""
         css = []
         self.load_resources(styles, get_style, css)
-        css += self.load_highlight(style)
         return css
 
-    def load_js(self, js):
+    def load_js_files(self, js):
         """Load specified JS sources."""
 
         scripts = []
         self.load_resources(js, get_js, scripts)
         return scripts
 
-    def load_header(self, style):
-        """Load up header related info."""
+    def load_html(self, html):
+        """Load a single html source."""
 
-        self.page["includes"]["css"] = self.load_css(self.page["includes"]["css"], style)
-        self.page["includes"]["js"] = self.load_js(self.page["includes"]["js"])
+        files = self.load_html_files([html])
+
+        return files[0] if len(files) else ''
+
+    def load_css(self, css):
+        """Load a single html source."""
+
+        files = self.load_css_files([css])
+
+        return files[0] if len(files) else ''
+
+    def load_js(self, js):
+        """Load a single html source."""
+
+        files = self.load_js_files([js])
+
+        return files[0] if len(files) else ''
