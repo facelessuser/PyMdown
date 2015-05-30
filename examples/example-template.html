@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-{{ meta }}
+<meta charset="{{ page.encoding }}">
 <style>
 body {
   background-color: #fafafa;
@@ -91,17 +91,17 @@ body {
   border: 1px solid #ddd;
 }
 </style>
-{{ css }}
-{{ js }}
-<title>{{ title }}</title>
+{% for css in page.includes.css %}{{ css }}{% endfor %}
+{% for js in page.includes.js %}{{ js }}{% endfor %}
+<title>{{ page.title }}</title>
 </head>
 <body>
 <div class="example-body">
-    <h1 class="example-header">{{ title }}</h1>
+    <h1 class="example-header">{{ page.title }}</h1>
     <div class="example-content"><p>PyMdown is CLI tool to convert or even batch convert markdown files to HTML.  It is written in Python and uses Python Markdown as the markdown parser and Pygments for code syntax highlighting.  It supports all of Python Markdown's built in extensions.  PyMdown also provides a number of additional extensions as well.</p>
     </div>
     <div class="markdown-header">Example Syntax</div>
-    <article class="markdown-body">{{ content }}</article>
+    <article class="markdown-body">{{ page.content }}</article>
 </div>
 </body>
 </html>

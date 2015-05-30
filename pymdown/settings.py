@@ -104,39 +104,41 @@ class MergeSettings(object):
 
     def merge_includes(self, frontmatter, settings):
         """Find css and js includes and merge them."""
-        css = []
-        js = []
-
-        if "include" in frontmatter:
-            value = frontmatter['include']
-            if isinstance(value, list):
-                settings["page"]['include'] = [v for v in value if isinstance(v, compat.unicode_type)]
-                del frontmatter['include']
+        css = settings['settings'].get('css', [])
+        js = settings['settings'].get('js', [])
+        html = settings['settings'].get('html', [])
 
         # Javascript and CSS include
-        for i in ("css", "js"):
+        for i in ("css", "js", "html"):
             key = 'include.%s' % i
             if key in frontmatter:
                 value = frontmatter[key]
                 if isinstance(value, list):
-                    if i == 'css':
-                        css += [v for v in value if isinstance(v, compat.unicode_type)]
-                    else:
-                        js += [v for v in value if isinstance(v, compat.unicode_type)]
+                    locals()[i] += [v for v in value if isinstance(v, compat.unicode_type)]
                 del frontmatter[key]
 
-        # Append CSS and JS from built-in keys if any
-        if len(css):
-            settings['settings']['css'] = settings['settings'].get('css', []) + css
-        if len(js):
-            settings['settings']['js'] = settings['settings'].get('js', []) + js
+        if "include" in frontmatter:
+            value = frontmatter['include']
+            if isinstance(value, list):
+                for v in value:
+                    if isinstance(v, compat.unicode_type):
+                        key = '@%s' % v
+                        if key in settings['settings'] and isinstance(settings['settings'][key], (dict, OrderedDict)):
+                            for sub_k, includes in settings['settings'][key].items():
+                                if sub_k in ('css', 'js', 'html') and isinstance(includes, list):
+                                    locals()[sub_k] += [i for i in includes if isinstance(i, compat.unicode_type)]
+            del frontmatter['include']
+
+        settings['page']['includes']['css'] += css
+        settings['page']['includes']['js'] += js
+        settings['page']['includes']['html'] += html
 
     def merge_references(self, frontmatter, settings):
         """Merge reference."""
         if 'references' in frontmatter:
             value = frontmatter['references']
             if isinstance(value, list):
-                settings["page"]['references'] = [v for v in value if isinstance(v, compat.unicode_type)]
+                settings['references'] = [v for v in value if isinstance(v, compat.unicode_type)]
             del frontmatter['references']
 
     def merge_settings(self, frontmatter, settings):
@@ -174,11 +176,10 @@ class MergeSettings(object):
         """Resolve all other frontmatter items as meta items."""
 
         for key, value in frontmatter.items():
-            if isinstance(value, list):
-                value = [compat.unicode_type(v) for v in value]
-            else:
-                value = compat.unicode_type(value)
-            settings["page"]["meta"][key] = value
+            if key == 'title' and isinstance(value, compat.unicode_type):
+                settings["page"]["title"] = value
+
+            settings["page"]["extra"][key] = value
 
     def merge(self, frontmatter, settings):
         """Handle basepath first and then merge all keys."""
@@ -206,20 +207,26 @@ class Settings(object):
 
         self.settings = {
             "page": {
+                "title": None,
+                "encoding": kwargs.get('output_encoding', 'utf-8'),
                 "destination": None,
                 "basepath": None,
                 "relpath": None,
-                "references": [],
-                "include": [],
-                "meta": {}
+                "includes": {
+                    "css": [],
+                    "js": [],
+                    "html": []
+                },
+                "content": '',
+                "extra": {}
             },
+            "references": [],
             "settings": {}
         }
         self.critic = kwargs.get('critic', util.CRITIC_IGNORE)
         self.plain = kwargs.get('plain', False)
         self.batch = kwargs.get('batch', False)
         self.encoding = kwargs.get('encoding', 'utf-8')
-        self.output_encoding = kwargs.get('output_encoding', 'utf-8')
         self.preview = kwargs.get('preview', False)
         self.is_stream = kwargs.get('stream', False)
         self.force_stdout = kwargs.get('force_stdout', False)

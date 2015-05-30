@@ -83,7 +83,7 @@ class Terminal(object):
 
     name = None
 
-    def __init__(self, encoding):
+    def __init__(self, encoding="utf-8"):
         """Initialize."""
 
         self.encoding = encoding
@@ -103,25 +103,26 @@ class Text(object):
 
     """Text output object."""
 
-    def __init__(self, encoding='utf-8'):
+    def __init__(self, settings):
         """Initialize Text object."""
 
         self.encode_file = True
         self.file = None
-        self.encoding = encoding
+        self.encoding = settings("page", {}).get("encoding", 'utf-8')
+        self.output = settings("page", {}).get("destination", None)
 
-    def open(self, output):
+    def open(self):
         """
         Open output stream.
 
         Set the correct output target and create the file if necessary.
         """
 
-        if output is None:
+        if self.output is None:
             self.file = Terminal(self.encoding)
         else:
             try:
-                self.file = codecs.open(output, "w", encoding=self.encoding)
+                self.file = codecs.open(self.output, "w", encoding=self.encoding)
                 self.encode_file = False
             except Exception:
                 logger.Log.error(str(traceback.format_exc()))
@@ -147,47 +148,36 @@ class Html(object):
 
     def __init__(self, **kwargs):
         """Initialize."""
-
-        self.settings = kwargs.get("settings", {})
+        settings = kwargs["settings"]
+        self.settings = settings.get("settings", {})
+        self.page = settings.get("page", {})
+        self.plain = settings.get("plain", False)
+        self.preview = kwargs.get("preview", False)
+        self.encoding = settings.get("page", {}).get("encoding", "utf-8")
+        self.basepath = settings.get("page", {}).get("basepath", None)
+        self.relpath = settings.get("page", {}).get("relpath", None)
+        self.output = settings.get("page", {}).get("destination", None)
+        self.template_file = self.settings.get("template", None)
         self.encode_file = True
-        self.plain = kwargs.get("plain", False)
+        self.added_res = set()
         self.template = None
         self.file = None
-        self.meta = []
-        self.encoding = kwargs.get("encoding", "utf-8")
-        self.basepath = kwargs.get("basepath", None)
-        self.relative_output = kwargs.get("relative", None)
-        self.preview = kwargs.get("preview", False)
-        self.aliases = kwargs.get("aliases", [])
-        self.template_file = self.settings.get("template", None)
-        self.title = "Untitled"
         self.user_path = util.get_user_path()
-        self.added_res = set()
 
-    def set_meta(self, meta):
+    def update_meta(self, title, meta):
         """Create meta data tags."""
 
-        self.meta = ['<meta charset="%s">' % self.encoding]
-        if "title" in meta:
-            value = meta["title"]
-            if isinstance(value, list):
-                if len(value) == 0:
-                    value = ""
-                else:
-                    value = value[0]
-            self.title = compat.unicode_type(value)
+        if "title" in meta and isinstance(meta["title"], compat.string_type):
+            title = meta["title"]
             del meta["title"]
+        if self.page["title"] is None:
+            self.page["title"] = compat.to_unicode(title)
 
-        for k, v in meta.items():
-            if isinstance(v, list):
-                v = ','.join(v)
-            if v is not None:
-                self.meta.append(
-                    '<meta name="%s" content="%s">' % (
-                        cgi.escape(compat.unicode_type(k), True),
-                        cgi.escape(compat.unicode_type(v), True)
-                    )
-                )
+        # Merge the meta data
+        extra = self.page["extra"]
+        for k, v in meta.copy().items():
+            if k not in extra:
+                extra[k] = v
 
     def get_template_res_path(self, file_name):
         """Get the filepath and absolute filepath of the resource."""
@@ -227,8 +217,8 @@ class Html(object):
             # absolute output or relative output
             if self.settings.get("path_conversion_absolute", True):
                 file_path = abs_path
-            elif self.relative_output:
-                file_path = path.relpath(abs_path, self.relative_output)
+            elif self.relpath:
+                file_path = path.relpath(abs_path, self.relpath)
         return file_path, abs_path
 
     def template_embed_image(self, name):
@@ -328,22 +318,22 @@ class Html(object):
                 logger.Log.error(str(traceback.format_exc()))
 
         if template is None:
-            template = "{{ content }}"
+            template = "{{ page.content }}"
         env = jinja2.Environment()
         env.filters['embed'] = self.template_embed_file
         env.filters['getpath'] = self.template_get_path
         self.template = env.from_string(template)
 
-    def open(self, output):
+    def open(self):
         """Set and create the output target and target related flags."""
 
-        if output is None:
+        if self.output is None:
             self.file = Terminal(self.encoding)
-            self.file.name = self.relative_output
+            self.file.name = self.relpath
         try:
-            if not self.preview and output is not None:
+            if not self.preview and self.output is not None:
                 self.file = codecs.open(
-                    output, "w",
+                    self.output, "w",
                     encoding=self.encoding,
                     errors="xmlcharrefreplace"
                 )
@@ -370,12 +360,14 @@ class Html(object):
 
         self.get_template()
 
+        self.page["includes"]["html"] = self.load_html(self.page["includes"]["html"])
+        self.page["content"] = text
+        title = self.page["title"]
+        self.page["title"] = cgi.escape(compat.to_unicode(title if title else "Untitled"), True)
+
         html = self.template.render(
-            content=text,
-            meta='\n'.join(self.meta) + '\n',
-            css=''.join(self.css),
-            js=''.join(self.scripts),
-            title=cgi.escape(self.title)
+            page=self.page,
+            settings=self.settings
         )
 
         self.file.write(
@@ -443,9 +435,9 @@ class Html(object):
         """Adjust path depending on whether we are desiring absolute output or relative output."""
 
         if (self.preview or not omit_conversion):
-            if not absolute_conversion and self.relative_output:
+            if not absolute_conversion and self.relpath:
                 try:
-                    res_path = path.relpath(abs_path, self.relative_output)
+                    res_path = path.relpath(abs_path, self.relpath)
                 except Exception:
                     # No choice put to use absolute path
                     res_path = abs_path
@@ -523,35 +515,42 @@ class Html(object):
                         )
                         self.added_res.add(resource)
 
-    def load_css(self, style):
+    def load_html(self, fragments):
+        """Load HTML fragments."""
+
+        def force_insert(frag):
+            """Ensure HTML fragments have content inserted, not path."""
+
+            if frag.startswith("!"):
+                frag = frag[1:]
+            if not frag.startswith('^'):
+                frag = '^' + frag
+            return frag
+
+        html = []
+        env = jinja2.Environment()
+        env.filters['embed'] = self.template_embed_file
+        env.filters['getpath'] = self.template_get_path
+        self.load_resources([force_insert(f) for f in fragments], lambda html, **kwargs: '', html)
+        html = [env.from_string(h).render(page=self.page, settings=self.settings) for h in html]
+        return html
+
+    def load_css(self, styles, style):
         """Load specified CSS sources."""
+        css = []
+        self.load_resources(styles, get_style, css)
+        css += self.load_highlight(style)
+        return css
 
-        self.load_resources(self.settings.get("css", []), get_style, self.css)
-        for alias in self.aliases:
-            key = '@' + alias
-            if key in self.settings:
-                self.load_resources(
-                    self.settings.get(key).get("css"),
-                    get_style, self.css
-                )
-        self.css += self.load_highlight(style)
-
-    def load_js(self):
+    def load_js(self, js):
         """Load specified JS sources."""
 
-        self.load_resources(self.settings.get("js", []), get_js, self.scripts)
-        for alias in self.aliases:
-            key = '@' + alias
-            if key in self.settings:
-                self.load_resources(
-                    self.settings.get(key).get("js"),
-                    get_js, self.scripts
-                )
+        scripts = []
+        self.load_resources(js, get_js, scripts)
+        return scripts
 
     def load_header(self, style):
         """Load up header related info."""
 
-        self.css = []
-        self.scripts = []
-        self.load_css(style)
-        self.load_js()
+        self.page["includes"]["css"] = self.load_css(self.page["includes"]["css"], style)
+        self.page["includes"]["js"] = self.load_js(self.page["includes"]["js"])

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-{{ meta }}
+<meta charset="{{ page.encoding }}">
 <style>
 body {
   width: 40em;
@@ -44,13 +44,13 @@ body .markdown-body {
   }
 }
 </style>
-{{ css }}
-{{ js }}
-<title>{{ title }}</title>
+{% for css in page.includes.css %}{{ css }}{% endfor %}
+{% for js in page.includes.js %}{{ js }}{% endfor %}
+<title>{{ page.title }}</title>
 </head>
 <body>
 <article class="markdown-body">
-{{ content }}
+{{ page.content }}
 </article>
 </body>
 </html>

@@ -110,15 +110,15 @@ class MdConvert(object):
         self.relative_path = relative_path if relative_path is not None else ''
         self.output_path = output_path if output_path is not None else ''
         self.encoding = kwargs.get('encoding', 'utf-8')
-        self.check_extensions(kwargs.get('extensions', {}))
+        self.process_extensions(kwargs.get('extensions', {}))
         self.tab_length = kwargs.get('tab_length', 4)
         self.smart_emphasis = kwargs.get('smart_emphasis', True)
         self.lazy_ol = kwargs.get('lazy_ol', True)
         self.enable_attributes = kwargs.get('enable_attributes', True)
         self.output_format = kwargs.get('output_format', 'xhtml1')
 
-    def check_extensions(self, extensions):
-        """Check the extensions and see if anything needs to be modified."""
+    def process_extensions(self, extensions):
+        """Process the extensions separating extension name from configuration."""
 
         self.extensions = []
         self.extension_configs = {}

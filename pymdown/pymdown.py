@@ -42,13 +42,8 @@ class Convert(object):
         self.title = kwargs.get('title')
         self.settings_path = kwargs.get('settings_path')
 
-    def merge_meta(self, md_meta, file_name):
-        """
-        Retrieve Markdown meta data if available and merge frontmatter with it.
-
-            1. Frontmatter will override normal meta data.
-            2. Meta data overrides --title option on command line.
-        """
+    def get_title(self, file_name):
+        """Get the best guess for title (frontmatter not yet considered)."""
 
         # Resolve title for meta
         if self.title is not None:
@@ -57,14 +52,7 @@ class Convert(object):
             title = path.splitext(path.basename(path.abspath(file_name)))[0]
         else:
             title = None
-
-        # Merge the meta data
-        meta = md_meta.copy()
-        meta.update(self.settings["page"]["meta"])
-        if "title" not in meta and title is not None:
-            if title is not None:
-                meta["title"] = title
-        return meta
+        return title
 
     def strip_frontmatter(self, text):
         """
@@ -131,11 +119,11 @@ class Convert(object):
             status = FAIL
 
         if status == PASS:
-            txt = formatter.Text(self.config.output_encoding)
+            txt = formatter.Text(self.settings["page"]["encoding"])
 
             # Create text object
             try:
-                txt.open(self.settings["page"]["destination"])
+                txt.open()
                 # Apply critic stripping
                 text = critic_dump.CriticDump().dump(
                     text,
@@ -171,7 +159,7 @@ class Convert(object):
         if status == PASS:
             # Append Markdown reference files to current Markdown content
             text += util.get_references(
-                self.settings["page"].get("references", []),
+                self.settings.get("references", []),
                 self.settings["page"]["basepath"],
                 self.config.encoding
             )
@@ -180,14 +168,10 @@ class Convert(object):
             html = formatter.Html(
                 preview=self.config.preview,
                 plain=self.config.plain,
-                settings=self.settings["settings"],
-                basepath=self.settings["page"]["basepath"],
-                relative=self.settings["page"]["relpath"],
-                aliases=self.settings["page"]["include"],
-                encoding=self.config.output_encoding
+                settings=self.settings
             )
             try:
-                html.open(self.settings["page"]["destination"])
+                html.open()
 
                 # Set up Converter
                 converter = mdconvert.MdConverts(
@@ -207,7 +191,8 @@ class Convert(object):
                 converter.convert()
 
                 # Merge meta data
-                html.set_meta(self.merge_meta(converter.meta, file_name))
+                title = self.get_title(file_name)
+                html.update_meta(title, converter.meta)
 
                 # Write the markdown to the HTML
                 html.write(converter.markdown)
