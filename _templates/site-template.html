@@ -10,7 +10,7 @@
 <div class="content">
   <div class="header">
   <h1><a href="http://facelessuser.github.io/PyMdown/">PyMdown</a></h1>
-  <div class="bread-crumb-div">{{ nav }}</div>
+  <div class="bread-crumb-div">{% raw %}{{ nav }}{% endraw %}</div>
   </div>
 
   <div class="menu"></div>
@@ -23,7 +23,7 @@
   <div class="footer">
   <p>
     <a href="https://github.com/facelessuser/PyMdown" class="branding">
-      <img src="{{ getQuotedPath(assets/GitHub-Mark-64px.png) }}"/><br>
+      <img src="{{ 'assets/GitHub-Mark-64px.png'|getpath(quoted=True) }}"/><br>
     </a>
     <strong>Repository on Github</strong>
   </p>
