@@ -321,6 +321,7 @@ class Template(object):
     def get_css(self, css):
         """Load a html source or sources."""
 
+        files = []
         if isinstance(css, compat.string_type):
             files = self.load_css_files([css])
         elif isinstance(css, list):
@@ -331,6 +332,7 @@ class Template(object):
     def get_js(self, js):
         """Load a html source or sources."""
 
+        files = []
         if isinstance(js, compat.string_type):
             files = self.load_js_files([js])
         elif isinstance(js, list):
@@ -342,6 +344,7 @@ class Template(object):
         """Create meta tag."""
 
         meta_value = None
+        meta_name = None
         if isinstance(name, compat.string_type):
             meta_name = cgi.escape(name, True)
         if isinstance(value, compat.string_type):

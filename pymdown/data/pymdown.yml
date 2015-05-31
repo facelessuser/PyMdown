@@ -10,7 +10,7 @@
 # ---
 # settings:
 #   css:
-#   - somefile.css
+#     - somefile.css
 # ---
 #
 # but if you want to append to the list, you can use the 'include.css' keyword in the
@@ -74,39 +74,6 @@ disable_path_conversion: false
 # this disables conversion.
 path_conversion_absolute: false
 
-# Quick load aliases
-#
-# This is a quick way to optionally load multiple CSS and JS files when converting a specific file.
-# It done using the file's frontmatter:
-#
-# ---
-# include:
-# - mathjax
-# - flow
-# ---
-#
-# You can create any key you want, but it needs to begin with '@'.  Then just use the include keyword
-# in your frontmatter, and provide a list of aliases you wish to load.  Each alias can have a 'css' and/or 'js' keyword.
-"@flow":
-  js:
-    - "https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"
-    - flowchart-min.js
-    - default/uml-converter.js
-    - default/flow-loader.js
-
-"@sequence":
-  js:
-    - "https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"
-    - "https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"
-    - "https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.4/sequence-diagram-min.js"
-    - default/uml-converter.js
-    - default/sequence-loader.js
-
-"@mathjax":
-  js:
-    -   default/mathjax-config.js
-    -   'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
-
 # Length of tabs in source files
 tab_length: 4
 
@@ -144,3 +111,37 @@ extensions:
   markdown.extensions.nl2br:
   pymdownx.pymdown:
   pymdownx.inlinehilite:
+
+extra:
+  # By configuring 'flow', 'sequence', or 'mathjax' to `true` in a file's frontmatter,
+  # and using the following in a the template, conditional includes per file can be achieved:
+  #
+  #     {%if extra.flow %}{{ extra.flow_source.css|getcss }}{% endif %}
+  #     {%if extra.sequence %}{{ extra.sequence_source.css|getcss }}{% endif %}
+  #     {%if extra.mathjax %}{{ extra.mathjax_source.css|getcss }}{% endif %}
+  #     {%if extra.flow %}{{ extra.flow_source.js|getjs }}{% endif %}
+  #     {%if extra.sequence %}{{ extra.sequence_source.js|getjs }}{% endif %}
+  #     {%if extra.mathjax %}{{ extra.mathjax_source.js|getjs }}{% endif %}
+
+  flow: False
+  flow_source:
+    js:
+      - "https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"
+      - js/flowchart-min.js
+      - js/uml-converter.js
+      - js/flow-loader.js
+
+  sequence: False
+  sequence_source:
+    js:
+      - "https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"
+      - "https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"
+      - "https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.4/sequence-diagram-min.js"
+      - js/uml-converter.js
+      - js/sequence-loader.js
+
+  mathjax: False
+  mathjax_source:
+    js:
+      - js/mathjax-config.js
+      - 'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'

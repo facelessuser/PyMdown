@@ -72,7 +72,7 @@ pymdown --relpath ../somedirectory file.md
 PyMdown will normally look in the location of the [configuration directory](#configuration-file) to find the settings file, but the filename and path can be redirected with the `--settings` or `-s` option.
 
 ```
-pymdown -s ../my_settings.cfg file.md
+pymdown -s ../my_settings.yml file.md
 ```
 
 ## Encoding
@@ -239,8 +239,8 @@ Javascript and CSS can be included in the template by adding them to the followi
 #
 # ---
 # settings:
-#     css:
-#     -   somefile.css
+#   css:
+#     - somefile.css
 # ---
 #
 # but if you want to append to the list, you can use the 'include.css' keyword in the
@@ -252,7 +252,7 @@ Javascript and CSS can be included in the template by adding them to the followi
 # ---
 #
 css:
--   ^default/markdown.css
+- ^default/markdown.css
 
 # Load up js scripts (in head)
 #
@@ -264,8 +264,8 @@ css:
 #
 # ---
 # settings:
-#     js:
-#     -   somefile.js
+#   js:
+#     - somefile.js
 # ---
 #
 # but if you want to append to the list, you can use the 'include.js' keyword in the
@@ -273,7 +273,7 @@ css:
 #
 # ---
 # include.js:
-# - somefile.js
+#   - somefile.js
 # ---
 #
 js: []
@@ -282,44 +282,6 @@ js: []
 CSS files and JavaScript files can be URLs or file paths.  When specifying a file path, a `!` can be used to precede the path so that PyMdown will just link the file and skip converting the file to an absolute or relative path.  If the file path is preceded by a `^`, the file content will be embedded in the HTML under a style or script tag depending on the source type.
 
 CSS and JavaScript files can also be followed by `;encoding` to read in the file with the specified encoding.
-
-## JavaScript and CSS Quickload Aliases
-Sometimes you may have files you occasionally want to include on the fly.  PyMdown allows for defining aliases that can be referenced in a file's frontmatter to include multiple JavaScript and/or CSS files.  CSS and JavaScript included in the the quick-load aliases follow the same rules as the normal [CSS and JavaScript](#javascript-and-css) includes.
-
-```yaml
-# Quick load aliases
-#
-# This is a quick way to optionally load multiple CSS and JS files when converting a specific file.
-# It done using the file's frontmatter:
-#
-# ---
-# include:
-# - mathjax
-# - flow
-# ---
-#
-# You can create any key you want, but it needs to begin with '@'.  Then just use the include keyword
-# in your frontmatter, and provide a list of aliases you wish to load.  Each alias can have a 'css' and/or 'js' keyword.
-"@flow":
-    js:
-        -   "https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"
-        -   flowchart-min.js
-        -   default/uml-converter.js
-        -   default/flow-loader.js
-
-"@sequence":
-    js:
-        -   "https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"
-        -   "https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"
-        -   "https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.4/sequence-diagram-min.js"
-        -   default/uml-converter.js
-        -   default/sequence-loader.js
-
-"@mathjax":
-   js:
-        -   default/mathjax-config.js
-        -   'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
-```
 
 ## Path Conversions
 By default, PyMdown converts paths to be relative to the output location.  If desired, this can be changed to an absolute path:
@@ -348,20 +310,20 @@ Extensions to be used are defined under the **extensions** keyword.  **extension
 
 ```yaml
 extensions:
-    markdown.extensions.extra:
-    markdown.extensions.toc:
-        title: Table of Contents
-        slugify: ${SLUGIFY}
-    markdown.extensions.codehilite:
-        guess_lang: false
-    markdown.extensions.smarty:
-    markdown.extensions.wikilinks:
-    markdown.extensions.admonition:
-    markdown.extensions.nl2br:
-    pymdown.pymdown:
-    pymdown.b64:
-        base_path: ${BASE_PATH}
-    pymdown.critic:
+  markdown.extensions.extra:
+  markdown.extensions.toc:
+    title: Table of Contents
+    slugify: ${SLUGIFY}
+  markdown.extensions.codehilite:
+    guess_lang: false
+  markdown.extensions.smarty:
+  markdown.extensions.wikilinks:
+  markdown.extensions.admonition:
+  markdown.extensions.nl2br:
+  pymdown.pymdown:
+  pymdown.b64:
+    base_path: ${BASE_PATH}
+  pymdown.critic:
 ```
 
 There are a couple of special variables you can use in extension settings:

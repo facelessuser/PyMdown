@@ -116,18 +116,6 @@ class MergeSettings(object):
                     locals()[i] += [v for v in value if isinstance(v, compat.unicode_type)]
                 del frontmatter[key]
 
-        if "include" in frontmatter:
-            value = frontmatter['include']
-            if isinstance(value, list):
-                for v in value:
-                    if isinstance(v, compat.unicode_type):
-                        key = '@%s' % v
-                        if key in settings['settings'] and isinstance(settings['settings'][key], (dict, OrderedDict)):
-                            for sub_k, includes in settings['settings'][key].items():
-                                if sub_k in ('css', 'js') and isinstance(includes, list):
-                                    locals()[sub_k] += [i for i in includes if isinstance(i, compat.unicode_type)]
-            del frontmatter['include']
-
         settings['page']['includes']['css'] += css
         settings['page']['includes']['js'] += js
 
@@ -150,14 +138,6 @@ class MergeSettings(object):
                     org_pth = subvalue
                     new_pth = self.process_settings_path(org_pth, self.base)
                     settings['settings'][subkey] = new_pth if new_pth is not None else org_pth
-
-                # Handle optional extention assets
-                elif subkey.startswith('@') and isinstance(subvalue, OrderedDict):
-                    for assetkey, assetvalue in subvalue.items():
-                        if assetkey in ('css', 'js') and isinstance(assetvalue, list):
-                            settings['settings'][subkey][assetkey] = [
-                                v for v in assetvalue if isinstance(v, compat.unicode_type)
-                            ]
 
                 # Javascript and CSS files
                 elif subkey in ("css", "js") and isinstance(subvalue, compat.unicode_type):
@@ -234,7 +214,7 @@ class Settings(object):
 
         # Use default settings file if one was not provided
         settings_path = kwargs.get('settings_path', None)
-        self.settings_path = settings_path if settings_path is not None else 'pymdown.cfg'
+        self.settings_path = settings_path if settings_path is not None else path.basename(util.DEFAULT_SETTINGS)
 
     def unpack_settings_file(self):  # pragma: no cover
         """Unpack default settings file."""

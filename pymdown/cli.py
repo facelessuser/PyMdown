@@ -100,7 +100,7 @@ def display_licenses():
 def main():
     """Main function."""
 
-    default_settings = path.join(util.get_user_path(), "pymdown.cfg")
+    default_settings = path.join(util.get_user_path(), "pymdown.yml")
     parser = argparse.ArgumentParser(prog='pymdown', description='Markdown generator')
     # Flag arguments
     parser.add_argument('--version', action='version', version="%(prog)s " + __version__)

@@ -1,38 +1,38 @@
 ---
-    # Builtin values
-    references:
-        - references.md
-        - abbreviations.md
-        - footnotes.md
-    destination: Example.html
+# Builtin values
+references:
+  - references.md
+  - abbreviations.md
+  - footnotes.md
+destination: Example.html
 
-    # Meta Data
-    title: PyMdown Example
-    author:
-        - John Doe
-        - Jane Doe
+# Meta Data
+title: PyMdown Example
+author:
+  - John Doe
+  - Jane Doe
 
-    # Settings overrides
-    settings:
-        template: example-template.html
-        extensions:
-            markdown.extensions.extra:
-            markdown.extensions.toc:
-                title: Table of Contents
-                slugify: ${SLUGIFY}
-            markdown.extensions.headerid:
-            markdown.extensions.smarty:
-            markdown.extensions.meta:
-            markdown.extensions.wikilinks:
-            markdown.extensions.admonition:
-            markdown.extensions.nl2br:
-            markdown.extensions.codehilite:
-                guess_lang: False
-                css_class: highlight
-            pymdownx.pymdown:
-            pymdownx.inlinehilite:
-            pymdownx.b64:
-                base_path: ${BASE_PATH}
+# Settings overrides
+settings:
+  template: example-template.html
+  extensions:
+    markdown.extensions.extra:
+    markdown.extensions.toc:
+      title: Table of Contents
+      slugify: ${SLUGIFY}
+    markdown.extensions.headerid:
+    markdown.extensions.smarty:
+    markdown.extensions.meta:
+    markdown.extensions.wikilinks:
+    markdown.extensions.admonition:
+    markdown.extensions.nl2br:
+    markdown.extensions.codehilite:
+      guess_lang: False
+      css_class: highlight
+    pymdownx.pymdown:
+    pymdownx.inlinehilite:
+    pymdownx.b64:
+      base_path: ${BASE_PATH}
 ---
 test: This example of normal meta extension
 title: This title will be overridden by YAML
@@ -42,23 +42,23 @@ title: This title will be overridden by YAML
 
     ```yaml
         extensions:
-            markdown.extensions.extra:
-            markdown.extensions.toc:
-                title: Table of Contents
-                slugify: ${SLUGIFY}
-            markdown.extensions.headerid:
-            markdown.extensions.smarty:
-            markdown.extensions.meta:
-            markdown.extensions.wikilinks:
-            markdown.extensions.admonition:
-            markdown.extensions.nl2br:
-            markdown.extensions.codehilite:
-                guess_lang: False
-                css_class: highlight
-            pymdownx.pymdown:
-            pymdownx.inlinehilite:
-            pymdownx.b64:
-                base_path: ${BASE_PATH}
+          markdown.extensions.extra:
+          markdown.extensions.toc:
+            title: Table of Contents
+            slugify: ${SLUGIFY}
+          markdown.extensions.headerid:
+          markdown.extensions.smarty:
+          markdown.extensions.meta:
+          markdown.extensions.wikilinks:
+          markdown.extensions.admonition:
+          markdown.extensions.nl2br:
+          markdown.extensions.codehilite:
+            guess_lang: False
+            css_class: highlight
+          pymdownx.pymdown:
+          pymdownx.inlinehilite:
+          pymdownx.b64:
+            base_path: ${BASE_PATH}
     ```
 
     !!! Caution "Notes"
