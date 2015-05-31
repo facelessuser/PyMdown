@@ -1,7 +1,6 @@
 ---
-include:
-- flow
-- sequence
+flow: true
+sequence: true
 ---
 [TOC]
 # Overview

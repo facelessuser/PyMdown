@@ -1,6 +1,5 @@
 ---
-include:
-- mathjax
+mathjax: true
 ---
 [TOC]
 

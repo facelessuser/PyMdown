@@ -58,7 +58,7 @@ class Md2HtmlTreeBuilder(object):
 
     """Build a simple static site using PyMdown."""
 
-    def __init__(self, tab_size=4, settings='pymdown.cfg', force_update=False):
+    def __init__(self, tab_size=4, settings='pymdown.yml', force_update=False):
         """Initialize."""
 
         self.force_update = force_update
