@@ -24,7 +24,7 @@ class TestSettings(unittest.TestCase):
         """Test that we prevent critic override if critic is specified from command line."""
 
         s = self._get_settings(
-            'critic.cfg',
+            'critic.yml',
             stream=True,
             critic=util.CRITIC_ACCEPT,
         ).get(None)
@@ -35,7 +35,7 @@ class TestSettings(unittest.TestCase):
         """Test that we can override critic option if not already specified."""
 
         s = self._get_settings(
-            'critic.cfg',
+            'critic.yml',
             stream=True
         ).get(None)
         option = s.get('settings').get('extensions').get('pymdownx.critic').get('mode')
@@ -45,7 +45,7 @@ class TestSettings(unittest.TestCase):
         """Test that the frontmatter can override the critic option."""
 
         s = self._get_settings(
-            'critic.cfg',
+            'critic.yml',
             stream=True
         ).get(
             None,
@@ -66,7 +66,7 @@ class TestSettings(unittest.TestCase):
         """Test that we can set the critic reject option."""
 
         s = self._get_settings(
-            'critic.cfg',
+            'critic.yml',
             stream=True,
             critic=util.CRITIC_REJECT
         ).get(None)
@@ -77,7 +77,7 @@ class TestSettings(unittest.TestCase):
         """Test that we can set the critic view option."""
 
         s = self._get_settings(
-            'critic.cfg',
+            'critic.yml',
             stream=True,
             critic=util.CRITIC_VIEW
         ).get(None)
@@ -88,7 +88,7 @@ class TestSettings(unittest.TestCase):
         """Test that we can prevent the plain override if plain is set from command line."""
 
         s = self._get_settings(
-            'plain.cfg',
+            'plain.yml',
             plain=True,
             stream=True
         ).get(None)
@@ -99,7 +99,7 @@ class TestSettings(unittest.TestCase):
         """Test that we can override the plain setting if not already set."""
 
         s = self._get_settings(
-            'plain.cfg',
+            'plain.yml',
             stream=True
         ).get(None)
         options = s.get('settings').get('extensions').get('pymdownx.plainhtml')
@@ -109,7 +109,7 @@ class TestSettings(unittest.TestCase):
         """Ensure we get default style if none is specified."""
 
         s = self._get_settings(
-            'pygments_no_style.cfg',
+            'pygments_no_style.yml',
             stream=True
         ).get(None)
         style = s.get('settings').get('pygments_style')
@@ -120,7 +120,7 @@ class TestSettings(unittest.TestCase):
 
         logger.Log.set_level(logger.CRITICAL)
         s = self._get_settings(
-            'pygments_bad_style.cfg',
+            'pygments_bad_style.yml',
             stream=True
         ).get(None)
         style = s.get('settings').get('pygments_style')
@@ -131,7 +131,7 @@ class TestSettings(unittest.TestCase):
         """Ensure we internally know when hilite extensions specify to not use Pygments."""
 
         s = self._get_settings(
-            'no_pygments.cfg',
+            'no_pygments.yml',
             stream=True
         ).get(None)
         use_pygments_css = s.get('settings').get('use_pygments_css')
@@ -141,7 +141,7 @@ class TestSettings(unittest.TestCase):
         """Ensure 'use_pygments_css' not set internally if hilite extension uses 'noclasses'."""
 
         s = self._get_settings(
-            'pygments_noclasses.cfg',
+            'pygments_noclasses.yml',
             stream=True
         ).get(None)
         use_pygments_css = s.get('settings').get('use_pygments_css')
@@ -151,7 +151,7 @@ class TestSettings(unittest.TestCase):
         """Ensure we can set the Pygments css class internally."""
 
         s = self._get_settings(
-            'pygments_class.cfg',
+            'pygments_class.yml',
             stream=True
         ).get(None)
         pygments_css = s.get('settings').get('pygments_class')
@@ -161,7 +161,7 @@ class TestSettings(unittest.TestCase):
         """Test that we set relative path proper when preview mode is true with pathconverter."""
 
         s = self._get_settings(
-            'preview_with_pathconverter.cfg',
+            'preview_with_pathconverter.yml',
             preview=True,
             stream=True
         ).get(None)
@@ -172,7 +172,7 @@ class TestSettings(unittest.TestCase):
         """Ensure we configure pathconverter when not already configured when preview is enabled."""
 
         s = self._get_settings(
-            'empty.cfg',
+            'empty.yml',
             preview=True,
             stream=True
         ).get(None)
@@ -191,7 +191,7 @@ class TestSettings(unittest.TestCase):
         base = os.path.abspath('.')
         rel = os.path.join(os.path.abspath('.'), 'tests')
         sobj = self._get_settings(
-            'empty.cfg'
+            'empty.yml'
         )
         s = sobj.get('test.md')
         self.assertEqual(sobj.out, base)
@@ -212,7 +212,7 @@ class TestSettings(unittest.TestCase):
         dest = os.path.join(os.path.abspath('.'), 'tests', 'file.html')
         rel = os.path.abspath('.')
         sobj = self._get_settings(
-            'empty.cfg'
+            'empty.yml'
         )
         s = sobj.get('test.md', frontmatter={"destination": dest})
         self.assertEqual(sobj.out, os.path.dirname(dest))
@@ -228,13 +228,13 @@ class TestSettings(unittest.TestCase):
         dest = os.path.join(os.path.abspath('.'), 'tests', 'file.html')
         template = '/'.join(['pymdown', 'data', 'template.html'])
         s = self._get_settings(
-            'template.cfg'
+            'template.yml'
         ).get('test.md', frontmatter={"destination": dest})
         self.assertEqual(s.get('page').get('destination'), dest)
         self.assertEqual(s.get('settings').get('template'), template)
 
         s = self._get_settings(
-            'template.cfg',
+            'template.yml',
             force_stdout=True,
             force_no_template=True
         ).get('test.md', frontmatter={"destination": dest})
