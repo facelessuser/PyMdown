@@ -44,8 +44,8 @@ body .markdown-body {
   }
 }
 </style>
-{% for css in page.includes.css %}{{ css }}{% endfor %}
-{% for js in page.includes.js %}{{ js }}{% endfor %}
+{{ pages.includes.css|getcss }}
+{{ pages.includes.js|getjs }}
 <title>{{ page.title }}</title>
 </head>
 <body>

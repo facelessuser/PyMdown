@@ -2,6 +2,9 @@
 <html>
 <head>
 <meta charset="{{ page.encoding }}">
+{% if extra.author %}
+{{ extra.author|getmeta(name="author") }}
+{% endif %}
 <style>
 body {
   background-color: #fafafa;
@@ -91,9 +94,9 @@ body {
   border: 1px solid #ddd;
 }
 </style>
-{% for css in page.includes.css %}{{ css|getcss }}{% endfor %}
+{{ page.includes.css|getcss }}
 {%if page.pygments_style %}{{ page.pygments_style }}{% endif %}
-{% for js in page.includes.js %} %}{{ js|getjs }}{% endfor %}
+{{ page.includes.js|getjs }}
 <title>{{ page.title }}</title>
 </head>
 <body>

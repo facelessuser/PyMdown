@@ -106,10 +106,9 @@ class MergeSettings(object):
         """Find css and js includes and merge them."""
         css = settings['settings'].get('css', [])
         js = settings['settings'].get('js', [])
-        html = settings['settings'].get('html', [])
 
         # Javascript and CSS include
-        for i in ("css", "js", "html"):
+        for i in ("css", "js"):
             key = 'include.%s' % i
             if key in frontmatter:
                 value = frontmatter[key]
@@ -125,13 +124,12 @@ class MergeSettings(object):
                         key = '@%s' % v
                         if key in settings['settings'] and isinstance(settings['settings'][key], (dict, OrderedDict)):
                             for sub_k, includes in settings['settings'][key].items():
-                                if sub_k in ('css', 'js', 'html') and isinstance(includes, list):
+                                if sub_k in ('css', 'js') and isinstance(includes, list):
                                     locals()[sub_k] += [i for i in includes if isinstance(i, compat.unicode_type)]
             del frontmatter['include']
 
         settings['page']['includes']['css'] += css
         settings['page']['includes']['js'] += js
-        settings['page']['includes']['html'] += html
 
     def merge_references(self, frontmatter, settings):
         """Merge reference."""
@@ -156,7 +154,7 @@ class MergeSettings(object):
                 # Handle optional extention assets
                 elif subkey.startswith('@') and isinstance(subvalue, OrderedDict):
                     for assetkey, assetvalue in subvalue.items():
-                        if assetkey in ('css', 'js'):
+                        if assetkey in ('css', 'js') and isinstance(assetvalue, list):
                             settings['settings'][subkey][assetkey] = [
                                 v for v in assetvalue if isinstance(v, compat.unicode_type)
                             ]
@@ -166,6 +164,8 @@ class MergeSettings(object):
                     settings['settings'][subkey] = [
                         v for v in subvalue if isinstance(v, compat.unicode_type)
                     ]
+                elif subkey == "extra" and isinstance(subvalue, (dict, OrderedDict)):
+                    settings['settings'][subkey] = subvalue
 
                 # All other settings that require no other special handling
                 else:
@@ -173,13 +173,13 @@ class MergeSettings(object):
             del frontmatter['settings']
 
     def merge_meta(self, frontmatter, settings):
-        """Resolve all other frontmatter items as meta items."""
+        """Resolve all other frontmatter items as meta/extra items."""
 
         for key, value in frontmatter.items():
             if key == 'title' and isinstance(value, compat.unicode_type):
                 settings["page"]["title"] = value
 
-            settings["page"]["extra"][key] = value
+            settings["extra"][key] = value
 
     def merge(self, frontmatter, settings):
         """Handle basepath first and then merge all keys."""
@@ -214,12 +214,11 @@ class Settings(object):
                 "relpath": None,
                 "includes": {
                     "css": [],
-                    "js": [],
-                    "html": []
+                    "js": []
                 },
                 "content": '',
-                "extra": {}
             },
+            "extra": {},
             "references": [],
             "settings": {}
         }

@@ -9,30 +9,20 @@ Copyright (c) 2014 - 2015 Isaac Muse <isaacmuse@gmail.com>
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from __future__ import print_function
-import cgi
 import codecs
 import traceback
-import re
 import tempfile
-import base64
-import jinja2
-from os import path
+import cgi
+from copy import deepcopy
 from . import util
 from . import logger
 from . import compat
+from .template import Template
 try:
     from pygments.formatters import get_formatter_by_name
     PYGMENTS_AVAILABLE = True
 except Exception:  # pragma: no cover
     PYGMENTS_AVAILABLE = False
-
-RE_URL_START = re.compile(r"^(http|ftp)s?://|tel:|mailto:|data:|news:|#")
-
-image_types = {
-    (".png",): "image/png",
-    (".jpg", ".jpeg"): "image/jpeg",
-    (".gif",): "image/gif"
-}
 
 
 class PyMdownFormatterException(Exception):
@@ -40,29 +30,6 @@ class PyMdownFormatterException(Exception):
     """PyMdown formatter exception."""
 
     pass
-
-
-def get_js(js, **kwargs):
-    """Get the specified JS code."""
-
-    link = kwargs.get('link', False)
-    encoding = kwargs.get('encoding', 'utf-8')
-
-    if link:
-        return '<script type="text/javascript" charset="%s" src="%s"></script>\n' % (encoding, js)
-    else:
-        return '<script type="text/javascript">\n%s\n</script>\n' % js if js is not None else ""
-
-
-def get_style(style, **kwargs):
-    """Get the specified CSS code."""
-
-    link = kwargs.get('link', False)
-
-    if link:
-        return '<link href="%s" rel="stylesheet" type="text/css">\n' % style
-    else:
-        return '<style>\n%s\n</style>\n' % style if style is not None else ""
 
 
 def get_pygment_style(style, css_class='codehilite'):
@@ -151,13 +118,14 @@ class Html(object):
         settings = kwargs["settings"]
         self.settings = settings.get("settings", {})
         self.page = settings.get("page", {})
+        self.extra = settings.get("extra", {})
         self.plain = settings.get("plain", False)
         self.preview = kwargs.get("preview", False)
         self.encoding = settings.get("page", {}).get("encoding", "utf-8")
         self.basepath = settings.get("page", {}).get("basepath", None)
         self.relpath = settings.get("page", {}).get("relpath", None)
         self.output = settings.get("page", {}).get("destination", None)
-        self.template_file = self.settings.get("template", None)
+        self.template_file = self.settings.get("template", None) if not self.plain else None
         self.encode_file = True
         self.added_res = set()
         self.template = None
@@ -174,161 +142,10 @@ class Html(object):
             self.page["title"] = compat.to_unicode(title)
 
         # Merge the meta data
-        extra = self.page["extra"]
-        for k, v in meta.copy().items():
-            if k not in extra:
-                extra[k] = v
-
-    def get_template_res_path(self, file_name):
-        """Get the filepath and absolute filepath of the resource."""
-
-        abs_path = None
-        file_path = None
-        user_path = util.get_user_path()
-
-        is_abs = util.is_absolute(file_name)
-
-        # Find path relative to basepath or global user path
-        # If basepath is defined set paths relative to the basepath if possible
-        # or just keep the absolute
-        if not is_abs:
-            # Is relative path
-            if self.basepath is not None:
-                base_temp = path.normpath(path.join(self.basepath, file_name))
-                if path.exists(base_temp) and path.isfile(base_temp):
-                    file_path = base_temp
-            if file_path is None and user_path is not None:
-                user_temp = path.normpath(path.join(user_path, file_name))
-                if path.exists(user_temp) and path.isfile(user_temp):
-                    file_path = user_temp
-
-        elif is_abs and path.exists(file_name) and path.isfile(file_name):
-            # Is absolute path
-            file_path = file_name
-
-        if file_path is not None:
-            # Calculate the absolute path
-            if is_abs or not self.basepath:
-                abs_path = file_path
-            else:
-                abs_path = path.abspath(path.join(self.basepath, file_path))
-
-            # Adjust path depending on whether we are desiring
-            # absolute output or relative output
-            if self.settings.get("path_conversion_absolute", True):
-                file_path = abs_path
-            elif self.relpath:
-                file_path = path.relpath(abs_path, self.relpath)
-        return file_path, abs_path
-
-    def template_embed_image(self, name):
-        """Embed an image with base64 encoding."""
-
-        file_name = name.strip()
-        file_path, abs_path = self.get_template_res_path(file_name)
-        if file_path is not None:
-            # If embedding an image, get base64 image type or return path
-            ext = path.splitext(file_name)[1]
-            embedded = False
-            for b64_ext in image_types:
-                if ext in b64_ext:
-                    try:
-                        with open(abs_path, "rb") as f:
-                            file_name = "data:%s;base64,%s" % (
-                                image_types[b64_ext],
-                                base64.b64encode(f.read()).decode('ascii')
-                            )
-                            embedded = True
-                    except Exception:
-                        pass
-                    break
-            if not embedded:
-                file_name = ''
-        return file_name
-
-    def template_embed_file(self, name, image=False):
-        """
-        Return the content of the file instead of the file name.
-
-        If "image" is "True", base64 encode the content.
-        """
-
-        file_name = name.strip()
-        file_name, encoding = util.splitenc(file_name)
-        file_path, abs_path = self.get_template_res_path(file_name)
-        if file_path is not None:
-            if image:
-                # If embedding an image, get base64 image type or return path
-                ext = path.splitext(file_name)[1]
-                embedded = False
-                for b64_ext in image_types:
-                    if ext in b64_ext:
-                        try:
-                            with open(abs_path, "rb") as f:
-                                file_name = "data:%s;base64,%s" % (
-                                    image_types[b64_ext],
-                                    base64.b64encode(f.read()).decode('ascii')
-                                )
-                                embedded = True
-                        except Exception:
-                            pass
-                        break
-                if not embedded:
-                    file_name = ''
-            else:
-                file_name = util.load_text_resource(abs_path, encoding=encoding)
-                if file_name is None:
-                    file_name = ''
-        return file_name
-
-    def template_get_path(self, name, quoted=False):
-        """Get path in a template."""
-
-        file_name = name.strip()
-        file_path = self.get_template_res_path(file_name)[0]
-        if file_path is not None:
-            file_name = file_path.replace('\\', '/')
-            if quoted:
-                file_name = compat.pathname2url(file_name)
-        return file_name
-
-    def get_template(self):
-        """Output the HTML head and body up to the {{ content }} specifier."""
-        template = None
-        if self.template_file is not None and not self.plain:
-            template_path, encoding = util.splitenc(self.template_file)
-
-            if not util.is_absolute(template_path) and self.basepath:
-                template_base = path.join(self.basepath, template_path)
-            else:
-                template_base = ''
-
-            if (
-                (not path.exists(template_base) or not path.isfile(template_base)) and
-                self.user_path is not None
-            ):
-                template_path = path.join(self.user_path, template_path)
-            else:
-                template_path = template_base
-
-            try:
-                with codecs.open(template_path, "r", encoding=encoding) as f:
-                    template = f.read()
-            except Exception:
-                logger.Log.error(str(traceback.format_exc()))
-
-        if template is None:
-            template = "{{ page.content }}"
-        self.template_env = jinja2.Environment()
-        self.template_env.filters['embed'] = self.template_embed_file
-        self.template_env.filters['getpath'] = self.template_get_path
-        self.template_env.filters['gettemplate'] = self.load_html
-        self.template_env.filters['getcss'] = self.load_css
-        self.template_env.filters['getjs'] = self.load_js
-        self.template_env.filters['itertemplate'] = self.load_html_files
-        self.template_env.filters['itercss'] = self.load_css_files
-        self.template_env.filters['iterjs'] = self.load_js_files
-        self.template = self.template_env.from_string(template)
+        for extras in (meta, self.settings.get('extra', {})):
+            for k, v in deepcopy(extras).items():
+                if k not in self.extra:
+                    self.extra[k] = v
 
     def open(self):
         """Set and create the output target and target related flags."""
@@ -359,16 +176,24 @@ class Html(object):
     def write(self, text):
         """Write the given text to the output file."""
 
-        self.get_template()
-
         self.page["pygments_style"] = self.load_highlight(self.settings.get("pygments_style", None))
         self.page["content"] = text
         title = self.page["title"]
-        self.page["title"] = cgi.escape(compat.to_unicode(title if title else "Untitled"), True)
+        self.page["title"] = cgi.escape(compat.to_unicode(title if title else "Untitled"))
 
-        html = self.template.render(
+        template = Template(
+            basepath=self.basepath,
+            relpath=self.relpath,
+            userpath=self.user_path,
+            force_conversion=self.preview,
+            disable_path_conversion=self.settings.get("disable_path_conversion", False),
+            absolute_path_conversion=self.settings.get("path_conversion_absolute", False)
+        ).get_template(self.template_file)
+
+        html = template.render(
             page=self.page,
-            settings=self.settings
+            settings=self.settings,
+            extra=self.extra
         )
 
         self.file.write(
@@ -390,177 +215,3 @@ class Html(object):
                 )
 
         return style
-
-    def get_res_path(self, resource):
-        """Get file path and absolute file path of the file if possible."""
-
-        abs_path = None
-        res_path = None
-
-        is_abs = util.is_absolute(resource)
-        if not is_abs:
-            # Is relative path
-            if self.basepath is not None:
-                base_temp = path.normpath(path.join(self.basepath, resource))
-                if path.exists(base_temp) and path.isfile(base_temp):
-                    res_path = resource
-
-            if res_path is None and self.user_path is not None:
-                user_temp = path.normpath(path.join(self.user_path, resource))
-                if path.exists(user_temp) and path.isfile(user_temp):
-                    try:
-                        res_path = path.relpath(user_temp, self.basepath) if self.basepath else user_temp
-                    except Exception:
-                        # No choice but to use absolute path
-                        res_path = user_temp
-                        is_abs = True
-
-        elif is_abs and path.exists(resource) and path.isfile(resource):
-            # Is absolute path
-            res_path = path.relpath(resource, self.basepath) if self.basepath else resource
-
-        # Is an existing path.  Make path absolute, relative to output, or leave as is
-        # If direct include is not desired, add resource as link.
-        if res_path is not None:
-            # Calculate the absolute path
-            if is_abs or not self.basepath:
-                abs_path = res_path
-            else:
-                abs_path = path.abspath(path.join(self.basepath, res_path))
-
-        return res_path, abs_path
-
-    def convert_path(self, res_path, abs_path, absolute_conversion, omit_conversion):
-        """Adjust path depending on whether we are desiring absolute output or relative output."""
-
-        if (self.preview or not omit_conversion):
-            if not absolute_conversion and self.relpath:
-                try:
-                    res_path = path.relpath(abs_path, self.relpath)
-                except Exception:
-                    # No choice put to use absolute path
-                    res_path = abs_path
-            elif absolute_conversion:
-                res_path = abs_path
-        return res_path
-
-    def load_resources(self, template_resources, res_get, resources):
-        """
-        Load the resource (js or css).
-
-            - Resolve whether the path needs to be converted to
-              absolute or relative path.
-            - See whether we should embed the file's content or
-              just add a link to the file.
-        """
-
-        if isinstance(template_resources, list) and len(template_resources):
-            for pth in template_resources:
-                resource = pth
-                is_url = RE_URL_START.match(resource)
-
-                # This is a URL, don't include content
-                if is_url:
-                    resource, encoding = util.splitenc(resource)
-                    if resource not in self.added_res:
-                        resources.append(res_get(resource, link=True, encoding=encoding))
-                        self.added_res.add(resource)
-                else:
-                    # Find path relative to basepath or global user path
-                    # If basepath is defined set paths relative to the basepath if possible
-                    # or just keep the absolute
-
-                    # Check for markers
-                    direct_include = True
-                    omit_conversion = resource.startswith('!')
-                    direct_include = resource.startswith('^')
-
-                    if omit_conversion:
-                        resource = resource.replace('!', '', 1)
-                    elif direct_include:
-                        resource = resource.replace('^', '', 1)
-
-                    if not omit_conversion:
-                        omit_conversion = self.settings.get("disable_path_conversion", False)
-
-                    absolute_conversion = self.settings.get("path_conversion_absolute", False)
-
-                    resource, encoding = util.splitenc(resource)
-                    res_path, abs_path = self.get_res_path(resource)
-
-                    if res_path is not None:
-                        res_path = self.convert_path(res_path, abs_path, absolute_conversion, omit_conversion)
-
-                    # We check the absolute path against the current list
-                    # and add the respath if not present
-                    if abs_path not in self.added_res:
-                        if not direct_include:
-                            res_path = compat.pathname2url(res_path.replace('\\', '/'))
-                            link = True
-                        else:
-                            res_path = util.load_text_resource(abs_path, encoding=encoding)
-                            link = False
-                        resources.append(res_get(res_path, link=link, encoding=encoding))
-                        self.added_res.add(abs_path)
-
-                    # Not a known path and not a url, just add as is
-                    elif resource not in self.added_res:
-                        resources.append(
-                            res_get(
-                                compat.pathname2url(resource.replace('\\', '/')),
-                                link=True,
-                                encoding=encoding
-                            )
-                        )
-                        self.added_res.add(resource)
-
-    def load_html_files(self, fragments):
-        """Load HTML fragments."""
-
-        def force_insert(frag):
-            """Ensure HTML fragments have content inserted, not path."""
-
-            if frag.startswith("!"):
-                frag = frag[1:]
-            if not frag.startswith('^'):
-                frag = '^' + frag
-            return frag
-
-        html = []
-        self.load_resources([force_insert(f) for f in fragments], lambda html, **kwargs: '', html)
-        html = [self.template_env.from_string(h).render(page=self.page, settings=self.settings) for h in html]
-        return html
-
-    def load_css_files(self, styles):
-        """Load specified CSS sources."""
-        css = []
-        self.load_resources(styles, get_style, css)
-        return css
-
-    def load_js_files(self, js):
-        """Load specified JS sources."""
-
-        scripts = []
-        self.load_resources(js, get_js, scripts)
-        return scripts
-
-    def load_html(self, html):
-        """Load a single html source."""
-
-        files = self.load_html_files([html])
-
-        return files[0] if len(files) else ''
-
-    def load_css(self, css):
-        """Load a single html source."""
-
-        files = self.load_css_files([css])
-
-        return files[0] if len(files) else ''
-
-    def load_js(self, js):
-        """Load a single html source."""
-
-        files = self.load_js_files([js])
-
-        return files[0] if len(files) else ''
