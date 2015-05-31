@@ -132,14 +132,26 @@ class Html(object):
         self.file = None
         self.user_path = util.get_user_path()
 
-    def update_meta(self, title, meta):
-        """Create meta data tags."""
+    def update_template_variables(self, text, meta):
+        """
+        Update date template variables with meta info acquired from file and from settings.
 
+            - page.title: Update title with meta if none was found in frontmatter.
+            - page.pygments_style: Update pygments style if allowed in settings.
+            - page.content:  The HTML content acquied from the markdown source.
+            - extra: Update any "extra" content found in meta that isn't already defined.
+        """
+
+        title = "Untitled"
         if "title" in meta and isinstance(meta["title"], compat.string_type):
-            title = meta["title"]
+            title = compat.to_unicode(meta["title"])
             del meta["title"]
-        if self.page["title"] is None:
-            self.page["title"] = compat.to_unicode(title)
+        if self.page["title"] is not None:
+            title = compat.to_unicode(self.page["title"])
+
+        self.page["title"] = cgi.escape(title)
+        self.page["pygments_style"] = self.load_highlight(self.settings.get("pygments_style", None))
+        self.page["content"] = text
 
         # Merge the meta data
         for extras in (meta, self.settings.get('extra', {})):
@@ -173,13 +185,13 @@ class Html(object):
         if self.file:
             self.file.close()
 
-    def write(self, text):
+    def write(self, text, meta=None):
         """Write the given text to the output file."""
 
-        self.page["pygments_style"] = self.load_highlight(self.settings.get("pygments_style", None))
-        self.page["content"] = text
-        title = self.page["title"]
-        self.page["title"] = cgi.escape(compat.to_unicode(title if title else "Untitled"))
+        if meta is None:
+            meta = {}
+
+        self.update_template_variables(text, meta)
 
         template = Template(
             basepath=self.basepath,

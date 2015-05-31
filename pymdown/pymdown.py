@@ -42,18 +42,6 @@ class Convert(object):
         self.title = kwargs.get('title')
         self.settings_path = kwargs.get('settings_path')
 
-    def get_title(self, file_name):
-        """Get the best guess for title (frontmatter not yet considered)."""
-
-        # Resolve title for meta
-        if self.title is not None:
-            title = str(self.title)
-        elif file_name is not None:
-            title = path.splitext(path.basename(path.abspath(file_name)))[0]
-        else:
-            title = None
-        return title
-
     def strip_frontmatter(self, text):
         """
         Extract settings from file frontmatter and config file.
@@ -176,6 +164,8 @@ class Convert(object):
                 # Set up Converter
                 converter = mdconvert.MdConverts(
                     text,
+                    title=self.title,
+                    file_name=file_name,
                     smart_emphasis=self.settings["settings"].get('smart_emphasis', True),
                     lazy_ol=self.settings["settings"].get('lazy_ol', True),
                     tab_length=self.settings["settings"].get('tab_length', 4),
@@ -190,12 +180,8 @@ class Convert(object):
                 # Markdown -> HTML
                 converter.convert()
 
-                # Merge meta data
-                title = self.get_title(file_name)
-                html.update_meta(title, converter.meta)
-
                 # Write the markdown to the HTML
-                html.write(converter.markdown)
+                html.write(converter.markdown, converter.meta)
             except Exception:
                 logger.Log.error(str(traceback.format_exc()))
                 status = FAIL

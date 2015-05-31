@@ -11,6 +11,7 @@ from __future__ import absolute_import
 from markdown import Markdown
 import codecs
 import traceback
+import os
 import re
 from . import logger
 from . import compat
@@ -103,7 +104,15 @@ class MdConvert(object):
         base_path = kwargs.get('base_path')
         relative_path = kwargs.get('relative_path')
         output_path = kwargs.get('output_path')
+        title = kwargs.get('title')
+        file_name = kwargs.get('file_name')
 
+        if title is not None:
+            self.title = title
+        elif file_name is not None:
+            self.title = os.path.splitext(os.path.basename(os.path.abspath(file_name)))[0]
+        else:
+            self.title = None
         self.meta = {}
         self.source = source
         self.base_path = base_path if base_path is not None else ''
@@ -116,6 +125,22 @@ class MdConvert(object):
         self.lazy_ol = kwargs.get('lazy_ol', True)
         self.enable_attributes = kwargs.get('enable_attributes', True)
         self.output_format = kwargs.get('output_format', 'xhtml1')
+
+    def update_meta(self, md):
+        """
+        Set meta to the Markdown objects meta if available.
+
+        Set the title to the initialized title if not title is found in Meta
+        and initialized title is not 'None'.
+        """
+
+        if hasattr(md, 'Meta'):
+            self.meta = md.Meta
+        if (
+            self.title is not None and
+            ("title" not in self.meta or not isinstance(self.meta["title"], compat.string_type))
+        ):
+            self.meta['title'] = self.title
 
     def process_extensions(self, extensions):
         """Process the extensions separating extension name from configuration."""
@@ -156,10 +181,7 @@ class MdConvert(object):
                     output_format=self.output_format
                 )
                 self.markdown = md.convert(f.read())
-                try:
-                    self.meta = md.Meta
-                except Exception:
-                    pass
+                self.update_meta(md)
         except Exception:
             raise MdConvertException(str(traceback.format_exc()))
 
@@ -183,9 +205,6 @@ class MdConverts(MdConvert):
                 output_format=self.output_format
             )
             self.markdown = md.convert(self.source)
-            try:
-                self.meta = md.Meta
-            except Exception:
-                pass
+            self.update_meta(md)
         except Exception:
             raise MdConvertException(str(traceback.format_exc()))
