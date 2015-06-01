@@ -3,7 +3,7 @@ PyMdown extensions.
 
 ---
 
-# Overview
+## Overview
 The PyMdown extension is a convenience extension to load up the following extensions with their default settings. It currently provides no other additional features.
 
 Extensions:

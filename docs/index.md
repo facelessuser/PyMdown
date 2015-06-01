@@ -7,7 +7,7 @@ A Python Markdown Preview and Converter Tool
 !!! Danger "Under Construction"
     This documentation is currently under construction, and things are subject to change.
 
-# Overview
+## Overview
 PyMdown is a CLI tool to convert or even batch convert Markdown files to HTML.  It can also generate HTML previews of Markdown and auto-open them in a web browser. It allows for specifying simple HTML templates for the Markdown where you can include CSS and JavaScript.  PyMdown is built on top of [Python Markdown][py_md] and [Pygments][pygments].
 
 ---

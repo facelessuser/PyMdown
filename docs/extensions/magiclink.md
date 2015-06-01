@@ -3,10 +3,10 @@ URL and email address auto-linking.
 
 ---
 
-# Overview
+## Overview
 GFM has a nice feature that detects and auto-generates links.  This extension adds similar functionality to Python Markdown allowing you to just type or paste links; no special syntax required.  It auto-links HTML, FTP, and email links.
 
-# Examples
+## Examples
 
 ```
 This requires no special syntax.

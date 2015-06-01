@@ -3,10 +3,10 @@ Github style tasklists.
 
 ---
 
-# Overview
+## Overview
 The Tasklist extension adds GFM style checkbox lists.  They follow the same syntax as GFM.
 
-# Examples
+## Examples
 
 ```
 Task List

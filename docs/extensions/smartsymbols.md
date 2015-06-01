@@ -3,10 +3,10 @@ Auto-convert special symbols.
 
 ---
 
-# Overview
+## Overview
 SmartSymbols adds syntax for creating special characters such as trademarks, arrows, fractions, etc.  It basically allows for more "smarty-pants" type replacements.  It is meant to be used along side the Python Markdown's `smarty` extension.
 
-# Options
+## Options
 | Option          | Type | Default | Description |
 |-----------------|------|---------|-------------|
 | trademark       | bool | True | Add syntax for tradmark symbol.   |
@@ -19,7 +19,7 @@ SmartSymbols adds syntax for creating special characters such as trademarks, arr
 | fractions       | bool | True | Add syntax for common fractions.  |
 | ordinal_numbers | bool | True | Add syntax for ordinal numbers.   |
 
-# Examples
+## Examples
 
 | Markdown      | Result     |
 |---------------|------------|

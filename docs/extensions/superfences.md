@@ -3,7 +3,7 @@ Better fenced blocks.
 
 ---
 
-# Overview
+## Overview
 SuperFences provides 4 features:
 
 1. The ability to nest fences under blockquotes, lists, or other block elements (this feature is provided as a workaround until a more official and better implementation is provided by the Python Markdown team; see [Limitations](#limitations) for more info).
@@ -15,7 +15,7 @@ All features can be turned on or off.
 
 SuperFences relies on the [CodeHilite](https://pythonhosted.org/Markdown/extensions/code_hilite.html) extension for syntax highlighting, so CodeHilite is expected to be installed and configured if syntax highlighting desired.  If CodeHilite is not configured or installed, SuperFences will just escape in such a way that a JavaScript highlighter could be used.
 
-## Nested Fenced Blocks
+### Nested Fenced Blocks
 Fenced blocks requires all nested fence content to be at least at the indentation levels of the fences (blank lines excluded).  The opening and closing fence markers must be indented at the same level.  If you are using a fenced block inside a blockquote, at least the first line of the fenced block needs to have the appropriate number of `>` characters signifying the quote depth.
 
 ````
@@ -49,7 +49,7 @@ Definition
     ```
 ````
 
-## UML Diagrams
+### UML Diagrams
 When using the UML diagram features, you must provide the necessary JavaScript files for the HTML output.  The requirements are listed below:
 
 **flowcharts:**
@@ -147,7 +147,7 @@ Simply including the libraries above is not enough as these libraries need to be
 
 UML flowcharts and sequence diagrams will be rendered as HTML `<pre><code>` tags before the JavaScript libraries are run on them.  They will be assigned CSS classes `uml-flowchart` and `uml-sequence-diagram` respectively for flowcharts and sequence diagrams.
 
-# Limitations
+## Limitations
 This extension suffers from the same issues that the original fenced block extension suffers from.  Normally Python Markdown does not parse content inside HTML tags unless they are marked with the attribute `markdown='1'` etc.  But since this is run as a preprocessor, it is not aware of the HTML blocks.  So be aware of this.
 
 SuperFences is made to work with the default extensions out of the box.  It will probably not work with other extensions such as Grid Tables since that extension allows for characters to obscure the blocks like blockquote syntax does (though this has been designed to work with blockquotes).  Ideally fenced blocks needs to be handled as a block parser, but there is much work to be done on Python Markdown's internal block handlers before this is possible.
@@ -156,7 +156,7 @@ SuperFences works best when following the guidelines.  If the guidelines are not
 
 For the reasons above, the nested fences feature really is just a workaround.  But for a lot of people (including myself), this functionality is more than sufficient.
 
-# Options
+## Options
 General syntax highlighting settings are configured via CodeHilite which should be installed and configured.
 
 | Option    | Type | Default | Description |
@@ -166,10 +166,10 @@ General syntax highlighting settings are configured via CodeHilite which should 
 | uml_flow | bool | True | Enable flowcharts. |
 | uml_sequence | bool | True | Enable sequence diagrams. |
 
-# Examples
+## Examples
 This highlights the special features of this extension except for `disable_indented_code_blocks`.
 
-## Nested Fences:
+### Nested Fences:
 
 ````
     ```
@@ -235,7 +235,7 @@ as a fenced code block.
         > Not a problem!
         > ```
 
-## UML Flow Charts
+### UML Flow Charts
 ````
 ```flow
 st=>start: Start:>http://www.google.com[blank]

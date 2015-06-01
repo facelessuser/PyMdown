@@ -3,14 +3,14 @@ Relative and absolute path conversion.
 
 ---
 
-# Overview
+## Overview
 PathConverter is an extension that can convert paths to absolute or relative paths for links and images.  PathConverter takes a base path (an absolute path used as a reference for locating images and referenced files) and a relative path (an absolute path that the links will be relative to after conversion if not running in absolute mode) and then converts paths for the `href` and/or `src` attributes in `a`, `script`, `img`, and `link` tags.
 
 PathConverter will only operate on file paths that can be confirmed to exist on the system it is run on.  Absolute mode is mostly useful for PyMdown tool to render previews.  Relative mode is the more useful mode as it can be used to render HTML for use in an actual website.  This entire documentation site was created using the this extension in relative mode.
 
 PathConverter is also intelligent enough to only operate on the file portion of the a path link.  Consider the following scenario:  `path/to/file.html#header-to-jump-to`.  In the example, `path/to/file.html` will be converted, but `#header-to-jump-to` will be left unaltered.
 
-# Options
+## Options
 
 | Option    | Type | Default | Description |
 |-----------|------|---------|-------------|

@@ -3,10 +3,10 @@ Github style header anchors.
 
 ---
 
-# Overview
+## Overview
 HeaderAnchor adds anchors to headers in the style of GFM&rsquo;s header anchors. The header anchors in this document were all generated with this extension.
 
-# Options
+## Options
 By default, HeaderAnchor will use [Toc&rsquo;s](https://pythonhosted.org/Markdown/extensions/toc.html) settings (if Toc is being used), but HeaderAnchor can be run without Toc.  HeaderAnchor can also be run along side Toc and ignore Toc&rsquo;s settings; though it is advised to keep Toc and HeaderAnchor's settings in sync to ensure header links properly link.
 
 | Option    | Type | Default |Description |
@@ -15,7 +15,7 @@ By default, HeaderAnchor will use [Toc&rsquo;s](https://pythonhosted.org/Markdow
 | slugify | function | Default method | If ignoring Toc&rsquo;s settings, this will specify the function to generate anchors based on header text.  By Default, this will use Toc&rsquo;s default, fallback slugify method, but if for any reason Toc is not installed, HeaderAnchor will fall back to an equivalent method. |
 | use_toc_settings | bool | True | This specifies whether HeaderAnchor should get its settings from Toc.  This affects `slugify` and `separator`. |
 
-# CSS
+## CSS
 This is the CSS used for rendering the header anchors in this document. While Font Awesome is used, you can substitute it with [Octicons](https://octicons.github.com/) for even more of a GFM feel, or use something else entirely.
 
 The HTML tags with classes are set like this:
