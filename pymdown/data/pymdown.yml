@@ -13,11 +13,11 @@
 #     - somefile.css
 # ---
 #
-# but if you want to append to the list, you can use the 'include.css' keyword in the
+# but if you want to append to the list, you can use just the 'css' keyword in the
 # frontmatter:
 #
 # ---
-# include.css:
+# css:
 #   - somefile.css
 # ---
 #
@@ -56,11 +56,11 @@ template: default/template.html
 #     - somefile.js
 # ---
 #
-# but if you want to append to the list, you can use the 'include.js' keyword in the
+# but if you want to append to the list, you can use 'js' keyword directly in the
 # frontmatter:
 #
 # ---
-# include.js:
+# js:
 #   - somefile.js
 # ---
 #

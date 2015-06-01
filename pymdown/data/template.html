@@ -44,8 +44,15 @@ body .markdown-body {
   }
 }
 </style>
-{{ pages.includes.css|getcss }}
-{{ pages.includes.js|getjs }}
+{{ pages.css|getcss }}
+{%if extra.flow %}{{ extra.flow_source.css|getcss }}{% endif %}
+{%if extra.sequence %}{{ extra.sequence_source.css|getcss }}{% endif %}
+{%if extra.mathjax %}{{ extra.mathjax_source.css|getcss }}{% endif %}
+{%if page.pygments_style %}{{ page.pygments_style }}{% endif %}
+{{ pages.js|getjs }}
+{%if extra.flow %}{{ extra.flow_source.js|getjs }}{% endif %}
+{%if extra.sequence %}{{ extra.sequence_source.js|getjs }}{% endif %}
+{%if extra.mathjax %}{{ extra.mathjax_source.js|getjs }}{% endif %}
 <title>{{ page.title }}</title>
 </head>
 <body>

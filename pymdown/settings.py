@@ -28,10 +28,11 @@ class MergeSettings(object):
     """
     Apply front matter to settings object etc.
 
-    PAGE_KEYS: destination, basepath, references,
-               include.js', include.css', include
-    SETTIGS_KEY: settings
-    META_KEYS: all other keys that aren't handled above
+    PAGE_KEYS: destination, basepath, relpath,
+               js, css, title, encoding, content
+    SETTINGS KEY: settings.
+    REFERENCES: contains external reference files for footnotes etc.
+    EXTRA KEYS: all other keys that aren't handled above.
     """
 
     def __init__(self, file_name, is_stream):
@@ -108,16 +109,15 @@ class MergeSettings(object):
         js = settings['settings'].get('js', [])
 
         # Javascript and CSS include
-        for i in ("css", "js"):
-            key = 'include.%s' % i
+        for key in ("css", "js"):
             if key in frontmatter:
                 value = frontmatter[key]
                 if isinstance(value, list):
-                    locals()[i] += [v for v in value if isinstance(v, compat.unicode_type)]
+                    locals()[key] += [v for v in value if isinstance(v, compat.unicode_type)]
                 del frontmatter[key]
 
-        settings['page']['includes']['css'] += css
-        settings['page']['includes']['js'] += js
+        settings['page']['css'] += css
+        settings['page']['js'] += js
 
     def merge_references(self, frontmatter, settings):
         """Merge reference."""
@@ -192,10 +192,8 @@ class Settings(object):
                 "destination": None,
                 "basepath": None,
                 "relpath": None,
-                "includes": {
-                    "css": [],
-                    "js": []
-                },
+                "css": [],
+                "js": [],
                 "content": '',
             },
             "extra": {},
