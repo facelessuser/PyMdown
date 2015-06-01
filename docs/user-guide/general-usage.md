@@ -15,33 +15,33 @@ Though PyMdown could be used to generate a site, it was mainly designed to gener
 ### Input Files
 In its most basic usage, PyMdown accepts a markdown file:
 
-```
+```bash
 pymdown file.md
 ```
 
 or a file stream:
 
-```
+```bash
 pymdown < file.md
 ```
 
 ### Specifying Output
 PyMdown allows the output to be specified with the `--output` or `-o` option:
 
-```
+```bash
 pymdown -o file.html file.md
 ```
 
 Alternatively you can redirect the output:
 
-```
+```bash
 pymdown -o file.md > file.html
 ```
 
 ### Batch Processing
 PyMdown has a batch processing mode (`--batch` or `-b`). When the batch flag is set, PyMdown will accept multiple paths and wild-card patterns.
 
-```
+```bash
 pymdown -b *.md documents/*md
 ```
 
@@ -50,41 +50,41 @@ When in batch mode, PyMdown will simply transform the input file name: `file.md`
 ### Previewing Markdown
 With the `--preview` or `-p` option, PyMdown will generate a temp HTML file and open it in the default web browser.  Preview mode will work in normal and batch mode.
 
-```
+```bash
 pymdown -p file.md
 ```
 
 ### Basepath
 PyMdown in various circumstances (particularly in conjunction with specific PyMdown extensions) will try and resolve image, CSS, and JS asset paths for previews, base64 encoding, and other scenarios.  In order for this to work, a base path may be required and can be specified using the `--basepath` option.  If no base path is given, the base path will be that of the source file or `None` if the source is a file stream.
 
-```
+```bash
 pymdown --basepath ../assets file.md
 ```
 
 ### Relpath
 PyMdown in various circumstances (particularly in conjunction with specific PyMdown extensions) will try to create relative paths to assets or sources such as images, CSS, and JS.  In order for this to work, a relative path is needed.  The `--relpath` option is used to set this.  If `--relpath` is not set, it defaults to the output directory.  If the output directory is also not set (when output is dumped to stdout), the relative path will not be set.
 
-```
+```bash
 pymdown --relpath ../somedirectory file.md
 ```
 
 ### Settings
 PyMdown will normally look in the location of the [configuration directory](#configuration-file) to find the settings file, but the filename and path can be redirected with the `--settings` or `-s` option.
 
-```
+```bash
 pymdown -s ../my_settings.yml file.md
 ```
 
 ### Encoding
 PyMdown can be configured to read the Markdown file(s) with a different encoding than the default `UTF-8`.  This is done with the `--encoding` or `-e` option.
 
-```
+```bash
 pymdown -e utf-8 file.md
 ```
 
 By default, the output encoding will be the same as the input, but if greater control is needed, the user can set the output encoding via the `--output_encoding` or `-E` option.
 
-```
+```bash
 pymdown -E utf-8 file.md
 ```
 
@@ -107,28 +107,28 @@ Lastly, the `--critic-dump` option, when used with either the `--accept` or `--r
 ### Plain HTML
 If a stripped down HTML output is preferred, the `--plain-html` or `-P` option will return a stripped down output with no templates, no HTML comments, and no id, style, class, or on* attributes.
 
-```
+```bash
 pymdown -P file.md
 ```
 
 ### Force No Template
 If by default the configuration file has defined a template, but it is desired to do an output without the template, the `--force-no-template` option can be used to disable template use.
 
-```
+```bash
 pymdown --force-no-template file.md
 ```
 
 ### Force Stdout
 Sometimes a file may have frontmatter that redirects its output to a file, but it may be desirable to send the output to stdout.  In this case, the `--force-stdout` option can be used to force a redirect to stdout.
 
-```
+```bash
 pymdown --force-stdout file.md
 ```
 
 ### Quiet
 In some situations it may be desired to hide error messages and general info from the stdout.  In this case, the `--quiet` or `-q` option may be used.
 
-```
+```bash
 pymdown -q file.md
 ```
 

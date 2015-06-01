@@ -20,7 +20,7 @@ In order for PyMdown to work, there are a couple of prerequisites.  If installin
 | [PyMdown Lexers](https://github.com/facelessuser/pymdown-lexers) | No | Optional package that adds a couple of non-standard lexers, but nothing of substantial interest. This is a great example for adding your own custom lexers. |
 
 ## Installation
-You can download PyMdown and run it as a script bundle, or build and copy the binary in your path.  To install the traditional way, run `python setup.py build` and `python setup.py install`.  You should be able to access PyMdown from the command line via `pymdown` or `pymdownX.X` where `X.X` is your python version.  PyMdown on the first run will unpack user files to `~\.PyMdown` on Windows, `~/.PyMdown` on OSX and `~/.config/PyMdown` on Linux.
+You can download PyMdown and run it as a script bundle, or build and copy the binary in your path.  To install the traditional way, run `#!bash python setup.py build` and `#!bash python setup.py install`.  You should be able to access PyMdown from the command line via `pymdown` or `pymdownX.X` where `X.X` is your python version.  PyMdown on the first run will unpack user files to `~\.PyMdown` on Windows, `~/.PyMdown` on OSX and `~/.config/PyMdown` on Linux.
 
 ## Build
 If building, you will need to download the latest PyInstaller from [Github](https://github.com/pyinstaller/pyinstaller).  Just unzip the content into the root of the PyMdown project and ensure the main folder is named `pyinstaller`.  Then, from PyMdown's root directory, run `python build -c`.  The binary should be created in the `dist` folder.  This is regularly tested on Windows 7 and OSX 10.10.  Linux may require some playing around if it doesn't work out of the box.
