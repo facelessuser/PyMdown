@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <head>
 <meta charset="{{ page.encoding }}">
-{{ page.includes.css|getcss }}
+{{ page.css|getcss }}
 {%if extra.flow %}{{ extra.flow_source.css|getcss }}{% endif %}
 {%if extra.sequence %}{{ extra.sequence_source.css|getcss }}{% endif %}
 {%if extra.mathjax %}{{ extra.mathjax_source.css|getcss }}{% endif %}
 {%if page.pygments_style %}{{ page.pygments_style }}{% endif %}
-{{ page.includes.js|getjs }}
+{{ page.js|getjs }}
 {%if extra.flow %}{{ extra.flow_source.js|getjs }}{% endif %}
 {%if extra.sequence %}{{ extra.sequence_source.js|getjs }}{% endif %}
 {%if extra.mathjax %}{{ extra.mathjax_source.js|getjs }}{% endif %}
