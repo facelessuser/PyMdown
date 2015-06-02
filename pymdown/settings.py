@@ -148,7 +148,7 @@ class MergeSettings(object):
                 settings['settings']['use_template'] = frontmatter['use_template']
             del frontmatter['use_template']
 
-        if 'settings' in frontmatter and isinstance(frontmatter['settings'], dict):
+        if 'settings' in frontmatter and isinstance(frontmatter['settings'], (dict, OrderedDict)):
             value = frontmatter['settings']
             for subkey, subvalue in value.items():
                 # Html template
@@ -173,7 +173,8 @@ class MergeSettings(object):
     def merge_meta(self, frontmatter, settings):
         """Resolve all other frontmatter items as meta/extra items."""
 
-        settings["extra"] = settings["settings"]["extra"]
+        if settings["settings"].get('extra') and isinstance(settings["settings"].get('extra'), (dict, OrderedDict)):
+            settings["extra"] = settings["settings"].get("extra", {})
 
         for key, value in frontmatter.items():
             if key == 'title' and isinstance(value, compat.unicode_type):
@@ -396,7 +397,9 @@ class Settings(object):
                     logger.Log.error("Cannot find style: %s! Falling back to 'default' style." % style)
                     style = "default"
 
-        settings["settings"]["pygments_style"] = self.load_highlight(
+        settings["settings"]["pygments_style"] = style
+
+        settings["page"]["pygments_style"] = self.load_highlight(
             style,
             settings["settings"]["use_pygments_css"],
             settings["settings"].get('pygments_class', 'codehilite')
