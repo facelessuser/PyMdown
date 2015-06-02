@@ -1,4 +1,4 @@
 pygments_class: highlight
 
-extensions:
+markdown_extensions:
     markdown.extensions.codehilite:

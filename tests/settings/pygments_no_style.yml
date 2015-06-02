@@ -1,4 +1,4 @@
 pygments_style:
 
-extensions:
+markdown_extensions:
     markdown.extensions.codehilite:

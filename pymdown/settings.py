@@ -358,7 +358,7 @@ class Settings(object):
     def post_process_settings(self, settings):
         """Process the settings files making needed adjustement."""
 
-        extensions = settings["settings"].get("extensions", OrderedDict())
+        extensions = settings["settings"].get("markdown_extensions", OrderedDict())
 
         critic_mode = "ignore"
         if self.critic & util.CRITIC_ACCEPT:
@@ -399,7 +399,7 @@ class Settings(object):
             extensions['pymdownx.plainhtml'] = None
 
         # Set extensions to its own key
-        settings["settings"]["extensions"] = extensions
+        settings["settings"]["markdown_extensions"] = extensions
 
         # Set style
         self.set_style(extensions, settings)

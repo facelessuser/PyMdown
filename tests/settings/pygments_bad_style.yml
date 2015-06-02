@@ -1,4 +1,4 @@
 pygments_style: doesnotexist
 
-extensions:
+markdown_extensions:
     markdown.extensions.codehilite:

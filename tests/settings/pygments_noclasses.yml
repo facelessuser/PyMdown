@@ -1,4 +1,4 @@
-extensions:
+markdown_extensions:
     markdown.extensions.codehilite:
         pygments_style: default
         noclasses: True

@@ -174,7 +174,7 @@ class Convert(object):
                     output_path=path.dirname(html.file.name) if html.file.name else self.config.out,
                     enable_attributes=self.settings["settings"].get('enable_attributes', True),
                     output_format=self.settings["settings"].get('output_format', 'xhtml1'),
-                    extensions=self.settings["settings"]["extensions"]
+                    markdown_extensions=self.settings["settings"]["markdown_extensions"]
                 )
 
                 # Markdown -> HTML

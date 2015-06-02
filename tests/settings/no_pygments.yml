@@ -1,3 +1,3 @@
-extensions:
+markdown_extensions:
     markdown.extensions.codehilite:
         use_pygments: False

@@ -97,7 +97,7 @@ enable_attributes: true
 output_format: 'xhtml1'
 
 # Python Markdown extensions
-extensions:
+markdown_extensions:
   markdown.extensions.extra:
   markdown.extensions.toc:
     title: Table of Contents

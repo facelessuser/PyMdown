@@ -28,7 +28,7 @@ class TestSettings(unittest.TestCase):
             stream=True,
             critic=util.CRITIC_ACCEPT,
         ).get(None)
-        option = s.get('settings').get('extensions').get('pymdownx.critic').get('mode')
+        option = s.get('settings').get('markdown_extensions').get('pymdownx.critic').get('mode')
         self.assertEqual(option, 'accept')
 
     def test_critic_allow_override(self):
@@ -38,7 +38,7 @@ class TestSettings(unittest.TestCase):
             'critic.yml',
             stream=True
         ).get(None)
-        option = s.get('settings').get('extensions').get('pymdownx.critic').get('mode')
+        option = s.get('settings').get('markdown_extensions').get('pymdownx.critic').get('mode')
         self.assertEqual(option, 'reject')
 
     def test_critic_frontmatter_override(self):
@@ -51,7 +51,7 @@ class TestSettings(unittest.TestCase):
             None,
             frontmatter=OrderedDict(
                 [('settings', OrderedDict(
-                    [('extensions', OrderedDict(
+                    [('markdown_extensions', OrderedDict(
                         [('pymdownx.critic', OrderedDict(
                             [('mode', 'accept')]
                         ))]
@@ -59,7 +59,7 @@ class TestSettings(unittest.TestCase):
                 ))]
             )
         )
-        option = s.get('settings').get('extensions').get('pymdownx.critic').get('mode')
+        option = s.get('settings').get('markdown_extensions').get('pymdownx.critic').get('mode')
         self.assertEqual(option, 'accept')
 
     def test_critic_reject(self):
@@ -70,7 +70,7 @@ class TestSettings(unittest.TestCase):
             stream=True,
             critic=util.CRITIC_REJECT
         ).get(None)
-        option = s.get('settings').get('extensions').get('pymdownx.critic').get('mode')
+        option = s.get('settings').get('markdown_extensions').get('pymdownx.critic').get('mode')
         self.assertEqual(option, 'reject')
 
     def test_critic_view(self):
@@ -81,7 +81,7 @@ class TestSettings(unittest.TestCase):
             stream=True,
             critic=util.CRITIC_VIEW
         ).get(None)
-        options = s.get('settings').get('extensions').get('pymdownx.critic')
+        options = s.get('settings').get('markdown_extensions').get('pymdownx.critic')
         self.assertEqual(options.get('mode'), 'view')
 
     def test_plain_prevent_override(self):
@@ -92,7 +92,7 @@ class TestSettings(unittest.TestCase):
             plain=True,
             stream=True
         ).get(None)
-        options = s.get('settings').get('extensions').get('pymdownx.plainhtml')
+        options = s.get('settings').get('markdown_extensions').get('pymdownx.plainhtml')
         self.assertEqual(options, None)
 
     def test_plain_allow_override(self):
@@ -102,7 +102,7 @@ class TestSettings(unittest.TestCase):
             'plain.yml',
             stream=True
         ).get(None)
-        options = s.get('settings').get('extensions').get('pymdownx.plainhtml')
+        options = s.get('settings').get('markdown_extensions').get('pymdownx.plainhtml')
         self.assertEqual(options.get('strip_comments'), False)
 
     def test_pygments_no_style(self):
@@ -165,7 +165,7 @@ class TestSettings(unittest.TestCase):
             preview=True,
             stream=True
         ).get(None)
-        options = s.get('settings').get('extensions').get('pymdownx.pathconverter')
+        options = s.get('settings').get('markdown_extensions').get('pymdownx.pathconverter')
         self.assertEqual(options.get('relative_path'), '${OUTPUT}')
 
     def test_preview_pathconverter(self):
@@ -176,7 +176,7 @@ class TestSettings(unittest.TestCase):
             preview=True,
             stream=True
         ).get(None)
-        options = s.get('settings').get('extensions').get('pymdownx.pathconverter')
+        options = s.get('settings').get('markdown_extensions').get('pymdownx.pathconverter')
         self.assertEqual(options.get('relative_path'), '${OUTPUT}')
         self.assertEqual(options.get('base_path'), '${BASE_PATH}')
 

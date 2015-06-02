@@ -15,7 +15,7 @@ author:
 # Settings overrides
 settings:
   template: example-template.html
-  extensions:
+  markdown_extensions:
     markdown.extensions.extra:
     markdown.extensions.toc:
       title: Table of Contents
@@ -41,7 +41,7 @@ title: This title will be overridden by YAML
     This is mainly to visually inspect markdown output offered by PyMdown.  This isn't a real test.  Here are the enabled extensions:
 
     ```yaml
-        extensions:
+        markdown_extensions:
           markdown.extensions.extra:
           markdown.extensions.toc:
             title: Table of Contents

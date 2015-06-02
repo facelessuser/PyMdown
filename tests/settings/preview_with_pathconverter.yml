@@ -1,2 +1,2 @@
-extensions:
+markdown_extensions:
     pymdownx.pathconverter:

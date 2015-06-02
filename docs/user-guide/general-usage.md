@@ -296,10 +296,10 @@ disable_path_conversion: false
     The other exception is with previews.  In order for links and references to work in previews, they must be paths that are relative to the preview's temp directory or they must be absolute paths.  For this reason, PyMdown will always enable path conversions for previews.  If you have manually set up the `pathconverter` extension, preview's will overwrite the `relative_path` argument to ensure it is set to `${OUTPUT}` which will allow the preview to display content properly by making asset paths relative to the previews location.  By default, the `relative_path` is set to `${REL_PATH}` which is the output path by default, but can be altered via the command line option `--relpath` or the `relpath` frontmatter option.
 
 ### Python Markdown Extensions
-Extensions to be used are defined under the **extensions** keyword.  **extensions** is an ordered key/value pair. An extension has a name followed by `:` in yaml format.  If you want to include settings parameters, you can include those as the extension value.  All parameters should be done as key/value pairs as shown below.
+Extensions to be used are defined under the **markdown_extensions** keyword.  **markdown_extensions** is an ordered key/value pair. An extension has a name followed by `:` in yaml format.  If you want to include settings parameters, you can include those as the extension value.  All parameters should be done as key/value pairs as shown below.
 
 ```yaml
-extensions:
+markdown_extensions:
   markdown.extensions.extra:
   markdown.extensions.toc:
     title: Table of Contents
