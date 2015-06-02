@@ -181,7 +181,7 @@ class Convert(object):
                 converter.convert()
 
                 # Write the markdown to the HTML
-                html.write(converter.markdown, converter.meta)
+                html.write(converter.markdown)
             except Exception:
                 logger.Log.error(str(traceback.format_exc()))
                 status = FAIL

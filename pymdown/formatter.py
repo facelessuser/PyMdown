@@ -132,7 +132,7 @@ class Html(object):
         self.file = None
         self.user_path = util.get_user_path()
 
-    def update_template_variables(self, text, meta):
+    def update_template_variables(self, text):
         """
         Update date template variables with meta info acquired from file and from settings.
 
@@ -143,9 +143,6 @@ class Html(object):
         """
 
         title = "Untitled"
-        if "title" in meta and isinstance(meta["title"], compat.string_type):
-            title = compat.to_unicode(meta["title"])
-            del meta["title"]
         if self.page["title"] is not None:
             title = compat.to_unicode(self.page["title"])
 
@@ -154,10 +151,9 @@ class Html(object):
         self.page["content"] = text
 
         # Merge the meta data
-        for extras in (meta, self.settings.get('extra', {})):
-            for k, v in deepcopy(extras).items():
-                if k not in self.extra:
-                    self.extra[k] = v
+        for k, v in deepcopy(self.settings.get('extra', {})).items():
+            if k not in self.extra:
+                self.extra[k] = v
 
     def open(self):
         """Set and create the output target and target related flags."""
@@ -185,13 +181,10 @@ class Html(object):
         if self.file:
             self.file.close()
 
-    def write(self, text, meta=None):
+    def write(self, text):
         """Write the given text to the output file."""
 
-        if meta is None:
-            meta = {}
-
-        self.update_template_variables(text, meta)
+        self.update_template_variables(text)
 
         template = Template(
             basepath=self.basepath,
