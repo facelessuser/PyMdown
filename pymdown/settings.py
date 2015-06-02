@@ -11,16 +11,29 @@ from __future__ import absolute_import
 import codecs
 import traceback
 import os.path as path
+import cgi
 from collections import OrderedDict
 from copy import deepcopy
 from . import util
 from . import logger
 from . import compat
 try:
-    from pygments.styles import get_style_by_name
+    from pygments.styles import get_style_by_name, get_formatter_by_name
     PYGMENTS_AVAILABLE = True
 except Exception:  # pragma: no cover
     PYGMENTS_AVAILABLE = False
+
+
+def get_pygment_style(style, css_class='codehilite'):
+    """Get the specified pygments sytle CSS."""
+
+    try:
+        # Try and request pygments to generate it
+        text = get_formatter_by_name('html', style=style).get_style_defs('.' + css_class)
+    except Exception:
+        # Try and request pygments to generate default
+        text = get_formatter_by_name('html', style="default").get_style_defs('.' + css_class)
+    return '<style>\n%s\n</style>\n' % text if text is not None else ""
 
 
 class MergeSettings(object):
@@ -130,6 +143,11 @@ class MergeSettings(object):
     def merge_settings(self, frontmatter, settings):
         """Handle and merge PyMdown settings."""
 
+        if 'use_template' in frontmatter:
+            if isinstance(frontmatter['use_template'], bool):
+                settings['settings']['use_template'] = frontmatter['use_template']
+            del frontmatter['use_template']
+
         if 'settings' in frontmatter and isinstance(frontmatter['settings'], dict):
             value = frontmatter['settings']
             for subkey, subvalue in value.items():
@@ -154,6 +172,8 @@ class MergeSettings(object):
 
     def merge_meta(self, frontmatter, settings):
         """Resolve all other frontmatter items as meta/extra items."""
+
+        settings["extra"] = settings["settings"]["extra"]
 
         for key, value in frontmatter.items():
             if key == 'title' and isinstance(value, compat.unicode_type):
@@ -254,6 +274,7 @@ class Settings(object):
         basepath = kwargs.get('basepath', None)
         relpath = kwargs.get('relpath', None)
         frontmatter = kwargs.get('frontmatter', None)
+        title = kwargs.get('title', None)
 
         self.file_name = file_name
         settings = deepcopy(self.settings)
@@ -273,6 +294,15 @@ class Settings(object):
             # Apply frontmatter by merging it to the settings
             merge = MergeSettings(self.file_name, self.is_stream)
             merge.merge(frontmatter, settings)
+
+        # Handle title
+        if title is None and file_name is not None:
+            title = path.splitext(path.basename(path.abspath(file_name)))[0]
+        if settings["page"]["title"] is not None:
+            title = settings["page"]["title"]
+        else:
+            title = compat.to_unicode(title) if title else "Untitled"
+        settings["page"]["title"] = cgi.escape(title)
 
         # Store destination as our output reference directory.
         # This is used for things like converting relative paths.
@@ -305,6 +335,18 @@ class Settings(object):
         # Do some post processing on the settings
         self.post_process_settings(settings)
         return settings
+
+    def load_highlight(self, highlight_style, use_pygments_css, pygments_class):
+        """Load Syntax highlighter CSS."""
+
+        style = None
+
+        if not self.plain:
+            if PYGMENTS_AVAILABLE and highlight_style is not None and use_pygments_css:
+                # Ensure pygments is enabled in the highlighter
+                style = get_pygment_style(highlight_style, pygments_class)
+
+        return style
 
     def set_style(self, extensions, settings):
         """
@@ -353,7 +395,12 @@ class Settings(object):
                 except Exception:
                     logger.Log.error("Cannot find style: %s! Falling back to 'default' style." % style)
                     style = "default"
-        settings["settings"]["pygments_style"] = style
+
+        settings["settings"]["pygments_style"] = self.load_highlight(
+            style,
+            settings["settings"]["use_pygments_css"],
+            settings["settings"].get('pygments_class', 'codehilite')
+        )
 
     def post_process_settings(self, settings):
         """Process the settings files making needed adjustement."""

@@ -13,6 +13,7 @@ from __future__ import print_function
 from . import util
 import codecs
 import os.path as path
+from .template import Template
 from . import critic_dump
 from . import logger
 from . import formatter
@@ -52,7 +53,7 @@ class Convert(object):
         frontmatter, text = util.get_frontmatter(text)
         return frontmatter, text
 
-    def get_file_settings(self, file_name, frontmatter=None):
+    def get_file_settings(self, file_name, title=None, frontmatter=None):
         """
         Get the file settings merged with the file's frontmatter.
 
@@ -67,7 +68,7 @@ class Convert(object):
 
         try:
             self.settings = self.config.get(
-                file_name, output=self.output, basepath=self.basepath,
+                file_name, title=title, output=self.output, basepath=self.basepath,
                 relpath=self.relpath, frontmatter=frontmatter
             )
         except Exception:
@@ -161,11 +162,22 @@ class Convert(object):
             try:
                 html.open()
 
+                # Prepare template from markdown text to apply template variables
+                template = Template(
+                    basepath=self.settings["page"]["basepath"],
+                    relpath=self.settings["page"]["relpath"],
+                    force_conversion=self.config.preview,
+                    disable_path_conversion=self.settings["settings"].get("disable_path_conversion", False),
+                    absolute_path_conversion=self.settings["settings"].get("path_conversion_absolute", False)
+                ).get_template_from_string(text)
+
                 # Set up Converter
                 converter = mdconvert.MdConverts(
-                    text,
-                    title=self.title,
-                    file_name=file_name,
+                    template.render(
+                        settings=self.settings.get("settings", {}),
+                        page=self.settings.get("page", {}),
+                        extra=self.settings.get("extra", {})
+                    ) if self.settings.get('settings', {}).get('use_template', False) else text,
                     smart_emphasis=self.settings["settings"].get('smart_emphasis', True),
                     lazy_ol=self.settings["settings"].get('lazy_ol', True),
                     tab_length=self.settings["settings"].get('tab_length', 4),

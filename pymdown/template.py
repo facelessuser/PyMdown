@@ -61,7 +61,7 @@ class Template(object):
 
         self.basepath = kwargs.get('basepath')
         self.relpath = kwargs.get('relpath')
-        self.userpath = kwargs.get('userpath')
+        self.userpath = util.get_user_path()
         self.force_conversion = kwargs.get('force_conversion', False)
         self.disable_path_conversion = kwargs.get('disable_path_conversion', False)
         self.absolute_path_conversion = kwargs.get('absolute_path_conversion', False)
@@ -101,6 +101,11 @@ class Template(object):
                 logger.Log.error(str(traceback.format_exc()))
 
         return self.env.from_string('{{ page.content }}' if template is None else template)
+
+    def get_template_from_string(self, text):
+        """Get the template from the provided string."""
+
+        return self.env.from_string(text)
 
     def get_template_res_path(self, file_name):
         """Get the filepath and absolute filepath of the resource."""

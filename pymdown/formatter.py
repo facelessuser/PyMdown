@@ -12,17 +12,9 @@ from __future__ import print_function
 import codecs
 import traceback
 import tempfile
-import cgi
-from copy import deepcopy
-from . import util
 from . import logger
 from . import compat
 from .template import Template
-try:
-    from pygments.formatters import get_formatter_by_name
-    PYGMENTS_AVAILABLE = True
-except Exception:  # pragma: no cover
-    PYGMENTS_AVAILABLE = False
 
 
 class PyMdownFormatterException(Exception):
@@ -30,18 +22,6 @@ class PyMdownFormatterException(Exception):
     """PyMdown formatter exception."""
 
     pass
-
-
-def get_pygment_style(style, css_class='codehilite'):
-    """Get the specified pygments sytle CSS."""
-
-    try:
-        # Try and request pygments to generate it
-        text = get_formatter_by_name('html', style=style).get_style_defs('.' + css_class)
-    except Exception:
-        # Try and request pygments to generate default
-        text = get_formatter_by_name('html', style="default").get_style_defs('.' + css_class)
-    return '<style>\n%s\n</style>\n' % text if text is not None else ""
 
 
 class Terminal(object):
@@ -119,41 +99,14 @@ class Html(object):
         self.settings = settings.get("settings", {})
         self.page = settings.get("page", {})
         self.extra = settings.get("extra", {})
-        self.plain = settings.get("plain", False)
         self.preview = kwargs.get("preview", False)
         self.encoding = settings.get("page", {}).get("encoding", "utf-8")
         self.basepath = settings.get("page", {}).get("basepath", None)
         self.relpath = settings.get("page", {}).get("relpath", None)
         self.output = settings.get("page", {}).get("destination", None)
-        self.template_file = self.settings.get("template", None) if not self.plain else None
+        self.template_file = self.settings.get("template", None) if not settings.get("plain", False) else None
         self.encode_file = True
-        self.added_res = set()
-        self.template = None
         self.file = None
-        self.user_path = util.get_user_path()
-
-    def update_template_variables(self, text):
-        """
-        Update date template variables with meta info acquired from file and from settings.
-
-            - page.title: Update title with meta if none was found in frontmatter.
-            - page.pygments_style: Update pygments style if allowed in settings.
-            - page.content:  The HTML content acquied from the markdown source.
-            - extra: Update any "extra" content found in meta that isn't already defined.
-        """
-
-        title = "Untitled"
-        if self.page["title"] is not None:
-            title = compat.to_unicode(self.page["title"])
-
-        self.page["title"] = cgi.escape(title)
-        self.page["pygments_style"] = self.load_highlight(self.settings.get("pygments_style", None))
-        self.page["content"] = text
-
-        # Merge the meta data
-        for k, v in deepcopy(self.settings.get('extra', {})).items():
-            if k not in self.extra:
-                self.extra[k] = v
 
     def open(self):
         """Set and create the output target and target related flags."""
@@ -184,12 +137,11 @@ class Html(object):
     def write(self, text):
         """Write the given text to the output file."""
 
-        self.update_template_variables(text)
+        self.page["content"] = text
 
         template = Template(
             basepath=self.basepath,
             relpath=self.relpath,
-            userpath=self.user_path,
             force_conversion=self.preview,
             disable_path_conversion=self.settings.get("disable_path_conversion", False),
             absolute_path_conversion=self.settings.get("path_conversion_absolute", False)
@@ -204,19 +156,3 @@ class Html(object):
         self.file.write(
             html.encode(self.encoding, errors="xmlcharrefreplace") if self.encode_file else html
         )
-
-    def load_highlight(self, highlight_style):
-        """Load Syntax highlighter CSS."""
-
-        style = None
-
-        if not self.plain:
-            use_pygments_css = bool(self.settings.get("use_pygments_css", True))
-            if PYGMENTS_AVAILABLE and highlight_style is not None and use_pygments_css:
-                # Ensure pygments is enabled in the highlighter
-                style = get_pygment_style(
-                    highlight_style,
-                    self.settings.get("pygments_class", "codehilite")
-                )
-
-        return style

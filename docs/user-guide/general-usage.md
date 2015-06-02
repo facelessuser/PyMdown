@@ -328,9 +328,19 @@ There are a couple of special variables you can use in extension settings:
 ## Frontmatter
 Frontmatter can be used at the very beginning of a Markdown file.  Frontmatter blocks begin with `---` and end with `---`.  Frontmatter must be the very beginning of the file and start on the very first line.
 
-PyMdown frontmatter content must be in the YAML format.  The frontmatter is a dictionary of key value pairs which are translated into meta data for all keys except for a few **special** keywords.  For meta data, the key will become the content of the `meta` tag's `name` attribute, and the value will become the data for the `content` attribute.  If an array is specified as the value, each member of the array will be converted to a string and all of them will be strung together and separated by commas.  In all other cases, the value will just be converted to a string.
+PyMdown frontmatter content must be in the YAML format.  The frontmatter is a dictionary of key value pairs which will either be available in templates and/or used to set some functionality or setting per page.
 
-PyMdown has a few keywords that can be defined to alter the output.
+```
+---
+title: My Title
+author: My Name
+etc: You get the idea
+---
+### Markdown Header
+Markdown content.
+```
+
+PyMdown has a few special keywords that can be defined to alter the output.  All other keys will be counted as user variables.
 
 | Keyword | Description |
 |---------|-------------|
@@ -342,14 +352,15 @@ PyMdown has a few keywords that can be defined to alter the output.
 | css | This keyword's value is an array of strings denoting additional single CSS files to include.  They follow the same convention as CSS defined in the settings file: `;encoding` at tail will define the encoding used to access the file, paths starting with `!` will not have their path converted to absolute or relative paths, and `^` will directly embed the content in the HTML file. |
 | js | This keyword's value is an array of strings denoting additional single JavaScript files to include.  They follow the same convention as JavaScript defined in the settings file: `;encoding` at tail will define the encoding used to access the file, paths starting with `!` will not have their path converted to absolute or relative paths, and `^` will directly embed the content in the HTML file. |
 | settings | This is a dictionary and allows the overriding of any of the settings found in the original configuration file. |
+| use_tempalte | This is a boolean that is used to tell PyMdown whether it should apply template variables to the markdown content. |
 
 See [Templating](#templating) to learn more about accessing these values in your HTML template.
 
 ### Custom Frontmatter
-If the keyword is not one of the special keywords defined above, they will automatically be available in the template under `extra`
+If the keyword is not one of the special keywords defined above, they will automatically be available in the template variables under `extra`
 
 ## Templating
-Templates are HTML files that use [Jinja2](http://jinja.pocoo.org/) templating syntax.
+Templates are HTML files that use [Jinja2](http://jinja.pocoo.org/) templating syntax.  Template variables and logic is used in the HTML template that is provided.  If desired, `use_template` can be set to `true` in the markdown YAML frontmatter, and template variables and logic will be applied there as well.  It is up to the user to escape content that must be escaped.
 
 Template data is found under three variables:
 
