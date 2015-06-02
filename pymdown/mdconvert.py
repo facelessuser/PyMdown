@@ -11,7 +11,6 @@ from __future__ import absolute_import
 from markdown import Markdown
 import codecs
 import traceback
-import os
 import re
 from . import logger
 from . import compat
