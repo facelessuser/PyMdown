@@ -779,15 +779,23 @@
 </dl>
 <h4 id="get-path"><a name="user-content-get-path" href="#get-path" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Path</h4>
 <dl>
-<dt>getpath(path, quoted=False)</dt>
+<dt>getpath(path)</dt>
 <dd>
-<p>Given a path, adjust with internal base path and relative path settings to return the desired path.  Enable optional <code>quoted</code> parameter to return the path suitable for placing in HTML attributes.</p>
+<p>Given a path, adjust with internal base path and relative path settings to return the desired path.</p>
 <p><strong>Example</strong></p>
 <div class="codehilite"><pre><span class="cp">{{</span> <span class="s1">&#39;path/to/something&#39;</span><span class="o">|</span><span class="nf">getpath</span><span class="cp">}}</span><span class="x"></span>
 </pre></div>
 
 
-<div class="codehilite"><pre><span class="nt">&lt;img</span> <span class="na">src=</span><span class="s">&quot;</span><span class="cp">{{</span> <span class="s1">&#39;assets/some/image.png&#39;</span><span class="o">|</span><span class="nf">getpath</span><span class="o">(</span><span class="nv">quoted</span><span class="o">=</span><span class="kp">True</span><span class="o">)</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="nt">/&gt;</span>
+</dd>
+</dl>
+<h4 id="get-path-url"><a name="user-content-get-path-url" href="#get-path-url" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Path URL</h4>
+<dl>
+<dt>getpathurl(path)</dt>
+<dd>
+<p>Given a path, adjust with the internal base path and relative path settings to return the desired path, but also encode it for a URL; path will be quoted (quotes converted for placement in an HTML attribute).</p>
+<p><strong>Example</strong></p>
+<div class="codehilite"><pre><span class="nt">&lt;img</span> <span class="na">src=</span><span class="s">&quot;</span><span class="cp">{{</span> <span class="s1">&#39;assets/some/image.png&#39;</span><span class="o">|</span><span class="nf">getpathurl</span> <span class="cp">}}</span><span class="s">&quot;</span><span class="nt">/&gt;</span>
 </pre></div>
 
 
