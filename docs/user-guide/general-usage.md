@@ -427,10 +427,10 @@ getjs([files])
 
 #### Get Path
 
-getpath(path, quoted=False)
+getpath(path)
 : 
 
-    Given a path, adjust with internal base path and relative path settings to return the desired path.  Enable optional `quoted` parameter to return the path suitable for placing in HTML attributes.
+    Given a path, adjust with internal base path and relative path settings to return the desired path.
 
     **Example**
 
@@ -438,8 +438,17 @@ getpath(path, quoted=False)
     {{ 'path/to/something'|getpath}}
     ```
 
+#### Get Path URL
+
+getpathurl(path)
+: 
+
+    Given a path, adjust with the internal base path and relative path settings to return the desired path, but also encode it for a URL; path will be quoted (quotes converted for placement in an HTML attribute).
+
+    **Example**
+
     ```html+jinja
-    <img src="{{ 'assets/some/image.png'|getpath(quoted=True) }}"/>
+    <img src="{{ 'assets/some/image.png'|getpathurl }}"/>
     ```
 
 #### Get Meta

@@ -69,6 +69,7 @@ class Template(object):
         self.env = jinja2.Environment()
         self.env.filters['embedimage'] = self.embed_image
         self.env.filters['getpath'] = self.get_path
+        self.env.filters['getpathurl'] = self.get_path_url
         self.env.filters['getcss'] = self.get_css
         self.env.filters['getjs'] = self.get_js
         self.env.filters['getmeta'] = self.get_meta
@@ -143,15 +144,18 @@ class Template(object):
                 file_path = path.relpath(abs_path, self.relpath)
         return file_path, abs_path
 
-    def get_path(self, name, quoted=False):
+    def get_path_url(self, name):
+        """Get url from path in a template that is also quoted."""
+
+        return compat.pathname2url(self.get_path(name))
+
+    def get_path(self, name):
         """Get path in a template."""
 
         file_name = name.strip()
         file_path = self.get_template_res_path(file_name)[0]
         if file_path is not None:
             file_name = file_path.replace('\\', '/')
-            if quoted:
-                file_name = compat.pathname2url(file_name)
         return file_name
 
     def embed_image(self, name):
