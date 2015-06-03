@@ -44,7 +44,6 @@ class MergeSettings(object):
     PAGE_KEYS: destination, basepath, relpath,
                js, css, title, encoding, content
     SETTINGS KEY: settings.
-    REFERENCES: contains external reference files for footnotes etc.
     EXTRA KEYS: all other keys that aren't handled above.
     """
 
@@ -132,14 +131,6 @@ class MergeSettings(object):
         settings['page']['css'] += css
         settings['page']['js'] += js
 
-    def merge_references(self, frontmatter, settings):
-        """Merge reference."""
-        if 'references' in frontmatter:
-            value = frontmatter['references']
-            if isinstance(value, list):
-                settings['references'] = [v for v in value if isinstance(v, compat.unicode_type)]
-            del frontmatter['references']
-
     def merge_settings(self, frontmatter, settings):
         """Handle and merge PyMdown settings."""
 
@@ -188,7 +179,6 @@ class MergeSettings(object):
         self.merge_basepath(frontmatter, settings)
         self.merge_relative_path(frontmatter, settings)
         self.merge_destination(frontmatter, settings)
-        self.merge_references(frontmatter, settings)
         self.merge_settings(frontmatter, settings)
         self.merge_includes(frontmatter, settings)
         self.merge_meta(frontmatter, settings)
@@ -218,7 +208,6 @@ class Settings(object):
                 "content": '',
             },
             "extra": {},
-            "references": [],
             "settings": {}
         }
         self.critic = kwargs.get('critic', util.CRITIC_IGNORE)

@@ -244,44 +244,6 @@ def load_text_resource(*args, **kwargs):
     return data
 
 
-def get_references(references, basepath, encoding):
-    """Get footnote and general references from outside source."""
-
-    text = ''
-    for file_name in references:
-        file_name, encoding = splitenc(file_name, default=encoding)
-        user_path = path.join(get_user_path(), file_name)
-
-        is_abs = is_absolute(file_name)
-
-        # Find path relative to basepath or global user path
-        # If basepath is defined set paths relative to the basepath if possible
-        # or just keep the absolute
-        if not is_abs:
-            # Is relative path
-            base_temp = path.normpath(path.join(basepath, file_name)) if basepath is not None else None
-            user_temp = path.normpath(path.join(user_path, file_name)) if user_path is not None else None
-            if base_temp is not None and path.exists(base_temp) and path.isfile(base_temp):
-                ref_path = base_temp
-            elif user_temp is not None and path.exists(user_temp) and path.isfile(user_temp):
-                ref_path = user_temp
-            else:
-                # Is an unknown path
-                ref_path = None
-        elif is_abs and path.exists(file_name) and path.isfile(file_name):
-            # Is absolute path
-            ref_path = file_name
-        else:
-            # Is an unknown path
-            ref_path = None
-
-        if ref_path is not None:
-            text += load_text_resource(ref_path, encoding=encoding)
-        else:
-            logger.Log.error("Could not find reference file %s!" % file_name)
-    return text
-
-
 def open_in_browser(name):
     """Auto open HTML."""
 

@@ -72,6 +72,7 @@ class Template(object):
         self.env.filters['getpathurl'] = self.get_path_url
         self.env.filters['getcss'] = self.get_css
         self.env.filters['getjs'] = self.get_js
+        self.env.filters['gettxt'] = self.get_txt
         self.env.filters['getmeta'] = self.get_meta
 
     def get_template(self, template_file):
@@ -327,8 +328,20 @@ class Template(object):
         self.load_resources(js, get_js, scripts)
         return scripts
 
+    def load_txt_files(self, text):
+        """Load specified text sources."""
+
+        texts = []
+        for t in text:
+            t, encoding = util.splitenc(t)
+            res_path, abs_path = self.get_res_path(t)
+
+            if res_path is not None:
+                texts.append(util.load_text_resource(abs_path, encoding=encoding))
+        return texts
+
     def get_css(self, css):
-        """Load a html source or sources."""
+        """Load a css source or sources."""
 
         files = []
         if isinstance(css, compat.string_type):
@@ -339,13 +352,24 @@ class Template(object):
         return ''.join(files) if len(files) else ''
 
     def get_js(self, js):
-        """Load a html source or sources."""
+        """Load a javascript source or sources."""
 
         files = []
         if isinstance(js, compat.string_type):
             files = self.load_js_files([js])
         elif isinstance(js, list):
             files = self.load_js_files(js)
+
+        return ''.join(files) if len(files) else ''
+
+    def get_txt(self, text):
+        """Load a markdown source or sources."""
+
+        files = []
+        if isinstance(text, compat.string_type):
+            files = self.load_txt_files([text])
+        elif isinstance(text, list):
+            files = self.load_txt_files(text)
 
         return ''.join(files) if len(files) else ''
 

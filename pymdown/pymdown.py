@@ -146,13 +146,6 @@ class Convert(object):
             status = self.get_file_settings(file_name, frontmatter=frontmatter)
 
         if status == PASS:
-            # Append Markdown reference files to current Markdown content
-            text += util.get_references(
-                self.settings.get("references", []),
-                self.settings["page"]["basepath"],
-                self.config.encoding
-            )
-
             # Create html object
             html = formatter.Html(
                 preview=self.config.preview,
