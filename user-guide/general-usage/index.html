@@ -563,8 +563,8 @@
 <p>The other exception is with previews.  In order for links and references to work in previews, they must be paths that are relative to the preview&rsquo;s temp directory or they must be absolute paths.  For this reason, PyMdown will always enable path conversions for previews.  If you have manually set up the <code>pathconverter</code> extension, preview&rsquo;s will overwrite the <code>relative_path</code> argument to ensure it is set to <code>${OUTPUT}</code> which will allow the preview to display content properly by making asset paths relative to the previews location.  By default, the <code>relative_path</code> is set to <code>${REL_PATH}</code> which is the output path by default, but can be altered via the command line option <code>--relpath</code> or the <code>relpath</code> frontmatter option.</p>
 </div>
 <h3 id="python-markdown-extensions"><a name="user-content-python-markdown-extensions" href="#python-markdown-extensions" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Python Markdown Extensions</h3>
-<p>Extensions to be used are defined under the <strong>extensions</strong> keyword.  <strong>extensions</strong> is an ordered key/value pair. An extension has a name followed by <code>:</code> in yaml format.  If you want to include settings parameters, you can include those as the extension value.  All parameters should be done as key/value pairs as shown below.</p>
-<div class="codehilite"><pre><span class="l-Scalar-Plain">extensions</span><span class="p-Indicator">:</span>
+<p>Extensions to be used are defined under the <strong>markdown_extensions</strong> keyword.  <strong>markdown_extensions</strong> is an ordered key/value pair. An extension has a name followed by <code>:</code> in yaml format.  If you want to include settings parameters, you can include those as the extension value.  All parameters should be done as key/value pairs as shown below.</p>
+<div class="codehilite"><pre><span class="l-Scalar-Plain">markdown_extensions</span><span class="p-Indicator">:</span>
   <span class="l-Scalar-Plain">markdown.extensions.extra</span><span class="p-Indicator">:</span>
   <span class="l-Scalar-Plain">markdown.extensions.toc</span><span class="p-Indicator">:</span>
     <span class="l-Scalar-Plain">title</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">Table of Contents</span>
@@ -611,8 +611,18 @@
 </table>
 <h2 id="frontmatter"><a name="user-content-frontmatter" href="#frontmatter" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Frontmatter</h2>
 <p>Frontmatter can be used at the very beginning of a Markdown file.  Frontmatter blocks begin with <code>---</code> and end with <code>---</code>.  Frontmatter must be the very beginning of the file and start on the very first line.</p>
-<p>PyMdown frontmatter content must be in the YAML format.  The frontmatter is a dictionary of key value pairs which are translated into meta data for all keys except for a few <strong>special</strong> keywords.  For meta data, the key will become the content of the <code>meta</code> tag&rsquo;s <code>name</code> attribute, and the value will become the data for the <code>content</code> attribute.  If an array is specified as the value, each member of the array will be converted to a string and all of them will be strung together and separated by commas.  In all other cases, the value will just be converted to a string.</p>
-<p>PyMdown has a few keywords that can be defined to alter the output.</p>
+<p>PyMdown frontmatter content must be in the YAML format.  The frontmatter is a dictionary of key value pairs which will either be available in templates and/or used to set some functionality or setting per page.</p>
+<div class="codehilite"><pre>---
+title: My Title
+author: My Name
+etc: You get the idea
+---
+### Markdown Header
+Markdown content.
+</pre></div>
+
+
+<p>PyMdown has a few special keywords that can be defined to alter the output.  All other keys will be counted as user variables.</p>
 <table>
 <thead>
 <tr>
@@ -653,13 +663,17 @@
 <td>settings</td>
 <td>This is a dictionary and allows the overriding of any of the settings found in the original configuration file.</td>
 </tr>
+<tr>
+<td>use_tempalte</td>
+<td>This is a boolean that is used to tell PyMdown whether it should apply template variables to the markdown content.</td>
+</tr>
 </tbody>
 </table>
 <p>See <a href="#templating">Templating</a> to learn more about accessing these values in your HTML template.</p>
 <h3 id="custom-frontmatter"><a name="user-content-custom-frontmatter" href="#custom-frontmatter" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Custom Frontmatter</h3>
-<p>If the keyword is not one of the special keywords defined above, they will automatically be available in the template under <code>extra</code></p>
+<p>If the keyword is not one of the special keywords defined above, they will automatically be available in the template variables under <code>extra</code></p>
 <h2 id="templating"><a name="user-content-templating" href="#templating" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Templating</h2>
-<p>Templates are HTML files that use <a href="http://jinja.pocoo.org/">Jinja2</a> templating syntax.</p>
+<p>Templates are HTML files that use <a href="http://jinja.pocoo.org/">Jinja2</a> templating syntax.  Template variables and logic is used in the HTML template that is provided.  If desired, <code>use_template</code> can be set to <code>true</code> in the markdown YAML frontmatter, and template variables and logic will be applied there as well.  It is up to the user to escape content that must be escaped.</p>
 <p>Template data is found under three variables:</p>
 <table>
 <thead>
