@@ -58,7 +58,7 @@ class Md2HtmlTreeBuilder(object):
 
     """Build a simple static site using PyMdown."""
 
-    def __init__(self, tab_size=4, settings='pymdown.yml', force_update=False):
+    def __init__(self, tab_size=4, settings='pymdown.cfg', force_update=False):
         """Initialize."""
 
         self.force_update = force_update
@@ -421,7 +421,6 @@ class Md2HtmlTreeBuilder(object):
 
         if html_folder:
             site['html'] = True
-            site['files'] = sorted(files)
         elif len(files) or len(folders) or has_index:
             site['files'] = sorted(files + folders)
 
@@ -442,19 +441,22 @@ class Md2HtmlTreeBuilder(object):
         """Get title from Markdown file."""
 
         title = fallback
-        try:
-            with codecs.open(md, 'r', encoding='utf-8') as f:
-                frontmatter = {}
-                bfr = f.read()
+        yaml_pattern = re.compile(br'^---[ \t]*\r?\n')
+        yaml_lines = []
 
-                if bfr.startswith("---"):
-                    m = re.search(r'^(---(.*?)---\r?\n)', bfr, re.DOTALL)
-                    if m:
-                        try:
-                            frontmatter = yaml.load(m.group(2))
-                        except Exception:
-                            pass
-                title = frontmatter.get('title', fallback)
+        try:
+            with codecs.open(md, 'rb') as f:
+                if yaml_pattern.match(f.readline()) is not None:
+                    for line in f:
+                        if yaml_pattern.match(line) is None:
+                            yaml_lines.append(line)
+                        else:
+                            try:
+                                frontmatter = yaml.load(''.join(yaml_lines).decode('utf-8'))
+                                title = frontmatter.get('title', fallback)
+                            except Exception:
+                                pass
+                            break
         except Exception:
             pass
         return title

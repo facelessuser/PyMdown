@@ -1,4 +1,5 @@
 ---
+use_template: true
 references:
   - _references/references.md
 ---
@@ -76,3 +77,5 @@ This is the CSS used for rendering the header anchors in this document. While Fo
   content: '\f0c1';
 }
 ```
+
+{{ extra.references|gettxt }}

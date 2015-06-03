@@ -1,4 +1,5 @@
 ---
+use_template: true
 references:
   - _references/references.md
 ---
@@ -21,3 +22,5 @@ This requires no special syntax.
 Just paste links directly in the document like this: https://github.com/facelessuser/PyMdown.
 
 Or even an email address fake.email@email.com.
+
+{{ extra.references|gettxt }}

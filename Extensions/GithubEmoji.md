@@ -1,4 +1,5 @@
 ---
+use_template: true
 references:
   - _references/references.md
 ---
@@ -12,3 +13,5 @@ Github :octocat: emojis are very useful :thumbsup:.
 ```
 
 Github :octocat: emojis are very useful :thumbsup:.
+
+{{ extra.references|gettxt }}

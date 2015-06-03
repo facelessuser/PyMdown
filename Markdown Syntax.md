@@ -1,18 +1,18 @@
 ---
 settings:
-    extensions:
-        markdown.extensions.codehilite:
-            guess_lang: False
-            pygments_style: github2014
-        markdown.extensions.toc:
-            title: Table of Contents
-            baselevel: 2
-        markdown.extensions.smarty:
-        markdown.extensions.attr_list:
-        markdown.extensions.admonition:
-        pymdownx.betterem:
-            smart_enable: none
-        pymdownx.headeranchor:
+  markdown_extensions:
+    markdown.extensions.codehilite:
+      guess_lang: False
+      pygments_style: github2014
+    markdown.extensions.toc:
+      title: Table of Contents
+      baselevel: 2
+    markdown.extensions.smarty:
+    markdown.extensions.attr_list:
+    markdown.extensions.admonition:
+    pymdownx.betterem:
+      smart_enable: none
+    pymdownx.headeranchor:
 ---
 [TOC]
 

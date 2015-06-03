@@ -1,6 +1,7 @@
 ---
+use_template: true
 references:
-- _references/references.md
+  - _references/references.md
 ---
 [TOC]
 # Overview
@@ -27,3 +28,5 @@ In the future, I do plan on allowing this run from an installed Pyinstaller oppo
 
 # Installation
 You can download PyMdown and run it as a script bundle, or build and copy the binary in your path.  To install the traditional way, run `python setup.py build` and `python setup.py install`.  You should be able to access PyMdown from the command line via `pymdown` or `pymdownX.X` where `X.X` is your python version.  PyMdown on the first run will unpack user files to `~\.PyMdown` on Windows, `~/.PyMdown` on OSX and `~/.config/PyMdown` on Linux.
+
+{{ extra.references|gettxt }}

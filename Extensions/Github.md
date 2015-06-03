@@ -1,4 +1,5 @@
 ---
+use_template: true
 references:
   - _references/references.md
 ---
@@ -22,3 +23,5 @@ Extensions that get loaded:
 - pymdown.tasklist
 - pymdown.headeranchor
 - pymdown.superfences
+
+{{ extra.references|gettxt }}
