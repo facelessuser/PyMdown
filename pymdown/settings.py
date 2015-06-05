@@ -356,10 +356,10 @@ class Settings(object):
 
         global_use_pygments_css = settings["settings"].get("use_pygments_css", True)
         use_pygments_css = False
+        # Search for highlight extensions to see what whether pygments css is required.
         for hilite_ext in ('markdown.extensions.codehilite', 'pymdownx.inlinehilite'):
             if hilite_ext not in extensions:
                 continue
-            # Search for codehilite to see what style is being set.
             config = extensions[hilite_ext]
             if config is None:
                 config = {}
@@ -374,6 +374,8 @@ class Settings(object):
 
         if global_use_pygments_css and not use_pygments_css:
             settings["settings"]["use_pygments_css"] = False
+        else:
+            settings["settings"]["use_pygments_css"] = use_pygments_css
 
         if use_pygments_css:
             # Ensure a working style is set
