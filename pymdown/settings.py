@@ -18,7 +18,8 @@ from . import util
 from . import logger
 from . import compat
 try:
-    from pygments.styles import get_style_by_name, get_formatter_by_name
+    from pygments.styles import get_style_by_name
+    from pygments.formatters import get_formatter_by_name
     PYGMENTS_AVAILABLE = True
 except Exception:  # pragma: no cover
     PYGMENTS_AVAILABLE = False
@@ -96,6 +97,7 @@ class MergeSettings(object):
 
     def merge_destination(self, frontmatter, settings):
         """Merge destinatio."""
+
         if "destination" in frontmatter:
             value = frontmatter['destination']
             if isinstance(value, compat.unicode_type):
@@ -117,6 +119,7 @@ class MergeSettings(object):
 
     def merge_includes(self, frontmatter, settings):
         """Find css and js includes and merge them."""
+
         css = settings['settings'].get('css', [])
         js = settings['settings'].get('js', [])
 
@@ -345,6 +348,7 @@ class Settings(object):
         If it is not explicitly set, go ahead and insert the default
         style (github).
         """
+
         style = 'default'
 
         if not PYGMENTS_AVAILABLE:  # pragma: no cover
