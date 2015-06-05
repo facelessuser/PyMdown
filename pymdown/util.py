@@ -52,7 +52,6 @@ def yaml_load(stream, loader=yaml.Loader, object_pairs_hook=OrderedDict):
     http://stackoverflow.com/a/2967461/3609487
     """
 
-
     def construct_mapping(loader, node):
         """Convert to ordered dict."""
 
