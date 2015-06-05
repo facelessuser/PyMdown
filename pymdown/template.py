@@ -317,6 +317,7 @@ class Template(object):
 
     def load_css_files(self, styles):
         """Load specified CSS sources."""
+
         css = []
         self.load_resources(styles, get_style, css)
         return css

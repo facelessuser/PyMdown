@@ -52,11 +52,6 @@ def yaml_load(stream, loader=yaml.Loader, object_pairs_hook=OrderedDict):
     http://stackoverflow.com/a/2967461/3609487
     """
 
-    class Loader(loader):
-
-        """Custom Loader."""
-
-        pass
 
     def construct_mapping(loader, node):
         """Convert to ordered dict."""
@@ -68,6 +63,10 @@ def yaml_load(stream, loader=yaml.Loader, object_pairs_hook=OrderedDict):
         """Override the default string handling function to always return unicode objects."""
 
         return self.construct_scalar(node)
+
+    class Loader(loader):
+
+        """Custom Loader."""
 
     Loader.add_constructor(
         yaml.resolver.BaseResolver.DEFAULT_MAPPING_TAG,

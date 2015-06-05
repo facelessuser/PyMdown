@@ -21,8 +21,6 @@ class PyMdownFormatterException(Exception):
 
     """PyMdown formatter exception."""
 
-    pass
-
 
 class Terminal(object):
 
@@ -42,8 +40,6 @@ class Terminal(object):
 
     def close(self):
         """There is nothing to close."""
-
-        pass
 
 
 class Text(object):

@@ -20,6 +20,7 @@ class CriticDump(object):
 
     def dump(self, source, accept, view=False):
         """Process critic marks and return the file."""
+
         text = ''
         if view:
             mode = 'view'

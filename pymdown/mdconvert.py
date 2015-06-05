@@ -37,8 +37,6 @@ class MdConvertException(Exception):
 
     """MdConvert Exception."""
 
-    pass
-
 
 class MdWrapper(Markdown):
 
