@@ -6,6 +6,7 @@ env:
   - TOXENV=lint
 install:
   - pip install tox
+  - pip install codecov
   - pip install coveralls
   - npm install -g jshint
 script:
@@ -13,3 +14,4 @@ script:
   - jshint .
 after_success:
   - coveralls
+  - codecov
