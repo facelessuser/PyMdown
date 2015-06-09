@@ -6,6 +6,13 @@ references:
   - footnotes.md
 destination: Example.html
 
+# Testing out template settings
+use_template: true
+template_tags:
+    block: ['<%', '%>']
+    variable: ['<{', '}>']
+    comment: ['<#', '#>']
+
 # Meta Data
 title: PyMdown Example
 author:
@@ -992,3 +999,13 @@ To turn off level classes (which are used to decide special colors for certain p
 |Division Percentage |[= 212.2/537 "212.2/537 Testing division"] |
 |No Label            |[= 50%]                                    |
 |Inline              |Before[= 50% "I'm a block!"]After          |
+
+# Template Test
+
+```
+<%- raw %>
+<# This is the page title #><{ page.title }>
+<% endraw %>
+```
+
+<# This is the page title #><{ page.title }>

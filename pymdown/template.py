@@ -66,7 +66,20 @@ class Template(object):
         self.disable_path_conversion = kwargs.get('disable_path_conversion', False)
         self.absolute_path_conversion = kwargs.get('absolute_path_conversion', False)
         self.added_res = set()
-        self.env = jinja2.Environment()
+
+        # Setup template environment
+        template_tags = kwargs.get('template_tags', {})
+        block_tags = template_tags.get('block', ('{%', '%}'))
+        variable_tags = template_tags.get('variable', ('{{', '}}'))
+        comment_tags = template_tags.get('comment', ('{#', '#}'))
+        self.env = jinja2.Environment(
+            block_start_string=block_tags[0],
+            block_end_string=block_tags[1],
+            variable_start_string=variable_tags[0],
+            variable_end_string=variable_tags[1],
+            comment_start_string=comment_tags[0],
+            comment_end_string=comment_tags[1]
+        )
         self.env.filters['embedimage'] = self.embed_image
         self.env.filters['getpath'] = self.get_path
         self.env.filters['getpathurl'] = self.get_path_url

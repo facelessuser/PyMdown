@@ -134,17 +134,30 @@ class MergeSettings(object):
         settings['page']['css'] += css
         settings['page']['js'] += js
 
-    def merge_settings(self, frontmatter, settings):
-        """Handle and merge PyMdown settings."""
+    def merge_template_settings(self, frontmatter, settings):
+        """Merge special template variables."""
 
         if 'use_template' in frontmatter:
             if isinstance(frontmatter['use_template'], bool):
                 settings['settings']['use_template'] = frontmatter['use_template']
             del frontmatter['use_template']
+        if 'template_tags' in frontmatter:
+            if isinstance(frontmatter['template_tags'], (dict, OrderedDict)):
+                for key, value in frontmatter['template_tags'].items():
+                    if key in ('block', 'variable', 'comment') and len(value) == 2:
+                        if isinstance(value[0], compat.unicode_type) and isinstance(value[1], compat.unicode_type):
+                            settings['settings']['template_tags'][key] = value
+            del frontmatter['template_tags']
+
+    def merge_settings(self, frontmatter, settings):
+        """Handle and merge PyMdown settings."""
 
         if 'settings' in frontmatter and isinstance(frontmatter['settings'], (dict, OrderedDict)):
             value = frontmatter['settings']
             for subkey, subvalue in value.items():
+                if subkey in ('use_template', 'template_tags'):
+                    # Ignore template variables as these should only be in the frontmatter
+                    continue
                 # Html template
                 if subkey == "template" and isinstance(subvalue, compat.unicode_type):
                     org_pth = subvalue
@@ -182,6 +195,7 @@ class MergeSettings(object):
         self.merge_basepath(frontmatter, settings)
         self.merge_relative_path(frontmatter, settings)
         self.merge_destination(frontmatter, settings)
+        self.merge_template_settings(frontmatter, settings)
         self.merge_settings(frontmatter, settings)
         self.merge_includes(frontmatter, settings)
         self.merge_meta(frontmatter, settings)
@@ -259,6 +273,8 @@ class Settings(object):
             logger.Log.error(traceback.format_exc())
 
         self.settings["settings"] = settings if settings is not None else {}
+        self.settings["settings"]["use_template"] = False
+        self.settings["settings"]["template_tags"] = {}
 
     def get(self, file_name, **kwargs):
         """Get the complete settings object for the given file."""

@@ -352,6 +352,7 @@ PyMdown has a few special keywords that can be defined to alter the output.  All
 | js | This keyword's value is an array of strings denoting additional single JavaScript files to include.  They follow the same convention as JavaScript defined in the settings file: `;encoding` at tail will define the encoding used to access the file, paths starting with `!` will not have their path converted to absolute or relative paths, and `^` will directly embed the content in the HTML file. |
 | settings | This is a dictionary and allows the overriding of any of the settings found in the original configuration file. |
 | use_tempalte | This is a boolean that is used to tell PyMdown whether it should apply template variables to the markdown content. |
+| template_tags | Allows the overriding of the opening and closing of any Jinja2 tag.  The value is a dictionary that can contain any of the the 3 keys: `block`, `variable`, `comment`.  Each key must contain a list for the value which contains two strings.  The first string is the opening of the tag, the second is the closing of the tag. The defaults are `#!js ['{%', '%}']` for `block`, `#!js ['{{', '}']` for `variable`, and `#!js ['{#', '#}']` for `comment`. |
 
 See [Templating](#templating) to learn more about accessing these values in your HTML template.
 
@@ -411,11 +412,18 @@ getcss([files])
     **Example**
 
     ```jinja
+    {# Include css link #}
     {{ page.css|getcss }}
     ```
 
     ```jinja
+    {# Do not convert path for CSS link #}
     {{ '!path/to/css/file.css'|getcss }}
+    ```
+
+    ```jinja
+    {# Embed file content #}
+    {{ '^path/to/css/file.css'|getcss }}
     ```
 
 #### Get JavaScript
@@ -428,11 +436,32 @@ getjs([files])
     **Example**
 
     ```jinja
+    {# Include JS link #}
     {{ page.js|getjs }}
     ```
 
     ```jinja
-    {{ '^path/to/css/file.js;utf-8'|getjs }}
+    {# Do not convert path for JS link #}
+    {{ '!path/to/js/file.js;utf-8'|getjs }}
+    ```
+
+    ```jinja
+    {# Embed file content #}
+    {{ '^path/to/js/file.js;utf-8'|getjs }}
+    ```
+
+#### Get Text
+
+gettxt([files])
+: 
+
+    Given a single file or array of files, resolve the file path and embed the content of the file(s).
+
+    **Example**
+
+    ```jinja
+    {# Embed text content #}
+    {{ 'some/path/to.txt'|gettxt }}
     ```
 
 #### Get Path
@@ -466,7 +495,7 @@ getpathurl(path)
 getmeta(value, name='name')
 : 
 
-    Given the value and name, return a simple meta tag.  `value` can be either a single string or array of strings; if an array, the values will be joined with `, `.
+    Given the value and name, return a simple meta tag: `#!html <meta name="name" value="value">`.  `value` can be either a single string or array of strings; if an array, the values will be joined with `, `.
 
     **Example**
 

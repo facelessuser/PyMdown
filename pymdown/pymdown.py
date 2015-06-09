@@ -161,7 +161,8 @@ class Convert(object):
                     relpath=self.settings["page"]["relpath"],
                     force_conversion=self.config.preview,
                     disable_path_conversion=self.settings["settings"].get("disable_path_conversion", False),
-                    absolute_path_conversion=self.settings["settings"].get("path_conversion_absolute", False)
+                    absolute_path_conversion=self.settings["settings"].get("path_conversion_absolute", False),
+                    template_tags=self.settings["settings"].get("template_tags", {})
                 ).get_template_from_string(text)
 
                 # Set up Converter
