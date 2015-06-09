@@ -8,6 +8,7 @@ from os import path
 from .. import util
 from .. import compat
 from collections import OrderedDict
+from . import validate
 
 
 class MergeSettings(object):
@@ -50,7 +51,7 @@ class MergeSettings(object):
 
         if "basepath" in frontmatter:
             value = frontmatter["basepath"]
-            if isinstance(value, compat.unicode_type):
+            if validate.is_string(value):
                 settings["page"]["basepath"] = util.resolve_base_path(
                     value,
                     self.file_name,
@@ -64,16 +65,16 @@ class MergeSettings(object):
 
         if "relpath" in frontmatter:
             value = frontmatter["relpath"]
-            if isinstance(value, compat.unicode_type):
+            if validate.is_string(value):
                 settings["page"]["relpath"] = util.resolve_relative_path(value)
             del self.frontmatter["relpath"]
 
     def merge_destination(self, frontmatter, settings):
-        """Merge destinatio."""
+        """Merge destination."""
 
         if "destination" in frontmatter:
             value = frontmatter['destination']
-            if isinstance(value, compat.unicode_type):
+            if validate.is_string(value):
                 file_name = util.resolve_meta_path(
                     path.dirname(value),
                     self.base
@@ -100,64 +101,62 @@ class MergeSettings(object):
         for key in ("css", "js"):
             if key in frontmatter:
                 value = frontmatter[key]
-                if isinstance(value, list):
-                    locals()[key] += [v for v in value if isinstance(v, compat.unicode_type)]
+                if validate.is_array(value):
+                    locals()[key] += [v for v in value if validate.is_string(v)]
                 del frontmatter[key]
 
         settings['page']['css'] += css
         settings['page']['js'] += js
 
-    def merge_template_settings(self, frontmatter, settings):
-        """Merge special template variables."""
+    def merge_template_settings(self, frontmatter):
+        """
+        Merge special template variables.
+
+        Template variables won't be directly merged into settings here,
+        but they will be merged into the frontmatter 'settings' variable
+        which gets merged after this.
+        """
 
         if 'use_template' in frontmatter:
-            if isinstance(frontmatter['use_template'], bool):
-                settings['settings']['use_template'] = frontmatter['use_template']
+            if validate.is_bool(frontmatter['use_template']):
+                frontmatter['settings']['use_template'] = frontmatter['use_template']
             del frontmatter['use_template']
         if 'template_tags' in frontmatter:
-            if isinstance(frontmatter['template_tags'], (dict, OrderedDict)):
+            if validate.is_dict(frontmatter['template_tags']):
                 for key, value in frontmatter['template_tags'].items():
                     if key in ('block', 'variable', 'comment') and len(value) == 2:
-                        if isinstance(value[0], compat.unicode_type) and isinstance(value[1], compat.unicode_type):
-                            settings['settings']['template_tags'][key] = value
+                        if validate.is_string(value[0]) and validate.is_string(value[1]):
+                            if 'template_tags' not in frontmatter['settings']:
+                                frontmatter['settings']['template_tags'] = OrderedDict()
+                            frontmatter['settings']['template_tags'][key] = value
             del frontmatter['template_tags']
 
     def merge_settings(self, frontmatter, settings):
         """Handle and merge PyMdown settings."""
 
-        if 'settings' in frontmatter and isinstance(frontmatter['settings'], (dict, OrderedDict)):
-            value = frontmatter['settings']
-            for subkey, subvalue in value.items():
-                if subkey in ('use_template', 'template_tags'):
-                    # Ignore template variables as these should only be in the frontmatter
-                    continue
-                # Html template
-                if subkey == "template" and isinstance(subvalue, compat.unicode_type):
-                    org_pth = subvalue
-                    new_pth = self.process_settings_path(org_pth, self.base)
-                    settings['settings'][subkey] = new_pth if new_pth is not None else org_pth
+        value = frontmatter['settings']
+        for subkey, subvalue in value.items():
+            if subkey == 'template_tags':
+                for tag_key, tag_value in subvalue.items():
+                    settings['settings'][subkey][tag_key] = tag_value
+            # Html template
+            if subkey == "template" and isinstance(subvalue, compat.unicode_type):
+                org_pth = subvalue
+                new_pth = self.process_settings_path(org_pth, self.base)
+                settings['settings'][subkey] = new_pth if new_pth is not None else org_pth
 
-                # Javascript and CSS files
-                elif subkey in ("css", "js") and isinstance(subvalue, compat.unicode_type):
-                    settings['settings'][subkey] = [
-                        v for v in subvalue if isinstance(v, compat.unicode_type)
-                    ]
-                elif subkey == "extra" and isinstance(subvalue, (dict, OrderedDict)):
-                    settings['settings'][subkey] = subvalue
-
-                # All other settings that require no other special handling
-                else:
-                    settings['settings'][subkey] = subvalue
-            del frontmatter['settings']
+            # All other settings that require no other special handling
+            else:
+                settings['settings'][subkey] = subvalue
+        del frontmatter['settings']
 
     def merge_meta(self, frontmatter, settings):
         """Resolve all other frontmatter items as meta/extra items."""
 
-        if settings["settings"].get('extra') and isinstance(settings["settings"].get('extra'), (dict, OrderedDict)):
-            settings["extra"] = settings["settings"].get("extra", {})
+        settings["extra"] = settings["settings"].get("extra", OrderedDict())
 
         for key, value in frontmatter.items():
-            if key == 'title' and isinstance(value, compat.unicode_type):
+            if key == 'title' and validate.is_string(value):
                 settings["page"]["title"] = value
 
             settings["extra"][key] = value
@@ -165,10 +164,14 @@ class MergeSettings(object):
     def merge(self, frontmatter, settings):
         """Handle basepath first and then merge all keys."""
 
+        if 'settings' in frontmatter and validate.is_dict(frontmatter['settings']):
+            validate.Validate().validate(frontmatter['settings'])
+        else:
+            frontmatter['settings'] = OrderedDict()
         self.merge_basepath(frontmatter, settings)
         self.merge_relative_path(frontmatter, settings)
         self.merge_destination(frontmatter, settings)
-        self.merge_template_settings(frontmatter, settings)
+        self.merge_template_settings(frontmatter)
         self.merge_settings(frontmatter, settings)
         self.merge_includes(frontmatter, settings)
         self.merge_meta(frontmatter, settings)

@@ -18,6 +18,7 @@ from .. import util
 from .. import logger
 from .. import compat
 from .merge import MergeSettings
+from .validate import Validate
 try:
     from pygments.styles import get_style_by_name
     from pygments.formatters import get_formatter_by_name
@@ -109,9 +110,12 @@ class Settings(object):
         except Exception:  # pragma: no cover
             logger.Log.error(traceback.format_exc())
 
-        self.settings["settings"] = settings if settings is not None else {}
-        self.settings["settings"]["use_template"] = False
-        self.settings["settings"]["template_tags"] = {}
+        if settings is None:
+            settings = OrderedDict()
+
+        Validate(provide_defaults=True).validate(settings)
+
+        self.settings["settings"] = settings
 
     def get(self, file_name, **kwargs):
         """Get the complete settings object for the given file."""
@@ -207,7 +211,7 @@ class Settings(object):
         if not PYGMENTS_AVAILABLE:  # pragma: no cover
             settings["settings"]["use_pygments_css"] = False
 
-        global_use_pygments_css = settings["settings"].get("use_pygments_css", True)
+        global_use_pygments_css = settings["settings"]["use_pygments_css"]
         use_pygments_css = False
         # Search for highlight extensions to see what whether pygments css is required.
         for hilite_ext in ('markdown.extensions.codehilite', 'pymdownx.inlinehilite'):
@@ -232,31 +236,26 @@ class Settings(object):
 
         if use_pygments_css:
             # Ensure a working style is set
-            style = settings["settings"].get('pygments_style', None)
-            if style is None:
-                # Explicitly define a pygment style and store the name
-                # This is to ensure the "noclasses" option always works
+            style = settings["settings"]['pygments_style']
+            try:
+                # Check if the desired style exists internally
+                get_style_by_name(style)
+            except Exception:
+                logger.Log.error("Cannot find style: %s! Falling back to 'default' style." % style)
                 style = "default"
-            else:
-                try:
-                    # Check if the desired style exists internally
-                    get_style_by_name(style)
-                except Exception:
-                    logger.Log.error("Cannot find style: %s! Falling back to 'default' style." % style)
-                    style = "default"
 
         settings["settings"]["pygments_style"] = style
 
         settings["page"]["pygments_style"] = self.load_highlight(
             style,
             settings["settings"]["use_pygments_css"],
-            settings["settings"].get('pygments_class', 'codehilite')
+            settings["settings"]['pygments_class']
         )
 
     def post_process_settings(self, settings):
         """Process the settings files making needed adjustement."""
 
-        extensions = settings["settings"].get("markdown_extensions", OrderedDict())
+        extensions = settings["settings"]["markdown_extensions"]
 
         critic_mode = "ignore"
         if self.critic & util.CRITIC_ACCEPT:
@@ -274,13 +273,13 @@ class Settings(object):
             del extensions["pymdownx.plainhtml"]
 
         # Ensure previews are using absolute paths or relative paths
-        if self.preview or not settings["settings"].get("disable_path_conversion", False):
+        if self.preview or not settings["settings"]["disable_path_conversion"]:
             # Add pathconverter extension if not already set.
             if "pymdownx.pathconverter" not in extensions:
                 extensions["pymdownx.pathconverter"] = {
                     "base_path": "${BASE_PATH}",
                     "relative_path": "${REL_PATH}" if not self.preview else "${OUTPUT}",
-                    "absolute": settings["settings"].get("path_conversion_absolute", False)
+                    "absolute": settings["settings"]["path_conversion_absolute"]
                 }
             elif self.preview and "pymdownx.pathconverter" in extensions:
                 if extensions["pymdownx.pathconverter"] is None:
