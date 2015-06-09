@@ -1009,3 +1009,5 @@ To turn off level classes (which are used to decide special colors for certain p
 ```
 
 <# This is the page title #><{ page.title }>
+
+<{ extra.references|gettxt }>
