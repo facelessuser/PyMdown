@@ -640,10 +640,6 @@ Markdown content.
 <td>This keyword is the location and file name were the output should be placed.</td>
 </tr>
 <tr>
-<td>references</td>
-<td>This can specify a separate Markdown file containing footnotes, attributes, etc. This feature could be abused to just insert normal Markdown files into other Markdown files; PyMdown currently does nothing to prevent this, but this is not really advised. References can be followed by <code>;encoding</code> to specify the read encoding. By default, the encoding from the command line will be used, but this can override it.</td>
-</tr>
-<tr>
 <td>basepath</td>
 <td>This is used to specify the path that PyMdown should use to look for reference material like CSS or JS files and even <code>references</code> defined in the frontmatter. It is also used in plugins such as <code>pathconverter</code> and <code>b64</code>.  This can override the <code>basepath</code> fed in at the command line.</td>
 </tr>
@@ -666,6 +662,10 @@ Markdown content.
 <tr>
 <td>use_tempalte</td>
 <td>This is a boolean that is used to tell PyMdown whether it should apply template variables to the markdown content.</td>
+</tr>
+<tr>
+<td>template_tags</td>
+<td>Allows the overriding of the opening and closing of any Jinja2 tag.  The value is a dictionary that can contain any of the the 3 keys: <code>block</code>, <code>variable</code>, <code>comment</code>.  Each key must contain a list for the value which contains two strings.  The first string is the opening of the tag, the second is the closing of the tag. The defaults are <code class="codehilite"><span class="p">[</span><span class="s1">&#39;{%&#39;</span><span class="p">,</span> <span class="s1">&#39;%}&#39;</span><span class="p">]</span></code> for <code>block</code>, <code class="codehilite"><span class="p">[</span><span class="s1">&#39;{{&#39;</span><span class="p">,</span> <span class="s1">&#39;}&#39;</span><span class="p">]</span></code> for <code>variable</code>, and <code class="codehilite"><span class="p">[</span><span class="s1">&#39;{#&#39;</span><span class="p">,</span> <span class="s1">&#39;#}&#39;</span><span class="p">]</span></code> for <code>comment</code>.</td>
 </tr>
 </tbody>
 </table>
@@ -765,11 +765,18 @@ Markdown content.
 <dd>
 <p>Given a single file or array of files, resolve the file path and either embed the content of the file(s) or provide a link(s) as specified in the settings, frontmatter, or inline with appropriate PyMdown notation.</p>
 <p><strong>Example</strong></p>
-<div class="codehilite"><pre><span class="cp">{{</span> <span class="nv">page.css</span><span class="o">|</span><span class="nf">getcss</span> <span class="cp">}}</span><span class="x"></span>
+<div class="codehilite"><pre><span class="c">{# Include css link #}</span><span class="x"></span>
+<span class="cp">{{</span> <span class="nv">page.css</span><span class="o">|</span><span class="nf">getcss</span> <span class="cp">}}</span><span class="x"></span>
 </pre></div>
 
 
-<div class="codehilite"><pre><span class="cp">{{</span> <span class="s1">&#39;!path/to/css/file.css&#39;</span><span class="o">|</span><span class="nf">getcss</span> <span class="cp">}}</span><span class="x"></span>
+<div class="codehilite"><pre><span class="c">{# Do not convert path for CSS link #}</span><span class="x"></span>
+<span class="cp">{{</span> <span class="s1">&#39;!path/to/css/file.css&#39;</span><span class="o">|</span><span class="nf">getcss</span> <span class="cp">}}</span><span class="x"></span>
+</pre></div>
+
+
+<div class="codehilite"><pre><span class="c">{# Embed file content #}</span><span class="x"></span>
+<span class="cp">{{</span> <span class="s1">&#39;^path/to/css/file.css&#39;</span><span class="o">|</span><span class="nf">getcss</span> <span class="cp">}}</span><span class="x"></span>
 </pre></div>
 
 
@@ -781,11 +788,31 @@ Markdown content.
 <dd>
 <p>Given a single file or array of files, resolve the file path and either embed the content of the file(s) or provide a link(s) as specified in the settings, frontmatter, or inline with appropriate PyMdown notation.</p>
 <p><strong>Example</strong></p>
-<div class="codehilite"><pre><span class="cp">{{</span> <span class="nv">page.js</span><span class="o">|</span><span class="nf">getjs</span> <span class="cp">}}</span><span class="x"></span>
+<div class="codehilite"><pre><span class="c">{# Include JS link #}</span><span class="x"></span>
+<span class="cp">{{</span> <span class="nv">page.js</span><span class="o">|</span><span class="nf">getjs</span> <span class="cp">}}</span><span class="x"></span>
 </pre></div>
 
 
-<div class="codehilite"><pre><span class="cp">{{</span> <span class="s1">&#39;^path/to/css/file.js;utf-8&#39;</span><span class="o">|</span><span class="nf">getjs</span> <span class="cp">}}</span><span class="x"></span>
+<div class="codehilite"><pre><span class="c">{# Do not convert path for JS link #}</span><span class="x"></span>
+<span class="cp">{{</span> <span class="s1">&#39;!path/to/js/file.js;utf-8&#39;</span><span class="o">|</span><span class="nf">getjs</span> <span class="cp">}}</span><span class="x"></span>
+</pre></div>
+
+
+<div class="codehilite"><pre><span class="c">{# Embed file content #}</span><span class="x"></span>
+<span class="cp">{{</span> <span class="s1">&#39;^path/to/js/file.js;utf-8&#39;</span><span class="o">|</span><span class="nf">getjs</span> <span class="cp">}}</span><span class="x"></span>
+</pre></div>
+
+
+</dd>
+</dl>
+<h4 id="get-text"><a name="user-content-get-text" href="#get-text" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Get Text</h4>
+<dl>
+<dt>gettxt([files])</dt>
+<dd>
+<p>Given a single file or array of files, resolve the file path and embed the content of the file(s).</p>
+<p><strong>Example</strong></p>
+<div class="codehilite"><pre><span class="c">{# Embed text content #}</span><span class="x"></span>
+<span class="cp">{{</span> <span class="s1">&#39;some/path/to.txt&#39;</span><span class="o">|</span><span class="nf">gettxt</span> <span class="cp">}}</span><span class="x"></span>
 </pre></div>
 
 
@@ -819,7 +846,7 @@ Markdown content.
 <dl>
 <dt>getmeta(value, name=&rsquo;name&rsquo;)</dt>
 <dd>
-<p>Given the value and name, return a simple meta tag.  <code>value</code> can be either a single string or array of strings; if an array, the values will be joined with <code>,</code>.</p>
+<p>Given the value and name, return a simple meta tag: <code class="codehilite"><span class="nt">&lt;meta</span> <span class="na">name=</span><span class="s">&quot;name&quot;</span> <span class="na">value=</span><span class="s">&quot;value&quot;</span><span class="nt">&gt;</span></code>.  <code>value</code> can be either a single string or array of strings; if an array, the values will be joined with <code>,</code>.</p>
 <p><strong>Example</strong></p>
 <div class="codehilite"><pre><span class="cp">{{</span> <span class="nv">extra.author</span><span class="o">|</span><span class="nf">getmeta</span><span class="o">(</span><span class="nv">name</span><span class="o">=</span><span class="s1">&#39;author&#39;</span><span class="o">)</span> <span class="cp">}}</span><span class="x"></span>
 </pre></div>
