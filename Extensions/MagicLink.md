@@ -1,7 +1,5 @@
 ---
 use_template: true
-references:
-  - _references/references.md
 ---
 [TOC]
 # Overview
@@ -23,4 +21,4 @@ Just paste links directly in the document like this: https://github.com/faceless
 
 Or even an email address fake.email@email.com.
 
-{{ extra.references|gettxt }}
+{{ extra.references }}

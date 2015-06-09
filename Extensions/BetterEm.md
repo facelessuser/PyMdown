@@ -1,7 +1,5 @@
 ---
 use_template: true
-references:
-  - _references/references.md
 ---
 [TOC]
 # Overview
@@ -68,4 +66,4 @@ Usage is the __same__ as usual.  Just keep in mind the _differences_.  Markdown 
 
 Usage is the __same__ as usual.  Just keep in mind the _differences_.  Markdown is un**freaking**believable :smile:.
 
-{{ extra.references|gettxt }}
+{{ extra.references }}

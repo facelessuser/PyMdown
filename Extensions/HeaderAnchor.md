@@ -1,7 +1,5 @@
 ---
 use_template: true
-references:
-  - _references/references.md
 ---
 [TOC]
 # Overview
@@ -78,4 +76,4 @@ This is the CSS used for rendering the header anchors in this document. While Fo
 }
 ```
 
-{{ extra.references|gettxt }}
+{{ extra.references }}

@@ -1,8 +1,6 @@
 ---
 title: PyMdown
 use_template: true
-references:
-  - _references/references.md
 css:
   - css/site-content.css
 ---
@@ -41,4 +39,4 @@ plugin for Sublime Text 3
 how to include custom lexers and styes
 </td></tr></tbody></table>
 
-{{ extra.references|gettxt }}
+{{ extra.references }}

@@ -1,7 +1,5 @@
 ---
 use_template: true
-references:
-  - _references/references.md
 ---
 [TOC]
 # Overview
@@ -24,4 +22,4 @@ Extensions that get loaded:
 - pymdown.headeranchor
 - pymdown.superfences
 
-{{ extra.references|gettxt }}
+{{ extra.references }}
