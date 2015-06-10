@@ -12,6 +12,7 @@ from __future__ import print_function
 import codecs
 import traceback
 import tempfile
+import os
 from . import logger
 from . import compat
 from .template import Template
@@ -120,6 +121,7 @@ class Html(object):
                 self.encode_file = False
             elif self.preview:
                 self.file = tempfile.NamedTemporaryFile(delete=False, suffix=".html")
+                self.relpath = os.path.dirname(self.file.name)
         except Exception:
             logger.Log.error(str(traceback.format_exc()))
             raise PyMdownFormatterException("Could not open output file!")

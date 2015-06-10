@@ -1,3 +1,32 @@
+# Your HTML template via an absolute path.
+# If not an absolute path, PyMdown will use the basepath of the input if available,
+# and lastly the user directory if it can't find the file.
+template: default/template.html
+
+# Load up js scripts (in head)
+#
+# Is an array of scripts (path or link).
+# If it points to a physical file, it will be included.
+# PyMdown will look relative to the binary if it can't find the file.
+#
+# This can be overridden in a file's frontmatter via the 'settings' key word:
+#
+# ---
+# settings:
+#   js:
+#     - somefile.js
+# ---
+#
+# but if you want to append to the list, you can use 'js' keyword directly in the
+# frontmatter:
+#
+# ---
+# js:
+#   - somefile.js
+# ---
+#
+js: []
+
 # Select your CSS for you output html
 # or you can have it all contained in your HTML template
 #
@@ -36,35 +65,24 @@ pygments_style: default
 # to use the same name.
 pygments_class: highlight
 
+# Enable Jinja2 Template support inside of Markdown content
+# WARNING: It is recommended to use this per file when needed
+#          in the frontmatter as having template tags enabled
+#          all the time could be very annoying, but you are
+#          able to if you want.
+use_jinja2: false
 
-# Your HTML template via an absolute path.
-# If not an absolute path, PyMdown will use the basepath of the input if available,
-# and lastly the user directory if it can't find the file.
-template: default/template.html
+# By default, Jinja2 uses {% block %} for blocks. You can change that here
+# or change it per file in your frontmatter. Only affects Markdown content template tags.
+jinja2_block: ['{%', '%}']
 
-# Load up js scripts (in head)
-#
-# Is an array of scripts (path or link).
-# If it points to a physical file, it will be included.
-# PyMdown will look relative to the binary if it can't find the file.
-#
-# This can be overridden in a file's frontmatter via the 'settings' key word:
-#
-# ---
-# settings:
-#   js:
-#     - somefile.js
-# ---
-#
-# but if you want to append to the list, you can use 'js' keyword directly in the
-# frontmatter:
-#
-# ---
-# js:
-#   - somefile.js
-# ---
-#
-js: []
+# By default, Jinja2 uses {{ variable }} for variables. You can change that here
+# or change it per file in your frontmatter. Only affects Markdown content template tags.
+jinja2_variable: ['{{', '}}']
+
+# By default, Jinja2 uses {# comment #} for comments. You can change that here
+# or change it per file in your frontmatter. Only affects Markdown content template tags.
+jinja2_comment: ['{#', '#}']
 
 # By default resource paths are converted to relative file paths when possible;
 # this disables conversion.  Previews will still convert paths to render preview proper.
@@ -116,32 +134,27 @@ extra:
   # By configuring 'flow', 'sequence', or 'mathjax' to `true` in a file's frontmatter,
   # and using the following in a the template, conditional includes per file can be achieved:
   #
-  #     {%if extra.flow %}{{ extra.flow_source.css|getcss }}{% endif %}
-  #     {%if extra.sequence %}{{ extra.sequence_source.css|getcss }}{% endif %}
-  #     {%if extra.mathjax %}{{ extra.mathjax_source.css|getcss }}{% endif %}
-  #     {%if extra.flow %}{{ extra.flow_source.js|getjs }}{% endif %}
-  #     {%if extra.sequence %}{{ extra.sequence_source.js|getjs }}{% endif %}
-  #     {%if extra.mathjax %}{{ extra.mathjax_source.js|getjs }}{% endif %}
+  #     {% if extra.flow or extra.sequence %}{{ extra.diagram_common_js|getjs }}{% endif %}
+  #     {%if extra.flow %}{{ extra.flow_js|getjs }}{% endif %}
+  #     {%if extra.sequence %}{{ extra.sequence_js|getjs }}{% endif %}
+  #     {%if extra.mathjax %}{{ extra.mathjax_js|getjs }}{% endif %}
 
   flow: False
-  flow_source:
-    js:
-      - "https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"
-      - js/flowchart-min.js
-      - js/uml-converter.js
-      - js/flow-loader.js
+  flow_js:
+    - flowchart-min.js
+    - default/flow-loader.js
 
   sequence: False
-  sequence_source:
-    js:
-      - "https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"
-      - "https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"
-      - "https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.4/sequence-diagram-min.js"
-      - js/uml-converter.js
-      - js/sequence-loader.js
+  sequence_js:
+    - "https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"
+    - "https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.4/sequence-diagram-min.js"
+    - default/sequence-loader.js
+
+  diagram_common_js:
+    - "https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"
+    - default/uml-converter.js
 
   mathjax: False
-  mathjax_source:
-    js:
-      - js/mathjax-config.js
-      - 'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
+  mathjax_js:
+    - default/mathjax-config.js
+    - 'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'

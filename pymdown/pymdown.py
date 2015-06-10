@@ -155,31 +155,41 @@ class Convert(object):
             try:
                 html.open()
 
+                if self.config.preview and html.file.name:
+                    # Special case: we have to force relative path to be the output for previews
+                    self.settings["page"]['relpath'] = path.dirname(html.file.name)
+
                 # Prepare template from markdown text to apply template variables
-                template = Template(
-                    basepath=self.settings["page"]["basepath"],
-                    relpath=self.settings["page"]["relpath"],
-                    force_conversion=self.config.preview,
-                    disable_path_conversion=self.settings["settings"].get("disable_path_conversion", False),
-                    absolute_path_conversion=self.settings["settings"].get("path_conversion_absolute", False),
-                    template_tags=self.settings["settings"].get("template_tags", {})
-                ).get_template_from_string(text)
+                if self.settings['settings']['use_jinja2']:
+                    template = Template(
+                        basepath=self.settings["page"]["basepath"],
+                        relpath=self.settings["page"]["relpath"],
+                        force_conversion=self.config.preview,
+                        disable_path_conversion=self.settings["settings"]["disable_path_conversion"],
+                        absolute_path_conversion=self.settings["settings"]["path_conversion_absolute"],
+                        template_tags={
+                            'block': self.settings["settings"]["jinja2_block"],
+                            'variable': self.settings["settings"]["jinja2_variable"],
+                            'comment': self.settings["settings"]["jinja2_comment"]
+                        }
+                    ).get_template_from_string(text)
+                    text = template.render(
+                        settings=self.settings["settings"],
+                        page=self.settings["page"],
+                        extra=self.settings["extra"]
+                    )
 
                 # Set up Converter
                 converter = mdconvert.MdConverts(
-                    template.render(
-                        settings=self.settings.get("settings", {}),
-                        page=self.settings.get("page", {}),
-                        extra=self.settings.get("extra", {})
-                    ) if self.settings.get('settings', {}).get('use_template', False) else text,
-                    smart_emphasis=self.settings["settings"].get('smart_emphasis', True),
-                    lazy_ol=self.settings["settings"].get('lazy_ol', True),
-                    tab_length=self.settings["settings"].get('tab_length', 4),
+                    text,
+                    smart_emphasis=self.settings["settings"]['smart_emphasis'],
+                    lazy_ol=self.settings["settings"]['lazy_ol'],
+                    tab_length=self.settings["settings"]['tab_length'],
                     base_path=self.settings["page"]["basepath"],
                     relative_path=self.settings["page"]["relpath"],
                     output_path=path.dirname(html.file.name) if html.file.name else self.config.out,
-                    enable_attributes=self.settings["settings"].get('enable_attributes', True),
-                    output_format=self.settings["settings"].get('output_format', 'xhtml1'),
+                    enable_attributes=self.settings["settings"]['enable_attributes'],
+                    output_format=self.settings["settings"]['output_format'],
                     markdown_extensions=self.settings["settings"]["markdown_extensions"]
                 )
 

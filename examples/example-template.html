@@ -95,14 +95,12 @@ body {
 }
 </style>
 {{ page.css|getcss }}
-{%if extra.flow %}{{ extra.flow_source.css|getcss }}{% endif %}
-{%if extra.sequence %}{{ extra.sequence_source.css|getcss }}{% endif %}
-{%if extra.mathjax %}{{ extra.mathjax_source.css|getcss }}{% endif %}
-{%if page.pygments_style %}{{ page.pygments_style }}{% endif %}
+{% if page.pygments_style %}{{ page.pygments_style }}{% endif %}
 {{ page.js|getjs }}
-{%if extra.flow %}{{ extra.flow_source.js|getjs }}{% endif %}
-{%if extra.sequence %}{{ extra.sequence_source.js|getjs }}{% endif %}
-{%if extra.mathjax %}{{ extra.mathjax_source.js|getjs }}{% endif %}
+{%- if extra.flow or extra.sequence %}{{ extra.diagram_common_js|getjs }}{% endif %}
+{%- if extra.flow %}{{ extra.flow_js|getjs }}{% endif %}
+{%- if extra.sequence %}{{ extra.sequence_js|getjs }}{% endif %}
+{%- if extra.mathjax %}{{ extra.mathjax_js|getjs }}{% endif %}
 <title>{{ page.title }}</title>
 </head>
 <body>

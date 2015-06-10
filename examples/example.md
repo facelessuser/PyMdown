@@ -6,12 +6,9 @@ references:
   - footnotes.md
 destination: Example.html
 
-# Testing out template settings
-use_template: true
-template_tags:
-    block: ['<%', '%>']
-    variable: ['<{', '}>']
-    comment: ['<#', '#>']
+flow: true
+sequence: true
+mathjax: true
 
 # Meta Data
 title: PyMdown Example
@@ -22,6 +19,10 @@ author:
 # Settings overrides
 settings:
   template: example-template.html
+  use_jinja2: true
+  jinja2_block: ['<%', '%>']
+  jinja2_variable: ['<{', '}>']
+  jinja2_comment: ['<#', '#>']
   markdown_extensions:
     markdown.extensions.extra:
     markdown.extensions.toc:
@@ -40,6 +41,7 @@ settings:
     pymdownx.inlinehilite:
     pymdownx.b64:
       base_path: ${BASE_PATH}
+    pymdown.critic:
 ---
 test: This example of normal meta extension
 title: This title will be overridden by YAML
@@ -66,6 +68,7 @@ title: This title will be overridden by YAML
           pymdownx.inlinehilite:
           pymdownx.b64:
             base_path: ${BASE_PATH}
+          pymdownx.critic:
     ```
 
     !!! Caution "Notes"
@@ -999,6 +1002,233 @@ To turn off level classes (which are used to decide special colors for certain p
 |Division Percentage |[= 212.2/537 "212.2/537 Testing division"] |
 |No Label            |[= 50%]                                    |
 |Inline              |Before[= 50% "I'm a block!"]After          |
+
+# Neseted Fences:
+
+````
+    ```
+    This will still be parsed
+    as a normal indented code block.
+    ```
+
+```
+This will still be parsed
+as a fenced code block.
+```
+
+- This is a list that contains multiple code blocks.
+
+    - Here is an indented block
+
+            ```
+            This will still be parsed
+            as a normal indented code block.
+            ```
+
+    - Here is a fenced code block:
+
+        ```
+        This will still be parsed
+        as a fenced code block.
+        ```
+
+        > ```
+        > Blockquotes?
+        > Not a problem!
+        > ```
+````
+
+    ```
+    This will still be parsed
+    as a normal indented code block.
+    ```
+
+```
+This will still be parsed
+as a fenced code block.
+```
+
+- This is a list that contains multiple code blocks.
+
+    - Here is an indented block
+
+            ```
+            This will still be parsed
+            as a normal indented code block.
+            ```
+
+    - Here is a fenced code block:
+
+        ```
+        This will still be parsed
+        as a fenced code block.
+        ```
+
+        > ```
+        > Blockquotes?
+        > Not a problem!
+        > ```
+
+# UML Flow Charts
+````
+```flow
+st=>start: Start:>http://www.google.com[blank]
+e=>end:>http://www.google.com
+op1=>operation: My Operation
+sub1=>subroutine: My Subroutine
+cond=>condition: Yes
+or No?:>http://www.google.com
+io=>inputoutput: catch something...
+
+st->op1->cond
+cond(yes)->io->e
+cond(no)->sub1(right)->op1
+```
+````
+
+```flow
+st=>start: Start:>http://www.google.com[blank]
+e=>end:>http://www.google.com
+op1=>operation: My Operation
+sub1=>subroutine: My Subroutine
+cond=>condition: Yes
+or No?:>http://www.google.com
+io=>inputoutput: catch something...
+
+st->op1->cond
+cond(yes)->io->e
+cond(no)->sub1(right)->op1
+```
+
+# UML Sequence Diagrams
+````
+```sequence
+Title: Here is a title
+A->B: Normal line
+B-->C: Dashed line
+C->>D: Open arrow
+D-->>A: Dashed open arrow
+```
+````
+
+```sequence
+Title: Here is a title
+A->B: Normal line
+B-->C: Dashed line
+C->>D: Open arrow
+D-->>A: Dashed open arrow
+```
+
+# Math
+````tex
+Some Equations:
+
+$$
+E(\mathbf{v}, \mathbf{h}) = -\sum_{i,j}w_{ij}v_i h_j - \sum_i b_i v_i - \sum_j c_j h_j
+$$
+
+- Here are some more equations:
+
+    $$
+        \begin{align}
+            p(v_i=1|\mathbf{h}) & = \sigma\left(\sum_j w_{ij}h_j + b_i\right) \\
+            p(h_j=1|\mathbf{v}) & = \sigma\left(\sum_i w_{ij}v_i + c_j\right)
+        \end{align}
+    $$
+
+- Inline equations: $p(x|y) = \frac{p(y|x)p(x)}{p(y)}$.
+````
+
+Some Equations:
+
+$$
+E(\mathbf{v}, \mathbf{h}) = -\sum_{i,j}w_{ij}v_i h_j - \sum_i b_i v_i - \sum_j c_j h_j
+$$
+
+- Here are some more equations:
+
+    $$
+        \begin{align}
+            p(v_i=1|\mathbf{h}) & = \sigma\left(\sum_j w_{ij}h_j + b_i\right) \\
+            p(h_j=1|\mathbf{v}) & = \sigma\left(\sum_i w_{ij}v_i + c_j\right)
+        \end{align}
+    $$
+
+- Inline equations: $p(x|y) = \frac{p(y|x)p(x)}{p(y)}$.
+
+# Critic
+
+```critic-markup
+Here is some \{--*incorrect*--} Markdown.  I am adding this\{++ here.++}.  Here is some more \{--text
+that I am removing--}text.  And here is even more \{++text that I
+am ++}adding.\{~~
+
+~>  ~~}Paragraph was deleted and replaced with some spaces.\{~~  ~>
+
+~~}Spaces were removed and a paragraph was added.
+
+And here is a comment on \{==some
+==text== ==}\{>>This works quite well. I just wanted to comment on it.<<}. Substitutions \{~~is~>are~~} great!
+
+Escape \\{>>This text is preserved<<}.
+
+General block handling.
+
+\{--
+
+* test
+* test
+* test
+    * test
+* test
+
+--}
+
+\{++
+
+* test
+* test
+* test
+    * test
+* test
+
+++}
+```
+
+Here is some {--*incorrect*--} Markdown.  I am adding this{++ here.++}.  Here is some more {--text
+that I am removing--}text.  And here is even more {++text that I
+am ++}adding.{~~
+
+~>  ~~}Paragraph was deleted and replaced with some spaces.{~~  ~>
+
+~~}Spaces were removed and a paragraph was added.
+
+And here is a comment on {==some
+==text== ==}{>>This works quite well. I just wanted to comment on it.<<}. Substitutions {~~is~>are~~} great!
+
+Escape \{>>This text is preserved<<}.
+
+General block handling.
+
+{--
+
+* test
+* test
+* test
+    * test
+* test
+
+--}
+
+{++
+
+* test
+* test
+* test
+    * test
+* test
+
+++}
 
 # Template Test
 

@@ -273,6 +273,32 @@ CSS files and JavaScript files can be URLs or file paths.  When specifying a fil
 
 CSS and JavaScript files can also be followed by `;encoding` to read in the file with the specified encoding.
 
+### Enabling Jinja2 Templating in Markdown Content
+If desired, Jinja2 templating can be enabled in Markdown content.  While Jinja2 usage in Markdown content can be enabled globally, it is recommended to enable it in specific pages via the YAML frontmatter.
+
+```yaml
+# Enable Jinja2 Template support inside of Markdown content
+use_jinja2: false
+```
+
+You can also control the tag style if you find the default difficult to use within your content either globally in your settings file, or in your page's YAML frontmatter.
+
+```yaml
+# By default, Jinja2 uses {% block %} for blocks. You can change that here
+# or change it per file in your frontmatter. Only affects Markdown content template tags.
+jinja2_block: ['{%', '%}']
+
+# By default, Jinja2 uses {{ variable }} for variables. You can change that here
+# or change it per file in your frontmatter. Only affects Markdown content template tags.
+jinja2_variable: ['{{', '}}']
+
+# By default, Jinja2 uses {# comment #} for comments. You can change that here
+# or change it per file in your frontmatter. Only affects Markdown content template tags.
+jinja2_comment: ['{#', '#}']
+```
+
+See [Templating](#templating) to learn more about accessing these template variables.
+
 ### Path Conversions
 By default, PyMdown converts paths to be relative to the output location.  If desired, this can be changed to an absolute path:
 
@@ -351,8 +377,6 @@ PyMdown has a few special keywords that can be defined to alter the output.  All
 | css | This keyword's value is an array of strings denoting additional single CSS files to include.  They follow the same convention as CSS defined in the settings file: `;encoding` at tail will define the encoding used to access the file, paths starting with `!` will not have their path converted to absolute or relative paths, and `^` will directly embed the content in the HTML file. |
 | js | This keyword's value is an array of strings denoting additional single JavaScript files to include.  They follow the same convention as JavaScript defined in the settings file: `;encoding` at tail will define the encoding used to access the file, paths starting with `!` will not have their path converted to absolute or relative paths, and `^` will directly embed the content in the HTML file. |
 | settings | This is a dictionary and allows the overriding of any of the settings found in the original configuration file. |
-| use_tempalte | This is a boolean that is used to tell PyMdown whether it should apply template variables to the markdown content. |
-| template_tags | Allows the overriding of the opening and closing of any Jinja2 tag.  The value is a dictionary that can contain any of the the 3 keys: `block`, `variable`, `comment`.  Each key must contain a list for the value which contains two strings.  The first string is the opening of the tag, the second is the closing of the tag. The defaults are `#!js ['{%', '%}']` for `block`, `#!js ['{{', '}']` for `variable`, and `#!js ['{#', '#}']` for `comment`. |
 
 See [Templating](#templating) to learn more about accessing these values in your HTML template.
 
@@ -360,7 +384,21 @@ See [Templating](#templating) to learn more about accessing these values in your
 If the keyword is not one of the special keywords defined above, they will automatically be available in the template variables under `extra`
 
 ## Templating
-Templates are HTML files that use [Jinja2](http://jinja.pocoo.org/) templating syntax.  Template variables and logic is used in the HTML template that is provided.  If desired, `use_template` can be set to `true` in the markdown YAML frontmatter, and template variables and logic will be applied there as well.  It is up to the user to escape content that must be escaped.
+Templates are HTML files that use [Jinja2](http://jinja.pocoo.org/) templating syntax.  Template variables and logic is used in the HTML templates.  If desired, Jinja2 templating can be enabled in the Markdown content by with the following syntax:
+
+```yaml
+settings:
+  use_jinja2
+```
+
+It is up to the user to escape content that must be escaped. If desired, the brackets for a given page can be changed with the following frontmatter:
+
+```yaml
+settings:
+  jinja2_block: ['{%', '%}']
+  jinja2_variable: ['{{', '}}']
+  jinja2_comment: ['{#', '#}']
+```
 
 Template data is found under three variables:
 

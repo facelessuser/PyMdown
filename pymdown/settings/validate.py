@@ -6,7 +6,6 @@ Copyright (c) 2014 - 2015 Isaac Muse <isaacmuse@gmail.com>
 """
 from collections import OrderedDict
 from .. import compat
-from copy import deepcopy
 
 InvalidKey = object()
 
@@ -53,6 +52,17 @@ def is_none(value):
     return value is None
 
 
+def in_range(value, minimum, maximum):
+    """Check if value is in range."""
+
+    okay = True
+    if minimum >= 0 and len < minimum:
+        okay = False
+    elif maximum >= 0 and value > maximum:
+        okay = False
+    return okay
+
+
 class Validate(object):
 
     """Validate the settings object and return defaults in invalide keys if option is enabled."""
@@ -60,12 +70,10 @@ class Validate(object):
     defaults = {
         "css": [],
         "js": [],
-        "use_template": False,
-        "template_tags": {
-            "block": ["{%", "%}"],
-            "variable": ["{{", "}}"],
-            "comment": ["{#", "#}"]
-        },
+        "use_jinja2": False,
+        "jinja2_block": ["{%", "%}"],
+        "jinja2_variable": ["{{", "}}"],
+        "jinja2_comment": ["{#", "#}"],
         "markdown_extensions": OrderedDict(),
         "use_pygments_css": True,
         "pygments_style": 'default',
@@ -89,27 +97,16 @@ class Validate(object):
     def set_default(self, settings, key):
         """Set the default key."""
 
-        if is_array(key):
-            val = settings
-            def_val = self.defaults
-            while len(key):
-                k = key.pop(0)
-                def_val = def_val[k]
-                if len(key):
-                    val = val[k]
-                else:
-                    val[k] = deepcopy(def_val)
-        else:
-            settings[key] = deepcopy(self.defaults[key])
+        settings[key] = self.defaults[key]
 
-    def val_str_array(self, key, settings):
+    def val_str_array(self, key, settings, minimum=-1, maximum=-1):
         """Validate an array of strings."""
 
         remove = []
         if key not in settings:
             if self.provide_defaults:
                 self.set_default(settings, key)
-        elif not is_array(settings[key]):
+        elif not is_array(settings[key]) or not in_range(len(settings[key]), minimum, maximum):
             if self.provide_defaults:
                 self.set_default(settings, key)
             else:
@@ -168,57 +165,11 @@ class Validate(object):
         if key not in settings:
             if self.provide_defaults:
                 self.set_default(settings, key)
-        elif not is_string(settings[key]):
-            if self.provide_defaults:
-                self.set_default(settings, key)
-            else:
-                del settings[key]
-
-    def val_template_tag(self, settings):
-        """Validate the subkeys within the template_tag object."""
-
-        key = 'template_tags'
-
-        template_tags = settings[key]
-        for subkey in ('block', 'variable', 'comment'):
-            if subkey not in template_tags:
-                if self.provide_defaults:
-                    self.set_default(settings, [key, subkey])
-            elif not is_array(template_tags[subkey]) or len(template_tags[subkey]) != 2:
-                #  Array of values does not meet the criteria
-                if self.provide_defaults:
-                    self.set_defalt(settings, [key, subkey])
-                else:
-                    del template_tags[subkey]
-            else:
-                # Validate the array of values
-                remove = False
-                for x in template_tags[subkey]:
-                    if not is_string(x):
-                        remove = True
-                        break
-                if remove:
-                    if self.provide_defaults:
-                        self.set_default(settings, [key, subkey])
-                    else:
-                        del template_tags[subkey]
-
-    def val_template_tags(self, settings):
-        """Validate the template tags object."""
-
-        key = 'template_tags'
-
-        # Validate the root of the object
-        if key not in settings:
-            if self.provide_defaults:
-                self.set_default(settings, key)
         elif not is_dict(settings[key]):
             if self.provide_defaults:
                 self.set_default(settings, key)
             else:
                 del settings[key]
-        else:
-            self.val_template_tag(settings)
 
     def val_md_extensions(self, settings):
         """Ensure markdown extensions look valid."""
@@ -244,19 +195,31 @@ class Validate(object):
     def validate(self, settings):
         """Ensure the settings object is valid."""
 
+        # Template settings
+        self.val_str('template', settings)
         self.val_str_array('css', settings)
         self.val_str_array('js', settings)
-        self.val_bool('use_pygments_css', settings)
+        self.val_extra(settings)
+
+        # PyMdown path conversion settings
         self.val_bool('disable_path_conversion', settings)
         self.val_bool('path_conversion_absolute', settings)
+
+        # Pygments settings
+        self.val_bool('use_pygments_css', settings)
+        self.val_str('pygments_class', settings)
+        self.val_str('pygments_style', settings)
+
+        # Jinja2 settings
+        self.val_bool('use_jinja2', settings)
+        self.val_str_array('jinja2_block', settings, minimum=2, maximum=2)
+        self.val_str_array('jinja2_variable', settings, minimum=2, maximum=2)
+        self.val_str_array('jinja2_comment', settings, minimum=2, maximum=2)
+
+        # Python Markdown settings
+        self.val_int('tab_length', settings)
         self.val_bool('lazy_ol', settings)
         self.val_bool('smart_emphasis', settings)
         self.val_bool('enable_attributes', settings)
-        self.val_bool('use_template', settings)
-        self.val_int('tab_length', settings)
-        self.val_str('pygments_style', settings)
-        self.val_str('pygments_class', settings)
-        self.val_str('template', settings)
-        self.val_template_tags(settings)
-        self.val_extra(settings)
+        self.val_str('output_format', settings)
         self.val_md_extensions(settings)
