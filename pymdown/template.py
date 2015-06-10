@@ -65,7 +65,6 @@ class Template(object):
         self.force_conversion = kwargs.get('force_conversion', False)
         self.disable_path_conversion = kwargs.get('disable_path_conversion', False)
         self.absolute_path_conversion = kwargs.get('absolute_path_conversion', False)
-        self.added_res = set()
 
         # Setup template environment
         template_tags = kwargs.get('template_tags', {})
@@ -278,9 +277,7 @@ class Template(object):
                 # This is a URL, don't include content
                 if is_url:
                     resource, encoding = util.splitenc(resource)
-                    if resource not in self.added_res:
-                        resources.append(res_get(resource, link=True, encoding=encoding))
-                        self.added_res.add(resource)
+                    resources.append(res_get(resource, link=True, encoding=encoding))
                 else:
                     # Find path relative to basepath or global user path
                     # If basepath is defined set paths relative to the basepath if possible
@@ -307,7 +304,7 @@ class Template(object):
 
                     # We check the absolute path against the current list
                     # and add the respath if not present
-                    if abs_path not in self.added_res:
+                    if res_path:
                         if not direct_include:
                             res_path = compat.pathname2url(res_path.replace('\\', '/'))
                             link = True
@@ -315,10 +312,9 @@ class Template(object):
                             res_path = util.load_text_resource(abs_path, encoding=encoding)
                             link = False
                         resources.append(res_get(res_path, link=link, encoding=encoding))
-                        self.added_res.add(abs_path)
 
                     # Not a known path and not a url, just add as is
-                    elif resource not in self.added_res:
+                    else:
                         resources.append(
                             res_get(
                                 compat.pathname2url(resource.replace('\\', '/')),
@@ -326,7 +322,6 @@ class Template(object):
                                 encoding=encoding
                             )
                         )
-                        self.added_res.add(resource)
 
     def load_css_files(self, styles):
         """Load specified CSS sources."""
