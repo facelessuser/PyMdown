@@ -108,37 +108,12 @@ class MergeSettings(object):
         settings['page']['css'] += css
         settings['page']['js'] += js
 
-    def merge_template_settings(self, frontmatter):
-        """
-        Merge special template variables.
-
-        Template variables won't be directly merged into settings here,
-        but they will be merged into the frontmatter 'settings' variable
-        which gets merged after this.
-        """
-
-        if 'use_template' in frontmatter:
-            if validate.is_bool(frontmatter['use_template']):
-                frontmatter['settings']['use_template'] = frontmatter['use_template']
-            del frontmatter['use_template']
-        if 'template_tags' in frontmatter:
-            if validate.is_dict(frontmatter['template_tags']):
-                for key, value in frontmatter['template_tags'].items():
-                    if key in ('block', 'variable', 'comment') and len(value) == 2:
-                        if validate.is_string(value[0]) and validate.is_string(value[1]):
-                            if 'template_tags' not in frontmatter['settings']:
-                                frontmatter['settings']['template_tags'] = OrderedDict()
-                            frontmatter['settings']['template_tags'][key] = value
-            del frontmatter['template_tags']
-
     def merge_settings(self, frontmatter, settings):
         """Handle and merge PyMdown settings."""
 
         value = frontmatter['settings']
         for subkey, subvalue in value.items():
-            if subkey == 'template_tags':
-                for tag_key, tag_value in subvalue.items():
-                    settings['settings'][subkey][tag_key] = tag_value
+
             # Html template
             if subkey == "template" and isinstance(subvalue, compat.unicode_type):
                 org_pth = subvalue
@@ -171,7 +146,6 @@ class MergeSettings(object):
         self.merge_basepath(frontmatter, settings)
         self.merge_relative_path(frontmatter, settings)
         self.merge_destination(frontmatter, settings)
-        self.merge_template_settings(frontmatter)
         self.merge_settings(frontmatter, settings)
         self.merge_includes(frontmatter, settings)
         self.merge_meta(frontmatter, settings)
