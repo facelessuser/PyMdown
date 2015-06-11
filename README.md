@@ -18,13 +18,12 @@ Though the documentation is currently still in flux and still being completed, i
 - Built on top of https://pypi.python.org/pypi/Markdown
 - Contains a custom extensions from pymdown-extensions: https://github.com/facelessuser/pymdown-extensions
 - Uses Pygments for syntax highlighting of code: http://pygments.org/.
-- Includes optional Tomorrow Themes for Pygments: https://github.com/MozMorris/tomorrow-pygments
 - Inspiration for the project came from https://github.com/revolunet/sublimetext-markdown-preview.
 
 # License
 MIT license.
 
-Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
+Copyright (c) 2014 - 2015 Isaac Muse <isaacmuse@gmail.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
 

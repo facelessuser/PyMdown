@@ -4,7 +4,7 @@ PyMdown extensions.
 ---
 
 ## Available Extensions
-A number of extensions where made specifically for the PyMdown tool.  They are collectively found at the PyMdown extensions [repository](https://github.com/facelessuser/pymdown-extensions).  And though the PyMdown extensions were created to be used with PyMdown, you can use them freely as normal Python Markdown extensions outside of the PyMdown tool.  Keep in mind, the PyMdown extensions were designed to work with the default extensions.  Your mileage may vary when paired with other 3rd party extensions.  If using a compiled version of PyMdown, you will have to ensure they get compiled in.
+A number of extensions where made specifically for the PyMdown tool.  They are collectively found at the PyMdown extensions [repository](https://github.com/facelessuser/pymdown-extensions).  And though the PyMdown extensions were created to be used with PyMdown, you can use them freely as normal Python Markdown extensions outside of the PyMdown tool.  Keep in mind, the PyMdown extensions were designed to work with the default extensions.  Your mileage may vary when paired with other 3rd party extensions.
 
 Check out the individual extension document pages for more info on the available PyMdown extensions.
 
