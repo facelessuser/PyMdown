@@ -9,7 +9,6 @@ environment:
       TOXENV: "py34-unittests"
     - PYTHON: "C:/Python27"
       NODEJS: "0.12"
-      TOXENV: "lint"
 init:
   - "ECHO %TOXENV%"
   - "ECHO %PYTHON%"
