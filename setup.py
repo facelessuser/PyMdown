@@ -24,21 +24,17 @@ setup(
     author='Isaac Muse',
     author_email='Isaac.Muse [at] gmail.com',
     url='https://github.com/facelessuser/PyMdown',
-    packages=find_packages(exclude=['pyinstaller*']),
+    packages=find_packages(),
     install_requires=[
-        'Markdown>=2.6.0',
+        'Markdown>=2.6.0,<3',
         'Pygments>=2.0.1',
         'PyYAML>=3.10',
         'Jinja2>=2.7.3',
-        'pymdown-extensions>=1.0.0',
-        'pymdown-lexers>=1.0.0',
-        'pymdown-styles>=1.0.0'
+        'pymdown-extensions>=1.0.0'
     ],
     zip_safe=False,
     dependency_links=[
-        'https://github.com/facelessuser/pymdown-extensions/archive/master.zip#egg=pymdown-extensions-1.0.0',
-        'https://github.com/facelessuser/pymdown-lexers/archive/master.zip#egg=pymdown-lexers-1.0.0',
-        'https://github.com/facelessuser/pymdown-styles/archive/master.zip#egg=pymdown-styles-1.0.0'
+        'https://github.com/facelessuser/pymdown-extensions/archive/master.zip#egg=pymdown-extensions-1.0.0'
     ],
     entry_points={
         'console_scripts': [
