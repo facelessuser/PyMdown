@@ -30,6 +30,7 @@ pages:
     - SuperFences: extensions/superfences.md
     - Tasklist: extensions/tasklist.md
     - Tilde: extensions/tilde.md
+  - Contributing &amp; Suppport: contributing.md
   - License: license.md
 theme: readthedocs
 theme_dir: doc_theme
