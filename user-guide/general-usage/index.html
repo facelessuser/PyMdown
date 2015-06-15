@@ -258,6 +258,13 @@
           
             <li>
     <li class="toctree-l1 ">
+        <a class="" href="../../contributing/">Contributing &amp; Suppport</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
         <a class="" href="../../license/">License</a>
         
     </li>
@@ -542,6 +549,29 @@
 
 <p>CSS files and JavaScript files can be URLs or file paths.  When specifying a file path, a <code>!</code> can be used to precede the path so that PyMdown will just link the file and skip converting the file to an absolute or relative path.  If the file path is preceded by a <code>^</code>, the file content will be embedded in the HTML under a style or script tag depending on the source type.</p>
 <p>CSS and JavaScript files can also be followed by <code>;encoding</code> to read in the file with the specified encoding.</p>
+<h3 id="enabling-jinja2-templating-in-markdown-content"><a name="user-content-enabling-jinja2-templating-in-markdown-content" href="#enabling-jinja2-templating-in-markdown-content" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Enabling Jinja2 Templating in Markdown Content</h3>
+<p>If desired, Jinja2 templating can be enabled in Markdown content.  While Jinja2 usage in Markdown content can be enabled globally, it is recommended to enable it in specific pages via the YAML frontmatter.</p>
+<div class="codehilite"><pre><span class="c1"># Enable Jinja2 Template support inside of Markdown content</span>
+<span class="l-Scalar-Plain">use_jinja2</span><span class="p-Indicator">:</span> <span class="l-Scalar-Plain">false</span>
+</pre></div>
+
+
+<p>You can also control the tag style if you find the default difficult to use within your content either globally in your settings file, or in your page&rsquo;s YAML frontmatter.</p>
+<div class="codehilite"><pre><span class="c1"># By default, Jinja2 uses {% block %} for blocks. You can change that here</span>
+<span class="c1"># or change it per file in your frontmatter. Only affects Markdown content template tags.</span>
+<span class="l-Scalar-Plain">jinja2_block</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="s">&#39;{%&#39;</span><span class="p-Indicator">,</span> <span class="s">&#39;%}&#39;</span><span class="p-Indicator">]</span>
+
+<span class="c1"># By default, Jinja2 uses {{ variable }} for variables. You can change that here</span>
+<span class="c1"># or change it per file in your frontmatter. Only affects Markdown content template tags.</span>
+<span class="l-Scalar-Plain">jinja2_variable</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="s">&#39;{{&#39;</span><span class="p-Indicator">,</span> <span class="s">&#39;}}&#39;</span><span class="p-Indicator">]</span>
+
+<span class="c1"># By default, Jinja2 uses {# comment #} for comments. You can change that here</span>
+<span class="c1"># or change it per file in your frontmatter. Only affects Markdown content template tags.</span>
+<span class="l-Scalar-Plain">jinja2_comment</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="s">&#39;{#&#39;</span><span class="p-Indicator">,</span> <span class="s">&#39;#}&#39;</span><span class="p-Indicator">]</span>
+</pre></div>
+
+
+<p>See <a href="#templating">Templating</a> to learn more about accessing these template variables.</p>
 <h3 id="path-conversions"><a name="user-content-path-conversions" href="#path-conversions" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Path Conversions</h3>
 <p>By default, PyMdown converts paths to be relative to the output location.  If desired, this can be changed to an absolute path:</p>
 <div class="codehilite"><pre><span class="c1"># By default resource paths are converted to relative file paths when possible;</span>
@@ -659,21 +689,26 @@ Markdown content.
 <td>settings</td>
 <td>This is a dictionary and allows the overriding of any of the settings found in the original configuration file.</td>
 </tr>
-<tr>
-<td>use_tempalte</td>
-<td>This is a boolean that is used to tell PyMdown whether it should apply template variables to the markdown content.</td>
-</tr>
-<tr>
-<td>template_tags</td>
-<td>Allows the overriding of the opening and closing of any Jinja2 tag.  The value is a dictionary that can contain any of the the 3 keys: <code>block</code>, <code>variable</code>, <code>comment</code>.  Each key must contain a list for the value which contains two strings.  The first string is the opening of the tag, the second is the closing of the tag. The defaults are <code class="codehilite"><span class="p">[</span><span class="s1">&#39;{%&#39;</span><span class="p">,</span> <span class="s1">&#39;%}&#39;</span><span class="p">]</span></code> for <code>block</code>, <code class="codehilite"><span class="p">[</span><span class="s1">&#39;{{&#39;</span><span class="p">,</span> <span class="s1">&#39;}&#39;</span><span class="p">]</span></code> for <code>variable</code>, and <code class="codehilite"><span class="p">[</span><span class="s1">&#39;{#&#39;</span><span class="p">,</span> <span class="s1">&#39;#}&#39;</span><span class="p">]</span></code> for <code>comment</code>.</td>
-</tr>
 </tbody>
 </table>
 <p>See <a href="#templating">Templating</a> to learn more about accessing these values in your HTML template.</p>
 <h3 id="custom-frontmatter"><a name="user-content-custom-frontmatter" href="#custom-frontmatter" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Custom Frontmatter</h3>
 <p>If the keyword is not one of the special keywords defined above, they will automatically be available in the template variables under <code>extra</code></p>
 <h2 id="templating"><a name="user-content-templating" href="#templating" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Templating</h2>
-<p>Templates are HTML files that use <a href="http://jinja.pocoo.org/">Jinja2</a> templating syntax.  Template variables and logic is used in the HTML template that is provided.  If desired, <code>use_template</code> can be set to <code>true</code> in the markdown YAML frontmatter, and template variables and logic will be applied there as well.  It is up to the user to escape content that must be escaped.</p>
+<p>Templates are HTML files that use <a href="http://jinja.pocoo.org/">Jinja2</a> templating syntax.  Template variables and logic is used in the HTML templates.  If desired, Jinja2 templating can be enabled in the Markdown content by with the following syntax:</p>
+<div class="codehilite"><pre><span class="l-Scalar-Plain">settings</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">use_jinja2</span>
+</pre></div>
+
+
+<p>It is up to the user to escape content that must be escaped. If desired, the brackets for a given page can be changed with the following frontmatter:</p>
+<div class="codehilite"><pre><span class="l-Scalar-Plain">settings</span><span class="p-Indicator">:</span>
+  <span class="l-Scalar-Plain">jinja2_block</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="s">&#39;{%&#39;</span><span class="p-Indicator">,</span> <span class="s">&#39;%}&#39;</span><span class="p-Indicator">]</span>
+  <span class="l-Scalar-Plain">jinja2_variable</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="s">&#39;{{&#39;</span><span class="p-Indicator">,</span> <span class="s">&#39;}}&#39;</span><span class="p-Indicator">]</span>
+  <span class="l-Scalar-Plain">jinja2_comment</span><span class="p-Indicator">:</span> <span class="p-Indicator">[</span><span class="s">&#39;{#&#39;</span><span class="p-Indicator">,</span> <span class="s">&#39;#}&#39;</span><span class="p-Indicator">]</span>
+</pre></div>
+
+
 <p>Template data is found under three variables:</p>
 <table>
 <thead>

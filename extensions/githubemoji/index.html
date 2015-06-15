@@ -254,6 +254,13 @@
           
             <li>
     <li class="toctree-l1 ">
+        <a class="" href="../../contributing/">Contributing &amp; Suppport</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
         <a class="" href="../../license/">License</a>
         
     </li>
@@ -321,14 +328,43 @@
 <td>&lsquo;emoji&rsquo;</td>
 <td>Insert the given class name into the img tag.  To disable class name insertion, provide an empty string.</td>
 </tr>
+<tr>
+<td>offline</td>
+<td>bool</td>
+<td>True</td>
+<td>When enabled, GithubEmoji will use the last generated emoji table from Github at the time of release.  If for some reason Github changes things and you <strong>must</strong> have the latest, you can set this to <code>False</code> and GithubEmoji will request the latest table via the <a href="https://developer.github.com/v3/emojis/">Github API</a>.  It does this with the <a href="http://docs.python-requests.org/en/latest/">requests</a> module, and it will only be in memory.</td>
+</tr>
 </tbody>
 </table>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Since &lsquo;online&rsquo; calls through the Github API are done anonymously, Github will limit the caller to approximately 60 calls in an hour.  There are no plans at this time to add <a href="https://developer.github.com/v3/oauth/">OAuth support</a>.  If the emoji table gets out of date, it is recommended to either send a pull request, or create an issue that notes it is out of date.</p>
+<p>To update for a pull request:</p>
+<ol>
+<li>
+<p>Fork the project.</p>
+</li>
+<li>
+<p>From the directory of <code>githubemoji.py</code>, run the script directly:</p>
+<div class="codehilite"><pre>python githubemoji.py
+</pre></div>
+
+
+</li>
+<li>
+<p>Commit.</p>
+</li>
+<li>
+<p>Create a pull request.</p>
+</li>
+</ol>
+</div>
 <h2 id="examples"><a name="user-content-examples" href="#examples" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Examples</h2>
 <div class="codehilite"><pre>Github :octocat: emojis are very useful :thumbsup:.
 </pre></div>
 
 
-<p>Github <img align="absmiddle" alt=":octocat:" class="emoji" height="20px" src="https://assets-cdn.github.com/images/icons/emoji/octocat.png" title=":octocat:" width="20px" /> emojis are very useful <img align="absmiddle" alt=":thumbsup:" class="emoji" height="20px" src="https://assets-cdn.github.com/images/icons/emoji/thumbsup.png" title=":thumbsup:" width="20px" />.</p>
+<p>Github <img align="absmiddle" alt=":octocat:" class="emoji" height="20px" src="https://assets-cdn.github.com/images/icons/emoji/octocat.png" title=":octocat:" width="20px" /> emojis are very useful <img align="absmiddle" alt=":thumbsup:" class="emoji" height="20px" src="https://assets-cdn.github.com/images/icons/emoji/unicode/1f44d.png" title=":thumbsup:" width="20px" />.</p>
               
             </div>
           </div>

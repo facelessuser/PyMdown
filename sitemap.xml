@@ -4,7 +4,7 @@
     
     <url>
      <loc>None/</loc>
-     <lastmod>2015-06-08</lastmod>
+     <lastmod>2015-06-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
     
@@ -13,31 +13,31 @@
         
     <url>
      <loc>None/user-guide/installation/</loc>
-     <lastmod>2015-06-08</lastmod>
+     <lastmod>2015-06-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>None/user-guide/markdown-syntax/</loc>
-     <lastmod>2015-06-08</lastmod>
+     <lastmod>2015-06-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>None/user-guide/general-usage/</loc>
-     <lastmod>2015-06-08</lastmod>
+     <lastmod>2015-06-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>None/user-guide/pygments-customization/</loc>
-     <lastmod>2015-06-08</lastmod>
+     <lastmod>2015-06-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>None/user-guide/pymdown-extensions/</loc>
-     <lastmod>2015-06-08</lastmod>
+     <lastmod>2015-06-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
@@ -47,115 +47,115 @@
         
     <url>
      <loc>None/extensions/b64/</loc>
-     <lastmod>2015-06-08</lastmod>
+     <lastmod>2015-06-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>None/extensions/betterem/</loc>
-     <lastmod>2015-06-08</lastmod>
+     <lastmod>2015-06-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>None/extensions/caret/</loc>
-     <lastmod>2015-06-08</lastmod>
+     <lastmod>2015-06-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>None/extensions/critic/</loc>
-     <lastmod>2015-06-08</lastmod>
+     <lastmod>2015-06-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>None/extensions/github/</loc>
-     <lastmod>2015-06-08</lastmod>
+     <lastmod>2015-06-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>None/extensions/githubemoji/</loc>
-     <lastmod>2015-06-08</lastmod>
+     <lastmod>2015-06-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>None/extensions/headeranchor/</loc>
-     <lastmod>2015-06-08</lastmod>
+     <lastmod>2015-06-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>None/extensions/inlinehilite/</loc>
-     <lastmod>2015-06-08</lastmod>
+     <lastmod>2015-06-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>None/extensions/magiclink/</loc>
-     <lastmod>2015-06-08</lastmod>
+     <lastmod>2015-06-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>None/extensions/mark/</loc>
-     <lastmod>2015-06-08</lastmod>
+     <lastmod>2015-06-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>None/extensions/math/</loc>
-     <lastmod>2015-06-08</lastmod>
+     <lastmod>2015-06-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>None/extensions/pathconverter/</loc>
-     <lastmod>2015-06-08</lastmod>
+     <lastmod>2015-06-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>None/extensions/plainhtml/</loc>
-     <lastmod>2015-06-08</lastmod>
+     <lastmod>2015-06-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>None/extensions/progressbar/</loc>
-     <lastmod>2015-06-08</lastmod>
+     <lastmod>2015-06-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>None/extensions/pymdown/</loc>
-     <lastmod>2015-06-08</lastmod>
+     <lastmod>2015-06-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>None/extensions/smartsymbols/</loc>
-     <lastmod>2015-06-08</lastmod>
+     <lastmod>2015-06-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>None/extensions/superfences/</loc>
-     <lastmod>2015-06-08</lastmod>
+     <lastmod>2015-06-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>None/extensions/tasklist/</loc>
-     <lastmod>2015-06-08</lastmod>
+     <lastmod>2015-06-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
     <url>
      <loc>None/extensions/tilde/</loc>
-     <lastmod>2015-06-08</lastmod>
+     <lastmod>2015-06-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
         
@@ -163,8 +163,16 @@
 
     
     <url>
+     <loc>None/contributing/</loc>
+     <lastmod>2015-06-14</lastmod>
+     <changefreq>daily</changefreq>
+    </url>
+    
+
+    
+    <url>
      <loc>None/license/</loc>
-     <lastmod>2015-06-08</lastmod>
+     <lastmod>2015-06-14</lastmod>
      <changefreq>daily</changefreq>
     </url>
     

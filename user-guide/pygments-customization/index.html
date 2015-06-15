@@ -93,8 +93,6 @@
                 
                     <li><a class="toctree-l4" href="#create-your-own-pygments-styles-and-lexers">Create Your Own Pygments Styles and Lexers</a></li>
                 
-                    <li><a class="toctree-l4" href="#modify-pyinstaller-build">Modify Pyinstaller Build</a></li>
-                
             
             </ul>
         
@@ -254,6 +252,13 @@
           
             <li>
     <li class="toctree-l1 ">
+        <a class="" href="../../contributing/">Contributing &amp; Suppport</a>
+        
+    </li>
+<li>
+          
+            <li>
+    <li class="toctree-l1 ">
         <a class="" href="../../license/">License</a>
         
     </li>
@@ -303,7 +308,7 @@
 <p>Adding Pygments themes.</p>
 <hr />
 <h2 id="overview"><a name="user-content-overview" href="#overview" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Overview</h2>
-<p>Pygments allows for people to write their own lexers and styles, but they need to have an entry point of <code>pygments.lexers</code> or <code>pygments.styles</code> for the respective plugin type.  This can only be done by either directly adding your plugin to the Pygments package, or creating and installing your own package that defines the entry points as mentioned.  If you know how to create your own package and install it, PyMdown should be able to use it.  If you are compiling a binary with pyinstaller, you will have to <a href="#modify-pyinstaller-build">modify</a> the <code>build_vars.py</code> file.</p>
+<p>Pygments allows for people to write their own lexers and styles, but they need to have an entry point of <code>pygments.lexers</code> or <code>pygments.styles</code> for the respective plugin type.  This can only be done by either directly adding your plugin to the Pygments package, or creating and installing your own package that defines the entry points as mentioned.  If you know how to create your own package and install it, PyMdown should be able to use it.</p>
 <h2 id="create-your-own-pygments-styles-and-lexers"><a name="user-content-create-your-own-pygments-styles-and-lexers" href="#create-your-own-pygments-styles-and-lexers" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Create Your Own Pygments Styles and Lexers</h2>
 <p>PyMdown comes with a couple of optional <a href="https://github.com/facelessuser/PyMdown/tree/master/pymdown-styles">styles</a> and <a href="https://github.com/facelessuser/PyMdown/tree/master/pymdown-lexers">lexers</a> that can be included.  They don&rsquo;t offer anything that is <strong>needed</strong>, but you can use these two repositories as an example.</p>
 <p>Once the lexer or style is written, you have to edit the <code>__init__.py</code> file and expose your module (style example shown below):</p>
@@ -338,19 +343,6 @@
     <span class="n">entry_points</span><span class="o">=</span><span class="n">entry_points</span><span class="p">,</span>
     <span class="n">zip_safe</span><span class="o">=</span><span class="bp">True</span>
 <span class="p">)</span>
-</pre></div>
-
-
-<h2 id="modify-pyinstaller-build"><a name="user-content-modify-pyinstaller-build" href="#modify-pyinstaller-build" class="headeranchor-link" aria-hidden="true"><span class="headeranchor"></span></a>Modify Pyinstaller Build</h2>
-<p>If you are building with a binary with Pyinstaller, and you want your custom package to be included, you can add the package name in <code>build_vars.py</code> under the <code>hidden_imports_to_crawl</code> list.</p>
-<div class="admonition note">
-<p class="admonition-title">Note</p>
-<p>In your custom packages, it is recommended to not specify dependencies in your python <code>setup.py</code> file as doing so may cause the PyMdown binary to fail when checking the package dependencies.</p>
-</div>
-<div class="codehilite"><pre><span class="n">hidden_imports_to_crawl</span> <span class="o">=</span> <span class="p">[</span>
-    <span class="s">&#39;pymdown_styles&#39;</span><span class="p">,</span>
-    <span class="s">&#39;pymdown_lexers&#39;</span>
-<span class="p">]</span>
 </pre></div>
               
             </div>
