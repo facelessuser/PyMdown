@@ -177,9 +177,9 @@ use_pygments_css: true,
 !!! note "Note"
     If any of the following reasons are true, Pygments CSS will not be injected regardless of whether `use_pygments_css` is enabled or not:
 
-        - CodeHilite and/or InlineHilite extension are not being used.
-        - CodeHilite and/or InlineHilite have `use_pygments` set to `False` or `noclasses` set to `True`.
-        - Pygments is not installed on the system.
+    - CodeHilite and/or InlineHilite extension are not being used.
+    - CodeHilite and/or InlineHilite have `use_pygments` set to `False` or `noclasses` set to `True`.
+    - Pygments is not installed on the system.
 
 This setting is used to configure which installed Pygments theme PyMdown should insert into your HTML template.
 
