@@ -54,4 +54,5 @@ markdown_extensions:
   - pymdownx.progressbar
   - pymdownx.headeranchor
   - pymdownx.math
+  - pymdownx.mark
   - pymdownx.critic
