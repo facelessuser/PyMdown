@@ -457,12 +457,11 @@
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If any of the following reasons are true, Pygments CSS will not be injected regardless of whether <code>use_pygments_css</code> is enabled or not:</p>
-<div class="codehilite"><pre>- CodeHilite and/or InlineHilite extension are not being used.
-- CodeHilite and/or InlineHilite have `use_pygments` set to `False` or `noclasses` set to `True`.
-- Pygments is not installed on the system.
-</pre></div>
-
-
+<ul>
+<li>CodeHilite and/or InlineHilite extension are not being used.</li>
+<li>CodeHilite and/or InlineHilite have <code>use_pygments</code> set to <code>False</code> or <code>noclasses</code> set to <code>True</code>.</li>
+<li>Pygments is not installed on the system.</li>
+</ul>
 </div>
 <p>This setting is used to configure which installed Pygments theme PyMdown should insert into your HTML template.</p>
 <div class="codehilite"><pre><span class="c1"># Name of installed Pygments style to use.</span>
