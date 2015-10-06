@@ -8,7 +8,7 @@ PyMdown was written to aid in batch processing Markdown files with Python Markdo
 
 PyMdown can also optionally use a template with CSS and JavaScript for styling the Markdown outputs.  Templates, CSS, JavaScript, and extensions are all setup in a configuration file.  If for certain batches specific settings need to be tweaked, PyMdown can accept paths to specific settings file via the CLI.  The settings files is in the YAML format.  PyMdown also supports input sources with a YAML frontmatter where settings can be configured along with general meta data.
 
-Though PyMdown could be used to generate a site, it was mainly designed to generate static documents from Markdown for general use or previewing.  If you are looking to generate document sites, there are plenty of good tools that already do this ([mkdocs](http://www.mkdocs.org/) is one suggestion).  But even if you don't directly use PyMdown, you may still find the [PyMdown extensions](pymdown-extensions.md) as useful additions in other Python Markdown related projects as they can be installed and used independently.
+Though PyMdown could be used to generate a site, it was mainly designed to generate static documents from Markdown for general use or previewing.  If you are looking to generate document sites, there are plenty of good tools that already do this ([mkdocs](http://www.mkdocs.org/) is one suggestion).  But even if you don't directly use PyMdown, you may still find the [PyMdown extensions](http://facelessuser.github.io/pymdown-extensions) as useful additions in other Python Markdown related projects as they can be installed and used independently.
 
 ## Command Line Interface
 
@@ -317,7 +317,7 @@ disable_path_conversion: false
 ```
 
 !!! caution "Note"
-    PyMdown utilizes the [pathconverter](../extensions/pathconverter.md) extension to convert links and references in the actual markdown content.  If `pathconverter` is manually configured instead of letting PyMdown handle it, these settings will have no effect.
+    PyMdown utilizes the [pathconverter](http://facelessuser.github.io/pymdown-extensions/extensions/pathconverter/) extension to convert links and references in the actual markdown content.  If `pathconverter` is manually configured instead of letting PyMdown handle it, these settings will have no effect.
 
     The other exception is with previews.  In order for links and references to work in previews, they must be paths that are relative to the preview's temp directory or they must be absolute paths.  For this reason, PyMdown will always enable path conversions for previews.  If you have manually set up the `pathconverter` extension, preview's will overwrite the `relative_path` argument to ensure it is set to `${OUTPUT}` which will allow the preview to display content properly by making asset paths relative to the previews location.  By default, the `relative_path` is set to `${REL_PATH}` which is the output path by default, but can be altered via the command line option `--relpath` or the `relpath` frontmatter option.
 

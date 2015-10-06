@@ -19,7 +19,7 @@ as laid out by [Mark Gruber][daringfireball]
 ### [Python Markdown Differences](https://pythonhosted.org/Markdown/#differences)
 out of the box differences (no extensions)
 </td></tr><tr><td>
-### [PyMdown Extensions](user-guide/pymdown-extensions.md)
+### [PyMdown Extensions](http://facelessuser.github.io/pymdown-extensions)
 extensions made specifically for PyMdown
 </td><td>
 ### [Python Markdown Extensions][py_md_extensions]
