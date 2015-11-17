@@ -30,6 +30,6 @@ markdown_extensions:
   - pymdownx.tasklist
   - pymdownx.progressbar
   - pymdownx.headeranchor
-  - pymdownx.math
+  - pymdownx.arithmatex
   - pymdownx.mark
   - pymdownx.critic
