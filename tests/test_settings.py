@@ -9,7 +9,6 @@ import os
 
 
 class TestSettings(unittest.TestCase):
-
     """TestSettings."""
 
     def _get_settings(self, settings_file, **kwargs):

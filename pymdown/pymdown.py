@@ -28,7 +28,6 @@ FAIL = 1
 
 
 class Convert(object):
-
     """Converts markdown files."""
 
     def __init__(self, **kwargs):

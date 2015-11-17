@@ -16,7 +16,6 @@ __all__ = ("CRITICAL", "ERROR", "WARNING", "INFO", "DEBUG", "Log")
 
 
 class Log(object):
-
     """Log messages."""
 
     @classmethod

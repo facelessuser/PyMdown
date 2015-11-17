@@ -33,12 +33,10 @@ def slugify(text, sep):
 
 
 class MdConvertException(Exception):
-
     """MdConvert Exception."""
 
 
 class MdWrapper(Markdown):
-
     """
     Wrapper around Python Markdown's class.
 
@@ -91,7 +89,6 @@ class MdWrapper(Markdown):
 
 
 class MdConvert(object):
-
     """Markdown converter."""
 
     def __init__(self, source, **kwargs):
@@ -157,7 +154,6 @@ class MdConvert(object):
 
 
 class MdConverts(MdConvert):
-
     """Markdown converter for strings."""
 
     def convert(self):

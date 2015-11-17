@@ -7,7 +7,6 @@ from . import common
 
 
 class TestCompat(unittest.TestCase):
-
     """TestCompat."""
 
     def test_unicode(self):

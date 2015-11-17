@@ -12,7 +12,6 @@ from . import validate
 
 
 class MergeSettings(object):
-
     """
     Apply front matter to settings object etc.
 

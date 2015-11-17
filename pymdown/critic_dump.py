@@ -10,7 +10,6 @@ from pymdownx.critic import CriticViewPreprocessor, CriticsPostprocessor, Critic
 
 
 class CriticDump(object):
-
     """
     Critic Dumper.
 

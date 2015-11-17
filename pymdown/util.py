@@ -64,7 +64,6 @@ def yaml_load(stream, loader=yaml.Loader, object_pairs_hook=OrderedDict):
         return self.construct_scalar(node)
 
     class Loader(loader):
-
         """Custom Loader."""
 
     Loader.add_constructor(

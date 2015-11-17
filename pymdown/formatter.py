@@ -19,12 +19,10 @@ from .template import Template
 
 
 class PyMdownFormatterException(Exception):
-
     """PyMdown formatter exception."""
 
 
 class Terminal(object):
-
     """Have console output mimic the file output calls."""
 
     name = None
@@ -44,7 +42,6 @@ class Terminal(object):
 
 
 class Text(object):
-
     """Text output object."""
 
     def __init__(self, settings):
@@ -87,7 +84,6 @@ class Text(object):
 
 
 class Html(object):
-
     """HTML output object."""
 
     def __init__(self, **kwargs):

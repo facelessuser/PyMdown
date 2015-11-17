@@ -6,7 +6,6 @@ from pymdown import critic_dump
 
 
 class TestCritic(unittest.TestCase):
-
     """TestCritic."""
 
     text = common.dedent(

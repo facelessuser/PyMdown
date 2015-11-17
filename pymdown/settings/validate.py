@@ -64,7 +64,6 @@ def in_range(value, minimum, maximum):
 
 
 class Validate(object):
-
     """Validate the settings object and return defaults in invalide keys if option is enabled."""
 
     defaults = {

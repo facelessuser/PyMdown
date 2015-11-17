@@ -11,7 +11,6 @@ from pymdown import compat
 
 
 class TestFrontmatter(unittest.TestCase):
-
     """TestFrontmatter."""
 
     def test_yaml_ordered_load(self):
@@ -51,7 +50,6 @@ class TestFrontmatter(unittest.TestCase):
 
 
 class TestResources(unittest.TestCase):
-
     """TestResources."""
 
     def test_text_resource(self):

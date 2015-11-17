@@ -53,7 +53,6 @@ def get_style(style, **kwargs):
 
 
 class Template(object):
-
     """Class for handling templates."""
 
     def __init__(self, **kwargs):
