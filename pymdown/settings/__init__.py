@@ -40,7 +40,6 @@ def get_pygment_style(style, css_class='codehilite'):
 
 
 class Settings(object):
-
     """
     Settings object for merging global settings with frontmatter.
 
@@ -284,6 +283,8 @@ class Settings(object):
             elif self.preview and "pymdownx.pathconverter" in extensions:
                 if extensions["pymdownx.pathconverter"] is None:
                     extensions["pymdownx.pathconverter"] = {}
+                if "base_path" not in extensions["pymdownx.pathconverter"]:
+                    extensions["pymdownx.pathconverter"]["base_path"] = "${BASE_PATH}"
                 extensions["pymdownx.pathconverter"]["relative_path"] = "${OUTPUT}"
 
         # Add critic to the end since it is most reliable when applied to the end.
