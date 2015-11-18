@@ -7,6 +7,8 @@ environment:
       TOXENV: "py33-unittests"
     - PYTHON: "C:/Python34"
       TOXENV: "py34-unittests"
+    - PYTHON: "C:/Python35"
+      TOXENV: "py35-unittests"
     - PYTHON: "C:/Python27"
       NODEJS: "0.12"
       TOXENV: "lint"
