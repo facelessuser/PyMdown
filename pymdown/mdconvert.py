@@ -18,20 +18,6 @@ RE_TAGS = re.compile(r'''</?[^>]*>''', re.UNICODE)
 RE_WORD = re.compile(r'''[^\w\- ]''', re.UNICODE)
 
 
-def slugify(text, sep):
-    """Custom slugify."""
-
-    if text is None:
-        return ''
-    # Strip html tags and lower
-    tag_id = RE_TAGS.sub('', text).lower()
-    # Remove non word characters or non spaces and dashes
-    # Then convert spaces to dashes
-    tag_id = RE_WORD.sub('', tag_id).replace(' ', sep)
-    # Encode anything that needs to be
-    return compat.quote(tag_id.encode('utf-8'))
-
-
 class MdConvertException(Exception):
     """MdConvert Exception."""
 
@@ -120,16 +106,13 @@ class MdConvert(object):
                 extensions[k] = {}
             for sub_k, sub_v in extensions[k].items():
                 if isinstance(sub_v, compat.string_type):
-                    if sub_v == '${SLUGIFY}':
-                        extensions[k][sub_k] = slugify
-                    else:
-                        extensions[k][sub_k] = sub_v.replace(
-                            '${BASE_PATH}', self.base_path
-                        ).replace(
-                            '${REL_PATH}', self.relative_path
-                        ).replace(
-                            '${OUTPUT}', self.output_path
-                        )
+                    extensions[k][sub_k] = sub_v.replace(
+                        '${BASE_PATH}', self.base_path
+                    ).replace(
+                        '${REL_PATH}', self.relative_path
+                    ).replace(
+                        '${OUTPUT}', self.output_path
+                    )
             self.md_extensions.append(k)
             self.extension_configs[k] = extensions[k]
 

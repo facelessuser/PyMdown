@@ -329,7 +329,7 @@ markdown_extensions:
   markdown.extensions.extra:
   markdown.extensions.toc:
     title: Table of Contents
-    slugify: ${SLUGIFY}
+    slugify: !!python/name:pymdownx.headeranchor.uslugify
   markdown.extensions.codehilite:
     guess_lang: false
   markdown.extensions.smarty:
@@ -349,7 +349,6 @@ There are a couple of special variables you can use in extension settings:
 | $\{BASE_PATH} | Insert the base path from command line or frontmatter. |
 | $\{REL_PATH} | Insert the relative path from command line or frontmatter. |
 | $\{OUTPUT} | Insert the output path (or destination) from command line or frontmatter. |
-| $\{SLUGIFY} | Use PyMdown's internal slugify method which provides a more unique header id for headers that have Unicode characters.  Python Markdown's internal slugify just strips them out, while PyMdown will give a percent encoding of the Unicode characters. |
 
 ## Frontmatter
 Frontmatter can be used at the very beginning of a Markdown file.  Frontmatter blocks begin with `---` and end with `---`.  Frontmatter must be the very beginning of the file and start on the very first line.
