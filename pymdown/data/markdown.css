@@ -745,7 +745,7 @@
 
 .markdown-body .admonition:before {
   content: "\f056\00a0";
-  color: 333;
+  color: #333;
 }
 
 .markdown-body .attention:before {
