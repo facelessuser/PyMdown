@@ -141,17 +141,17 @@ extra:
 
   flow: False
   flow_js:
-    - flowchart-min.js
+    - "https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.4.2/flowchart.min.js"
     - default/flow-loader.js
 
   sequence: False
   sequence_js:
-    - "https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"
-    - "https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.4/sequence-diagram-min.js"
+    - "https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"
+    - "https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"
     - default/sequence-loader.js
 
   diagram_common_js:
-    - "https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.2/raphael-min.js"
+    - "https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.4/raphael-min.js"
     - default/uml-converter.js
 
   mathjax: False
