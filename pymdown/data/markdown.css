@@ -116,7 +116,8 @@
   outline: 0;
 }
 
-.markdown-body a {
+.markdown-body a,
+.markdown-body a code {
   color: #4183c4;
   text-decoration: none;
   transition: color ease 0.3s;
@@ -124,9 +125,11 @@
 
 .markdown-body a:hover,
 .markdown-body a:focus,
-.markdown-body a:active {
+.markdown-body a:active,
+.markdown-body a:hover code,
+.markdown-body a:focus code,
+.markdown-body a:active code {
   color: #41a4c4;
-  text-decoration: underline;
 }
 
 .markdown-body sub,
