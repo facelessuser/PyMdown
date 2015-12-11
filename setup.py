@@ -3,23 +3,44 @@
 """Setup package."""
 from setuptools import setup, find_packages
 import sys
+import os
+import imp
 
 LONG_DESC = '''
 PyMdown is a CLI batch Markdown conversion / preview tool.
 The project utilizes Python Markdown to convert Markdown
 files to HTML and includes a number of custom extensions
-to add additional features and syntax to the Markdown. It
+to add additional features and syntax to the Markdown input. It
 uses Pygments for the sytax highlighting code blocks.
 
-The project repo is found at:
-https://github.com/facelessuser/PyMdown.
+The project repo is found at: https://github.com/facelessuser/PyMdown.
 '''
+
+
+def get_version():
+    """Get version and version_info without importing the entire module."""
+
+    devstatus = {
+        'alpha': '3 - Alpha',
+        'beta': '4 - Beta',
+        'rc': '4 - Beta',
+        'final': '5 - Production/Stable'
+    }
+    path = os.path.join(os.path.dirname(__file__), 'pymdown')
+    fp, pathname, desc = imp.find_module('__version__', [path])
+    try:
+        v = imp.load_module('__version__', fp, pathname, desc)
+        return v.version, devstatus[v.version_info[3]]
+    finally:
+        fp.close()
+
+VER, DEVSTATUS = get_version()
 
 setup(
     name='PyMdown',
-    version='0.8.0',
+    version=VER,
     keywords='markdown html batch',
-    description='CLI Markdown batch converter/previewer.',
+    description='Markdown batch converter/previewer.',
     long_description=LONG_DESC,
     author='Isaac Muse',
     author_email='Isaac.Muse [at] gmail.com',
@@ -30,12 +51,9 @@ setup(
         'Pygments>=2.0.1',
         'PyYAML>=3.10',
         'Jinja2>=2.7.3',
-        'pymdown-extensions>=1.0.0'
+        'pymdown-extensions>=1.0.1'
     ],
     zip_safe=False,
-    dependency_links=[
-        'https://github.com/facelessuser/pymdown-extensions/archive/master.zip#egg=pymdown-extensions-1.0.0'
-    ],
     entry_points={
         'console_scripts': [
             'pymdown=pymdown.cli:main',
@@ -47,7 +65,7 @@ setup(
     },
     license='MIT License',
     classifiers=[
-        'Development Status :: 5 - Production/Stable',
+        'Development Status :: %s' % DEVSTATUS,
         'Environment :: Console',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',

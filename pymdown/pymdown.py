@@ -21,8 +21,6 @@ from . import mdconvert
 from . import settings
 import traceback
 
-version_info = (0, 8, 0)
-
 PASS = 0
 FAIL = 1
 

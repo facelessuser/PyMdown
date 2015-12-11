@@ -20,8 +20,7 @@ from . import pymdown
 from . import util
 from . import logger
 from . import compat
-
-__version__ = '.'.join(map(str, pymdown.version_info))
+from .__version__ import version
 
 
 def get_files(file_patterns):
@@ -103,7 +102,7 @@ def main():
     default_settings = path.join(util.get_user_path(), "pymdown.yml")
     parser = argparse.ArgumentParser(prog='pymdown', description='Markdown generator')
     # Flag arguments
-    parser.add_argument('--version', action='version', version="%(prog)s " + __version__)
+    parser.add_argument('--version', action='version', version="%(prog)s " + version)
     parser.add_argument('--debug', '-d', action='store_true', default=False, help=argparse.SUPPRESS)
     parser.add_argument('--licenses', action='store_true', default=False, help="Display licenses.")
     parser.add_argument('--quiet', '-q', action='store_true', default=False, help="No messages on stdout.")
