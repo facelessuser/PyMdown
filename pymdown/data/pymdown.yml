@@ -52,6 +52,7 @@ js: []
 #
 css:
   - '^default/markdown.css'
+  - https://cdnjs.cloudflare.com/ajax/libs/emojione/2.2.7/assets/css/emojione.min.css
 
 # Include the pygments css when using codehilite or inlinehilite extension
 use_pygments_css: true
@@ -126,7 +127,18 @@ markdown_extensions:
   markdown.extensions.wikilinks:
   markdown.extensions.admonition:
   markdown.extensions.nl2br:
-  pymdownx.pymdown:
+  pymdownx.magiclink:
+  pymdownx.betterem:
+  pymdownx.tilde:
+  pymdownx.caret:
+  pymdownx.mark:
+  pymdownx.smartsymbols:
+  pymdownx.emoji:
+  pymdownx.tasklist:
+  pymdownx.progressbar:
+  pymdownx.headeranchor:
+  pymdownx.superfences:
+  pymdownx.arithmatex:
   pymdownx.inlinehilite:
 
 extra:
