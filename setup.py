@@ -34,6 +34,7 @@ def get_version():
     finally:
         fp.close()
 
+
 VER, DEVSTATUS = get_version()
 
 setup(
