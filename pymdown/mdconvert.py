@@ -89,7 +89,7 @@ class MdConvert(object):
         self.base_path = base_path if base_path is not None else ''
         self.relative_path = relative_path if relative_path is not None else ''
         self.output_path = output_path if output_path is not None else ''
-        self.encoding = kwargs.get('encoding', 'utf-8', read=True)
+        self.encoding = util._get_encoding(kwargs.get('encoding', 'utf-8'), read=True)
         self.process_extensions(kwargs.get('markdown_extensions', {}))
         self.tab_length = kwargs.get('tab_length', 4)
         self.smart_emphasis = kwargs.get('smart_emphasis', True)
