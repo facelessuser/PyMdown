@@ -35,7 +35,7 @@ pymdown -o file.html file.md
 Alternatively you can redirect the output:
 
 ```bash
-pymdown -o file.md > file.html
+pymdown file.md > file.html
 ```
 
 ### Batch Processing
@@ -91,7 +91,7 @@ pymdown -E utf-8 file.md
 ### Title
 PyMdown, by default, will use the source file's name as the title, or if the input is a file stream, it will use **Untitled**.  But this can be set/overridden with the `--title` option.  This probably isn't practical for batch processing.  When batch processing, it may make more sense to utilize the [frontmatter](#frontmatter) to set the title per file.
 
-```
+```bash
 pymdown --title "My Awesome File" file.md
 ```
 
