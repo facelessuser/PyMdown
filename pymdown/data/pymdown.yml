@@ -25,7 +25,8 @@ template: default/template.html
 #   - somefile.js
 # ---
 #
-js: []
+js:
+  - '^default/details_polyfill.js'
 
 # Select your CSS for you output html
 # or you can have it all contained in your HTML template
@@ -52,7 +53,6 @@ js: []
 #
 css:
   - '^default/markdown.css'
-  - https://cdnjs.cloudflare.com/ajax/libs/emojione/2.2.7/assets/css/emojione.min.css
 
 # Include the pygments css when using codehilite or inlinehilite extension
 use_pygments_css: true
@@ -117,17 +117,18 @@ output_format: 'xhtml1'
 
 # Python Markdown extensions
 markdown_extensions:
-  markdown.extensions.extra:
+  pymdownx.extra:
+  markdown.extensions.smarty:
+    smart_quotes: false
+  markdown.extensions.admonition:
   markdown.extensions.toc:
     title: Table of Contents
-  markdown.extensions.codehilite:
+    slugify: !!python/name:pymdownx.slugs.uslugify
+  pymdownx.highlight:
     guess_lang: false
     css_class: highlight
-  markdown.extensions.smarty:
-  markdown.extensions.wikilinks:
-  markdown.extensions.admonition:
-  markdown.extensions.nl2br:
   pymdownx.magiclink:
+    repo_url_shortener: true
   pymdownx.betterem:
   pymdownx.tilde:
   pymdownx.caret:
@@ -136,10 +137,17 @@ markdown_extensions:
   pymdownx.emoji:
   pymdownx.tasklist:
   pymdownx.progressbar:
-  pymdownx.headeranchor:
   pymdownx.superfences:
   pymdownx.arithmatex:
   pymdownx.inlinehilite:
+  pymdownx.escapeall:
+    hardbreak: True
+    nbsp: True
+  pymdownx.keys:
+    separator: ＋
+  pymdownx.details:
+  pymdownx.plainhtml:
+    strip_attributes: ''
 
 extra:
   # By configuring 'flow', 'sequence', or 'mathjax' to `true` in a file's frontmatter,
@@ -152,20 +160,20 @@ extra:
 
   flow: False
   flow_js:
-    - "https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.4.2/flowchart.min.js"
+    - https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js
     - default/flow-loader.js
 
   sequence: False
   sequence_js:
-    - "https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"
-    - "https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"
+    - https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js
+    - https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js
     - default/sequence-loader.js
 
   diagram_common_js:
-    - "https://cdnjs.cloudflare.com/ajax/libs/raphael/2.1.4/raphael-min.js"
+    - https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js
     - default/uml-converter.js
 
   mathjax: False
   mathjax_js:
     - default/mathjax-config.js
-    - 'https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML'
+    - https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js
