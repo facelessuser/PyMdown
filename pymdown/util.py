@@ -88,6 +88,7 @@ def get_frontmatter(string):
         m = re.search(r'^(-{3}(.*?)(?:-{3}|\.{3})\r?\n)', string, re.DOTALL)
         if m:
             try:
+                assert m.group(2).strip(), ValueError
                 frontmatter = yaml_load(m.group(2))
             except Exception:
                 logger.Log.error(traceback.format_exc())
