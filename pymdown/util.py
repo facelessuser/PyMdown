@@ -85,7 +85,7 @@ def get_frontmatter(string):
     frontmatter = {}
 
     if string.startswith("---"):
-        m = re.search(r'^(---(.*?)---\r?\n)', string, re.DOTALL)
+        m = re.search(r'^(-{3}(.*?)(?:-{3}|\.{3})\r?\n)', string, re.DOTALL)
         if m:
             try:
                 frontmatter = yaml_load(m.group(2))
