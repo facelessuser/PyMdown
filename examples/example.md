@@ -24,21 +24,36 @@ settings:
   jinja2_variable: ['<{', '}>']
   jinja2_comment: ['<#', '#>']
   markdown_extensions:
-    markdown.extensions.extra:
+    pymdownx.extra:
+    markdown.extensions.smarty:
+    markdown.extensions.admonition:
     markdown.extensions.toc:
       title: Table of Contents
-      slugify: ${SLUGIFY}
-    markdown.extensions.headerid:
-    markdown.extensions.smarty:
-    markdown.extensions.meta:
-    markdown.extensions.wikilinks:
-    markdown.extensions.admonition:
-    markdown.extensions.nl2br:
-    markdown.extensions.codehilite:
-      guess_lang: False
+      slugify: !!python/name:pymdownx.slugs.uslugify
+    pymdownx.highlight:
+      guess_lang: false
       css_class: highlight
-    pymdownx.pymdown:
+    pymdownx.magiclink:
+      repo_url_shortener: true
+    pymdownx.betterem:
+    pymdownx.tilde:
+    pymdownx.caret:
+    pymdownx.mark:
+    pymdownx.smartsymbols:
+    pymdownx.emoji:
+    pymdownx.tasklist:
+    pymdownx.progressbar:
+    pymdownx.superfences:
+    pymdownx.arithmatex:
     pymdownx.inlinehilite:
+    pymdownx.escapeall:
+      hardbreak: True
+      nbsp: True
+    pymdownx.keys:
+      separator: ＋
+    pymdownx.details:
+    pymdownx.plainhtml:
+      strip_attributes: ''
     pymdownx.b64:
       base_path: ${BASE_PATH}
     pymdown.critic:
@@ -281,7 +296,7 @@ With this link (https://github.com/facelessuser/pymdown), it still works.
 
 Footnotes[^1] have a label[^label] and a definition[^!DEF]
 
-![A Picture](bg.png "A "Picture")
+![A Picture](bg.png "A Picture")
 
 [Link to Picture](bg.png "Link")
 
@@ -850,6 +865,16 @@ Modified Text
 
 !!! Unknown "Title"
     `Default` class style
+
+## Details
+
+```
+??? "This is a details"
+    This is some content
+```
+
+??? "This is a details"
+    This is some content
 
 ## Github Emoji
 ```
