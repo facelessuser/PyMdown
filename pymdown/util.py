@@ -98,13 +98,19 @@ def get_frontmatter(string):
     return frontmatter, string
 
 
-def _get_encoding(enc):
+def _get_encoding(enc, read=False):
     """Check if encoding exists else return utf-8."""
 
     try:
         codecs.lookup(enc)
     except LookupError:
         enc = 'utf-8'
+
+    # If reading utf-8, lets just read with utf-8-sig
+    # so we don't have to worry about an accidental BOM
+    if read and enc.lower().replace('-', '') == 'utf8':
+        enc = 'utf-8-sig'
+
     return enc
 
 
@@ -229,7 +235,7 @@ def load_text_resource(*args, **kwargs):
 
     pth = resource_exists(*args, **kwargs)
 
-    encoding = _get_encoding(kwargs.get('encoding', 'utf-8'))
+    encoding = _get_encoding(kwargs.get('encoding', 'utf-8'), read=True)
 
     data = None
     if pth is not None:
