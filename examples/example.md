@@ -30,6 +30,7 @@ settings:
     markdown.extensions.toc:
       title: Table of Contents
       slugify: !!python/name:pymdownx.slugs.uslugify
+      permalink: "\uf0c1"
     pymdownx.highlight:
       guess_lang: false
       css_class: highlight

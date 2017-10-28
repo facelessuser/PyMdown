@@ -76,6 +76,51 @@
   font-size: 1em;
 }
 
+.markdown-body .headerlink {
+  opacity: 0;
+  position: absolute;
+  left: -1.3rem;
+  padding-right: 0.3rem;
+  top: 1em;
+  line-height: 1rem;
+  font: normal 400 1rem fontawesome-mini;
+}
+
+.markdown-body h1:hover .headerlink,
+.markdown-body h2:hover .headerlink,
+.markdown-body h3:hover .headerlink,
+.markdown-body h4:hover .headerlink,
+.markdown-body h5:hover .headerlink,
+.markdown-body h6:hover .headerlink,
+.markdown-body h1:hover .headerlink:hover,
+.markdown-body h2:hover .headerlink:hover,
+.markdown-body h3:hover .headerlink:hover,
+.markdown-body h4:hover .headerlink:hover,
+.markdown-body h5:hover .headerlink:hover,
+.markdown-body h6:hover .headerlink:hover {
+  opacity: 1;
+}
+
+.markdown-body h2 .headerlink {
+  top: 0.8em;
+}
+
+.markdown-body h3 .headerlink {
+  top: 0.8em;
+}
+
+.markdown-body h4 .headerlink {
+  top: 0.7em;
+}
+
+.markdown-body h5 .headerlink {
+  top: 0.5em;
+}
+
+.markdown-body h6 .headerlink {
+  top: 0.3em;
+}
+
 /* Header Rows */
 .markdown-body hr {
   height: 1px;
@@ -603,7 +648,9 @@
 }
 
 .markdown-body .highlight .hll {
-  padding: .3em 0;
+  display: table-caption;
+  padding-right: 13px;
+  margin-left: -13px;
 }
 
 .markdown-body .uml-sequence-diagram,
@@ -1085,10 +1132,6 @@ details.no-details:not([open]) summary {
   .markdown-body a,
   .markdown-body a:visited {
     text-decoration: underline;
-  }
-
-  .markdown-body .headeranchor-link {
-    display: none;
   }
 
   .markdown-body a[href]:after {
