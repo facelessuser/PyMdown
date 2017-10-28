@@ -126,26 +126,6 @@ class TestSettings(unittest.TestCase):
         logger.Log.set_level(logger.INFO)
         self.assertEqual(style, 'default')
 
-    def test_no_pygments(self):
-        """Ensure we internally know when hilite extensions specify to not use Pygments."""
-
-        s = self._get_settings(
-            'no_pygments.yml',
-            stream=True
-        ).get(None)
-        use_pygments_css = s.get('settings').get('use_pygments_css')
-        self.assertEqual(use_pygments_css, False)
-
-    def test_pygments_noclasses(self):
-        """Ensure 'use_pygments_css' not set internally if hilite extension uses 'noclasses'."""
-
-        s = self._get_settings(
-            'pygments_noclasses.yml',
-            stream=True
-        ).get(None)
-        use_pygments_css = s.get('settings').get('use_pygments_css')
-        self.assertEqual(use_pygments_css, False)
-
     def test_pygments_class(self):
         """Ensure we can set the Pygments css class internally."""
 
