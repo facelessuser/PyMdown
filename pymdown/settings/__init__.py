@@ -67,7 +67,7 @@ class Settings(object):
         self.critic = kwargs.get('critic', util.CRITIC_IGNORE)
         self.plain = kwargs.get('plain', False)
         self.batch = kwargs.get('batch', False)
-        self.encoding = kwargs.get('encoding', 'utf-8')
+        self.encoding = util._get_encoding(kwargs.get('encoding', 'utf-8'))
         self.preview = kwargs.get('preview', False)
         self.is_stream = kwargs.get('stream', False)
         self.force_stdout = kwargs.get('force_stdout', False)
@@ -191,51 +191,22 @@ class Settings(object):
         style = None
 
         if not self.plain:
-            if PYGMENTS_AVAILABLE and highlight_style is not None and use_pygments_css:
+            if highlight_style is not None and use_pygments_css:
                 # Ensure pygments is enabled in the highlighter
                 style = get_pygment_style(highlight_style, pygments_class)
 
         return style
 
     def set_style(self, extensions, settings):
-        """
-        Search the extensions for the style to be used and return it.
+        """Load up needed Pygments style."""
 
-        If it is not explicitly set, go ahead and insert the default
-        style (github).
-        """
-
-        style = 'default'
+        style = settings["settings"]['pygments_style']
 
         if not PYGMENTS_AVAILABLE:  # pragma: no cover
             settings["settings"]["use_pygments_css"] = False
 
-        global_use_pygments_css = settings["settings"]["use_pygments_css"]
-        use_pygments_css = False
-        # Search for highlight extensions to see what whether pygments css is required.
-        for hilite_ext in ('markdown.extensions.codehilite', 'pymdownx.inlinehilite'):
-            if hilite_ext not in extensions:
-                continue
-            config = extensions[hilite_ext]
-            if config is None:
-                config = {}
-
-            use_pygments_css = use_pygments_css or (
-                not config.get('noclasses', False) and
-                config.get('use_pygments', True) and
-                config.get('use_codehilite_settings', True) and
-                PYGMENTS_AVAILABLE and
-                global_use_pygments_css
-            )
-
-        if global_use_pygments_css and not use_pygments_css:
-            settings["settings"]["use_pygments_css"] = False
-        else:
-            settings["settings"]["use_pygments_css"] = use_pygments_css
-
-        if use_pygments_css:
+        if settings["settings"]["use_pygments_css"]:
             # Ensure a working style is set
-            style = settings["settings"]['pygments_style']
             try:
                 # Check if the desired style exists internally
                 get_style_by_name(style)
@@ -244,7 +215,6 @@ class Settings(object):
                 style = "default"
 
         settings["settings"]["pygments_style"] = style
-
         settings["page"]["pygments_style"] = self.load_highlight(
             style,
             settings["settings"]["use_pygments_css"],

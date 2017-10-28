@@ -82,18 +82,25 @@ def yaml_load(stream, loader=yaml.Loader, object_pairs_hook=OrderedDict):
 def get_frontmatter(string):
     """Get frontmatter from string."""
 
-    frontmatter = {}
+    frontmatter = OrderedDict()
 
     if string.startswith("---"):
-        m = re.search(r'^(-{3}(.*?)(?:-{3}|\.{3})\r?\n)', string, re.DOTALL)
+        m = re.search(r'^(-{3}\r?\n(?!\r?\n)(.*?)(?<=\n)(?:-{3}|\.{3})\r?\n)', string, re.DOTALL)
         if m:
+            yaml_okay = True
             try:
-                assert m.group(2).strip(), ValueError
                 frontmatter = yaml_load(m.group(2))
+                if frontmatter is None:
+                    frontmatter = OrderedDict()
+                # If we didn't get a dictionary, we don't want this as it isn't frontmatter.
+                assert isinstance(frontmatter, (dict, OrderedDict)), TypeError
             except Exception:
+                # We had a parsing error. This is not the YAML we are looking for.
+                yaml_okay = False
+                frontmatter = OrderedDict()
                 logger.Log.error(traceback.format_exc())
-
-            string = string[m.end(1):]
+            if yaml_okay:
+                string = string[m.end(1):]
 
     return frontmatter, string
 
@@ -120,9 +127,9 @@ def splitenc(entry, default='utf-8'):
     parts = entry.split(';')
     if len(parts) > 1:
         entry = ';'.join(parts[:-1])
-        encoding = _get_encoding(parts[-1])
+        encoding = _get_encoding(parts[-1], read=True)
     else:
-        encoding = _get_encoding(default)
+        encoding = _get_encoding(default, read=True)
     return entry, encoding
 
 

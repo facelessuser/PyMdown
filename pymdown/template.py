@@ -107,7 +107,7 @@ class Template(object):
                 template_path = template_base
 
             try:
-                with codecs.open(template_path, "r", encoding=util._get_encoding(encoding)) as f:
+                with codecs.open(template_path, "r", encoding=encoding) as f:
                     template = f.read()
             except Exception:
                 logger.Log.error(str(traceback.format_exc()))
