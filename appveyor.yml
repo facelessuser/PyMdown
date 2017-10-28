@@ -10,23 +10,19 @@ environment:
     - PYTHON: "C:/Python35"
       TOXENV: "py35-unittests"
     - PYTHON: "C:/Python27"
-      NODEJS: "0.12"
       TOXENV: "lint"
 init:
   - "ECHO %TOXENV%"
   - "ECHO %PYTHON%"
   - ps: "ls C:/Python*"
 install:
-  - ps: (new-object net.webclient).DownloadFile('https://bootstrap.pypa.io/get-pip.py', 'C:/get-pip.py')
-  - if "%TOXENV%" == "lint" npm install -g jshint
-  - "%PYTHON%/python.exe C:/get-pip.py"
   - "%PYTHON%/Scripts/pip.exe install virtualenv"
   - "%PYTHON%/Scripts/pip.exe install tox"
+  - "SET PATH=%PYTHON%;%PYTHON%\\Scripts;%PATH%"
 test_script:
-  - "%PYTHON%/Scripts/pip --version"
-  - "%PYTHON%/Scripts/virtualenv.exe --version"
-  - "%PYTHON%/Scripts/tox --version"
-  - "%PYTHON%/Scripts/tox"
-  - if "%TOXENV%" == "lint" jshint .
+  - pip --version
+  - virtualenv --version
+  - tox --version
+  - tox
 matrix:
   fast_finish: true
