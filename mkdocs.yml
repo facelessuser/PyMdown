@@ -27,7 +27,8 @@ markdown_extensions:
   - pymdownx.tilde
   - pymdownx.caret
   - pymdownx.smartsymbols
-  - pymdownx.githubemoji
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:pymdownx.emoji.to_png
   - pymdownx.tasklist
   - pymdownx.progressbar
   - pymdownx.headeranchor:

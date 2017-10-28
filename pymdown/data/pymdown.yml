@@ -136,6 +136,7 @@ markdown_extensions:
   pymdownx.mark:
   pymdownx.smartsymbols:
   pymdownx.emoji:
+    emoji_generator: !!python/name:pymdownx.emoji.to_png
   pymdownx.tasklist:
   pymdownx.progressbar:
   pymdownx.superfences:
