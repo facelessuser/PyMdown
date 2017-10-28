@@ -1,0 +1,11 @@
+[highlightjs]: https://highlightjs.org/
+[jinja2]: http://jinja.pocoo.org/
+[markdown]: https://pythonhosted.org/Markdown/
+[mkdocs]: http://www.mkdocs.org/
+[pathconverter]: http://facelessuser.github.io/pymdown-extensions/extensions/pathconverter/
+[pygments]: http://pygments.org/
+[pymdown-styles]: https://github.com/facelessuser/PyMdown/tree/master/pymdown-styles
+[pymdown-lexers]: https://github.com/facelessuser/PyMdown/tree/master/pymdown-lexers
+[pymdownx]: https://pythonhosted.org/Markdown/extensions/
+[pyyaml]: http://pyyaml.org/
+[daringfireball]: http://daringfireball.net/

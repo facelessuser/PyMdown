@@ -1,14 +1,11 @@
-# Markdown Syntax {: .doctitle}
-Mark Gruber's Markdown syntax.
-
----
+# Markdown Syntax
 
 !!! Note "Note"
-    This documentation lays out the syntax of Mark Gruber's Markdown specifications.  It is taken from his [site](http://daringfireball.net/projects/markdown/syntax).  The content and info is his words, but it is here for convenience.
+    This documentation lays out the syntax of Mark Gruber's Markdown specifications.  This is describing general Markdown syntax.  If you are using extensions, there may be extra or slightly different syntax. This guide is taken from Mark Gruber's [site](http://daringfireball.net/projects/markdown/syntax).  The content and info is his words, but it is here for convenience.
 
-# Overview {: #overview}
+## Overview {: #overview}
 
-## Philosophy {: #philosophy}
+### Philosophy {: #philosophy}
 
 Markdown is intended to be as easy-to-read and easy-to-write as is feasible.
 
@@ -25,7 +22,7 @@ Readability, however, is emphasized above all else. A Markdown-formatted documen
 To this end, Markdown's syntax is comprised entirely of punctuation characters, which punctuation characters have been carefully chosen so as to look like what they mean. E.g., asterisks around a word actually look like \*emphasis\*. Markdown lists look like, well, lists. Even blockquotes look like quoted passages of text, assuming you've ever used email.
 
 
-## Inline HTML {: #html}
+### Inline HTML {: #html}
 
 Markdown's syntax is intended for one purpose: to be used as a format for *writing* for the web.
 
@@ -54,7 +51,7 @@ Span-level HTML tags -- e.g. `<span>`, `<cite>`, or `<del>` -- can be used anywh
 Unlike block-level HTML tags, Markdown syntax *is* processed within span-level tags.
 
 
-## Automatic Escaping for Special Characters {: #autoescape}
+### Automatic Escaping for Special Characters {: #autoescape}
 
 In HTML, there are two characters that demand special treatment: `<` and `&`. Left angle brackets are used to start tags; ampersands are used to denote HTML entities. If you want to use them as literal characters, you must escape them as entities, e.g. `&lt;`, and `&amp;`.
 
@@ -96,10 +93,10 @@ However, inside Markdown code spans and blocks, angle brackets and ampersands ar
 * * *
 
 
-# Block Elements {: #block}
+## Block Elements {: #block}
 
 
-## Paragraphs and Line Breaks {: #p}
+### Paragraphs and Line Breaks {: #p}
 
 A paragraph is simply one or more consecutive lines of text, separated by one or more blank lines. (A blank line is any line that looks like a blank line -- a line containing nothing but spaces or tabs is considered blank.) Normal paragraphs should not be indented with spaces or tabs.
 
@@ -114,7 +111,7 @@ Yes, this takes a tad more effort to create a `<br />`, but a simplistic "every 
 
 
 
-## Headers {: #header}
+### Headers {: #header}
 
 Markdown supports two styles of headers, [Setext] [1] and [atx] [2].
 
@@ -145,7 +142,7 @@ Optionally, you may "close" atx-style headers. This is purely cosmetic -- you ca
     ### This is an H3 ######
 
 
-## Blockquotes {: #blockquote}
+### Blockquotes {: #blockquote}
 
 Markdown uses email-style `>` characters for blockquoting. If you're familiar with quoting passages of text in an email message, then you know how to create a blockquote in Markdown. It looks best if you hard wrap the text and put a `>` before every line:
 
@@ -181,7 +178,7 @@ Blockquotes can contain other Markdown elements, including headers, lists, and c
 Any decent text editor should make email-style quoting easy. For example, with BBEdit, you can make a selection and choose Increase Quote Level from the Text menu.
 
 
-## Lists {: #list}
+### Lists {: #list}
 
 Markdown supports ordered (numbered) and unordered (bulleted) lists.
 
@@ -312,7 +309,7 @@ In other words, a *number-period-space* sequence at the beginning of a line. To 
 
 
 
-## Code Blocks {: #precode}
+### Code Blocks {: #precode}
 
 Pre-formatted code blocks are used for writing about programming or markup source code. Rather than forming normal paragraphs, the lines of a code block are interpreted literally. Markdown wraps a code block in both `<pre>` and `<code>` tags.
 
@@ -364,7 +361,7 @@ will turn into:
 Regular Markdown syntax is not processed within code blocks. E.g., asterisks are just literal asterisks within a code block. This means it's also easy to use Markdown to write about Markdown's own syntax.
 
 
-## Horizontal Rules {: #hr}
+### Horizontal Rules {: #hr}
 
 You can produce a horizontal rule tag (`<hr />`) by placing three or more hyphens, asterisks, or underscores on a line by themselves. If you wish, you may use spaces between the hyphens or asterisks. Each of the following lines will produce a horizontal rule:
 
@@ -381,9 +378,9 @@ You can produce a horizontal rule tag (`<hr />`) by placing three or more hyphen
 
 * * *
 
-# Span Elements {: #span}
+## Span Elements {: #span}
 
-## Links {: #link}
+### Links {: #link}
 
 Markdown supports two style of links: *inline* and *reference*.
 
@@ -507,7 +504,7 @@ The point of reference-style links is not that they're easier to write. The poin
 With Markdown's reference-style links, a source document much more closely resembles the final output, as rendered in a browser. By allowing you to move the markup-related metadata out of the paragraph, you can add links without interrupting the narrative flow of your prose.
 
 
-## Emphasis {: #em}
+### Emphasis {: #em}
 
 Markdown treats asterisks (`*`) and underscores (`_`) as indicators of emphasis. Text wrapped with one `*` or `_` will be wrapped with an HTML `<em>` tag; double `*`'s or `_`'s will be wrapped with an HTML `<strong>` tag. E.g., this input:
 
@@ -543,7 +540,7 @@ To produce a literal asterisk or underscore at a position where it would otherwi
 
 
 
-## Code {: code}
+### Code {: code}
 
 To indicate a span of code, wrap it with backtick quotes (`` ` ``). Unlike a pre-formatted code block, a code span indicates code within a normal paragraph. For example:
 
@@ -592,7 +589,7 @@ to produce:
 
 
 
-## Images {: #img}
+### Images {: #img}
 
 Admittedly, it's fairly difficult to devise a "natural" syntax for placing images into a plain text document format.
 
@@ -624,9 +621,9 @@ As of this writing, Markdown has no syntax for specifying the dimensions of an i
 * * *
 
 
-# Miscellaneous {: #misc}
+## Miscellaneous {: #misc}
 
-## Automatic Links {: #autolink}
+### Automatic Links {: #autolink}
 
 Markdown supports a shortcut style for creating "automatic" links for URLs and email addresses: simply surround the URL or email address with angle brackets. What this means is that if you want to show the actual text of a URL or email address, and also have it be a clickable link, you can do this:
 
@@ -653,7 +650,7 @@ which will render in a browser as a clickable link to "address@example.com".
 
 
 
-## Backslash Escapes {: #backslash}
+### Backslash Escapes {: #backslash}
 
 Markdown allows you to use backslash escapes to generate literal characters which would otherwise have special meaning in Markdown's formatting syntax. For example, if you wanted to surround a word with literal asterisks (instead of an HTML `<em>` tag), you can use backslashes before the asterisks, like this:
 

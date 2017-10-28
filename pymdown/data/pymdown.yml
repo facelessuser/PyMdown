@@ -54,7 +54,7 @@ js:
 css:
   - '^default/markdown.css'
 
-# Include the pygments css when using codehilite or inlinehilite extension
+# Include the pygments css for code highlight blocks.
 use_pygments_css: true
 
 # Name of installed Pygments style to use.

@@ -1,7 +1,4 @@
-# Contributing &amp; Support {: .doctitle}
-Steps for contributing and getting support.
-
----
+# Contributing &amp; Support
 
 ## Overview
 Contribution from the community is encouraged and can be done in a variety of ways:
