@@ -15,11 +15,9 @@ matrix:
 install:
   - pip install tox
   - pip install codecov
-  - pip install coveralls
   - npm install -g jshint
 script:
   - tox
   - jshint .
 after_success:
-  - coveralls
   - codecov
