@@ -93,8 +93,8 @@ class MergeSettings(object):
     def merge_includes(self, frontmatter, settings):
         """Find css and js includes and merge them."""
 
-        css = settings['settings'].get('css', [])
-        js = settings['settings'].get('js', [])
+        css = settings['pymdown_settings'].get('css', [])
+        js = settings['pymdown_settings'].get('js', [])
 
         # Javascript and CSS include
         for key in ("css", "js"):
@@ -110,24 +110,24 @@ class MergeSettings(object):
     def merge_settings(self, frontmatter, settings):
         """Handle and merge PyMdown settings."""
 
-        value = frontmatter['settings']
+        value = frontmatter['pymdown_settings']
         for subkey, subvalue in value.items():
 
             # Html template
             if subkey == "template" and isinstance(subvalue, compat.unicode_type):
                 org_pth = subvalue
                 new_pth = self.process_settings_path(org_pth, self.base)
-                settings['settings'][subkey] = new_pth if new_pth is not None else org_pth
+                settings['pymdown_settings'][subkey] = new_pth if new_pth is not None else org_pth
 
             # All other settings that require no other special handling
             else:
-                settings['settings'][subkey] = subvalue
-        del frontmatter['settings']
+                settings['pymdown_settings'][subkey] = subvalue
+        del frontmatter['pymdown_settings']
 
     def merge_meta(self, frontmatter, settings):
         """Resolve all other frontmatter items as meta/extra items."""
 
-        settings["extra"] = settings["settings"].get("extra", OrderedDict())
+        settings["extra"] = settings["pymdown_settings"].get("extra", OrderedDict())
 
         for key, value in frontmatter.items():
             if key == 'title' and validate.is_string(value):
@@ -138,10 +138,10 @@ class MergeSettings(object):
     def merge(self, frontmatter, settings):
         """Handle basepath first and then merge all keys."""
 
-        if 'settings' in frontmatter and validate.is_dict(frontmatter['settings']):
-            validate.Validate().validate(frontmatter['settings'])
+        if 'pymdown_settings' in frontmatter and validate.is_dict(frontmatter['pymdown_settings']):
+            validate.Validate().validate(frontmatter['pymdown_settings'])
         else:
-            frontmatter['settings'] = OrderedDict()
+            frontmatter['pymdown_settings'] = OrderedDict()
         self.merge_basepath(frontmatter, settings)
         self.merge_relative_path(frontmatter, settings)
         self.merge_destination(frontmatter, settings)

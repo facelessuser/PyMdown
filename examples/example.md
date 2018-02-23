@@ -1,9 +1,5 @@
 ---
 # Builtin values
-references:
-  - references.md
-  - abbreviations.md
-  - footnotes.md
 destination: Example.html
 
 flow: true
@@ -17,25 +13,41 @@ author:
   - Jane Doe
 
 # Settings overrides
-settings:
+pymdown_settings:
   template: example-template.html
   use_jinja2: true
   jinja2_block: ['<%', '%>']
   jinja2_variable: ['<{', '}>']
   jinja2_comment: ['<#', '#>']
   markdown_extensions:
-    pymdownx.extra:
     markdown.extensions.smarty:
     markdown.extensions.admonition:
+    markdown.extensions.footnotes:
+    markdown.extensions.attr_list:
+    markdown.extensions.def_list:
+    markdown.extensions.tables:
+    markdown.extensions.abbr:
     markdown.extensions.toc:
       title: Table of Contents
       slugify: !!python/name:pymdownx.slugs.uslugify
       permalink: "\uf0c1"
     pymdownx.highlight:
-      guess_lang: false
-      css_class: highlight
+      extend_pygments_lang:
+        - name: php-inline
+          lang: php
+          options:
+            startinline: true
+        - name: pycon3
+          lang: pycon
+          options:
+            python3: true
     pymdownx.magiclink:
       repo_url_shortener: true
+      repo_url_shorthand: true
+      social_url_shorthand: true
+      user: facelessuser
+      repo: Pymdown
+    pymdownx.extrarawhtml:
     pymdownx.betterem:
     pymdownx.tilde:
     pymdownx.caret:
@@ -53,11 +65,12 @@ settings:
     pymdownx.keys:
       separator: ＋
     pymdownx.details:
-    pymdownx.plainhtml:
-      strip_attributes: ''
+    pymdownx.striphtml:
     pymdownx.b64:
       base_path: ${BASE_PATH}
     pymdown.critic:
+    pymdownx.snippets:
+      base_path: ${BASE_PATH}
 ---
 test: This example of normal meta extension
 title: This title will be overridden by YAML
@@ -66,25 +79,58 @@ title: This title will be overridden by YAML
     This is mainly to visually inspect markdown output offered by PyMdown.  This isn't a real test.  Here are the enabled extensions:
 
     ```yaml
-        markdown_extensions:
-          markdown.extensions.extra:
-          markdown.extensions.toc:
-            title: Table of Contents
-            slugify: ${SLUGIFY}
-          markdown.extensions.headerid:
-          markdown.extensions.smarty:
-          markdown.extensions.meta:
-          markdown.extensions.wikilinks:
-          markdown.extensions.admonition:
-          markdown.extensions.nl2br:
-          markdown.extensions.codehilite:
-            guess_lang: False
-            css_class: highlight
-          pymdownx.pymdown:
-          pymdownx.inlinehilite:
-          pymdownx.b64:
-            base_path: ${BASE_PATH}
-          pymdownx.critic:
+    markdown_extensions:
+      markdown.extensions.smarty:
+      markdown.extensions.admonition:
+      markdown.extensions.footnotes:
+      markdown.extensions.attr_list:
+      markdown.extensions.def_list:
+      markdown.extensions.tables:
+      markdown.extensions.abbr:
+      markdown.extensions.toc:
+        title: Table of Contents
+        slugify: !!python/name:pymdownx.slugs.uslugify
+        permalink: "\uf0c1"
+      pymdownx.highlight:
+        extend_pygments_lang:
+          - name: php-inline
+            lang: php
+            options:
+              startinline: true
+          - name: pycon3
+            lang: pycon
+            options:
+              python3: true
+      pymdownx.magiclink:
+        repo_url_shortener: true
+        repo_url_shorthand: true
+        social_url_shorthand: true
+        user: facelessuser
+        repo: Pymdown
+      pymdownx.extrarawhtml:
+      pymdownx.betterem:
+      pymdownx.tilde:
+      pymdownx.caret:
+      pymdownx.mark:
+      pymdownx.smartsymbols:
+      pymdownx.emoji:
+      pymdownx.tasklist:
+      pymdownx.progressbar:
+      pymdownx.superfences:
+      pymdownx.arithmatex:
+      pymdownx.inlinehilite:
+      pymdownx.escapeall:
+        hardbreak: True
+        nbsp: True
+      pymdownx.keys:
+        separator: ＋
+      pymdownx.details:
+      pymdownx.striphtml:
+      pymdownx.b64:
+        base_path: ${BASE_PATH}
+      pymdown.critic:
+      pymdownx.snippets:
+        base_path: ${BASE_PATH}
     ```
 
     !!! Caution "Notes"
@@ -161,7 +207,7 @@ New paragraph.
 ```
 `inline block`
 
-<kbd>ctrl</kbd>+<kbd>alt</kbd>+<kbd>delete</kbd>
+++ctrl+alt+delete++
 
 <cite>citation</cite>
 
@@ -216,7 +262,7 @@ __~~*strike italic 1 bold 2*~~__ and *~~__strike italic 1 bold 2__~~*
 
 `inline block`
 
-<kbd>ctrl</kbd>+<kbd>alt</kbd>+<kbd>delete</kbd>
+++ctrl+alt+delete++
 
 <cite>citation</cite>
 
@@ -1266,4 +1312,8 @@ General block handling.
 
 <# This is the page title #><{ page.title }>
 
-<{ extra.references|gettxt }>
+--8<--
+references.md
+abbreviations.md
+footnotes.md
+--8<--

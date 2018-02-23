@@ -89,7 +89,7 @@ class Html(object):
     def __init__(self, **kwargs):
         """Initialize."""
         settings = kwargs["settings"]
-        self.settings = settings.get("settings", {})
+        self.settings = settings.get("pymdown_settings", {})
         self.page = settings.get("page", {})
         self.extra = settings.get("extra", {})
         self.preview = kwargs.get("preview", False)

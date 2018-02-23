@@ -1,0 +1,1542 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+
+<meta name="author" value="John Doe, Jane Doe">
+
+<style>
+body {
+  background-color: #fafafa;
+  margin: 0 auto 16px auto;
+  font-family: "Helvetica Neue", Helvetica, "Segoe UI", Arial, freesans, sans-serif;
+  font-size: 16px;
+}
+
+.example-body {
+  padding: 0 30px 20px 30px;
+  width: 50em;
+  margin: 20px auto;
+  padding-top: 20px;
+  position:relative;
+  z-index:1;
+  background:#fff;
+  border: 1px solid #ddd;
+  -moz-box-shadow: 0px 3px 5px #CCCCCC;
+  -webkit-box-shadow: 0px 3px 5px #CCCCCC;
+  box-shadow: 0px 3px 5px #CCCCCC;
+}
+
+.example-header {
+    position:relative;
+    margin:0 -41px 20px;
+    font-size:28px;
+    text-align:center;
+    color: #fff;
+    text-shadow: 0 1px 0 #333;
+    padding: 20px 10px;
+    background-color: #71b2c9;
+    text-shadow:0 1px 2px rgba(0,0,0,0.5);
+    -webkit-box-shadow:0 1px 1px rgba(0,0,0,0.2);
+    -moz-box-shadow:0 1px 1px rgba(0,0,0,0.2);
+    box-shadow: 0 1px 1px rgba(0,0,0,0.2);
+    zoom:1;
+}
+
+.example-header:before,
+.example-header:after {
+    content:"";
+    position:absolute;
+    z-index:-1;
+    top:100%;
+    left:0;
+    border-width:0 10px 10px 0;
+    border-style:solid;
+    border-color:transparent #3b819a;
+}
+
+.example-header:after {
+    left:auto;
+    right:0;
+    border-width:0 0 10px 10px;
+}
+
+.example-content {
+  padding: 0;
+  font-size: 16px;
+}
+
+.example-content p {
+   margin: 16px 0;
+   padding: 0;
+}
+
+.markdown-header {
+  background-color: #e7e7e7;
+  border-left: 1px solid #ddd;
+  border-right: 1px solid #ddd;
+  border-top: 1px solid #ddd;
+  color: #333;
+  font-size: 14px;
+  font-weight: bold;
+  text-shadow: 0 1px 0 #fff;
+  -webkit-border-top-left-radius: 6px;
+  -webkit-border-top-right-radius: 6px;
+  -moz-border-top-left-radius: 6px;
+  -moz-border-top-right-radius: 6px;
+  border-top-left-radius: 6px;
+  border-top-right-radius: 6px;
+  padding: 10px;
+}
+
+.markdown-body {
+  padding: 30px;
+  border: 1px solid #ddd;
+}
+</style>
+<link href="../../../../.PyMdown/markdown.css" rel="stylesheet" type="text/css">
+
+<style>
+.highlight .hll { background-color: #ffffcc }
+.highlight  { background: #f8f8f8; }
+.highlight .c { color: #408080; font-style: italic } /* Comment */
+.highlight .err { border: 1px solid #FF0000 } /* Error */
+.highlight .k { color: #008000; font-weight: bold } /* Keyword */
+.highlight .o { color: #666666 } /* Operator */
+.highlight .ch { color: #408080; font-style: italic } /* Comment.Hashbang */
+.highlight .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #BC7A00 } /* Comment.Preproc */
+.highlight .cpf { color: #408080; font-style: italic } /* Comment.PreprocFile */
+.highlight .c1 { color: #408080; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #408080; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #A00000 } /* Generic.Deleted */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #FF0000 } /* Generic.Error */
+.highlight .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+.highlight .gi { color: #00A000 } /* Generic.Inserted */
+.highlight .go { color: #888888 } /* Generic.Output */
+.highlight .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+.highlight .gt { color: #0044DD } /* Generic.Traceback */
+.highlight .kc { color: #008000; font-weight: bold } /* Keyword.Constant */
+.highlight .kd { color: #008000; font-weight: bold } /* Keyword.Declaration */
+.highlight .kn { color: #008000; font-weight: bold } /* Keyword.Namespace */
+.highlight .kp { color: #008000 } /* Keyword.Pseudo */
+.highlight .kr { color: #008000; font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #B00040 } /* Keyword.Type */
+.highlight .m { color: #666666 } /* Literal.Number */
+.highlight .s { color: #BA2121 } /* Literal.String */
+.highlight .na { color: #7D9029 } /* Name.Attribute */
+.highlight .nb { color: #008000 } /* Name.Builtin */
+.highlight .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+.highlight .no { color: #880000 } /* Name.Constant */
+.highlight .nd { color: #AA22FF } /* Name.Decorator */
+.highlight .ni { color: #999999; font-weight: bold } /* Name.Entity */
+.highlight .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #0000FF } /* Name.Function */
+.highlight .nl { color: #A0A000 } /* Name.Label */
+.highlight .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+.highlight .nt { color: #008000; font-weight: bold } /* Name.Tag */
+.highlight .nv { color: #19177C } /* Name.Variable */
+.highlight .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mb { color: #666666 } /* Literal.Number.Bin */
+.highlight .mf { color: #666666 } /* Literal.Number.Float */
+.highlight .mh { color: #666666 } /* Literal.Number.Hex */
+.highlight .mi { color: #666666 } /* Literal.Number.Integer */
+.highlight .mo { color: #666666 } /* Literal.Number.Oct */
+.highlight .sa { color: #BA2121 } /* Literal.String.Affix */
+.highlight .sb { color: #BA2121 } /* Literal.String.Backtick */
+.highlight .sc { color: #BA2121 } /* Literal.String.Char */
+.highlight .dl { color: #BA2121 } /* Literal.String.Delimiter */
+.highlight .sd { color: #BA2121; font-style: italic } /* Literal.String.Doc */
+.highlight .s2 { color: #BA2121 } /* Literal.String.Double */
+.highlight .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+.highlight .sh { color: #BA2121 } /* Literal.String.Heredoc */
+.highlight .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+.highlight .sx { color: #008000 } /* Literal.String.Other */
+.highlight .sr { color: #BB6688 } /* Literal.String.Regex */
+.highlight .s1 { color: #BA2121 } /* Literal.String.Single */
+.highlight .ss { color: #19177C } /* Literal.String.Symbol */
+.highlight .bp { color: #008000 } /* Name.Builtin.Pseudo */
+.highlight .fm { color: #0000FF } /* Name.Function.Magic */
+.highlight .vc { color: #19177C } /* Name.Variable.Class */
+.highlight .vg { color: #19177C } /* Name.Variable.Global */
+.highlight .vi { color: #19177C } /* Name.Variable.Instance */
+.highlight .vm { color: #19177C } /* Name.Variable.Magic */
+.highlight .il { color: #666666 } /* Literal.Number.Integer.Long */
+</style>
+
+<script type="text/javascript">
+(function () {
+'use strict';
+/**
+ * Converts details/summary tags into working elements in browsers that don't yet support them.
+ * @return {void}
+ */
+var details = (function () {
+
+  var isDetailsSupported = function () {
+    // https://mathiasbynens.be/notes/html5-details-jquery#comment-35
+    // Detect if details is supported in the browser
+    var el = document.createElement("details");
+    var fake = false;
+
+    if (!("open" in el)) {
+      return false;
+    }
+
+    var root = document.body || function () {
+      var de = document.documentElement;
+      fake = true;
+      return de.insertBefore(document.createElement("body"), de.firstElementChild || de.firstChild);
+    }();
+
+    el.innerHTML = "<summary>a</summary>b";
+    el.style.display = "block";
+    root.appendChild(el);
+    var diff = el.offsetHeight;
+    el.open = true;
+    diff = diff !== el.offsetHeight;
+    root.removeChild(el);
+
+    if (fake) {
+      root.parentNode.removeChild(root);
+    }
+
+    return diff;
+  }();
+
+  if (!isDetailsSupported) {
+    var blocks = document.querySelectorAll("details>summary");
+    for (var i = 0; i < blocks.length; i++) {
+      var summary = blocks[i];
+      var details = summary.parentNode;
+
+      // Apply "no-details" to for unsupported details tags
+      if (!details.className.match(new RegExp("(\\s|^)no-details(\\s|$)"))) {
+        details.className += " no-details";
+      }
+
+      summary.addEventListener("click", function (e) {
+        var node = e.target.parentNode;
+        if (node.hasAttribute("open")) {
+          node.removeAttribute("open");
+        } else {
+          node.setAttribute("open", "open");
+        }
+      });
+    }
+  }
+});
+
+(function () {
+  var onReady = function onReady(fn) {
+    if (document.addEventListener) {
+      document.addEventListener("DOMContentLoaded", fn);
+    } else {
+      document.attachEvent("onreadystatechange", function () {
+        if (document.readyState === "interactive") {
+          fn();
+        }
+      });
+    }
+  };
+
+  onReady(function () {
+    details();
+  });
+})();
+
+}());
+
+</script>
+<script type="text/javascript" charset="utf-8-sig" src="https://cdnjs.cloudflare.com/ajax/libs/raphael/2.2.7/raphael.min.js"></script>
+<script type="text/javascript" charset="utf-8-sig" src="../../../../.PyMdown/default/uml-converter.js"></script>
+<script type="text/javascript" charset="utf-8-sig" src="https://cdnjs.cloudflare.com/ajax/libs/flowchart/1.6.5/flowchart.min.js"></script>
+<script type="text/javascript" charset="utf-8-sig" src="../../../../.PyMdown/default/flow-loader.js"></script>
+<script type="text/javascript" charset="utf-8-sig" src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+<script type="text/javascript" charset="utf-8-sig" src="https://cdnjs.cloudflare.com/ajax/libs/js-sequence-diagrams/1.0.6/sequence-diagram-min.js"></script>
+<script type="text/javascript" charset="utf-8-sig" src="../../../../.PyMdown/default/sequence-loader.js"></script>
+<script type="text/javascript" charset="utf-8-sig" src="../../../../.PyMdown/default/mathjax-config.js"></script>
+<script type="text/javascript" charset="utf-8-sig" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js"></script>
+
+<title>PyMdown Example</title>
+</head>
+<body>
+<div class="example-body">
+    <h1 class="example-header">PyMdown Example</h1>
+    <div class="example-content"><p>PyMdown is CLI tool to convert or even batch convert markdown files to HTML.  It is written in Python and uses Python Markdown as the markdown parser and Pygments for code syntax highlighting.  It supports all of Python Markdown's built in extensions.  PyMdown also provides a number of additional extensions as well.</p>
+    </div>
+    <div class="markdown-header">Example Syntax</div>
+    <article class="markdown-body"><p>test: This example of normal meta extension
+title: This title will be overridden by YAML</p>
+<div class="admonition hint">
+<p class="admonition-title">Extensions Used in this Document</p>
+<p>This is mainly to visually inspect markdown output offered by PyMdown.  This isn&rsquo;t a real test.  Here are the enabled extensions:</p>
+<div class="highlight"><pre><span></span>    <span class="l l-Scalar l-Scalar-Plain">markdown_extensions</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">markdown.extensions.extra</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">markdown.extensions.toc</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">title</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">Table of Contents</span>
+        <span class="l l-Scalar l-Scalar-Plain">slugify</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">${SLUGIFY}</span>
+      <span class="l l-Scalar l-Scalar-Plain">markdown.extensions.headerid</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">markdown.extensions.smarty</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">markdown.extensions.meta</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">markdown.extensions.wikilinks</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">markdown.extensions.admonition</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">markdown.extensions.nl2br</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">markdown.extensions.codehilite</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">guess_lang</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">False</span>
+        <span class="l l-Scalar l-Scalar-Plain">css_class</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">highlight</span>
+      <span class="l l-Scalar l-Scalar-Plain">pymdownx.pymdown</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">pymdownx.inlinehilite</span><span class="p p-Indicator">:</span>
+      <span class="l l-Scalar l-Scalar-Plain">pymdownx.b64</span><span class="p p-Indicator">:</span>
+        <span class="l l-Scalar l-Scalar-Plain">base_path</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">${BASE_PATH}</span>
+      <span class="l l-Scalar l-Scalar-Plain">pymdownx.critic</span><span class="p p-Indicator">:</span>
+</pre></div>
+
+<div class="admonition caution">
+<p class="admonition-title">Notes</p>
+<ul>
+<li><code>sane_lists</code> will alter the results of <a href="#mixed-lists">Mixed Lists</a>. When turned off, this document will have all list items mixed and aligned proper.  With <code>sane_lists</code> on, some will not be recognized, and some items may be aligned in different lists. <code>sane_lists</code> is disabled in this example.</li>
+<li>having <code>guess_lang=False</code> allows selective highlighting of only the blocks that specify a language.  When omitted or set <code>true</code>, it can be expected that all of the blocks will be highlighted to some extent (in some cases very wrong).  <code>guess_lang</code> is disabled in this example.</li>
+<li>pymdown.b64 can be verified by checking the source of one of the images to see if conversion occured.</li>
+</ul>
+</div>
+</div>
+<div class="toc"><span class="toctitle">Table of Contents</span><ul>
+<li><a href="#headers">Headers</a></li>
+<li><a href="#h1">H1</a><ul>
+<li><a href="#h2">H2</a><ul>
+<li><a href="#h3">H3</a><ul>
+<li><a href="#h4">H4</a><ul>
+<li><a href="#h5">H5</a><ul>
+<li><a href="#h6">H6</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#duplicate-header">Duplicate Header</a></li>
+<li><a href="#duplicate-header_1">Duplicate Header</a></li>
+</ul>
+</li>
+<li><a href="#horizontal-rules">Horizontal Rules</a></li>
+<li><a href="#paragraphs">Paragraphs</a></li>
+<li><a href="#inline">Inline</a></li>
+<li><a href="#links">Links</a></li>
+<li><a href="#abbreviation">Abbreviation</a></li>
+<li><a href="#unordered-list">Unordered List</a></li>
+<li><a href="#ordered-list">Ordered List</a></li>
+<li><a href="#task-list">Task List</a></li>
+<li><a href="#mixed-lists">Mixed Lists</a></li>
+<li><a href="#dictionary">Dictionary</a></li>
+<li><a href="#blocks">Blocks</a></li>
+<li><a href="#block-quotes">Block Quotes</a></li>
+<li><a href="#fenced-block">Fenced Block</a></li>
+<li><a href="#tables">Tables</a></li>
+<li><a href="#smarter-bold-and-emphasis">Smarter Bold (and Emphasis)</a></li>
+<li><a href="#smarty">Smarty</a></li>
+<li><a href="#smart-symbols">Smart Symbols</a></li>
+<li><a href="#attribute-list">Attribute List</a></li>
+<li><a href="#admonition">Admonition</a></li>
+<li><a href="#details">Details</a></li>
+<li><a href="#github-emoji">Github Emoji</a><ul>
+<li><a href="#people">People</a></li>
+<li><a href="#nature">Nature</a></li>
+<li><a href="#objects">Objects</a></li>
+<li><a href="#places">Places</a></li>
+<li><a href="#symbols">Symbols</a></li>
+</ul>
+</li>
+<li><a href="#insert">Insert</a></li>
+</ul>
+</li>
+<li><a href="#subscript-and-superscript">Subscript and Superscript</a></li>
+<li><a href="#progress">Progress</a></li>
+<li><a href="#neseted-fences">Neseted Fences:</a></li>
+<li><a href="#uml-flow-charts">UML Flow Charts</a></li>
+<li><a href="#uml-sequence-diagrams">UML Sequence Diagrams</a></li>
+<li><a href="#math">Math</a></li>
+<li><a href="#critic">Critic</a></li>
+<li><a href="#template-test">Template Test</a></li>
+</ul>
+</div>
+<h2 id="headers">Headers<a class="headerlink" href="#headers" title="Permanent link"></a></h2>
+<div class="highlight"><pre><span></span># H1
+## H2
+### H3
+#### H4
+##### H5
+###### H6
+### Duplicate Header
+### Duplicate Header
+</pre></div>
+
+<h1 id="h1">H1<a class="headerlink" href="#h1" title="Permanent link"></a></h1>
+<h2 id="h2">H2<a class="headerlink" href="#h2" title="Permanent link"></a></h2>
+<h3 id="h3">H3<a class="headerlink" href="#h3" title="Permanent link"></a></h3>
+<h4 id="h4">H4<a class="headerlink" href="#h4" title="Permanent link"></a></h4>
+<h5 id="h5">H5<a class="headerlink" href="#h5" title="Permanent link"></a></h5>
+<h6 id="h6">H6<a class="headerlink" href="#h6" title="Permanent link"></a></h6>
+<h3 id="duplicate-header">Duplicate Header<a class="headerlink" href="#duplicate-header" title="Permanent link"></a></h3>
+<h3 id="duplicate-header_1">Duplicate Header<a class="headerlink" href="#duplicate-header_1" title="Permanent link"></a></h3>
+<h2 id="horizontal-rules">Horizontal Rules<a class="headerlink" href="#horizontal-rules" title="Permanent link"></a></h2>
+<div class="highlight"><pre><span></span>---
+
+- - -
+
+***
+
+* * *
+
+___
+
+_ _ _
+</pre></div>
+
+<hr />
+<hr />
+<hr />
+<hr />
+<hr />
+<hr />
+<h2 id="paragraphs">Paragraphs<a class="headerlink" href="#paragraphs" title="Permanent link"></a></h2>
+<div class="highlight"><pre><span></span>This is a paragraph.
+I am still part of the paragraph.
+
+New paragraph.
+</pre></div>
+
+<p>This is a paragraph.
+I am still part of the paragraph.</p>
+<p>New paragraph.</p>
+<h2 id="inline">Inline<a class="headerlink" href="#inline" title="Permanent link"></a></h2>
+<div class="highlight"><pre><span></span>`inline block`
+
+&lt;kbd&gt;ctrl&lt;/kbd&gt;+&lt;kbd&gt;alt&lt;/kbd&gt;+&lt;kbd&gt;delete&lt;/kbd&gt;
+
+&lt;cite&gt;citation&lt;/cite&gt;
+
+
+This is a ==mark (with **bold** *italic* `code`)== tag.
+
+~~strike~~
+
+
+~~smart~~stike~~
+
+==smart==mark==
+
+
+**bold 1** and __bold 2__
+
+*italic 1*  and _italic 2_
+
+
+***bold 1 and italic 1***
+
+___bold 2 and italic 2___
+
+__*bold 2 and italic 1*__
+
+**_bold 1 and italic 2_**
+
+
+~~*strike italic 1*~~ and *~~strike italic 2~~*
+
+~~_strike italic 2_~~ and  _~~strike italic 2~~_
+
+
+~~**strike bold 1**~~ and **~~strike bold 1~~**
+
+~~__strike bold 2__~~ and __~~strike bold 2~~__
+
+
+~~***strike italic 1 bold 1***~~ and ***~~strike italic 1 bold 1~~***
+
+~~___strike italic 2 bold 2___~~ and ___~~strike italic 2 bold 2~~___
+
+**~~*strike italic 1 bold 1*~~** and *~~**strike italic 1 bold 1**~~*
+
+__~~_strike italic 2 bold 2_~~__ and _~~__strike italic 2 bold 2__~~_
+
+**~~_strike italic 2 bold 1_~~** and _~~**strike italic 2 bold 1**~~_
+
+__~~*strike italic 1 bold 2*~~__ and *~~__strike italic 1 bold 2__~~*
+</pre></div>
+
+<p><code>inline block</code></p>
+<p><kbd>ctrl</kbd>+<kbd>alt</kbd>+<kbd>delete</kbd></p>
+<p><cite>citation</cite></p>
+<p>This is a <mark>mark (with <strong>bold</strong> <em>italic</em> <code>code</code>)</mark> tag.</p>
+<p><del>strike</del></p>
+<p><del>smart~~stike</del></p>
+<p><mark>smart==mark</mark></p>
+<p><strong>bold 1</strong> and <strong>bold 2</strong></p>
+<p><em>italic 1</em>  and <em>italic 2</em></p>
+<p><strong><em>bold 1 and italic 1</em></strong></p>
+<p><strong><em>bold 2 and italic 2</em></strong></p>
+<p><strong><em>bold 2 and italic 1</em></strong></p>
+<p><strong><em>bold 1 and italic 2</em></strong></p>
+<p><del><em>strike italic 1</em></del> and <em><del>strike italic 2</del></em></p>
+<p><del><em>strike italic 2</em></del> and  <em><del>strike italic 2</del></em></p>
+<p><del><strong>strike bold 1</strong></del> and <strong><del>strike bold 1</del></strong></p>
+<p><del><strong>strike bold 2</strong></del> and <strong><del>strike bold 2</del></strong></p>
+<p><del><strong><em>strike italic 1 bold 1</em></strong></del> and <strong><em><del>strike italic 1 bold 1</del></em></strong></p>
+<p><del><strong><em>strike italic 2 bold 2</em></strong></del> and <strong><em><del>strike italic 2 bold 2</del></em></strong></p>
+<p><strong><del><em>strike italic 1 bold 1</em></del></strong> and <em><del><strong>strike italic 1 bold 1</strong></del></em></p>
+<p><strong><del><em>strike italic 2 bold 2</em></del></strong> and <em><del><strong>strike italic 2 bold 2</strong></del></em></p>
+<p><strong><del><em>strike italic 2 bold 1</em></del></strong> and <em><del><strong>strike italic 2 bold 1</strong></del></em></p>
+<p><strong><del><em>strike italic 1 bold 2</em></del></strong> and <em><del><strong>strike italic 1 bold 2</strong></del></em></p>
+<h2 id="links">Links<a class="headerlink" href="#links" title="Permanent link"></a></h2>
+<p>Footnote and reference sources are at the bottom of the page.
+<div class="highlight"><pre><span></span>[Reference Link][1]
+
+Footnotes[^1] have a label[^label] and a definition[^!DEF]
+
+![A Picture](bg.png &quot;A Picture&quot;)
+
+[Link to Picture](bg.png &quot;Link&quot;)
+
+https://github.com/facelessuser/pymdown
+
+This is a link https://github.com/facelessuser/pymdown.
+
+This is a link &quot;https://github.com/facelessuser/pymdown&quot;.
+
+With this link (https://github.com/facelessuser/pymdown), it still works.
+
+    [1]: https://github.com/facelessuser/pymdown
+    [^1]: This is a footnote
+    [^label]: A footnote on &quot;label&quot;
+    [^!DEF]: The footnote for definition
+</pre></div></p>
+<p><a href="https://github.com/facelessuser/pymdown">Reference Link</a></p>
+<p>Footnotes<sup id="fnref:1"><a class="footnote-ref" href="#fn:1" rel="footnote">1</a></sup> have a label<sup id="fnref:label"><a class="footnote-ref" href="#fn:label" rel="footnote">2</a></sup> and a definition<sup id="fnref:!DEF"><a class="footnote-ref" href="#fn:!DEF" rel="footnote">3</a></sup></p>
+<p><img alt="A Picture" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAHgAAAB4CAMAAAAOusbgAAAAqFBMVEU5eZdll66Yucjd7h7d7h7d7h5ll65ll65ll65ll65ll65ll65ll65ll65ll65ll65ll65ll65ll65ll65ll65ll65ll65ll65ll65ll65ll65ll65ll65ll65ll66YuciYuciYuciYuciYuciYuciYuciYuciYuciYuciYuciYuciYuciYuciYuciYuciYuciYuciYuciYuciYuciYuciYuciYuciYucgXVONTAAABDklEQVRoge3XR3ICQRBE0b/Ce2+FAAnkLeb+N9MRNBvFR0H2vuJFT3dX5VAqV6q1eqPZane6vf5gOBpPprP5YnnD72t1u95s7+53+4fHp+eX17f3j8+v78PxdC5Qi+SWkNwykltBcqtIbg3JrSO5DSS3ieS2kNw2kttBcrtIbg/J7SO5AyR3iOSOkNwxkjtBcqdI7gzJnSO5CyR3WaD0T1xrv3Hjxo0bN27cuHHjxo0bN27c63Sx9ov1nbHOF+teYd1nrHeE9X6x+gZWv8Lqk1j9GWsuYM0jrDmINX+x5j5W3sDKOVj5CivXYeVJrByLlZ+xcnuB0n/5vxA3bty4cePGjRs3bty4cePGvUj3B2JzyvcNRmTGAAAAAElFTkSuQmCC" title="A Picture" /></p>
+<p><a href="bg.png" title="Link">Link to Picture</a></p>
+<p><a href="http://www.google.com">www.google.com</a></p>
+<p><a href="&#109;&#97;&#105;&#108;&#116;&#111;&#58;&#105;&#115;&#97;&#97;&#99;&#109;&#117;&#115;&#101;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;">&#105;&#115;&#97;&#97;&#99;&#109;&#117;&#115;&#101;&#64;&#103;&#109;&#97;&#105;&#108;&#46;&#99;&#111;&#109;</a></p>
+<p><a href="https://github.com/facelessuser/pymdown">https://github.com/facelessuser/pymdown</a></p>
+<p>This is a link <a href="https://github.com/facelessuser/pymdown">https://github.com/facelessuser/pymdown</a>.</p>
+<p>This is a link &ldquo;<a href="https://github.com/facelessuser/pymdown">https://github.com/facelessuser/pymdown</a>&rdquo;.</p>
+<p>With this link (<a href="https://github.com/facelessuser/pymdown">https://github.com/facelessuser/pymdown</a>), it still works.</p>
+<h2 id="abbreviation">Abbreviation<a class="headerlink" href="#abbreviation" title="Permanent link"></a></h2>
+<p>Abreviations source are found at the bottom of the page
+<div class="highlight"><pre><span></span>The HTML specification
+is maintained by the W3C.
+
+*[HTML]: Hyper Text Markup Language
+*[W3C]:  World Wide Web Consortium
+</pre></div></p>
+<p>The <abbr title="Hyper Text Markup Language">HTML</abbr> specification
+is maintained by the <abbr title="World Wide Web Consortium">W3C</abbr>.</p>
+<h2 id="unordered-list">Unordered List<a class="headerlink" href="#unordered-list" title="Permanent link"></a></h2>
+<div class="highlight"><pre><span></span>Unordered List
+
+- item 1
+    * item A
+    * item B
+        more text
+        + item a
+        + item b
+        + item c
+    * item C
+- item 2
+- item 3
+</pre></div>
+
+<p>Unordered List</p>
+<ul>
+<li>item 1<ul>
+<li>item A</li>
+<li>item B
+    more text<ul>
+<li>item a</li>
+<li>item b</li>
+<li>item c</li>
+</ul>
+</li>
+<li>item C</li>
+</ul>
+</li>
+<li>item 2</li>
+<li>item 3</li>
+</ul>
+<h2 id="ordered-list">Ordered List<a class="headerlink" href="#ordered-list" title="Permanent link"></a></h2>
+<div class="highlight"><pre><span></span>Ordered List
+
+1. item 1
+    1. item A
+    2. item B
+        more text
+        1. item a
+        2. item b
+        3. item c
+    3. item C
+2. item 2
+3. item 3
+</pre></div>
+
+<p>Ordered List</p>
+<ol>
+<li>item 1<ol>
+<li>item A</li>
+<li>item B
+    more text<ol>
+<li>item a</li>
+<li>item b</li>
+<li>item c</li>
+</ol>
+</li>
+<li>item C</li>
+</ol>
+</li>
+<li>item 2</li>
+<li>item 3</li>
+</ol>
+<h2 id="task-list">Task List<a class="headerlink" href="#task-list" title="Permanent link"></a></h2>
+<div class="highlight"><pre><span></span>Task List
+
+- [X] item 1
+    * [X] item A
+    * [ ] item B
+        more text
+        + [x] item a
+        + [ ] item b
+        + [x] item c
+    * [X] item C
+- [ ] item 2
+- [ ] item 3
+</pre></div>
+
+<p>Task List</p>
+<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled checked> item 1<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled checked> item A</li>
+<li class="task-list-item"><input type="checkbox" disabled> item B<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled checked> item a</li>
+<li class="task-list-item"><input type="checkbox" disabled> item b</li>
+<li class="task-list-item"><input type="checkbox" disabled checked> item c</li>
+</ul>
+</li>
+<li class="task-list-item"><input type="checkbox" disabled checked> item C</li>
+</ul>
+</li>
+<li class="task-list-item"><input type="checkbox" disabled> item 2</li>
+<li class="task-list-item"><input type="checkbox" disabled> item 3</li>
+</ul>
+<h2 id="mixed-lists">Mixed Lists<a class="headerlink" href="#mixed-lists" title="Permanent link"></a></h2>
+<p><code>Really Mixed Lists</code> should break with <code>sane_lists</code> on.</p>
+<div class="highlight"><pre><span></span>Mixed Lists
+
+- item 1
+    * [X] item A
+    * [ ] item B
+        more text
+        1. item a
+        2. item b
+        3. item c
+    * [X] item C
+- item 2
+- item 3
+
+
+Really Mixed Lists
+
+- item 1
+    * [X] item A
+    - item B
+        more text
+        1. item a
+        + item b
+        + [ ] item c
+    3. item C
+2. item 2
+- [X] item 3
+</pre></div>
+
+<p>Mixed Lists</p>
+<ul>
+<li>item 1<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled checked> item A</li>
+<li class="task-list-item"><input type="checkbox" disabled> item B<ol>
+<li>item a</li>
+<li>item b</li>
+<li>item c</li>
+</ol>
+</li>
+<li class="task-list-item"><input type="checkbox" disabled checked> item C</li>
+</ul>
+</li>
+<li>item 2</li>
+<li>item 3</li>
+</ul>
+<p>Really Mixed Lists</p>
+<ul class="task-list">
+<li>item 1<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled checked> item A</li>
+<li>item B
+    more text<ol class="task-list">
+<li>item a</li>
+<li>item b</li>
+<li class="task-list-item"><input type="checkbox" disabled> item c</li>
+</ol>
+</li>
+<li>item C</li>
+</ul>
+</li>
+<li>item 2</li>
+<li class="task-list-item"><input type="checkbox" disabled checked> item 3</li>
+</ul>
+<h2 id="dictionary">Dictionary<a class="headerlink" href="#dictionary" title="Permanent link"></a></h2>
+<div class="highlight"><pre><span></span>Dictionary
+:   item 1
+
+    item 2
+
+    item 3
+</pre></div>
+
+<dl>
+<dt>Dictionary</dt>
+<dd>
+<p>item 1</p>
+<p>item 2</p>
+<p>item 3</p>
+</dd>
+</dl>
+<h2 id="blocks">Blocks<a class="headerlink" href="#blocks" title="Permanent link"></a></h2>
+<div class="highlight"><pre><span></span>Normal raw block
+
+    This is a block.
+
+    This is more of a block.
+
+Highlighted code block
+
+    :::javascript
+    // Fenced **with** highlighting
+    function doIt() {
+        for (var i = 1; i &lt;= slen ; i^^) {
+            setTimeout(&quot;document.z.textdisplay.value = newMake()&quot;, i*300);
+            setTimeout(&quot;window.status = newMake()&quot;, i*300);
+        }
+    }
+</pre></div>
+
+<p>Normal raw block</p>
+<div class="highlight"><pre><span></span>This is a block.
+
+This is more of a block.
+</pre></div>
+
+<p>Highlighted code block</p>
+<div class="highlight"><pre><span></span>:::javascript
+// Fenced **with** highlighting
+function doIt() {
+    for (var i = 1; i &lt;= slen ; i^^) {
+        setTimeout(&quot;document.z.textdisplay.value = newMake()&quot;, i*300);
+        setTimeout(&quot;window.status = newMake()&quot;, i*300);
+    }
+}
+</pre></div>
+
+<h2 id="block-quotes">Block Quotes<a class="headerlink" href="#block-quotes" title="Permanent link"></a></h2>
+<div class="highlight"><pre><span></span>&gt; This is a block quote.
+
+&gt; &gt; How does it look?
+&gt; &gt; &lt;cite&gt;--I said this too&lt;/cite&gt;
+
+&gt; I think it looks good.
+&gt; &lt;cite&gt;--I said this&lt;/cite&gt;
+</pre></div>
+
+<blockquote>
+<p>This is a block quote.</p>
+<blockquote>
+<p>How does it look?
+<cite>&ndash;I said this too</cite></p>
+</blockquote>
+<p>I think it looks good.
+<cite>&ndash;I said this</cite></p>
+</blockquote>
+<h2 id="fenced-block">Fenced Block<a class="headerlink" href="#fenced-block" title="Permanent link"></a></h2>
+<p>Assuming guessing is not enabled.</p>
+<div class="highlight"><pre><span></span>```
+// Fenced **without** highlighting
+function doIt() {
+    for (var i = 1; i &lt;= slen ; i^^) {
+        setTimeout(&quot;document.z.textdisplay.value = newMake()&quot;, i*300);
+        setTimeout(&quot;window.status = newMake()&quot;, i*300);
+    }
+}
+```
+
+~~~{javascript}
+var Test = 0;
+~~~
+
+```javascript hl_lines=&quot;4 5&quot;
+// Fenced **with** highlighting
+function doIt() {
+    for (var i = 1; i &lt;= slen ; i^^) {
+        setTimeout(&quot;document.z.textdisplay.value = newMake()&quot;, i*300);
+        setTimeout(&quot;window.status = newMake()&quot;, i*300);
+    }
+}
+```
+</pre></div>
+
+<div class="highlight"><pre><span></span>// Fenced **without** highlighting
+function doIt() {
+    for (var i = 1; i &lt;= slen ; i^^) {
+        setTimeout(&quot;document.z.textdisplay.value = newMake()&quot;, i*300);
+        setTimeout(&quot;window.status = newMake()&quot;, i*300);
+    }
+}
+</pre></div>
+
+<div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">Test</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+</pre></div>
+
+<div class="highlight"><pre><span></span><span class="c1">// Fenced **with** highlighting</span>
+<span class="kd">function</span> <span class="nx">doIt</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">for</span> <span class="p">(</span><span class="kd">var</span> <span class="nx">i</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span> <span class="nx">i</span> <span class="o">&lt;=</span> <span class="nx">slen</span> <span class="p">;</span> <span class="nx">i</span><span class="o">^^</span><span class="p">)</span> <span class="p">{</span>
+<span class="hll">        <span class="nx">setTimeout</span><span class="p">(</span><span class="s2">&quot;document.z.textdisplay.value = newMake()&quot;</span><span class="p">,</span> <span class="nx">i</span><span class="o">*</span><span class="mi">300</span><span class="p">);</span>
+</span><span class="hll">        <span class="nx">setTimeout</span><span class="p">(</span><span class="s2">&quot;window.status = newMake()&quot;</span><span class="p">,</span> <span class="nx">i</span><span class="o">*</span><span class="mi">300</span><span class="p">);</span>
+</span>    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+
+<h2 id="tables">Tables<a class="headerlink" href="#tables" title="Permanent link"></a></h2>
+<div class="highlight"><pre><span></span>| _Colors_      | Fruits          | Vegetable         |
+| ------------- |:---------------:| -----------------:|
+| Red           | *Apple*         | [Pepper](#Tables) |
+| ~~Orange~~    | `Oranges`       | **Carrot**        |
+| Green         | ~~***Pears***~~ | Spinach           |
+</pre></div>
+
+<table>
+<thead>
+<tr>
+<th><em>Colors</em></th>
+<th align="center">Fruits</th>
+<th align="right">Vegetable</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Red</td>
+<td align="center"><em>Apple</em></td>
+<td align="right"><a href="#Tables">Pepper</a></td>
+</tr>
+<tr>
+<td><del>Orange</del></td>
+<td align="center"><code>Oranges</code></td>
+<td align="right"><strong>Carrot</strong></td>
+</tr>
+<tr>
+<td>Green</td>
+<td align="center"><del><strong><em>Pears</em></strong></del></td>
+<td align="right">Spinach</td>
+</tr>
+</tbody>
+</table>
+<h2 id="smarter-bold-and-emphasis">Smarter Bold (and Emphasis)<a class="headerlink" href="#smarter-bold-and-emphasis" title="Permanent link"></a></h2>
+<div class="highlight"><pre><span></span>Text with double__underscore__words.
+
+__Strong__ still works.
+
+__this__works__too__
+
+
+Text with single_underscore_words.
+
+_Emphasis_ still works.
+
+_this_works_too_
+
+
+Text with double**star**words.
+
+**Strong** still works.
+
+**this**works**too**
+
+
+Text with single*star*words.
+
+*Emphasis* still works.
+
+*this*works*too*
+</pre></div>
+
+<p>Text with triple___underscore___words.</p>
+<p><strong><em>Strong</em></strong> still works.</p>
+<p><strong><em>this___works___too</em></strong></p>
+<p>Text with double__underscore__words.</p>
+<p><strong>Strong</strong> still works.</p>
+<p><strong>this__works__too</strong></p>
+<p>Text with single_underscore_words.</p>
+<p><em>Emphasis</em> still works.</p>
+<p><em>this_works_too</em></p>
+<p>Text with triple<strong><em>star</em></strong>words.</p>
+<p><strong><em>Strong</em></strong> still works.</p>
+<p><strong><em>this</em></strong>works<strong><em>too</em></strong></p>
+<p>Text with double<strong>star</strong>words.</p>
+<p><strong>Strong</strong> still works.</p>
+<p><strong>this</strong>works<strong>too</strong></p>
+<p>Text with single<em>star</em>words.</p>
+<p><em>Emphasis</em> still works.</p>
+<p><em>this</em>works<em>too</em></p>
+<h2 id="smarty">Smarty<a class="headerlink" href="#smarty" title="Permanent link"></a></h2>
+<div class="highlight"><pre><span></span>&quot;double quotes&quot;
+
+&#39;single quotes&#39;
+
+da--sh
+
+elipsis...
+</pre></div>
+
+<p>&ldquo;double quotes&rdquo;</p>
+<p>&lsquo;single quotes&rsquo;</p>
+<p>da&ndash;sh</p>
+<p>elipsis&hellip;</p>
+<h2 id="smart-symbols">Smart Symbols<a class="headerlink" href="#smart-symbols" title="Permanent link"></a></h2>
+<div class="highlight"><pre><span></span>Copyright (c)
+Trademark(tm)
+Registered(r)
+
+230 +/- 10% V
+
+A != B
+
+right arrow --&gt;
+left arrow &lt;--
+double arrow &lt;--&gt;
+
+Fraction 1/2
+Fraction 1/4
+Fraction 3/4
+Fraction 1/3
+Fraction 2/3
+Fraction 1/5
+Fraction 2/5
+Fraction 3/5
+Fraction 4/5
+Fraction 1/6
+Fraction 5/6
+Fraction 1/8
+Fraction 3/8
+Fraction 5/8
+Fraction 7/8
+</pre></div>
+
+<p>Copyright &copy;
+Trademark&trade;
+Registered&reg;</p>
+<p>230 &plusmn; 10% V</p>
+<p>A != B</p>
+<p>right arrow &rarr;
+left arrow &larr;
+double arrow &harr;</p>
+<p>Fraction &frac12;
+Fraction &frac14;
+Fraction &frac34;
+Fraction &#8531;
+Fraction &#8532;
+Fraction &#8533;
+Fraction &#8534;
+Fraction &#8535;
+Fraction &#8536;
+Fraction &#8537;
+Fraction &#8538;
+Fraction &#8539;
+Fraction &#8540;
+Fraction &#8541;
+Fraction &#8542;</p>
+<h2 id="attribute-list">Attribute List<a class="headerlink" href="#attribute-list" title="Permanent link"></a></h2>
+<div class="highlight"><pre><span></span>Normal Text
+
+Modified Text
+{: style=&quot;font-weight:bold;&quot; }
+</pre></div>
+
+<p>Normal Text</p>
+<p style="font-weight:bold;">Modified Text</p>
+<h2 id="admonition">Admonition<a class="headerlink" href="#admonition" title="Permanent link"></a></h2>
+<div class="highlight"><pre><span></span>!!! Attention &quot;Success!&quot;
+    You can use inline ~~stuff~~ markup too!
+
+!!! Hint &quot;Info!&quot;
+    - Here is some info.
+    - And some more
+
+!!! Caution &quot;Warning!&quot;
+    - [X] Make sure you turn off the stove
+    - [X] Don&#39;t run with scissors
+
+!!! Danger &quot;Alert!&quot;
+    You really need to read [this](#admonition)!
+
+!!! Question &quot;Question?&quot;
+    Are you serious?
+
+!!! Note &quot;Note&quot;
+    :smile:
+
+    &gt; Not all markup can be placed in these boxes, but you can fit all sorts of things in them. But you will notice that the styles don&#39;t always play nice with each other.  Additional CSS could fix this though.
+
+    Stuff like _this_ works too.
+
+    | _Colors_      | Fruits          | Vegetable    |
+    | ------------- |:---------------:| ------------:|
+    | Red           | *Apple*         | Pepper       |
+    | ~~Orange~~    | `Oranges`       | **Carrot**   |
+    | Green         | ~~***Pears***~~ | Spinach      |
+
+        :::javascript
+        // Fenced **with** highlighting
+        function doIt() {
+            for (var i = 1; i &lt;= slen ; i^^) {
+                setTimeout(&quot;document.z.textdisplay.value = newMake()&quot;, i*300);
+                setTimeout(&quot;window.status = newMake()&quot;, i*300);
+            }
+        }
+
+!!! Unknown &quot;Title&quot;
+    `Default` class style
+</pre></div>
+
+<div class="admonition attention">
+<p class="admonition-title">Success!</p>
+<p>You can use inline <del>stuff</del> markup too!</p>
+</div>
+<div class="admonition hint">
+<p class="admonition-title">Info!</p>
+<ul>
+<li>Here is some info.</li>
+<li>And some more</li>
+</ul>
+</div>
+<div class="admonition caution">
+<p class="admonition-title">Warning!</p>
+<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled checked> Make sure you turn off the stove</li>
+<li class="task-list-item"><input type="checkbox" disabled checked> Don&rsquo;t run with scissors</li>
+</ul>
+</div>
+<div class="admonition danger">
+<p class="admonition-title">Alert!</p>
+<p>You really need to read <a href="#admonition">this</a>!</p>
+</div>
+<div class="admonition question">
+<p class="admonition-title">Question?</p>
+<p>Are you serious?</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><img alt="😄" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f604.png" title=":smile:" /></p>
+<blockquote>
+<p>Not all markup can be placed in these boxes, but you can fit all sorts of things in them. But you will notice that the styles don&rsquo;t always play nice with each other.  Additional CSS could fix this though.</p>
+</blockquote>
+<p>Stuff like <em>this</em> works too.</p>
+<table>
+<thead>
+<tr>
+<th><em>Colors</em></th>
+<th align="center">Fruits</th>
+<th align="right">Vegetable</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Red</td>
+<td align="center"><em>Apple</em></td>
+<td align="right">Pepper</td>
+</tr>
+<tr>
+<td><del>Orange</del></td>
+<td align="center"><code>Oranges</code></td>
+<td align="right"><strong>Carrot</strong></td>
+</tr>
+<tr>
+<td>Green</td>
+<td align="center"><del><strong><em>Pears</em></strong></del></td>
+<td align="right">Spinach</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight"><pre><span></span>:::javascript
+// Fenced **with** highlighting
+function doIt() {
+    for (var i = 1; i &lt;= slen ; i^^) {
+        setTimeout(&quot;document.z.textdisplay.value = newMake()&quot;, i*300);
+        setTimeout(&quot;window.status = newMake()&quot;, i*300);
+    }
+}
+</pre></div>
+
+</div>
+<div class="admonition unknown">
+<p class="admonition-title">Title</p>
+<p><code>Default</code> class style</p>
+</div>
+<h2 id="details">Details<a class="headerlink" href="#details" title="Permanent link"></a></h2>
+<div class="highlight"><pre><span></span>??? &quot;This is a details&quot;
+    This is some content
+</pre></div>
+
+<details><summary>This is a details</summary><p>This is some content</p></details><h2 id="github-emoji">Github Emoji<a class="headerlink" href="#github-emoji" title="Permanent link"></a></h2>
+<div class="highlight"><pre><span></span>This is a test for emoji :smile:.  The emojis are images linked to github assets :octocat:.
+</pre></div>
+
+<p>This is a test for emoji <img alt="😄" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f604.png" title=":smile:" />.  The emojis are images linked to github assets :octocat:.</p>
+<h3 id="people">People<a class="headerlink" href="#people" title="Permanent link"></a></h3>
+<p><img alt="👍" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f44d.png" title=":+1:" /><img alt="👎" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f44e.png" title=":-1:" /><img alt="👽" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f47d.png" title=":alien:" /><img alt="👼" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f47c.png" title=":angel:" /><img alt="💢" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4a2.png" title=":anger:" /><img alt="😠" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f620.png" title=":angry:" /><img alt="😧" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f627.png" title=":anguished:" /><img alt="😲" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f632.png" title=":astonished:" /><img alt="👶" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f476.png" title=":baby:" /><img alt="💙" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f499.png" title=":blue_heart:" /><img alt="😊" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f60a.png" title=":blush:" /><img alt="💥" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4a5.png" title=":boom:" /><img alt="🙇" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f647.png" title=":bow:" />:bowtie:<img alt="👦" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f466.png" title=":boy:" /><img alt="👰" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f470.png" title=":bride_with_veil:" /><img alt="💔" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f494.png" title=":broken_heart:" /><img alt="👤" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f464.png" title=":bust_in_silhouette:" /><img alt="👥" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f465.png" title=":busts_in_silhouette:" /><img alt="👏" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f44f.png" title=":clap:" /><img alt="😰" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f630.png" title=":cold_sweat:" />:collision:<img alt="😖" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f616.png" title=":confounded:" /><img alt="😕" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f615.png" title=":confused:" /><img alt="👷" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f477.png" title=":construction_worker:" /><img alt="👮" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f46e.png" title=":cop:" /><img alt="👫" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f46b.png" title=":couple:" /><img alt="💑" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f491.png" title=":couple_with_heart:" /><img alt="💏" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f48f.png" title=":couplekiss:" /><img alt="😢" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f622.png" title=":cry:" /><img alt="😿" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f63f.png" title=":crying_cat_face:" /><img alt="💘" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f498.png" title=":cupid:" /><img alt="💃" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f483.png" title=":dancer:" /><img alt="👯" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f46f.png" title=":dancers:" /><img alt="💨" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4a8.png" title=":dash:" /><img alt="😞" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f61e.png" title=":disappointed:" /><img alt="😥" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f625.png" title=":disappointed_relieved:" /><img alt="💫" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4ab.png" title=":dizzy:" /><img alt="😵" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f635.png" title=":dizzy_face:" /><img alt="💧" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4a7.png" title=":droplet:" /><img alt="👂" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f442.png" title=":ear:" /><img alt="❗" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2757.png" title=":exclamation:" /><img alt="😑" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f611.png" title=":expressionless:" /><img alt="👀" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f440.png" title=":eyes:" />:facepunch:<img alt="👪" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f46a.png" title=":family:" /><img alt="😨" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f628.png" title=":fearful:" />:feelsgood:<img alt="🐾" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f43e.png" title=":feet:" />:finnadie:<img alt="🔥" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f525.png" title=":fire:" /><img alt="✊" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/270a.png" title=":fist:" /><img alt="😳" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f633.png" title=":flushed:" /><img alt="😦" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f626.png" title=":frowning:" />:fu:<img alt="👧" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f467.png" title=":girl:" />:goberserk::godmode:<img alt="💚" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f49a.png" title=":green_heart:" /><img alt="❕" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2755.png" title=":grey_exclamation:" /><img alt="❔" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2754.png" title=":grey_question:" /><img alt="😬" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f62c.png" title=":grimacing:" /><img alt="😁" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f601.png" title=":grin:" /><img alt="😀" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f600.png" title=":grinning:" /><img alt="💂" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f482.png" title=":guardsman:" /><img alt="💇" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f487.png" title=":haircut:" />:hand:<img alt="💩" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4a9.png" title=":hankey:" /><img alt="🙉" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f649.png" title=":hear_no_evil:" /><img alt="❤️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2764.png" title=":heart:" /><img alt="😍" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f60d.png" title=":heart_eyes:" /><img alt="😻" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f63b.png" title=":heart_eyes_cat:" /><img alt="💓" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f493.png" title=":heartbeat:" /><img alt="💗" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f497.png" title=":heartpulse:" />:hurtrealbad:<img alt="😯" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f62f.png" title=":hushed:" /><img alt="👿" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f47f.png" title=":imp:" /><img alt="💁" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f481.png" title=":information_desk_person:" /><img alt="😇" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f607.png" title=":innocent:" /><img alt="👺" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f47a.png" title=":japanese_goblin:" /><img alt="👹" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f479.png" title=":japanese_ogre:" /><img alt="😂" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f602.png" title=":joy:" /><img alt="😹" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f639.png" title=":joy_cat:" /><img alt="💋" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f48b.png" title=":kiss:" /><img alt="😗" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f617.png" title=":kissing:" /><img alt="😽" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f63d.png" title=":kissing_cat:" /><img alt="😚" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f61a.png" title=":kissing_closed_eyes:" /><img alt="😘" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f618.png" title=":kissing_heart:" /><img alt="😙" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f619.png" title=":kissing_smiling_eyes:" /><img alt="😆" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f606.png" title=":laughing:" /><img alt="👄" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f444.png" title=":lips:" /><img alt="💌" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f48c.png" title=":love_letter:" /><img alt="👨" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f468.png" title=":man:" /><img alt="👲" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f472.png" title=":man_with_gua_pi_mao:" /><img alt="👳" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f473.png" title=":man_with_turban:" /><img alt="😷" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f637.png" title=":mask:" /><img alt="💆" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f486.png" title=":massage:" /><img alt="🤘" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f918.png" title=":metal:" /><img alt="💪" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4aa.png" title=":muscle:" /><img alt="🎵" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3b5.png" title=":musical_note:" /><img alt="💅" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f485.png" title=":nail_care:" />:neckbeard:<img alt="😐" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f610.png" title=":neutral_face:" /><img alt="🙅" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f645.png" title=":no_good:" /><img alt="😶" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f636.png" title=":no_mouth:" /><img alt="👃" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f443.png" title=":nose:" /><img alt="🎶" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3b6.png" title=":notes:" /><img alt="👌" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f44c.png" title=":ok_hand:" /><img alt="🙆" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f646.png" title=":ok_woman:" /><img alt="👴" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f474.png" title=":older_man:" /><img alt="👵" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f475.png" title=":older_woman:" /><img alt="👐" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f450.png" title=":open_hands:" /><img alt="😮" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f62e.png" title=":open_mouth:" /><img alt="😔" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f614.png" title=":pensive:" /><img alt="😣" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f623.png" title=":persevere:" /><img alt="🙍" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f64d.png" title=":person_frowning:" /><img alt="👱" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f471.png" title=":person_with_blond_hair:" /><img alt="🙎" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f64e.png" title=":person_with_pouting_face:" /><img alt="👇" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f447.png" title=":point_down:" /><img alt="👈" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f448.png" title=":point_left:" /><img alt="👉" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f449.png" title=":point_right:" /><img alt="☝️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/261d.png" title=":point_up:" /><img alt="👆" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f446.png" title=":point_up_2:" /><img alt="💩" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4a9.png" title=":poop:" /><img alt="😾" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f63e.png" title=":pouting_cat:" /><img alt="🙏" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f64f.png" title=":pray:" /><img alt="👸" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f478.png" title=":princess:" /><img alt="👊" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f44a.png" title=":punch:" /><img alt="💜" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f49c.png" title=":purple_heart:" /><img alt="❓" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2753.png" title=":question:" /><img alt="😡" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f621.png" title=":rage:" />:rage1::rage2::rage3::rage4:<img alt="✋" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/270b.png" title=":raised_hand:" /><img alt="🙌" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f64c.png" title=":raised_hands:" /><img alt="🙋" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f64b.png" title=":raising_hand:" /><img alt="☺️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/263a.png" title=":relaxed:" /><img alt="😌" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f60c.png" title=":relieved:" /><img alt="💞" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f49e.png" title=":revolving_hearts:" /><img alt="🏃" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3c3.png" title=":runner:" />:running:<img alt="😆" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f606.png" title=":satisfied:" /><img alt="😱" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f631.png" title=":scream:" /><img alt="🙀" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f640.png" title=":scream_cat:" /><img alt="🙈" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f648.png" title=":see_no_evil:" /><img alt="💩" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4a9.png" title=":shit:" /><img alt="💀" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f480.png" title=":skull:" /><img alt="😴" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f634.png" title=":sleeping:" /><img alt="😪" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f62a.png" title=":sleepy:" /><img alt="😄" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f604.png" title=":smile:" /><img alt="😸" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f638.png" title=":smile_cat:" /><img alt="😃" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f603.png" title=":smiley:" /><img alt="😺" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f63a.png" title=":smiley_cat:" /><img alt="😈" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f608.png" title=":smiling_imp:" /><img alt="😏" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f60f.png" title=":smirk:" /><img alt="😼" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f63c.png" title=":smirk_cat:" /><img alt="😭" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f62d.png" title=":sob:" /><img alt="✨" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2728.png" title=":sparkles:" /><img alt="💖" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f496.png" title=":sparkling_heart:" /><img alt="🙊" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f64a.png" title=":speak_no_evil:" /><img alt="💬" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4ac.png" title=":speech_balloon:" /><img alt="⭐" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2b50.png" title=":star:" /><img alt="🌟" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f31f.png" title=":star2:" /><img alt="😛" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f61b.png" title=":stuck_out_tongue:" /><img alt="😝" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f61d.png" title=":stuck_out_tongue_closed_eyes:" /><img alt="😜" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f61c.png" title=":stuck_out_tongue_winking_eye:" /><img alt="😎" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f60e.png" title=":sunglasses:" />:suspect:<img alt="😓" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f613.png" title=":sweat:" /><img alt="💦" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4a6.png" title=":sweat_drops:" /><img alt="😅" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f605.png" title=":sweat_smile:" /><img alt="💭" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4ad.png" title=":thought_balloon:" /><img alt="👎" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f44e.png" title=":thumbsdown:" /><img alt="👍" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f44d.png" title=":thumbsup:" /><img alt="😫" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f62b.png" title=":tired_face:" /><img alt="👅" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f445.png" title=":tongue:" /><img alt="😤" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f624.png" title=":triumph:" />:trollface:<img alt="💕" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f495.png" title=":two_hearts:" /><img alt="👬" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f46c.png" title=":two_men_holding_hands:" /><img alt="👭" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f46d.png" title=":two_women_holding_hands:" /><img alt="😒" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f612.png" title=":unamused:" /><img alt="✌️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/270c.png" title=":v:" /><img alt="🚶" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6b6.png" title=":walking:" /><img alt="👋" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f44b.png" title=":wave:" /><img alt="😩" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f629.png" title=":weary:" /><img alt="😉" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f609.png" title=":wink:" /><img alt="👩" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f469.png" title=":woman:" /><img alt="😟" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f61f.png" title=":worried:" /><img alt="💛" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f49b.png" title=":yellow_heart:" /><img alt="😋" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f60b.png" title=":yum:" /><img alt="💤" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4a4.png" title=":zzz:" /></p>
+<h3 id="nature">Nature<a class="headerlink" href="#nature" title="Permanent link"></a></h3>
+<p><img alt="🐜" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f41c.png" title=":ant:" /><img alt="🐤" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f424.png" title=":baby_chick:" /><img alt="🐻" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f43b.png" title=":bear:" /><img alt="🐝" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f41d.png" title=":bee:" /><img alt="🐞" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f41e.png" title=":beetle:" /><img alt="🐦" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f426.png" title=":bird:" /><img alt="🌼" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f33c.png" title=":blossom:" /><img alt="🐡" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f421.png" title=":blowfish:" /><img alt="🐗" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f417.png" title=":boar:" /><img alt="💐" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f490.png" title=":bouquet:" /><img alt="🐛" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f41b.png" title=":bug:" /><img alt="🌵" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f335.png" title=":cactus:" /><img alt="🐫" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f42b.png" title=":camel:" /><img alt="🐱" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f431.png" title=":cat:" /><img alt="🐈" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f408.png" title=":cat2:" /><img alt="🌸" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f338.png" title=":cherry_blossom:" /><img alt="🌰" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f330.png" title=":chestnut:" /><img alt="🐔" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f414.png" title=":chicken:" /><img alt="☁️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2601.png" title=":cloud:" /><img alt="🐮" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f42e.png" title=":cow:" /><img alt="🐄" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f404.png" title=":cow2:" /><img alt="🌙" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f319.png" title=":crescent_moon:" /><img alt="🐊" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f40a.png" title=":crocodile:" /><img alt="🌀" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f300.png" title=":cyclone:" /><img alt="🌳" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f333.png" title=":deciduous_tree:" /><img alt="🐶" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f436.png" title=":dog:" /><img alt="🐕" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f415.png" title=":dog2:" /><img alt="🐬" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f42c.png" title=":dolphin:" /><img alt="🐉" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f409.png" title=":dragon:" /><img alt="🐲" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f432.png" title=":dragon_face:" /><img alt="🐪" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f42a.png" title=":dromedary_camel:" /><img alt="🌾" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f33e.png" title=":ear_of_rice:" /><img alt="🌍" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f30d.png" title=":earth_africa:" /><img alt="🌎" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f30e.png" title=":earth_americas:" /><img alt="🌏" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f30f.png" title=":earth_asia:" /><img alt="🐘" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f418.png" title=":elephant:" /><img alt="🌲" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f332.png" title=":evergreen_tree:" /><img alt="🍂" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f342.png" title=":fallen_leaf:" /><img alt="🌓" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f313.png" title=":first_quarter_moon:" /><img alt="🌛" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f31b.png" title=":first_quarter_moon_with_face:" /><img alt="🐟" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f41f.png" title=":fish:" /><img alt="🌁" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f301.png" title=":foggy:" /><img alt="🍀" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f340.png" title=":four_leaf_clover:" /><img alt="🐸" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f438.png" title=":frog:" /><img alt="🌕" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f315.png" title=":full_moon:" /><img alt="🌝" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f31d.png" title=":full_moon_with_face:" /><img alt="🌐" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f310.png" title=":globe_with_meridians:" /><img alt="🐐" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f410.png" title=":goat:" /><img alt="🐹" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f439.png" title=":hamster:" /><img alt="🐥" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f425.png" title=":hatched_chick:" /><img alt="🐣" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f423.png" title=":hatching_chick:" /><img alt="🌿" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f33f.png" title=":herb:" /><img alt="🌺" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f33a.png" title=":hibiscus:" />:honeybee:<img alt="🐴" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f434.png" title=":horse:" /><img alt="🐨" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f428.png" title=":koala:" /><img alt="🌗" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f317.png" title=":last_quarter_moon:" /><img alt="🌜" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f31c.png" title=":last_quarter_moon_with_face:" /><img alt="🍃" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f343.png" title=":leaves:" /><img alt="🐆" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f406.png" title=":leopard:" /><img alt="🍁" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f341.png" title=":maple_leaf:" /><img alt="🌌" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f30c.png" title=":milky_way:" /><img alt="🐒" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f412.png" title=":monkey:" /><img alt="🐵" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f435.png" title=":monkey_face:" />:moon:<img alt="🐭" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f42d.png" title=":mouse:" /><img alt="🐁" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f401.png" title=":mouse2:" /><img alt="🍄" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f344.png" title=":mushroom:" /><img alt="🌑" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f311.png" title=":new_moon:" /><img alt="🌚" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f31a.png" title=":new_moon_with_face:" /><img alt="🌃" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f303.png" title=":night_with_stars:" /><img alt="🌊" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f30a.png" title=":ocean:" />:octocat:<img alt="🐙" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f419.png" title=":octopus:" /><img alt="🐂" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f402.png" title=":ox:" /><img alt="🌴" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f334.png" title=":palm_tree:" /><img alt="🐼" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f43c.png" title=":panda_face:" /><img alt="⛅" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/26c5.png" title=":partly_sunny:" /><img alt="🐾" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f43e.png" title=":paw_prints:" /><img alt="🐧" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f427.png" title=":penguin:" /><img alt="🐷" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f437.png" title=":pig:" /><img alt="🐖" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f416.png" title=":pig2:" /><img alt="🐽" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f43d.png" title=":pig_nose:" /><img alt="🐩" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f429.png" title=":poodle:" /><img alt="🐰" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f430.png" title=":rabbit:" /><img alt="🐇" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f407.png" title=":rabbit2:" /><img alt="🐎" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f40e.png" title=":racehorse:" /><img alt="🐏" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f40f.png" title=":ram:" /><img alt="🐀" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f400.png" title=":rat:" /><img alt="🐓" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f413.png" title=":rooster:" /><img alt="🌹" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f339.png" title=":rose:" /><img alt="🌱" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f331.png" title=":seedling:" /><img alt="🐑" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f411.png" title=":sheep:" /><img alt="🐚" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f41a.png" title=":shell:" /><img alt="🐌" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f40c.png" title=":snail:" /><img alt="🐍" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f40d.png" title=":snake:" /><img alt="❄️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2744.png" title=":snowflake:" /><img alt="⛄" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/26c4.png" title=":snowman:" />:squirrel:<img alt="🌞" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f31e.png" title=":sun_with_face:" /><img alt="🌻" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f33b.png" title=":sunflower:" /><img alt="☀️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2600.png" title=":sunny:" /><img alt="🐯" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f42f.png" title=":tiger:" /><img alt="🐅" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f405.png" title=":tiger2:" /><img alt="🐠" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f420.png" title=":tropical_fish:" /><img alt="🌷" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f337.png" title=":tulip:" /><img alt="🐢" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f422.png" title=":turtle:" /><img alt="☔" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2614.png" title=":umbrella:" /><img alt="🌋" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f30b.png" title=":volcano:" /><img alt="🌘" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f318.png" title=":waning_crescent_moon:" /><img alt="🌖" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f316.png" title=":waning_gibbous_moon:" /><img alt="🐃" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f403.png" title=":water_buffalo:" /><img alt="🌒" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f312.png" title=":waxing_crescent_moon:" /><img alt="🌔" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f314.png" title=":waxing_gibbous_moon:" /><img alt="🐳" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f433.png" title=":whale:" /><img alt="🐋" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f40b.png" title=":whale2:" /><img alt="🐺" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f43a.png" title=":wolf:" /><img alt="⚡" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/26a1.png" title=":zap:" /></p>
+<h3 id="objects">Objects<a class="headerlink" href="#objects" title="Permanent link"></a></h3>
+<p><img alt="🎱" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3b1.png" title=":8ball:" /><img alt="⏰" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/23f0.png" title=":alarm_clock:" /><img alt="🍎" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f34e.png" title=":apple:" /><img alt="🎨" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3a8.png" title=":art:" /><img alt="👟" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f45f.png" title=":athletic_shoe:" /><img alt="🍼" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f37c.png" title=":baby_bottle:" /><img alt="🎈" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f388.png" title=":balloon:" /><img alt="🎍" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f38d.png" title=":bamboo:" /><img alt="🍌" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f34c.png" title=":banana:" /><img alt="📊" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4ca.png" title=":bar_chart:" /><img alt="⚾" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/26be.png" title=":baseball:" /><img alt="🏀" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3c0.png" title=":basketball:" /><img alt="🛀" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6c0.png" title=":bath:" /><img alt="🛁" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6c1.png" title=":bathtub:" /><img alt="🔋" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f50b.png" title=":battery:" /><img alt="🍺" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f37a.png" title=":beer:" /><img alt="🍻" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f37b.png" title=":beers:" /><img alt="🔔" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f514.png" title=":bell:" /><img alt="🍱" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f371.png" title=":bento:" /><img alt="🚴" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6b4.png" title=":bicyclist:" /><img alt="👙" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f459.png" title=":bikini:" /><img alt="🎂" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f382.png" title=":birthday:" /><img alt="🃏" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f0cf.png" title=":black_joker:" /><img alt="✒️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2712.png" title=":black_nib:" /><img alt="📘" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4d8.png" title=":blue_book:" /><img alt="💣" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4a3.png" title=":bomb:" /><img alt="📖" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4d6.png" title=":book:" /><img alt="🔖" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f516.png" title=":bookmark:" /><img alt="📑" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4d1.png" title=":bookmark_tabs:" /><img alt="📚" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4da.png" title=":books:" /><img alt="👢" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f462.png" title=":boot:" /><img alt="🎳" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3b3.png" title=":bowling:" /><img alt="🍞" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f35e.png" title=":bread:" /><img alt="💼" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4bc.png" title=":briefcase:" /><img alt="💡" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4a1.png" title=":bulb:" /><img alt="🍰" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f370.png" title=":cake:" /><img alt="📆" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4c6.png" title=":calendar:" /><img alt="📲" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4f2.png" title=":calling:" /><img alt="📷" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4f7.png" title=":camera:" /><img alt="🍬" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f36c.png" title=":candy:" /><img alt="📇" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4c7.png" title=":card_index:" /><img alt="💿" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4bf.png" title=":cd:" /><img alt="📉" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4c9.png" title=":chart_with_downwards_trend:" /><img alt="📈" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4c8.png" title=":chart_with_upwards_trend:" /><img alt="🍒" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f352.png" title=":cherries:" /><img alt="🍫" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f36b.png" title=":chocolate_bar:" /><img alt="🎄" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f384.png" title=":christmas_tree:" /><img alt="🎬" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3ac.png" title=":clapper:" /><img alt="📋" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4cb.png" title=":clipboard:" /><img alt="📕" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4d5.png" title=":closed_book:" /><img alt="🔐" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f510.png" title=":closed_lock_with_key:" /><img alt="🌂" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f302.png" title=":closed_umbrella:" /><img alt="♣️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2663.png" title=":clubs:" /><img alt="🍸" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f378.png" title=":cocktail:" /><img alt="☕" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2615.png" title=":coffee:" /><img alt="💻" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4bb.png" title=":computer:" /><img alt="🎊" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f38a.png" title=":confetti_ball:" /><img alt="🍪" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f36a.png" title=":cookie:" /><img alt="🌽" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f33d.png" title=":corn:" /><img alt="💳" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4b3.png" title=":credit_card:" /><img alt="👑" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f451.png" title=":crown:" /><img alt="🔮" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f52e.png" title=":crystal_ball:" /><img alt="🍛" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f35b.png" title=":curry:" /><img alt="🍮" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f36e.png" title=":custard:" /><img alt="🍡" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f361.png" title=":dango:" /><img alt="🎯" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3af.png" title=":dart:" /><img alt="📅" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4c5.png" title=":date:" /><img alt="♦️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2666.png" title=":diamonds:" /><img alt="💵" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4b5.png" title=":dollar:" /><img alt="🎎" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f38e.png" title=":dolls:" /><img alt="🚪" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6aa.png" title=":door:" /><img alt="🍩" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f369.png" title=":doughnut:" /><img alt="👗" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f457.png" title=":dress:" /><img alt="📀" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4c0.png" title=":dvd:" /><img alt="📧" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4e7.png" title=":e-mail:" /><img alt="🥚" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f95a.png" title=":egg:" /><img alt="🍆" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f346.png" title=":eggplant:" /><img alt="🔌" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f50c.png" title=":electric_plug:" /><img alt="📧" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4e7.png" title=":email:" /><img alt="✉️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2709.png" title=":envelope:" /><img alt="📩" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4e9.png" title=":envelope_with_arrow:" /><img alt="💶" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4b6.png" title=":euro:" /><img alt="👓" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f453.png" title=":eyeglasses:" /><img alt="📠" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4e0.png" title=":fax:" /><img alt="📁" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4c1.png" title=":file_folder:" /><img alt="🎆" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f386.png" title=":fireworks:" /><img alt="🍥" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f365.png" title=":fish_cake:" /><img alt="🎣" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3a3.png" title=":fishing_pole_and_fish:" /><img alt="🎏" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f38f.png" title=":flags:" /><img alt="🔦" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f526.png" title=":flashlight:" />:flipper:<img alt="💾" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4be.png" title=":floppy_disk:" /><img alt="🎴" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3b4.png" title=":flower_playing_cards:" /><img alt="🏈" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3c8.png" title=":football:" /><img alt="👣" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f463.png" title=":footprints:" /><img alt="🍴" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f374.png" title=":fork_and_knife:" /><img alt="🍤" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f364.png" title=":fried_shrimp:" /><img alt="🍟" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f35f.png" title=":fries:" /><img alt="🎲" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3b2.png" title=":game_die:" /><img alt="💎" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f48e.png" title=":gem:" /><img alt="👻" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f47b.png" title=":ghost:" /><img alt="🎁" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f381.png" title=":gift:" /><img alt="💝" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f49d.png" title=":gift_heart:" /><img alt="⛳" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/26f3.png" title=":golf:" /><img alt="🍇" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f347.png" title=":grapes:" /><img alt="🍏" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f34f.png" title=":green_apple:" /><img alt="📗" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4d7.png" title=":green_book:" /><img alt="🎸" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3b8.png" title=":guitar:" /><img alt="🔫" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f52b.png" title=":gun:" /><img alt="🍔" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f354.png" title=":hamburger:" /><img alt="🔨" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f528.png" title=":hammer:" /><img alt="👜" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f45c.png" title=":handbag:" /><img alt="🎧" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3a7.png" title=":headphones:" /><img alt="♥️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2665.png" title=":hearts:" /><img alt="🔆" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f506.png" title=":high_brightness:" /><img alt="👠" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f460.png" title=":high_heel:" />:hocho:<img alt="🍯" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f36f.png" title=":honey_pot:" /><img alt="🏇" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3c7.png" title=":horse_racing:" /><img alt="⌛" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/231b.png" title=":hourglass:" /><img alt="⏳" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/23f3.png" title=":hourglass_flowing_sand:" /><img alt="🍨" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f368.png" title=":ice_cream:" /><img alt="🍦" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f366.png" title=":icecream:" /><img alt="📥" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4e5.png" title=":inbox_tray:" /><img alt="📨" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4e8.png" title=":incoming_envelope:" /><img alt="📱" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4f1.png" title=":iphone:" /><img alt="🎃" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f383.png" title=":jack_o_lantern:" /><img alt="👖" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f456.png" title=":jeans:" /><img alt="🔑" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f511.png" title=":key:" /><img alt="👘" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f458.png" title=":kimono:" />:lantern:<img alt="📒" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4d2.png" title=":ledger:" /><img alt="🍋" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f34b.png" title=":lemon:" /><img alt="💄" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f484.png" title=":lipstick:" /><img alt="🔒" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f512.png" title=":lock:" /><img alt="🔏" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f50f.png" title=":lock_with_ink_pen:" /><img alt="🍭" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f36d.png" title=":lollipop:" /><img alt="➿" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/27bf.png" title=":loop:" /><img alt="🔊" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f50a.png" title=":loud_sound:" /><img alt="📢" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4e2.png" title=":loudspeaker:" /><img alt="🔅" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f505.png" title=":low_brightness:" /><img alt="🔍" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f50d.png" title=":mag:" /><img alt="🔎" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f50e.png" title=":mag_right:" /><img alt="🀄" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f004.png" title=":mahjong:" /><img alt="📫" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4eb.png" title=":mailbox:" /><img alt="📪" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4ea.png" title=":mailbox_closed:" /><img alt="📬" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4ec.png" title=":mailbox_with_mail:" /><img alt="📭" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4ed.png" title=":mailbox_with_no_mail:" /><img alt="👞" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f45e.png" title=":mans_shoe:" /><img alt="🍖" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f356.png" title=":meat_on_bone:" /><img alt="📣" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4e3.png" title=":mega:" /><img alt="🍈" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f348.png" title=":melon:" /><img alt="📝" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4dd.png" title=":memo:" /><img alt="🎤" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3a4.png" title=":microphone:" /><img alt="🔬" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f52c.png" title=":microscope:" /><img alt="💽" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4bd.png" title=":minidisc:" /><img alt="💸" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4b8.png" title=":money_with_wings:" /><img alt="💰" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4b0.png" title=":moneybag:" /><img alt="🎓" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f393.png" title=":mortar_board:" /><img alt="🚵" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6b5.png" title=":mountain_bicyclist:" /><img alt="🎥" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3a5.png" title=":movie_camera:" /><img alt="🎹" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3b9.png" title=":musical_keyboard:" /><img alt="🎼" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3bc.png" title=":musical_score:" /><img alt="🔇" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f507.png" title=":mute:" /><img alt="📛" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4db.png" title=":name_badge:" /><img alt="👔" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f454.png" title=":necktie:" /><img alt="📰" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4f0.png" title=":newspaper:" /><img alt="🔕" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f515.png" title=":no_bell:" /><img alt="📓" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4d3.png" title=":notebook:" /><img alt="📔" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4d4.png" title=":notebook_with_decorative_cover:" /><img alt="🔩" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f529.png" title=":nut_and_bolt:" /><img alt="🍢" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f362.png" title=":oden:" />:open_book:<img alt="📂" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4c2.png" title=":open_file_folder:" /><img alt="📙" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4d9.png" title=":orange_book:" /><img alt="📤" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4e4.png" title=":outbox_tray:" /><img alt="📦" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4e6.png" title=":package:" /><img alt="📄" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4c4.png" title=":page_facing_up:" /><img alt="📃" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4c3.png" title=":page_with_curl:" /><img alt="📟" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4df.png" title=":pager:" /><img alt="📎" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4ce.png" title=":paperclip:" /><img alt="🍑" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f351.png" title=":peach:" /><img alt="🍐" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f350.png" title=":pear:" /><img alt="📝" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4dd.png" title=":pencil:" /><img alt="✏️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/270f.png" title=":pencil2:" />:phone:<img alt="💊" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f48a.png" title=":pill:" /><img alt="🍍" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f34d.png" title=":pineapple:" /><img alt="🍕" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f355.png" title=":pizza:" /><img alt="📯" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4ef.png" title=":postal_horn:" /><img alt="📮" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4ee.png" title=":postbox:" /><img alt="👝" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f45d.png" title=":pouch:" /><img alt="🍗" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f357.png" title=":poultry_leg:" /><img alt="💷" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4b7.png" title=":pound:" /><img alt="👛" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f45b.png" title=":purse:" /><img alt="📌" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4cc.png" title=":pushpin:" /><img alt="📻" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4fb.png" title=":radio:" /><img alt="🍜" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f35c.png" title=":ramen:" /><img alt="🎀" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f380.png" title=":ribbon:" /><img alt="🍚" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f35a.png" title=":rice:" /><img alt="🍙" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f359.png" title=":rice_ball:" /><img alt="🍘" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f358.png" title=":rice_cracker:" /><img alt="🎑" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f391.png" title=":rice_scene:" /><img alt="💍" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f48d.png" title=":ring:" /><img alt="🏉" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3c9.png" title=":rugby_football:" /><img alt="🎽" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3bd.png" title=":running_shirt_with_sash:" /><img alt="🍶" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f376.png" title=":sake:" /><img alt="👡" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f461.png" title=":sandal:" /><img alt="🎅" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f385.png" title=":santa:" /><img alt="📡" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4e1.png" title=":satellite:" /><img alt="🎷" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3b7.png" title=":saxophone:" /><img alt="🎒" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f392.png" title=":school_satchel:" /><img alt="✂️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2702.png" title=":scissors:" /><img alt="📜" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4dc.png" title=":scroll:" /><img alt="💺" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4ba.png" title=":seat:" /><img alt="🍧" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f367.png" title=":shaved_ice:" /><img alt="👕" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f455.png" title=":shirt:" />:shoe:<img alt="🚿" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6bf.png" title=":shower:" /><img alt="🎿" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3bf.png" title=":ski:" /><img alt="🚬" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6ac.png" title=":smoking:" /><img alt="🏂" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3c2.png" title=":snowboarder:" /><img alt="⚽" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/26bd.png" title=":soccer:" /><img alt="🔉" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f509.png" title=":sound:" /><img alt="👾" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f47e.png" title=":space_invader:" /><img alt="♠️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2660.png" title=":spades:" /><img alt="🍝" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f35d.png" title=":spaghetti:" /><img alt="❇️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2747.png" title=":sparkle:" /><img alt="🎇" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f387.png" title=":sparkler:" /><img alt="🔈" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f508.png" title=":speaker:" /><img alt="🍲" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f372.png" title=":stew:" /><img alt="📏" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4cf.png" title=":straight_ruler:" /><img alt="🍓" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f353.png" title=":strawberry:" /><img alt="🏄" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3c4.png" title=":surfer:" /><img alt="🍣" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f363.png" title=":sushi:" /><img alt="🍠" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f360.png" title=":sweet_potato:" /><img alt="🏊" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3ca.png" title=":swimmer:" /><img alt="💉" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f489.png" title=":syringe:" /><img alt="🎉" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f389.png" title=":tada:" /><img alt="🎋" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f38b.png" title=":tanabata_tree:" /><img alt="🍊" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f34a.png" title=":tangerine:" /><img alt="🍵" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f375.png" title=":tea:" /><img alt="☎️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/260e.png" title=":telephone:" /><img alt="📞" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4de.png" title=":telephone_receiver:" /><img alt="🔭" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f52d.png" title=":telescope:" /><img alt="🎾" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3be.png" title=":tennis:" /><img alt="🚽" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6bd.png" title=":toilet:" /><img alt="🍅" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f345.png" title=":tomato:" /><img alt="🎩" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3a9.png" title=":tophat:" /><img alt="📐" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4d0.png" title=":triangular_ruler:" /><img alt="🏆" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3c6.png" title=":trophy:" /><img alt="🍹" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f379.png" title=":tropical_drink:" /><img alt="🎺" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3ba.png" title=":trumpet:" />:tshirt:<img alt="📺" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4fa.png" title=":tv:" /><img alt="🔓" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f513.png" title=":unlock:" /><img alt="📼" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4fc.png" title=":vhs:" /><img alt="📹" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4f9.png" title=":video_camera:" /><img alt="🎮" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3ae.png" title=":video_game:" /><img alt="🎻" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3bb.png" title=":violin:" /><img alt="⌚" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/231a.png" title=":watch:" /><img alt="🍉" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f349.png" title=":watermelon:" /><img alt="🎐" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f390.png" title=":wind_chime:" /><img alt="🍷" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f377.png" title=":wine_glass:" /><img alt="👚" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f45a.png" title=":womans_clothes:" /><img alt="👒" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f452.png" title=":womans_hat:" /><img alt="🔧" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f527.png" title=":wrench:" /><img alt="💴" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4b4.png" title=":yen:" /></p>
+<h3 id="places">Places<a class="headerlink" href="#places" title="Permanent link"></a></h3>
+<p><img alt="🚡" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6a1.png" title=":aerial_tramway:" /><img alt="✈️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2708.png" title=":airplane:" /><img alt="🚑" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f691.png" title=":ambulance:" /><img alt="⚓" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2693.png" title=":anchor:" /><img alt="🚛" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f69b.png" title=":articulated_lorry:" /><img alt="🏧" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3e7.png" title=":atm:" /><img alt="🏦" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3e6.png" title=":bank:" /><img alt="💈" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f488.png" title=":barber:" /><img alt="🔰" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f530.png" title=":beginner:" /><img alt="🚲" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6b2.png" title=":bike:" /><img alt="🚙" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f699.png" title=":blue_car:" />:boat:<img alt="🌉" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f309.png" title=":bridge_at_night:" /><img alt="🚅" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f685.png" title=":bullettrain_front:" /><img alt="🚄" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f684.png" title=":bullettrain_side:" /><img alt="🚌" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f68c.png" title=":bus:" /><img alt="🚏" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f68f.png" title=":busstop:" />:car:<img alt="🎠" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3a0.png" title=":carousel_horse:" /><img alt="🏁" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3c1.png" title=":checkered_flag:" /><img alt="⛪" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/26ea.png" title=":church:" /><img alt="🎪" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3aa.png" title=":circus_tent:" /><img alt="🌇" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f307.png" title=":city_sunrise:" /><img alt="🌇" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f307.png" title=":city_sunset:" /><img alt="🇨🇳" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f1e8-1f1f3.png" title=":cn:" /><img alt="🚧" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6a7.png" title=":construction:" /><img alt="🏪" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3ea.png" title=":convenience_store:" /><img alt="🎌" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f38c.png" title=":crossed_flags:" /><img alt="🇩🇪" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f1e9-1f1ea.png" title=":de:" /><img alt="🏬" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3ec.png" title=":department_store:" /><img alt="🇪🇸" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f1ea-1f1f8.png" title=":es:" /><img alt="🏰" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3f0.png" title=":european_castle:" /><img alt="🏤" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3e4.png" title=":european_post_office:" /><img alt="🏭" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3ed.png" title=":factory:" /><img alt="🎡" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3a1.png" title=":ferris_wheel:" /><img alt="🚒" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f692.png" title=":fire_engine:" /><img alt="⛲" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/26f2.png" title=":fountain:" /><img alt="🇫🇷" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f1eb-1f1f7.png" title=":fr:" /><img alt="⛽" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/26fd.png" title=":fuelpump:" /><img alt="🇬🇧" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f1ec-1f1e7.png" title=":gb:" /><img alt="🚁" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f681.png" title=":helicopter:" /><img alt="🏥" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3e5.png" title=":hospital:" /><img alt="🏨" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3e8.png" title=":hotel:" /><img alt="♨️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2668.png" title=":hotsprings:" /><img alt="🏠" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3e0.png" title=":house:" /><img alt="🏡" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3e1.png" title=":house_with_garden:" /><img alt="🇮🇹" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f1ee-1f1f9.png" title=":it:" /><img alt="🏮" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3ee.png" title=":izakaya_lantern:" /><img alt="🗾" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f5fe.png" title=":japan:" /><img alt="🏯" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3ef.png" title=":japanese_castle:" /><img alt="🇯🇵" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f1ef-1f1f5.png" title=":jp:" /><img alt="🇰🇷" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f1f0-1f1f7.png" title=":kr:" /><img alt="🚈" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f688.png" title=":light_rail:" /><img alt="🏩" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3e9.png" title=":love_hotel:" /><img alt="🚐" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f690.png" title=":minibus:" /><img alt="🚝" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f69d.png" title=":monorail:" /><img alt="🗻" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f5fb.png" title=":mount_fuji:" /><img alt="🚠" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6a0.png" title=":mountain_cableway:" /><img alt="🚞" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f69e.png" title=":mountain_railway:" /><img alt="🗿" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f5ff.png" title=":moyai:" /><img alt="🏢" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3e2.png" title=":office:" /><img alt="🚘" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f698.png" title=":oncoming_automobile:" /><img alt="🚍" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f68d.png" title=":oncoming_bus:" /><img alt="🚔" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f694.png" title=":oncoming_police_car:" /><img alt="🚖" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f696.png" title=":oncoming_taxi:" /><img alt="🎭" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3ad.png" title=":performing_arts:" /><img alt="🚓" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f693.png" title=":police_car:" /><img alt="🏣" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3e3.png" title=":post_office:" /><img alt="🚃" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f683.png" title=":railway_car:" /><img alt="🌈" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f308.png" title=":rainbow:" /><img alt="🚗" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f697.png" title=":red_car:" /><img alt="🚀" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f680.png" title=":rocket:" /><img alt="🎢" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3a2.png" title=":roller_coaster:" /><img alt="🚨" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6a8.png" title=":rotating_light:" /><img alt="📍" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4cd.png" title=":round_pushpin:" /><img alt="🚣" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6a3.png" title=":rowboat:" /><img alt="🇷🇺" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f1f7-1f1fa.png" title=":ru:" /><img alt="⛵" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/26f5.png" title=":sailboat:" /><img alt="🏫" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3eb.png" title=":school:" /><img alt="🚢" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6a2.png" title=":ship:" /><img alt="🎰" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3b0.png" title=":slot_machine:" /><img alt="🚤" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6a4.png" title=":speedboat:" /><img alt="🌠" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f320.png" title=":stars:" /><img alt="🚉" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f689.png" title=":station:" /><img alt="🗽" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f5fd.png" title=":statue_of_liberty:" /><img alt="🚂" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f682.png" title=":steam_locomotive:" /><img alt="🌅" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f305.png" title=":sunrise:" /><img alt="🌄" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f304.png" title=":sunrise_over_mountains:" /><img alt="🚟" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f69f.png" title=":suspension_railway:" /><img alt="🚕" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f695.png" title=":taxi:" /><img alt="⛺" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/26fa.png" title=":tent:" /><img alt="🎫" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3ab.png" title=":ticket:" /><img alt="🗼" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f5fc.png" title=":tokyo_tower:" /><img alt="🚜" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f69c.png" title=":tractor:" /><img alt="🚥" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6a5.png" title=":traffic_light:" /><img alt="🚋" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f68b.png" title=":train:" /><img alt="🚆" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f686.png" title=":train2:" /><img alt="🚊" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f68a.png" title=":tram:" /><img alt="🚩" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6a9.png" title=":triangular_flag_on_post:" /><img alt="🚎" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f68e.png" title=":trolleybus:" /><img alt="🚚" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f69a.png" title=":truck:" />:uk:<img alt="🇺🇸" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f1fa-1f1f8.png" title=":us:" /><img alt="🚦" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6a6.png" title=":vertical_traffic_light:" /><img alt="⚠️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/26a0.png" title=":warning:" /><img alt="💒" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f492.png" title=":wedding:" /></p>
+<h3 id="symbols">Symbols<a class="headerlink" href="#symbols" title="Permanent link"></a></h3>
+<p><img alt="💯" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4af.png" title=":100:" /><img alt="🔢" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f522.png" title=":1234:" /><img alt="🅰️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f170.png" title=":a:" /><img alt="🆎" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f18e.png" title=":ab:" /><img alt="🔤" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f524.png" title=":abc:" /><img alt="🔡" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f521.png" title=":abcd:" /><img alt="🉑" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f251.png" title=":accept:" /><img alt="♒" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2652.png" title=":aquarius:" /><img alt="♈" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2648.png" title=":aries:" /><img alt="◀️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/25c0.png" title=":arrow_backward:" /><img alt="⏬" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/23ec.png" title=":arrow_double_down:" /><img alt="⏫" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/23eb.png" title=":arrow_double_up:" /><img alt="⬇️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2b07.png" title=":arrow_down:" /><img alt="🔽" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f53d.png" title=":arrow_down_small:" /><img alt="▶️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/25b6.png" title=":arrow_forward:" /><img alt="⤵️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2935.png" title=":arrow_heading_down:" /><img alt="⤴️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2934.png" title=":arrow_heading_up:" /><img alt="⬅️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2b05.png" title=":arrow_left:" /><img alt="↙️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2199.png" title=":arrow_lower_left:" /><img alt="↘️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2198.png" title=":arrow_lower_right:" /><img alt="➡️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/27a1.png" title=":arrow_right:" /><img alt="↪️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/21aa.png" title=":arrow_right_hook:" /><img alt="⬆️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2b06.png" title=":arrow_up:" /><img alt="↕️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2195.png" title=":arrow_up_down:" /><img alt="🔼" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f53c.png" title=":arrow_up_small:" /><img alt="↖️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2196.png" title=":arrow_upper_left:" /><img alt="↗️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2197.png" title=":arrow_upper_right:" /><img alt="🔃" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f503.png" title=":arrows_clockwise:" /><img alt="🔄" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f504.png" title=":arrows_counterclockwise:" /><img alt="🅱️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f171.png" title=":b:" /><img alt="🚼" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6bc.png" title=":baby_symbol:" /><img alt="🔙" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f519.png" title=":back:" /><img alt="🛄" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6c4.png" title=":baggage_claim:" /><img alt="☑️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2611.png" title=":ballot_box_with_check:" /><img alt="‼️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/203c.png" title=":bangbang:" /><img alt="⚫" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/26ab.png" title=":black_circle:" /><img alt="⬛" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2b1b.png" title=":black_large_square:" /><img alt="◾" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/25fe.png" title=":black_medium_small_square:" /><img alt="◼️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/25fc.png" title=":black_medium_square:" /><img alt="▪️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/25aa.png" title=":black_small_square:" /><img alt="🔲" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f532.png" title=":black_square_button:" /><img alt="♋" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/264b.png" title=":cancer:" /><img alt="🔠" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f520.png" title=":capital_abcd:" /><img alt="♑" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2651.png" title=":capricorn:" /><img alt="💹" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4b9.png" title=":chart:" /><img alt="🚸" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6b8.png" title=":children_crossing:" /><img alt="🎦" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f3a6.png" title=":cinema:" /><img alt="🆑" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f191.png" title=":cl:" /><img alt="🕐" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f550.png" title=":clock1:" /><img alt="🕙" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f559.png" title=":clock10:" /><img alt="🕥" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f565.png" title=":clock1030:" /><img alt="🕚" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f55a.png" title=":clock11:" /><img alt="🕦" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f566.png" title=":clock1130:" /><img alt="🕛" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f55b.png" title=":clock12:" /><img alt="🕧" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f567.png" title=":clock1230:" /><img alt="🕜" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f55c.png" title=":clock130:" /><img alt="🕑" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f551.png" title=":clock2:" /><img alt="🕝" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f55d.png" title=":clock230:" /><img alt="🕒" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f552.png" title=":clock3:" /><img alt="🕞" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f55e.png" title=":clock330:" /><img alt="🕓" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f553.png" title=":clock4:" /><img alt="🕟" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f55f.png" title=":clock430:" /><img alt="🕔" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f554.png" title=":clock5:" /><img alt="🕠" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f560.png" title=":clock530:" /><img alt="🕕" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f555.png" title=":clock6:" /><img alt="🕡" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f561.png" title=":clock630:" /><img alt="🕖" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f556.png" title=":clock7:" /><img alt="🕢" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f562.png" title=":clock730:" /><img alt="🕗" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f557.png" title=":clock8:" /><img alt="🕣" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f563.png" title=":clock830:" /><img alt="🕘" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f558.png" title=":clock9:" /><img alt="🕤" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f564.png" title=":clock930:" /><img alt="㊗️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/3297.png" title=":congratulations:" /><img alt="🆒" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f192.png" title=":cool:" /><img alt="©️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/00a9.png" title=":copyright:" /><img alt="➰" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/27b0.png" title=":curly_loop:" /><img alt="💱" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4b1.png" title=":currency_exchange:" /><img alt="🛃" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6c3.png" title=":customs:" /><img alt="💠" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4a0.png" title=":diamond_shape_with_a_dot_inside:" /><img alt="🚯" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6af.png" title=":do_not_litter:" /><img alt="8️⃣" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/0038-20e3.png" title=":eight:" /><img alt="✴️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2734.png" title=":eight_pointed_black_star:" /><img alt="✳️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2733.png" title=":eight_spoked_asterisk:" /><img alt="🔚" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f51a.png" title=":end:" /><img alt="⏩" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/23e9.png" title=":fast_forward:" /><img alt="5️⃣" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/0035-20e3.png" title=":five:" /><img alt="4️⃣" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/0034-20e3.png" title=":four:" /><img alt="🆓" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f193.png" title=":free:" /><img alt="♊" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/264a.png" title=":gemini:" /><img alt="#️⃣" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/0023-20e3.png" title=":hash:" /><img alt="💟" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f49f.png" title=":heart_decoration:" /><img alt="✔️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2714.png" title=":heavy_check_mark:" /><img alt="➗" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2797.png" title=":heavy_division_sign:" /><img alt="💲" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4b2.png" title=":heavy_dollar_sign:" />:heavy_exclamation_mark:<img alt="➖" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2796.png" title=":heavy_minus_sign:" /><img alt="✖️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2716.png" title=":heavy_multiplication_x:" /><img alt="➕" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2795.png" title=":heavy_plus_sign:" /><img alt="🆔" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f194.png" title=":id:" /><img alt="🉐" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f250.png" title=":ideograph_advantage:" /><img alt="ℹ️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2139.png" title=":information_source:" /><img alt="⁉️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2049.png" title=":interrobang:" /><img alt="🔟" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f51f.png" title=":keycap_ten:" /><img alt="🈁" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f201.png" title=":koko:" />:large_blue_circle:<img alt="🔷" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f537.png" title=":large_blue_diamond:" /><img alt="🔶" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f536.png" title=":large_orange_diamond:" /><img alt="🛅" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6c5.png" title=":left_luggage:" /><img alt="↔️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2194.png" title=":left_right_arrow:" /><img alt="↩️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/21a9.png" title=":leftwards_arrow_with_hook:" /><img alt="♌" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/264c.png" title=":leo:" /><img alt="♎" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/264e.png" title=":libra:" /><img alt="🔗" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f517.png" title=":link:" /><img alt="Ⓜ️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/24c2.png" title=":m:" /><img alt="🚹" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6b9.png" title=":mens:" /><img alt="🚇" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f687.png" title=":metro:" /><img alt="📴" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4f4.png" title=":mobile_phone_off:" /><img alt="❎" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/274e.png" title=":negative_squared_cross_mark:" /><img alt="🆕" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f195.png" title=":new:" /><img alt="🆖" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f196.png" title=":ng:" /><img alt="9️⃣" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/0039-20e3.png" title=":nine:" /><img alt="🚳" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6b3.png" title=":no_bicycles:" /><img alt="⛔" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/26d4.png" title=":no_entry:" /><img alt="🚫" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6ab.png" title=":no_entry_sign:" /><img alt="📵" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4f5.png" title=":no_mobile_phones:" /><img alt="🚷" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6b7.png" title=":no_pedestrians:" /><img alt="🚭" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6ad.png" title=":no_smoking:" /><img alt="🚱" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6b1.png" title=":non-potable_water:" /><img alt="⭕" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2b55.png" title=":o:" /><img alt="🅾️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f17e.png" title=":o2:" /><img alt="🆗" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f197.png" title=":ok:" /><img alt="🔛" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f51b.png" title=":on:" /><img alt="1️⃣" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/0031-20e3.png" title=":one:" /><img alt="⛎" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/26ce.png" title=":ophiuchus:" /><img alt="🅿️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f17f.png" title=":parking:" /><img alt="〽️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/303d.png" title=":part_alternation_mark:" /><img alt="🛂" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6c2.png" title=":passport_control:" /><img alt="♓" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2653.png" title=":pisces:" /><img alt="🚰" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6b0.png" title=":potable_water:" /><img alt="🚮" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6ae.png" title=":put_litter_in_its_place:" /><img alt="🔘" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f518.png" title=":radio_button:" /><img alt="♻️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/267b.png" title=":recycle:" /><img alt="🔴" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f534.png" title=":red_circle:" /><img alt="®️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/00ae.png" title=":registered:" /><img alt="🔁" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f501.png" title=":repeat:" /><img alt="🔂" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f502.png" title=":repeat_one:" /><img alt="🚻" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6bb.png" title=":restroom:" /><img alt="⏪" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/23ea.png" title=":rewind:" /><img alt="🈂️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f202.png" title=":sa:" /><img alt="♐" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2650.png" title=":sagittarius:" /><img alt="♏" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/264f.png" title=":scorpius:" /><img alt="㊙️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/3299.png" title=":secret:" /><img alt="7️⃣" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/0037-20e3.png" title=":seven:" />:shipit:<img alt="📶" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4f6.png" title=":signal_strength:" /><img alt="6️⃣" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/0036-20e3.png" title=":six:" /><img alt="🔯" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f52f.png" title=":six_pointed_star:" /><img alt="🔹" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f539.png" title=":small_blue_diamond:" /><img alt="🔸" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f538.png" title=":small_orange_diamond:" /><img alt="🔺" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f53a.png" title=":small_red_triangle:" /><img alt="🔻" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f53b.png" title=":small_red_triangle_down:" /><img alt="🔜" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f51c.png" title=":soon:" /><img alt="🆘" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f198.png" title=":sos:" /><img alt="🔣" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f523.png" title=":symbols:" /><img alt="♉" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2649.png" title=":taurus:" /><img alt="3️⃣" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/0033-20e3.png" title=":three:" /><img alt="™️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2122.png" title=":tm:" /><img alt="🔝" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f51d.png" title=":top:" /><img alt="🔱" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f531.png" title=":trident:" /><img alt="🔀" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f500.png" title=":twisted_rightwards_arrows:" /><img alt="2️⃣" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/0032-20e3.png" title=":two:" /><img alt="🈹" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f239.png" title=":u5272:" /><img alt="🈴" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f234.png" title=":u5408:" /><img alt="🈺" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f23a.png" title=":u55b6:" /><img alt="🈯" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f22f.png" title=":u6307:" /><img alt="🈷️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f237.png" title=":u6708:" /><img alt="🈶" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f236.png" title=":u6709:" /><img alt="🈵" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f235.png" title=":u6e80:" /><img alt="🈚" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f21a.png" title=":u7121:" /><img alt="🈸" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f238.png" title=":u7533:" /><img alt="🈲" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f232.png" title=":u7981:" /><img alt="🈳" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f233.png" title=":u7a7a:" /><img alt="🔞" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f51e.png" title=":underage:" /><img alt="🆙" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f199.png" title=":up:" /><img alt="📳" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4f3.png" title=":vibration_mode:" /><img alt="♍" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/264d.png" title=":virgo:" /><img alt="🆚" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f19a.png" title=":vs:" /><img alt="〰️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/3030.png" title=":wavy_dash:" /><img alt="🚾" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6be.png" title=":wc:" /><img alt="♿" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/267f.png" title=":wheelchair:" /><img alt="✅" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2705.png" title=":white_check_mark:" /><img alt="⚪" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/26aa.png" title=":white_circle:" /><img alt="💮" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f4ae.png" title=":white_flower:" /><img alt="⬜" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/2b1c.png" title=":white_large_square:" /><img alt="◽" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/25fd.png" title=":white_medium_small_square:" /><img alt="◻️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/25fb.png" title=":white_medium_square:" /><img alt="▫️" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/25ab.png" title=":white_small_square:" /><img alt="🔳" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f533.png" title=":white_square_button:" /><img alt="🚺" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/1f6ba.png" title=":womens:" /><img alt="❌" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/274c.png" title=":x:" /><img alt="0️⃣" class="emojione" src="https://cdn.jsdelivr.net/emojione/assets/3.1/png/64/0030-20e3.png" title=":zero:" /></p>
+<h2 id="insert">Insert<a class="headerlink" href="#insert" title="Permanent link"></a></h2>
+<div class="highlight"><pre><span></span>^^insert^^
+
+^^smart^^insert^^
+
+^^*insert italic*^^  *^^insert italic 2^^*
+
+^^_insert italic_^^  _^^insert italic 2^^_
+
+^^**insert bold**^^  **^^insert bold 2^^**
+
+^^__insert bold__^^  __^^insert bold 2^^__
+
+^^***insert italic bold***^^  ***^^insert italic bold 2^^***
+
+^^___insert italic bold___^^  ___^^insert italic bold 2^^___
+
+**^^*insert italic bold*^^**  *^^**insert italic bold 2**^^*
+
+__^^_insert italic bold_^^__  _^^__insert italic bold 2__^^_
+
+**^^_insert italic bold_^^**  _^^**insert italic bold 2**^^_
+
+__^^*insert italic bold*^^__  *^^__insert italic bold 2__^^*
+</pre></div>
+
+<p><ins>insert</ins></p>
+<p><ins>smart^^insert</ins></p>
+<p><ins><em>insert italic</em></ins>  <em><ins>insert italic 2</ins></em></p>
+<p><ins><em>insert italic</em></ins>  <em><ins>insert italic 2</ins></em></p>
+<p><ins><strong>insert bold</strong></ins>  <strong><ins>insert bold 2</ins></strong></p>
+<p><ins><strong>insert bold</strong></ins>  <strong><ins>insert bold 2</ins></strong></p>
+<p><ins><strong><em>insert italic bold</em></strong></ins>  <strong><em><ins>insert italic bold 2</ins></em></strong></p>
+<p><ins><strong><em>insert italic bold</em></strong></ins>  <strong><em><ins>insert italic bold 2</ins></em></strong></p>
+<p><strong><ins><em>insert italic bold</em></ins></strong>  <em><ins><strong>insert italic bold 2</strong></ins></em></p>
+<p><strong><ins><em>insert italic bold</em></ins></strong>  <em><ins><strong>insert italic bold 2</strong></ins></em></p>
+<p><strong><ins><em>insert italic bold</em></ins></strong>  <em><ins><strong>insert italic bold 2</strong></ins></em></p>
+<p><strong><ins><em>insert italic bold</em></ins></strong>  <em><ins><strong>insert italic bold 2</strong></ins></em></p>
+<h1 id="subscript-and-superscript">Subscript and Superscript<a class="headerlink" href="#subscript-and-superscript" title="Permanent link"></a></h1>
+<p>Pandoc style subscript and superscripts
+<div class="highlight"><pre><span></span>CH~3~CH~2~OH
+
+[ClO~2~]^+^
+
+x^2^ + y^2^ = 4
+
+Text^superscript^
+
+Text^superscript failed^
+
+Text^superscript\ success^
+
+Text~subscript~
+
+Text~subscript failed~
+
+Text~subscript\ success~
+</pre></div></p>
+<p>CH<sub>3</sub>CH<sub>2</sub>OH</p>
+<p>[ClO<sub>2</sub>]<sup>+</sup></p>
+<p>x<sup>2</sup> + y<sup>2</sup> = 4</p>
+<p>Text<sup>superscript</sup></p>
+<p>Text^superscript failed^</p>
+<p>Text<sup>superscript&nbsp;success</sup></p>
+<p>Text<sub>subscript</sub></p>
+<p>Text~subscript failed~</p>
+<p>Text<sub>subscript&nbsp;success</sub></p>
+<h1 id="progress">Progress<a class="headerlink" href="#progress" title="Permanent link"></a></h1>
+<p>Progress bars are block elements and it is recommened to put a newline before and after.  But they will be recognized inline, but they will be on their own line.</p>
+<p>Normally you would just globally set your additional classes: <code>progressbar(add_classes=candystripe-animate)</code>, but here we will demonstrate that it works with the <code>attr_list</code> extension.  It will take inline style.</p>
+<p>To turn off level classes (which are used to decide special colors for certain percentages) you could just use <code>progressbar(level_class=False)</code>.
+<div class="highlight"><pre><span></span>| Test               | Result                                    |
+|--------------------|-------------------------------------------|
+|Animated: 0%        |[=0% &quot;0%&quot;]{: .candystripe-animate}         |
+|Animated: 5%        |[=5% &quot;5%&quot;]{: .candystripe-animate}         |
+|Animated: 25%       |[=25% &quot;25%&quot;]{: .candystripe-animate}       |
+|Animated: 45%       |[=45% &quot;45%&quot;]{: .candystripe-animate}       |
+|Animated: 65%       |[=65% &quot;65%&quot;]{: .candystripe-animate}       |
+|Animated: 85%       |[=85% &quot;85%&quot;]{: .candystripe-animate}       |
+|Animated: 100%      |[=100% &quot;100%&quot;]{: .candystripe-animate}     |
+|Division Percentage |[= 212.2/537 &quot;212.2/537 Testing division&quot;] |
+|No Label            |[= 50%]                                    |
+|Inline              |Before[= 50% &quot;I&#39;m a block!&quot;]After          |
+</pre></div></p>
+<table>
+<thead>
+<tr>
+<th>Test</th>
+<th>Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Animated: 0%</td>
+<td>
+<div class="progress progress-0plus candystripe-animate">
+<div class="progress-bar" style="width:0.00%">
+<p class="progress-label">0%</p>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>Animated: 5%</td>
+<td>
+<div class="progress progress-0plus candystripe-animate">
+<div class="progress-bar" style="width:5.00%">
+<p class="progress-label">5%</p>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>Animated: 25%</td>
+<td>
+<div class="progress progress-20plus candystripe-animate">
+<div class="progress-bar" style="width:25.00%">
+<p class="progress-label">25%</p>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>Animated: 45%</td>
+<td>
+<div class="progress progress-40plus candystripe-animate">
+<div class="progress-bar" style="width:45.00%">
+<p class="progress-label">45%</p>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>Animated: 65%</td>
+<td>
+<div class="progress progress-60plus candystripe-animate">
+<div class="progress-bar" style="width:65.00%">
+<p class="progress-label">65%</p>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>Animated: 85%</td>
+<td>
+<div class="progress progress-80plus candystripe-animate">
+<div class="progress-bar" style="width:85.00%">
+<p class="progress-label">85%</p>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>Animated: 100%</td>
+<td>
+<div class="progress progress-100plus candystripe-animate">
+<div class="progress-bar" style="width:100.00%">
+<p class="progress-label">100%</p>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>Division Percentage</td>
+<td>
+<div class="progress progress-20plus">
+<div class="progress-bar" style="width:39.52%">
+<p class="progress-label">212.2/537 Testing division</p>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>No Label</td>
+<td>
+<div class="progress progress-40plus">
+<div class="progress-bar" style="width:50.00%">
+<p class="progress-label"></p>
+</div>
+</div>
+</td>
+</tr>
+<tr>
+<td>Inline</td>
+<td>Before<div class="progress progress-40plus">
+<div class="progress-bar" style="width:50.00%">
+<p class="progress-label">I&rsquo;m a block!</p>
+</div>
+</div>After</td>
+</tr>
+</tbody>
+</table>
+<h1 id="neseted-fences">Neseted Fences:<a class="headerlink" href="#neseted-fences" title="Permanent link"></a></h1>
+<div class="highlight"><pre><span></span>    ```
+    This will still be parsed
+    as a normal indented code block.
+    ```
+
+```
+This will still be parsed
+as a fenced code block.
+```
+
+- This is a list that contains multiple code blocks.
+
+    - Here is an indented block
+
+            ```
+            This will still be parsed
+            as a normal indented code block.
+            ```
+
+    - Here is a fenced code block:
+
+        ```
+        This will still be parsed
+        as a fenced code block.
+        ```
+
+        &gt; ```
+        &gt; Blockquotes?
+        &gt; Not a problem!
+        &gt; ```
+</pre></div>
+
+<div class="highlight"><pre><span></span>```
+This will still be parsed
+as a normal indented code block.
+```
+</pre></div>
+
+<div class="highlight"><pre><span></span>This will still be parsed
+as a fenced code block.
+</pre></div>
+
+<ul>
+<li>
+<p>This is a list that contains multiple code blocks.</p>
+<ul>
+<li>
+<p>Here is an indented block</p>
+<div class="highlight"><pre><span></span>```
+This will still be parsed
+as a normal indented code block.
+```
+</pre></div>
+
+</li>
+<li>
+<p>Here is a fenced code block:</p>
+<div class="highlight"><pre><span></span>This will still be parsed
+as a fenced code block.
+</pre></div>
+
+<blockquote>
+<div class="highlight"><pre><span></span>Blockquotes?
+Not a problem!
+</pre></div>
+
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+<h1 id="uml-flow-charts">UML Flow Charts<a class="headerlink" href="#uml-flow-charts" title="Permanent link"></a></h1>
+<div class="highlight"><pre><span></span>```flow
+st=&gt;start: Start:&gt;http://www.google.com[blank]
+e=&gt;end:&gt;http://www.google.com
+op1=&gt;operation: My Operation
+sub1=&gt;subroutine: My Subroutine
+cond=&gt;condition: Yes
+or No?:&gt;http://www.google.com
+io=&gt;inputoutput: catch something...
+
+st-&gt;op1-&gt;cond
+cond(yes)-&gt;io-&gt;e
+cond(no)-&gt;sub1(right)-&gt;op1
+```
+</pre></div>
+
+<pre class="uml-flowchart"><code>st=&gt;start: Start:&gt;http://www.google.com[blank]
+e=&gt;end:&gt;http://www.google.com
+op1=&gt;operation: My Operation
+sub1=&gt;subroutine: My Subroutine
+cond=&gt;condition: Yes
+or No?:&gt;http://www.google.com
+io=&gt;inputoutput: catch something...
+
+st-&gt;op1-&gt;cond
+cond(yes)-&gt;io-&gt;e
+cond(no)-&gt;sub1(right)-&gt;op1</code></pre>
+
+<h1 id="uml-sequence-diagrams">UML Sequence Diagrams<a class="headerlink" href="#uml-sequence-diagrams" title="Permanent link"></a></h1>
+<div class="highlight"><pre><span></span>```sequence
+Title: Here is a title
+A-&gt;B: Normal line
+B--&gt;C: Dashed line
+C-&gt;&gt;D: Open arrow
+D--&gt;&gt;A: Dashed open arrow
+```
+</pre></div>
+
+<pre class="uml-sequence-diagram"><code>Title: Here is a title
+A-&gt;B: Normal line
+B--&gt;C: Dashed line
+C-&gt;&gt;D: Open arrow
+D--&gt;&gt;A: Dashed open arrow</code></pre>
+
+<h1 id="math">Math<a class="headerlink" href="#math" title="Permanent link"></a></h1>
+<div class="highlight"><pre><span></span>Some Equations:
+
+<span class="sb">$$</span><span class="nb"></span>
+<span class="nb">E</span><span class="o">(</span><span class="nv">\mathbf</span><span class="nb">{v}, </span><span class="nv">\mathbf</span><span class="nb">{h}</span><span class="o">)</span><span class="nb"> </span><span class="o">=</span><span class="nb"> </span><span class="o">-</span><span class="nv">\sum</span><span class="nb">_{i,j}w_{ij}v_i h_j </span><span class="o">-</span><span class="nb"> </span><span class="nv">\sum</span><span class="nb">_i b_i v_i </span><span class="o">-</span><span class="nb"> </span><span class="nv">\sum</span><span class="nb">_j c_j h_j</span>
+<span class="s">$$</span>
+
+- Here are some more equations:
+
+    <span class="sb">$$</span><span class="nb"></span>
+<span class="nb">        </span><span class="nv">\begin</span><span class="nb">{align}</span>
+<span class="nb">            p</span><span class="o">(</span><span class="nb">v_i</span><span class="o">=</span><span class="m">1</span><span class="nb">|</span><span class="nv">\mathbf</span><span class="nb">{h}</span><span class="o">)</span><span class="nb"> &amp; </span><span class="o">=</span><span class="nb"> </span><span class="nv">\sigma\left</span><span class="o">(</span><span class="nv">\sum</span><span class="nb">_j w_{ij}h_j </span><span class="o">+</span><span class="nb"> b_i</span><span class="nv">\right</span><span class="o">)</span><span class="nb"> </span><span class="nv">\\</span><span class="nb"></span>
+<span class="nb">            p</span><span class="o">(</span><span class="nb">h_j</span><span class="o">=</span><span class="m">1</span><span class="nb">|</span><span class="nv">\mathbf</span><span class="nb">{v}</span><span class="o">)</span><span class="nb"> &amp; </span><span class="o">=</span><span class="nb"> </span><span class="nv">\sigma\left</span><span class="o">(</span><span class="nv">\sum</span><span class="nb">_i w_{ij}v_i </span><span class="o">+</span><span class="nb"> c_j</span><span class="nv">\right</span><span class="o">)</span><span class="nb"></span>
+<span class="nb">        </span><span class="nv">\end</span><span class="nb">{align}</span>
+<span class="nb">    </span><span class="s">$$</span>
+
+- Inline equations: <span class="s">$</span><span class="nb">p</span><span class="o">(</span><span class="nb">x|y</span><span class="o">)</span><span class="nb"> </span><span class="o">=</span><span class="nb"> </span><span class="nv">\frac</span><span class="nb">{p</span><span class="o">(</span><span class="nb">y|x</span><span class="o">)</span><span class="nb">p</span><span class="o">(</span><span class="nb">x</span><span class="o">)</span><span class="nb">}{p</span><span class="o">(</span><span class="nb">y</span><span class="o">)</span><span class="nb">}</span><span class="s">$</span>.
+</pre></div>
+
+<p>Some Equations:</p>
+<span>\[
+E(\mathbf{v}, \mathbf{h}) = -\sum_{i,j}w_{ij}v_i h_j - \sum_i b_i v_i - \sum_j c_j h_j
+\]</span><ul>
+<li>
+<p>Here are some more equations:</p>
+<span>\[
+    \begin{align}
+        p(v_i=1|\mathbf{h}) &amp; = \sigma\left(\sum_j w_{ij}h_j + b_i\right) \\
+        p(h_j=1|\mathbf{v}) &amp; = \sigma\left(\sum_i w_{ij}v_i + c_j\right)
+    \end{align}
+\]</span></li>
+<li>
+<p>Inline equations: <span>\(p(x|y) = \frac{p(y|x)p(x)}{p(y)}\)</span>.</p>
+</li>
+</ul>
+<h1 id="critic">Critic<a class="headerlink" href="#critic" title="Permanent link"></a></h1>
+<div class="highlight"><pre><span></span>Here<span class="w"> </span>is<span class="w"> </span>some<span class="w"> </span>\<del class="critic">*incorrect*</del><span class="w"> </span>Markdown.<span class="w">  </span>I<span class="w"> </span>am<span class="w"> </span>adding<span class="w"> </span>this\<ins class="critic"><span class="w"> </span>here.</ins>.<span class="w">  </span>Here<span class="w"> </span>is<span class="w"> </span>some<span class="w"> </span>more<span class="w"> </span>\<del class="critic">text
+that<span class="w"> </span>I<span class="w"> </span>am<span class="w"> </span>removing</del>text.<span class="w">  </span>And<span class="w"> </span>here<span class="w"> </span>is<span class="w"> </span>even<span class="w"> </span>more<span class="w"> </span>\<ins class="critic">text<span class="w"> </span>that<span class="w"> </span>I
+am<span class="w"> </span></ins>adding.\<del class="critic break">&nbsp;</del><ins class="critic"><span class="w">  </span></ins>Paragraph<span class="w"> </span>was<span class="w"> </span>deleted<span class="w"> </span>and<span class="w"> </span>replaced<span class="w"> </span>with<span class="w"> </span>some<span class="w"> </span>spaces.\<del class="critic"><span class="w">  </span></del>
+
+<ins class="critic break">&nbsp;</ins>
+
+Spaces<span class="w"> </span>were<span class="w"> </span>removed<span class="w"> </span>and<span class="w"> </span>a<span class="w"> </span>paragraph<span class="w"> </span>was<span class="w"> </span>added.
+
+And<span class="w"> </span>here<span class="w"> </span>is<span class="w"> </span>a<span class="w"> </span>comment<span class="w"> </span>on<span class="w"> </span>\<mark class="critic">some
+==text==<span class="w"> </span></mark>\<span class="critic comment">This works quite well. I just wanted to comment on it.</span>.<span class="w"> </span>Substitutions<span class="w"> </span>\<del class="critic">is</del><ins class="critic">are</ins><span class="w"> </span>great!
+
+Escape<span class="w"> </span>\\<span class="critic comment">This text is preserved</span>.
+
+General<span class="w"> </span>block<span class="w"> </span>handling.
+
+\<del class="critic">
+
+*<span class="w"> </span>test
+*<span class="w"> </span>test
+*<span class="w"> </span>test
+<span class="w">    </span>*<span class="w"> </span>test
+*<span class="w"> </span>test
+
+</del>
+
+\<ins class="critic">
+
+*<span class="w"> </span>test
+*<span class="w"> </span>test
+*<span class="w"> </span>test
+<span class="w">    </span>*<span class="w"> </span>test
+*<span class="w"> </span>test
+
+</ins>
+</pre></div>
+
+<p>Here is some <del class="critic"><em>incorrect</em></del> Markdown.  I am adding this<ins class="critic"> here.</ins>.  Here is some more <del class="critic">text
+that I am removing</del>text.  And here is even more <ins class="critic">text that I
+am </ins>adding.<del class="critic break">&nbsp;</del><ins class="critic">  </ins>Paragraph was deleted and replaced with some spaces.<del class="critic">  </del></p>
+<ins class="critic break">&nbsp;</ins>
+<p>Spaces were removed and a paragraph was added.</p>
+<p>And here is a comment on <mark class="critic">some
+<mark>text</mark> </mark><span class="critic comment">This works quite well. I just wanted to comment on it.</span>. Substitutions <del class="critic">is</del><ins class="critic">are</ins> great!</p>
+<p>Escape <span class="critic comment">This text is preserved</span>.</p>
+<p>General block handling.</p>
+<del class="critic block">
+<ul>
+<li>test</li>
+<li>test</li>
+<li>test<ul>
+<li>test</li>
+</ul>
+</li>
+<li>test</li>
+</ul>
+</del>
+<ins class="critic block">
+<ul>
+<li>test</li>
+<li>test</li>
+<li>test<ul>
+<li>test</li>
+</ul>
+</li>
+<li>test</li>
+</ul>
+</ins>
+<h1 id="template-test">Template Test<a class="headerlink" href="#template-test" title="Permanent link"></a></h1>
+<div class="highlight"><pre><span></span>&lt;# This is the page title #&gt;&lt;{ page.title }&gt;
+</pre></div>
+
+<p>PyMdown Example</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>This is a footnote&#160;<a class="footnote-backref" href="#fnref:1" rev="footnote" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:label">
+<p>A footnote on &ldquo;label&rdquo;&#160;<a class="footnote-backref" href="#fnref:label" rev="footnote" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:!DEF">
+<p>The footnote for definition&#160;<a class="footnote-backref" href="#fnref:!DEF" rev="footnote" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div></article>
+</div>
+</body>
+</html>

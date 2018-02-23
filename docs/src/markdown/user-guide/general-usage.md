@@ -239,7 +239,7 @@ Javascript and CSS can be included in the template by adding them to the followi
 # This can be overridden in a file's frontmatter via the 'settings' key word:
 #
 # ---
-# settings:
+# pymdown_settings:
 #   css:
 #     - somefile.css
 # ---
@@ -261,10 +261,10 @@ css:
 # If it points to a physical file, it will be included.
 # PyMdown will look relative to the binary if it can't find the file.
 #
-# This can be overridden in a file's frontmatter via the 'settings' key word:
+# This can be overridden in a file's frontmatter via the 'pymdown_settings' key word:
 #
 # ---
-# settings:
+# pymdown_settings:
 #   js:
 #     - somefile.js
 # ---
@@ -383,15 +383,15 @@ Markdown content.
 
 PyMdown has a few special keywords that can be defined to alter the output.  All other keys will be counted as user variables.
 
-Keyword       | Description
-------------- |------------
-`title`       | This item is used in the HTML's title tag.
-`destination` | This keyword is the location and file name were the output should be placed.
-`basepath`    | This is used to specify the path that PyMdown should use to look for reference material like CSS or JS files and even `references` defined in the frontmatter. It is also used in plugins such as `pathconverter` and `b64`.  This can override the `basepath` fed in at the command line.
-`relpath`     | This is used to specify the path that images and paths are relative to. It is used in plugins such as `pathconverter`.  This can override the `relpath` fed in at the command line.
-`css`         | This keyword's value is an array of strings denoting additional single CSS files to include.  They follow the same convention as CSS defined in the settings file: `;encoding` at tail will define the encoding used to access the file, paths starting with `!` will not have their path converted to absolute or relative paths, and `^` will directly embed the content in the HTML file.
-`js`          | This keyword's value is an array of strings denoting additional single JavaScript files to include.  They follow the same convention as JavaScript defined in the settings file: `;encoding` at tail will define the encoding used to access the file, paths starting with `!` will not have their path converted to absolute or relative paths, and `^` will directly embed the content in the HTML file.
-`settings`    | This is a dictionary and allows the overriding of any of the settings found in the original configuration file.
+Keyword            | Description
+------------------ | -----------
+`title`            | This item is used in the HTML's title tag.
+`destination`      | This keyword is the location and file name were the output should be placed.
+`basepath`         | This is used to specify the path that PyMdown should use to look for reference material like CSS or JS files and even `references` defined in the frontmatter. It is also used in plugins such as `pathconverter` and `b64`.  This can override the `basepath` fed in at the command line.
+`relpath`          | This is used to specify the path that images and paths are relative to. It is used in plugins such as `pathconverter`.  This can override the `relpath` fed in at the command line.
+`css`              | This keyword's value is an array of strings denoting additional single CSS files to include.  They follow the same convention as CSS defined in the settings file: `;encoding` at tail will define the encoding used to access the file, paths starting with `!` will not have their path converted to absolute or relative paths, and `^` will directly embed the content in the HTML file.
+`js`               | This keyword's value is an array of strings denoting additional single JavaScript files to include.  They follow the same convention as JavaScript defined in the settings file: `;encoding` at tail will define the encoding used to access the file, paths starting with `!` will not have their path converted to absolute or relative paths, and `^` will directly embed the content in the HTML file.
+`pymdown_settings` | This is a dictionary and allows the overriding of any of the settings found in the original configuration file.
 
 See [Templating](#templating) to learn more about accessing these values in your HTML template.
 
@@ -404,14 +404,14 @@ If the keyword is not one of the special keywords defined above, they will autom
 Templates are HTML files that use [Jinja2][jinja2] templating syntax.  Template variables and logic is used in the HTML templates.  If desired, Jinja2 templating can be enabled in the Markdown content by with the following syntax:
 
 ```yaml
-settings:
+pymdown_settings:
   use_jinja2
 ```
 
 It is up to the user to escape content that must be escaped. If desired, the brackets for a given page can be changed with the following frontmatter:
 
 ```yaml
-settings:
+pymdown_settings:
   jinja2_block: ['{%', '%}']
   jinja2_variable: ['{{', '}}']
   jinja2_comment: ['{#', '#}']
