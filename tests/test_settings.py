@@ -210,7 +210,7 @@ class TestSettings(unittest.TestCase):
             'template.yml'
         ).get('test.md', frontmatter={"destination": dest})
         self.assertEqual(s.get('page').get('destination'), dest)
-        self.assertEqual(s.get('settings').get('template'), template)
+        self.assertEqual(s.get('pymdown_settings').get('template'), template)
 
         s = self._get_settings(
             'template.yml',
@@ -218,4 +218,4 @@ class TestSettings(unittest.TestCase):
             force_no_template=True
         ).get('test.md', frontmatter={"destination": dest})
         self.assertEqual(s.get('page').get('destination'), None)
-        self.assertEqual(s.get('settings').get('template'), None)
+        self.assertEqual(s.get('pymdown_settings').get('template'), None)
