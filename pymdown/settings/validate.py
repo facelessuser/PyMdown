@@ -56,7 +56,7 @@ def in_range(value, minimum, maximum):
     """Check if value is in range."""
 
     okay = True
-    if minimum >= 0 and len < minimum:
+    if minimum >= 0 and value < minimum:
         okay = False
     elif maximum >= 0 and value > maximum:
         okay = False
