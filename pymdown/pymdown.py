@@ -157,21 +157,21 @@ class Convert(object):
                     self.settings["page"]['relpath'] = path.dirname(html.file.name)
 
                 # Prepare template from markdown text to apply template variables
-                if self.settings['settings']['use_jinja2']:
+                if self.settings['pymdown_settings']['use_jinja2']:
                     template = Template(
                         basepath=self.settings["page"]["basepath"],
                         relpath=self.settings["page"]["relpath"],
                         force_conversion=self.config.preview,
-                        disable_path_conversion=self.settings["settings"]["disable_path_conversion"],
-                        absolute_path_conversion=self.settings["settings"]["path_conversion_absolute"],
+                        disable_path_conversion=self.settings["pymdown_settings"]["disable_path_conversion"],
+                        absolute_path_conversion=self.settings["pymdown_settings"]["path_conversion_absolute"],
                         template_tags={
-                            'block': self.settings["settings"]["jinja2_block"],
-                            'variable': self.settings["settings"]["jinja2_variable"],
-                            'comment': self.settings["settings"]["jinja2_comment"]
+                            'block': self.settings["pymdown_settings"]["jinja2_block"],
+                            'variable': self.settings["pymdown_settings"]["jinja2_variable"],
+                            'comment': self.settings["pymdown_settings"]["jinja2_comment"]
                         }
                     ).get_template_from_string(text)
                     text = template.render(
-                        settings=self.settings["settings"],
+                        settings=self.settings["pymdown_settings"],
                         page=self.settings["page"],
                         extra=self.settings["extra"]
                     )
@@ -179,15 +179,15 @@ class Convert(object):
                 # Set up Converter
                 converter = mdconvert.MdConverts(
                     text,
-                    smart_emphasis=self.settings["settings"]['smart_emphasis'],
-                    lazy_ol=self.settings["settings"]['lazy_ol'],
-                    tab_length=self.settings["settings"]['tab_length'],
+                    smart_emphasis=self.settings["pymdown_settings"]['smart_emphasis'],
+                    lazy_ol=self.settings["pymdown_settings"]['lazy_ol'],
+                    tab_length=self.settings["pymdown_settings"]['tab_length'],
                     base_path=self.settings["page"]["basepath"],
                     relative_path=self.settings["page"]["relpath"],
                     output_path=path.dirname(html.file.name) if html.file.name else self.config.out,
-                    enable_attributes=self.settings["settings"]['enable_attributes'],
-                    output_format=self.settings["settings"]['output_format'],
-                    markdown_extensions=self.settings["settings"]["markdown_extensions"]
+                    enable_attributes=self.settings["pymdown_settings"]['enable_attributes'],
+                    output_format=self.settings["pymdown_settings"]['output_format'],
+                    markdown_extensions=self.settings["pymdown_settings"]["markdown_extensions"]
                 )
 
                 # Markdown -> HTML

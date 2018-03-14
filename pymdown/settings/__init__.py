@@ -62,7 +62,7 @@ class Settings(object):
                 "content": '',
             },
             "extra": {},
-            "settings": {}
+            "pymdown_settings": {}
         }
         self.critic = kwargs.get('critic', util.CRITIC_IGNORE)
         self.plain = kwargs.get('plain', False)
@@ -114,7 +114,7 @@ class Settings(object):
 
         Validate(provide_defaults=True).validate(settings)
 
-        self.settings["settings"] = settings
+        self.settings["pymdown_settings"] = settings
 
     def get(self, file_name, **kwargs):
         """Get the complete settings object for the given file."""
@@ -179,7 +179,7 @@ class Settings(object):
         if self.force_stdout:
             settings["page"]["destination"] = None
         if self.force_no_template:
-            settings['settings']['template'] = None
+            settings['pymdown_settings']['template'] = None
 
         # Do some post processing on the settings
         self.post_process_settings(settings)
@@ -200,12 +200,12 @@ class Settings(object):
     def set_style(self, extensions, settings):
         """Load up needed Pygments style."""
 
-        style = settings["settings"]['pygments_style']
+        style = settings["pymdown_settings"]['pygments_style']
 
         if not PYGMENTS_AVAILABLE:  # pragma: no cover
-            settings["settings"]["use_pygments_css"] = False
+            settings["pymdown_settings"]["use_pygments_css"] = False
 
-        if settings["settings"]["use_pygments_css"]:
+        if settings["pymdown_settings"]["use_pygments_css"]:
             # Ensure a working style is set
             try:
                 # Check if the desired style exists internally
@@ -214,17 +214,17 @@ class Settings(object):
                 logger.Log.error("Cannot find style: %s! Falling back to 'default' style." % style)
                 style = "default"
 
-        settings["settings"]["pygments_style"] = style
+        settings["pymdown_settings"]["pygments_style"] = style
         settings["page"]["pygments_style"] = self.load_highlight(
             style,
-            settings["settings"]["use_pygments_css"],
-            settings["settings"]['pygments_class']
+            settings["pymdown_settings"]["use_pygments_css"],
+            settings["pymdown_settings"]['pygments_class']
         )
 
     def post_process_settings(self, settings):
         """Process the settings files making needed adjustement."""
 
-        extensions = settings["settings"]["markdown_extensions"]
+        extensions = settings["pymdown_settings"]["markdown_extensions"]
 
         critic_mode = "ignore"
         if self.critic & util.CRITIC_ACCEPT:
@@ -242,13 +242,13 @@ class Settings(object):
             del extensions["pymdownx.plainhtml"]
 
         # Ensure previews are using absolute paths or relative paths
-        if self.preview or not settings["settings"]["disable_path_conversion"]:
+        if self.preview or not settings["pymdown_settings"]["disable_path_conversion"]:
             # Add pathconverter extension if not already set.
             if "pymdownx.pathconverter" not in extensions:
                 extensions["pymdownx.pathconverter"] = {
                     "base_path": "${BASE_PATH}",
                     "relative_path": "${REL_PATH}" if not self.preview else "${OUTPUT}",
-                    "absolute": settings["settings"]["path_conversion_absolute"]
+                    "absolute": settings["pymdown_settings"]["path_conversion_absolute"]
                 }
             elif self.preview and "pymdownx.pathconverter" in extensions:
                 if extensions["pymdownx.pathconverter"] is None:
@@ -267,7 +267,7 @@ class Settings(object):
             extensions['pymdownx.plainhtml'] = None
 
         # Set extensions to its own key
-        settings["settings"]["markdown_extensions"] = extensions
+        settings["pymdown_settings"]["markdown_extensions"] = extensions
 
         # Set style
         self.set_style(extensions, settings)

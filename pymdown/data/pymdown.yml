@@ -117,19 +117,34 @@ output_format: 'xhtml1'
 
 # Python Markdown extensions
 markdown_extensions:
-  pymdownx.extra:
   markdown.extensions.smarty:
     smart_quotes: false
   markdown.extensions.admonition:
+  markdown.extensions.footnotes:
+  markdown.extensions.attr_list:
+  markdown.extensions.def_list:
+  markdown.extensions.tables:
+  markdown.extensions.abbr:
   markdown.extensions.toc:
     title: Table of Contents
     slugify: !!python/name:pymdownx.slugs.uslugify
     permalink: '\uf0c1'
   pymdownx.highlight:
-    guess_lang: false
-    css_class: highlight
+    css_class: codehilite
+    extend_pygments_lang:
+      - name: php-inline
+        lang: php
+        options:
+          startinline: true
+      - name: pycon3
+        lang: pycon
+        options:
+          python3: true
   pymdownx.magiclink:
     repo_url_shortener: true
+    repo_url_shorthand: true
+    social_url_shorthand: true
+  pymdownx.extrarawhtml:
   pymdownx.betterem:
   pymdownx.tilde:
   pymdownx.caret:
@@ -146,10 +161,10 @@ markdown_extensions:
     hardbreak: True
     nbsp: True
   pymdownx.keys:
-    separator: ＋
+    separator: "\uff0b"
   pymdownx.details:
-  pymdownx.plainhtml:
-    strip_attributes: ''
+  pymdownx.striphtml:
+
 
 extra:
   # By configuring 'flow', 'sequence', or 'mathjax' to `true` in a file's frontmatter,
