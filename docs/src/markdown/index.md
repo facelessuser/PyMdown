@@ -15,7 +15,7 @@ PyMdown is a CLI tool to convert or even batch convert Markdown files to HTML.  
 
 ### [Basic Markdown Syntax](user-guide/markdown-syntax.md)
 
-as laid out by [Mark Gruber][daringfireball]
+as laid out by [John Gruber][daringfireball]
 </td>
 <td markdown="1">
 

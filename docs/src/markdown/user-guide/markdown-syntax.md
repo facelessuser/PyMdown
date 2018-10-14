@@ -1,7 +1,7 @@
 # Markdown Syntax
 
 !!! Note "Note"
-    This documentation lays out the syntax of Mark Gruber's Markdown specifications.  This is describing general Markdown syntax.  If you are using extensions, there may be extra or slightly different syntax. This guide is taken from Mark Gruber's [site](http://daringfireball.net/projects/markdown/syntax).  The content and info is his words, but it is here for convenience.
+    This documentation lays out the syntax of John Gruber's Markdown specifications.  This is describing general Markdown syntax.  If you are using extensions, there may be extra or slightly different syntax. This guide is taken from John Gruber's [site](http://daringfireball.net/projects/markdown/syntax).  The content and info is his words, but it is here for convenience.
 
 ## Overview {: #overview}
 
