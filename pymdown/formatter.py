@@ -52,7 +52,7 @@ class Text(object):
         self.encoding = settings("page", {}).get("encoding", 'utf-8')
         self.output = settings("page", {}).get("destination", None)
 
-    def open(self):
+    def open(self):  # noqa A003
         """
         Open output stream.
 
@@ -101,7 +101,7 @@ class Html(object):
         self.encode_file = True
         self.file = None
 
-    def open(self):
+    def open(self):  # noqa A003
         """Set and create the output target and target related flags."""
 
         if self.output is None:
