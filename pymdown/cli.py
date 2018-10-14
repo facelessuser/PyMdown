@@ -59,9 +59,7 @@ def get_critic_mode(args):
     """Setp the critic mode."""
 
     critic_mode = util.CRITIC_IGNORE
-    if args.accept and args.reject:
-        critic_mode |= util.CRITIC_VIEW
-    elif args.accept:
+    if args.accept:
         critic_mode |= util.CRITIC_ACCEPT
     elif args.reject:
         critic_mode |= util.CRITIC_REJECT
@@ -113,8 +111,9 @@ def main():
                                                                                        "  Just show tags.")
     parser.add_argument('--title', default=None, help="Title for HTML.")
     # Critic features
-    parser.add_argument('--accept', '-a', action='store_true', default=False, help="Accept propossed critic marks.")
-    parser.add_argument('--reject', '-r', action='store_true', default=False, help="Reject propossed critic marks.")
+    group = parser.add_mutually_exclusive_group()
+    group.add_argument('--accept', '-a', action='store_true', default=False, help="Accept propossed critic marks.")
+    group.add_argument('--reject', '-r', action='store_true', default=False, help="Reject propossed critic marks.")
     parser.add_argument('--critic-dump', action='store_true', default=False, help="Process critic marks, "
                                                                                   "dumps file(s), and exit.")
     # Output

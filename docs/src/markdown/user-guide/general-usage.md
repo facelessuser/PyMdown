@@ -157,21 +157,7 @@ Python Markdown has a number of settings that can be configured:
 # Length of tabs in source files
 tab_length: 4
 
-# Ignore number of first item in ordered list.
-# Setting this to false will force the list to start with the
-# first specified number in the list.
-lazy_ol: true
-
-# Python Markdown by default enables smart logic for _connected_words_
-# but only on italic with the underscore character.  I find this behavior odd
-# and disable it by default for a more traditional markdown feel by default.
-# Extensions can override this.
-smart_emphasis: false
-
-# Enable/disable attributes
-enable_attributes: true
-
-# Output format (html|html5|html5|xhtml|xhtml1|xhtml5)
+# Output format (html|xhtml)
 # It is recommend to use more specific versions such as: html5 or xhtml1 than
 # general html or xhtml
 output_format: 'xhtml1'

@@ -6,7 +6,7 @@ Copyright (c) 2014 Isaac Muse <isaacmuse@gmail.com>
 """
 from __future__ import unicode_literals
 from __future__ import absolute_import
-from pymdownx.critic import CriticViewPreprocessor, CriticsPostprocessor, CriticStash, CRITIC_KEY
+from pymdownx.critic import CriticViewPreprocessor, CriticStash, CRITIC_KEY
 
 
 class CriticDump(object):
@@ -21,9 +21,7 @@ class CriticDump(object):
         """Process critic marks and return the file."""
 
         text = ''
-        if view:
-            mode = 'view'
-        elif accept:
+        if accept:
             mode = 'accept'
         else:
             mode = 'reject'
@@ -32,8 +30,5 @@ class CriticDump(object):
         critic = CriticViewPreprocessor(critic_stash)
         critic.config = {'mode': mode}
         text = '\n'.join(critic.run(source.split('\n')))
-        if view:
-            critic_post = CriticsPostprocessor(critic_stash)
-            text = critic_post.run(text)
 
         return text

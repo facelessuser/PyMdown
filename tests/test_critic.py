@@ -50,20 +50,3 @@ class TestCritic(unittest.TestCase):
         )
 
         self.assertEqual(result, expected)
-
-    def test_view(self):
-        """Test viewing critic marks."""
-
-        cd = critic_dump.CriticDump()
-        result = cd.dump(self.text, False, True)
-
-        expected = common.dedent(
-            '''
-            # This is a <del class="critic">test</del><ins class="critic">Unit Test</ins>
-            This is a <ins class="critic">CritcMarkup </ins><del class="critic">test to </del>test<del class="critic"> CriticMarkup</del>.
-
-            <mark class="critic">This is a good test.</mark><span class="critic comment">This probably isn't needed.</span>
-            '''  # noqa
-        )
-
-        self.assertEqual(result, expected)

@@ -25,7 +25,7 @@ else:
     string_type = str  # noqa
     binary_type = bytes  # noqa
 
-NOSETESTS = sys.argv[0].endswith('nosetests')
+PYTEST = "pytest" in sys.modules
 
 if sys.platform.startswith('win'):  # pragma: no cover
     PLATFORM = "windows"
@@ -48,12 +48,12 @@ def print_stdout(text, encoding='utf-8'):
     """
 
     if PY3:
-        if not NOSETESTS:  # pragma: no cover
+        if not PYTEST:  # pragma: no cover
             sys.stdout.buffer.write(text)
         else:
             sys.stdout.write(text.decode(encoding))
     else:
-        if not NOSETESTS:  # pragma: no cover
+        if not PYTEST:  # pragma: no cover
             sys.stdout.write(text)
         else:
             sys.stdout.write(text.decode(encoding))

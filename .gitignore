@@ -3,6 +3,7 @@
 *.egg
 build/*
 */build/*
+.cache/*
 dist/*
 pyinstaller
 pymdown.spec

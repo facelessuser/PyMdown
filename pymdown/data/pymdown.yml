@@ -96,24 +96,8 @@ path_conversion_absolute: false
 # Length of tabs in source files
 tab_length: 4
 
-# Ignore number of first item in ordered list.
-# Setting this to false will force the list to start with the
-# first specified number in the list.
-lazy_ol: true
-
-# Python Markdown by default enables smart logic for _connected_words_
-# but only on italic with the underscore character.  I find this behavior odd
-# and disable it by default for a more traditional markdown feel by default.
-# Extensions can override this.
-smart_emphasis: false
-
-# Enable/disable attributes
-enable_attributes: true
-
-# Output format (html|html5|html5|xhtml|xhtml1|xhtml5)
-# It is recommend to use more specific versions such as: html5 or xhtml1 than
-# general html or xhtml
-output_format: 'xhtml1'
+# Output format (html|xhtml)
+output_format: 'xhtml'
 
 # Python Markdown extensions
 markdown_extensions:
@@ -155,8 +139,22 @@ markdown_extensions:
   pymdownx.tasklist:
   pymdownx.progressbar:
   pymdownx.superfences:
+    custom_fences: 
+      - name: flow
+        class: uml-flowchart
+        format: !!python/name:pymdownx.superfences.fence_code_format
+      - name: sequence
+        class: uml-sequence-diagram
+        format: !!python/name:pymdownx.superfences.fence_code_format
+      - name: math
+        class: arithmatex
+        format: !!python/name:pymdownx.arithmatex.fence_mathjax_format
   pymdownx.arithmatex:
   pymdownx.inlinehilite:
+    custom_inline:
+      - name: math
+        class: arithmatex
+        format: !!python/name:pymdownx.arithmatex.inline_mathjax_format
   pymdownx.escapeall:
     hardbreak: True
     nbsp: True

@@ -57,7 +57,7 @@ class MdWrapper(Markdown):
                 if isinstance(ext, util.string_type):
                     ext = self.build_extension(ext, configs.get(ext, {}))
                 if isinstance(ext, Extension):
-                    ext.extendMarkdown(self, globals())
+                    ext._extendMarkdown(self)
                     logger.Log.debug(
                         'Successfully loaded extension "%s.%s".'
                         % (ext.__class__.__module__, ext.__class__.__name__)
@@ -92,9 +92,6 @@ class MdConvert(object):
         self.encoding = util._get_encoding(kwargs.get('encoding', 'utf-8'), read=True)
         self.process_extensions(kwargs.get('markdown_extensions', {}))
         self.tab_length = kwargs.get('tab_length', 4)
-        self.smart_emphasis = kwargs.get('smart_emphasis', True)
-        self.lazy_ol = kwargs.get('lazy_ol', True)
-        self.enable_attributes = kwargs.get('enable_attributes', True)
         self.output_format = kwargs.get('output_format', 'xhtml1')
 
     def process_extensions(self, extensions):
@@ -128,8 +125,6 @@ class MdConvert(object):
                     extension_configs=self.extension_configs,
                     smart_emphasis=self.smart_emphasis,
                     tab_length=self.tab_length,
-                    lazy_ol=self.lazy_ol,
-                    enable_attributes=self.enable_attributes,
                     output_format=self.output_format
                 )
                 self.markdown = md.convert(f.read())
@@ -148,9 +143,7 @@ class MdConverts(MdConvert):
             md = MdWrapper(
                 extensions=self.md_extensions,
                 extension_configs=self.extension_configs,
-                smart_emphasis=self.smart_emphasis,
                 tab_length=self.tab_length,
-                lazy_ol=self.lazy_ol,
                 enable_attributes=self.enable_attributes,
                 output_format=self.output_format
             )

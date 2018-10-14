@@ -179,13 +179,10 @@ class Convert(object):
                 # Set up Converter
                 converter = mdconvert.MdConverts(
                     text,
-                    smart_emphasis=self.settings["pymdown_settings"]['smart_emphasis'],
-                    lazy_ol=self.settings["pymdown_settings"]['lazy_ol'],
                     tab_length=self.settings["pymdown_settings"]['tab_length'],
                     base_path=self.settings["page"]["basepath"],
                     relative_path=self.settings["page"]["relpath"],
                     output_path=path.dirname(html.file.name) if html.file.name else self.config.out,
-                    enable_attributes=self.settings["pymdown_settings"]['enable_attributes'],
                     output_format=self.settings["pymdown_settings"]['output_format'],
                     markdown_extensions=self.settings["pymdown_settings"]["markdown_extensions"]
                 )
